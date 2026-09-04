@@ -1,14 +1,12 @@
 import React, { JSX, memo } from "react";
 import {
   ChatPacket,
-  isCodeInterpreterToolType,
   ImageGenerationToolPacket,
   Packet,
   PacketType,
   ReasoningPacket,
   SearchToolStart,
   StopReason,
-  ToolCallArgumentDelta,
 } from "../../services/streamingModels";
 import {
   FullChatState,
@@ -19,9 +17,6 @@ import {
 } from "./interfaces";
 import { MessageTextRenderer } from "./renderers/MessageTextRenderer";
 import { ImageToolRenderer } from "./renderers/ImageToolRenderer";
-import { PythonToolRenderer } from "./timeline/renderers/code/PythonToolRenderer";
-import { CodingAgentRenderer } from "./timeline/renderers/code/CodingAgentRenderer";
-import { isCodingAgentPackets } from "./timeline/packetHelpers";
 import { ReasoningRenderer } from "./timeline/renderers/reasoning/ReasoningRenderer";
 import CustomToolRenderer from "./renderers/CustomToolRenderer";
 import { FileReaderToolRenderer } from "./timeline/renderers/filereader/FileReaderToolRenderer";
@@ -57,16 +52,6 @@ function isInternalSearchPacket(packet: Packet): boolean {
 
 function isImageToolPacket(packet: Packet) {
   return packet.obj.type === PacketType.IMAGE_GENERATION_TOOL_START;
-}
-
-function isPythonToolPacket(packet: Packet) {
-  return (
-    packet.obj.type === PacketType.PYTHON_TOOL_START ||
-    (packet.obj.type === PacketType.TOOL_CALL_ARGUMENT_DELTA &&
-      isCodeInterpreterToolType(
-        (packet.obj as ToolCallArgumentDelta).tool_type
-      ))
-  );
 }
 
 function isCustomToolPacket(packet: Packet) {
@@ -132,9 +117,6 @@ export function findRenderer(
   if (groupedPackets.packets.some((packet) => isResearchAgentPacket(packet))) {
     return ResearchAgentRenderer;
   }
-  if (isCodingAgentPackets(groupedPackets.packets)) {
-    return CodingAgentRenderer;
-  }
 
   // Standard tool checks
   if (groupedPackets.packets.some((packet) => isWebSearchPacket(packet))) {
@@ -145,9 +127,6 @@ export function findRenderer(
   }
   if (groupedPackets.packets.some((packet) => isImageToolPacket(packet))) {
     return ImageToolRenderer;
-  }
-  if (groupedPackets.packets.some((packet) => isPythonToolPacket(packet))) {
-    return PythonToolRenderer;
   }
   if (groupedPackets.packets.some((packet) => isFileReaderToolPacket(packet))) {
     return FileReaderToolRenderer;

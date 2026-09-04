@@ -7,7 +7,6 @@ from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from onyx.chat.citation_utils import extract_citation_order_from_text
-from onyx.coding_agent.mock_tools import CODING_AGENT_QUERY_KEY, CODING_AGENT_REPO_KEY
 from onyx.configs.constants import MessageType
 from onyx.context.search.models import SavedSearchDoc, SearchDoc
 from onyx.db.chat import (
@@ -25,8 +24,6 @@ from onyx.server.query_and_chat.streaming_models import (
     AgentResponseDelta,
     AgentResponseStart,
     CitationInfo,
-    CodingAgentFinal,
-    CodingAgentStart,
     CustomToolArgs,
     CustomToolDelta,
     CustomToolErrorInfo,
@@ -45,8 +42,6 @@ from onyx.server.query_and_chat.streaming_models import (
     OpenUrlUrls,
     OverallStop,
     Packet,
-    PythonToolDelta,
-    PythonToolStart,
     ReasoningDelta,
     ReasoningStart,
     ResearchAgentStart,
@@ -56,16 +51,12 @@ from onyx.server.query_and_chat.streaming_models import (
     SectionEnd,
     TopLevelBranching,
 )
-from onyx.tools.tool_implementations.coding_agent.coding_agent_tool import (
-    CodingAgentTool,
-)
 from onyx.tools.tool_implementations.file_reader.file_reader_tool import FileReaderTool
 from onyx.tools.tool_implementations.images.image_generation_tool import (
     ImageGenerationTool,
 )
 from onyx.tools.tool_implementations.memory.memory_tool import MemoryTool
 from onyx.tools.tool_implementations.open_url.open_url_tool import OpenURLTool
-from onyx.tools.tool_implementations.python.python_tool import PythonTool
 from onyx.tools.tool_implementations.search.search_tool import SearchTool
 from onyx.tools.tool_implementations.web_search.web_search_tool import WebSearchTool
 from onyx.utils.logger import setup_logger
@@ -326,44 +317,6 @@ def create_research_agent_packets(
     return packets
 
 
-def create_coding_agent_packets(
-    query: str,
-    repo: str,
-    answer: str | None,
-    turn_index: int,
-    tab_index: int = 0,
-) -> list[Packet]:
-    """Recreate the packet stream for a saved coding-agent tool call.
-
-    Mirrors what the live ``CodingAgentTool`` emits:
-    - ``CodingAgentStart(query, repo)`` opens the agent's section.
-    - ``CodingAgentFinal(answer)`` carries the inner agent's answer, which
-      the renderer displays as the agent's "Response" step.
-    - ``SectionEnd`` marks completion.
-
-    The outer chat-message bubble (rendered from ``chat_message.message`` via
-    ``create_message_packets`` at ``max_tool_turn + 1``) is the regular chat
-    agent's answer — separate from the coding agent's response, which stays
-    inside the agent's own timeline section.
-
-    Bash sub-calls aren't persisted (they're not top-level tool calls), so
-    they aren't replayed here — the renderer shows "Coding Task" only.
-    """
-    placement = Placement(turn_index=turn_index, tab_index=tab_index)
-    packets: list[Packet] = [
-        Packet(placement=placement, obj=CodingAgentStart(query=query, repo=repo)),
-    ]
-
-    if answer:
-        packets.append(
-            Packet(placement=placement, obj=CodingAgentFinal(answer=answer)),
-        )
-
-    packets.append(Packet(placement=placement, obj=SectionEnd()))
-
-    return packets
-
-
 def create_fetch_packets(
     fetch_docs: list[SavedSearchDoc],
     urls: list[str],
@@ -439,37 +392,6 @@ def create_memory_packets(
         )
     )
 
-    return packets
-
-
-def create_python_tool_packets(
-    code: str,
-    stdout: str,
-    stderr: str,
-    file_ids: list[str],
-    turn_index: int,
-    tab_index: int = 0,
-) -> list[Packet]:
-    """Recreate PythonToolStart + PythonToolDelta + SectionEnd from the stored
-    tool call data so the frontend can display both the code and its output
-    on page reload."""
-    packets: list[Packet] = []
-    placement = Placement(turn_index=turn_index, tab_index=tab_index)
-
-    packets.append(Packet(placement=placement, obj=PythonToolStart(code=code)))
-
-    packets.append(
-        Packet(
-            placement=placement,
-            obj=PythonToolDelta(
-                stdout=stdout,
-                stderr=stderr,
-                file_ids=file_ids,
-            ),
-        )
-    )
-
-    packets.append(Packet(placement=placement, obj=SectionEnd()))
     return packets
 
 
@@ -665,27 +587,6 @@ def translate_assistant_message_to_packets(
                             )
                         )
 
-                    elif tool.in_code_tool_id == CodingAgentTool.__name__:
-                        coding_query = cast(
-                            str,
-                            tool_call.tool_call_arguments.get(CODING_AGENT_QUERY_KEY)
-                            or "",
-                        )
-                        coding_repo = cast(
-                            str,
-                            tool_call.tool_call_arguments.get(CODING_AGENT_REPO_KEY)
-                            or "",
-                        )
-                        turn_tool_packets.extend(
-                            create_coding_agent_packets(
-                                query=coding_query,
-                                repo=coding_repo,
-                                answer=tool_call.tool_call_response,
-                                turn_index=turn_num,
-                                tab_index=tool_call.tab_index,
-                            )
-                        )
-
                     elif tool.in_code_tool_id == MemoryTool.__name__:
                         if tool_call.tool_call_response:
                             memory_data = json.loads(tool_call.tool_call_response)
@@ -702,41 +603,6 @@ def translate_assistant_message_to_packets(
                                     index=memory_data.get("index"),
                                 )
                             )
-
-                    elif tool.in_code_tool_id == PythonTool.__name__:
-                        code = cast(
-                            str,
-                            tool_call.tool_call_arguments.get("code", ""),
-                        )
-                        stdout = ""
-                        stderr = ""
-                        file_ids: list[str] = []
-                        if tool_call.tool_call_response:
-                            try:
-                                response_data = json.loads(tool_call.tool_call_response)
-                                stdout = response_data.get("stdout", "")
-                                stderr = response_data.get("stderr", "")
-                                generated_files = response_data.get(
-                                    "generated_files", []
-                                )
-                                file_ids = [
-                                    f.get("file_link", "").split("/")[-1]
-                                    for f in generated_files
-                                    if f.get("file_link")
-                                ]
-                            except (json.JSONDecodeError, KeyError):
-                                # Fall back to raw response as stdout
-                                stdout = tool_call.tool_call_response
-                        turn_tool_packets.extend(
-                            create_python_tool_packets(
-                                code=code,
-                                stdout=stdout,
-                                stderr=stderr,
-                                file_ids=file_ids,
-                                turn_index=turn_num,
-                                tab_index=tool_call.tab_index,
-                            )
-                        )
 
                     else:
                         # Custom tool or unknown tool

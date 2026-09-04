@@ -8,7 +8,6 @@ import { Button } from "@opal/components";
 import InlineExternalLink from "@/refresh-components/InlineExternalLink";
 import { logout } from "@/lib/users/svc";
 import { NEXT_PUBLIC_CLOUD_ENABLED } from "@/lib/constants";
-import { useLicense } from "@/hooks/useLicense";
 import { useSettings } from "@/lib/settings/hooks";
 import { ApplicationStatus } from "@/lib/settings/types";
 import Text from "@/refresh-components/texts/Text";
@@ -41,12 +40,12 @@ export default function AccessRestricted() {
   const t = useTranslations("common.errorPages");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { data: license } = useLicense();
   const settings = useSettings();
 
   const isSeatLimitExceeded =
     settings.application_status === ApplicationStatus.SEAT_LIMIT_EXCEEDED;
-  const hadPreviousLicense = license?.has_license === true;
+  // Community build: no license system, so there is never a previous license.
+  const hadPreviousLicense = false;
   const showRenewalMessage = NEXT_PUBLIC_CLOUD_ENABLED || hadPreviousLicense;
 
   function getSeatLimitMessage() {
@@ -102,11 +101,7 @@ export default function AccessRestricted() {
                   {chunks}
                 </Link>
               ),
-              billingLink: (chunks) => (
-                <Link className={linkClassName} href="/admin/billing">
-                  {chunks}
-                </Link>
-              ),
+              billingLink: (chunks) => chunks,
             })}
           </Text>
 
@@ -159,11 +154,7 @@ export default function AccessRestricted() {
           <Text text03>
             {t.rich("accessRestricted.billingAdminHint.text", {
               hadLicense: hadPreviousLicense ? "true" : "false",
-              billingLink: (chunks) => (
-                <Link className={linkClassName} href="/admin/billing">
-                  {chunks}
-                </Link>
-              ),
+              billingLink: (chunks) => chunks,
               supportLink: (chunks) => (
                 <a className={linkClassName} href="mailto:support@onyx.app">
                   {chunks}

@@ -1,9 +1,7 @@
 import {
-  isCodeInterpreterToolType,
   MemoryToolPacket,
   Packet,
   PacketType,
-  ToolCallArgumentDelta,
 } from "@/app/app/services/streamingModels";
 
 // Packet types with renderers supporting collapsed streaming mode.
@@ -12,10 +10,8 @@ import {
 export const COLLAPSED_STREAMING_PACKET_TYPES = new Set<PacketType>([
   PacketType.SEARCH_TOOL_START,
   PacketType.FETCH_TOOL_START,
-  PacketType.PYTHON_TOOL_START,
   PacketType.CUSTOM_TOOL_START,
   PacketType.RESEARCH_AGENT_START,
-  PacketType.CODING_AGENT_START,
   PacketType.REASONING_START,
   PacketType.DEEP_RESEARCH_PLAN_START,
 ]);
@@ -24,32 +20,9 @@ export const COLLAPSED_STREAMING_PACKET_TYPES = new Set<PacketType>([
 export const isResearchAgentPackets = (packets: Packet[]): boolean =>
   packets.some((p) => p.obj.type === PacketType.RESEARCH_AGENT_START);
 
-// Check if packets belong to a coding agent. The agent's group always contains
-// CodingAgentStart, but BashTool packets are emitted into the same group, so
-// any of these types signal a coding-agent group.
-export const CODING_AGENT_PACKET_TYPES = new Set<PacketType>([
-  PacketType.CODING_AGENT_START,
-  PacketType.CODING_AGENT_THINKING_DELTA,
-  PacketType.CODING_AGENT_FINAL,
-  PacketType.BASH_TOOL_START,
-  PacketType.BASH_TOOL_DELTA,
-]);
-
-export const isCodingAgentPackets = (packets: Packet[]): boolean =>
-  packets.some((p) => CODING_AGENT_PACKET_TYPES.has(p.obj.type as PacketType));
-
 // Check if packets belong to a search tool
 export const isSearchToolPackets = (packets: Packet[]): boolean =>
   packets.some((p) => p.obj.type === PacketType.SEARCH_TOOL_START);
-
-// Check if packets belong to a python tool
-export const isPythonToolPackets = (packets: Packet[]): boolean =>
-  packets.some(
-    (p) =>
-      p.obj.type === PacketType.PYTHON_TOOL_START ||
-      (p.obj.type === PacketType.TOOL_CALL_ARGUMENT_DELTA &&
-        isCodeInterpreterToolType((p.obj as ToolCallArgumentDelta).tool_type))
-  );
 
 // Check if packets belong to reasoning
 export const isReasoningPackets = (packets: Packet[]): boolean =>
@@ -57,11 +30,8 @@ export const isReasoningPackets = (packets: Packet[]): boolean =>
 
 // Check if step supports collapsed streaming rendering mode
 export const stepSupportsCollapsedStreaming = (packets: Packet[]): boolean =>
-  packets.some(
-    (p) =>
-      COLLAPSED_STREAMING_PACKET_TYPES.has(p.obj.type as PacketType) ||
-      (p.obj.type === PacketType.TOOL_CALL_ARGUMENT_DELTA &&
-        isCodeInterpreterToolType((p.obj as ToolCallArgumentDelta).tool_type))
+  packets.some((p) =>
+    COLLAPSED_STREAMING_PACKET_TYPES.has(p.obj.type as PacketType)
   );
 
 // Check if packets have content worth rendering in collapsed streaming mode.
@@ -95,19 +65,6 @@ export const stepHasCollapsedStreamingContent = (
     return true;
   }
 
-  // Python tool renders code/output from the start packet onward
-  if (
-    packetTypes.has(PacketType.PYTHON_TOOL_START) ||
-    packetTypes.has(PacketType.PYTHON_TOOL_DELTA) ||
-    packets.some(
-      (p) =>
-        p.obj.type === PacketType.TOOL_CALL_ARGUMENT_DELTA &&
-        isCodeInterpreterToolType((p.obj as ToolCallArgumentDelta).tool_type)
-    )
-  ) {
-    return true;
-  }
-
   // Custom tool shows running/completed state after start
   if (
     packetTypes.has(PacketType.CUSTOM_TOOL_START) ||
@@ -123,11 +80,6 @@ export const stepHasCollapsedStreamingContent = (
     packetTypes.has(PacketType.INTERMEDIATE_REPORT_DELTA) ||
     packetTypes.has(PacketType.INTERMEDIATE_REPORT_CITED_DOCS)
   ) {
-    return true;
-  }
-
-  // Coding agent has meaningful content from start (task) onward
-  if (isCodingAgentPackets(packets)) {
     return true;
   }
 

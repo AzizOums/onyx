@@ -10,7 +10,6 @@ from onyx.file_store.models import FileDescriptor
 from onyx.prompts.chat_prompts import (
     CITATION_REMINDER,
     DEFAULT_SYSTEM_PROMPT,
-    FILE_REMINDER,
     LAST_CYCLE_CITATION_REMINDER,
     REQUIRE_CITATION_GUIDANCE,
 )
@@ -20,7 +19,6 @@ from onyx.prompts.tool_prompts import (
     INTERNAL_SEARCH_GUIDANCE,
     MEMORY_GUIDANCE,
     OPEN_URLS_GUIDANCE,
-    PYTHON_TOOL_GUIDANCE,
     TOOL_DESCRIPTION_SEARCH_GUIDANCE,
     TOOL_SECTION_HEADER,
     WEB_SEARCH_GUIDANCE,
@@ -41,7 +39,6 @@ from onyx.tools.tool_implementations.images.image_generation_tool import (
 )
 from onyx.tools.tool_implementations.memory.memory_tool import MemoryTool
 from onyx.tools.tool_implementations.open_url.open_url_tool import OpenURLTool
-from onyx.tools.tool_implementations.python.python_tool import PythonTool
 from onyx.tools.tool_implementations.search.search_tool import SearchTool
 from onyx.tools.tool_implementations.web_search.web_search_tool import WebSearchTool
 from onyx.utils.timing import log_function_time
@@ -127,7 +124,6 @@ def calculate_reserved_tokens(
 def build_reminder_message(
     reminder_text: str | None,
     include_citation_reminder: bool,
-    include_file_reminder: bool,
     is_last_cycle: bool,
 ) -> str | None:
     reminder = reminder_text.strip() if reminder_text else ""
@@ -135,8 +131,6 @@ def build_reminder_message(
         reminder += "\n\n" + LAST_CYCLE_CITATION_REMINDER
     if include_citation_reminder:
         reminder += "\n\n" + CITATION_REMINDER
-    if include_file_reminder:
-        reminder += "\n\n" + FILE_REMINDER
     reminder = reminder.strip()
     return reminder if reminder else None
 
@@ -262,7 +256,6 @@ def build_system_prompt(
                 site_colon_disabled=WEB_SEARCH_SITE_DISABLED_GUIDANCE
             ),
             OPEN_URLS_GUIDANCE,
-            PYTHON_TOOL_GUIDANCE,
             GENERATE_IMAGE_GUIDANCE,
             MEMORY_GUIDANCE,
         ]
@@ -273,7 +266,6 @@ def build_system_prompt(
         has_web_search = any(isinstance(tool, WebSearchTool) for tool in tools)
         has_internal_search = any(isinstance(tool, SearchTool) for tool in tools)
         has_open_urls = any(isinstance(tool, OpenURLTool) for tool in tools)
-        has_python = any(isinstance(tool, PythonTool) for tool in tools)
         has_generate_image = any(
             isinstance(tool, ImageGenerationTool) for tool in tools
         )
@@ -302,9 +294,6 @@ def build_system_prompt(
 
         if has_open_urls or include_all_guidance:
             tool_guidance_sections.append(OPEN_URLS_GUIDANCE)
-
-        if has_python or include_all_guidance:
-            tool_guidance_sections.append(PYTHON_TOOL_GUIDANCE)
 
         if has_generate_image or include_all_guidance:
             tool_guidance_sections.append(GENERATE_IMAGE_GUIDANCE)

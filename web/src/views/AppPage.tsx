@@ -80,9 +80,6 @@ import { useQueryController } from "@/providers/QueryControllerProvider";
 import WelcomeMessage from "@/app/app/components/WelcomeMessage";
 import ChatUI from "@/sections/chat/ChatUI";
 import { useFullWidthChat } from "@/providers/FullWidthChatProvider";
-import { paidTierGated } from "@/ce";
-import EESearchUI from "@/ee/sections/SearchUI";
-const SearchUI = paidTierGated(EESearchUI);
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
 
@@ -578,11 +575,6 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
     if (incognitoEnabled) setAppMode("chat");
   }, [incognitoEnabled, setAppMode]);
 
-  const handleSearchDocumentClick = useCallback(
-    (doc: MinimalOnyxDocument) => setPresentingDocument(doc),
-    []
-  );
-
   const handleAppInputBarSubmit = useCallback(
     async (message: string) => {
       // If we're in an existing chat session, always use chat mode
@@ -1071,13 +1063,12 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
                     <Suggestions onSubmit={onSubmit} />
                   </Fade>
 
-                  {/* SearchUI */}
+                  {/* SearchUI (paid-tier search view; renders nothing in Community) */}
                   <Fade
                     show={isSearch}
                     className="h-full flex-1 w-full max-w-(--app-page-main-content-width) px-1 flex flex-col"
                   >
                     <Spacer rem={0.75} />
-                    <SearchUI onDocumentClick={handleSearchDocumentClick} />
                   </Fade>
                 </div>
               </div>

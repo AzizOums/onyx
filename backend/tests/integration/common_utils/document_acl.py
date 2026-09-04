@@ -8,11 +8,14 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ee.onyx.access.access import _get_access_for_documents
-from ee.onyx.db.external_perm import fetch_external_groups_for_user
+from onyx.access.access import _get_access_for_documents
 from onyx.access.utils import prefix_external_group, prefix_user_email
 from onyx.configs.constants import PUBLIC_DOC_PAT
-from onyx.db.models import DocumentByConnectorCredentialPair, User
+from onyx.db.models import (
+    DocumentByConnectorCredentialPair,
+    User,
+    User__ExternalUserGroupId,
+)
 from onyx.db.users import fetch_user_by_id
 from onyx.utils.logger import setup_logger
 from tests.integration.common_utils.test_models import DATestCCPair, DATestUser
@@ -32,7 +35,13 @@ def get_user_acl(user: User, db_session: Session) -> set[str]:
         Set of ACL entries for the user
     """
     db_external_groups = (
-        fetch_external_groups_for_user(db_session, user.id) if user else []
+        db_session.scalars(
+            select(User__ExternalUserGroupId).where(
+                User__ExternalUserGroupId.user_id == user.id
+            )
+        ).all()
+        if user
+        else []
     )
     prefixed_external_groups = [
         prefix_external_group(db_external_group.external_user_group_id)

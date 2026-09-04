@@ -22,7 +22,7 @@ import type {
 } from "@/lib/hierarchy/interfaces";
 import type { ProjectFile } from "@/lib/projects/types";
 import type { DocumentSetSummary, ValidSources } from "@/lib/types";
-import { searchDocuments } from "@/ee/lib/search/svc";
+import { searchDocuments } from "@/lib/search/svc";
 import { Disabled } from "@opal/core";
 import { Card, Switch } from "@opal/components";
 import { Content, InputHorizontal, Section } from "@opal/layouts";

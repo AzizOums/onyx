@@ -7036,15 +7036,6 @@ class ScimGroupMapping(Base):
     )
 
 
-class CodeInterpreterServer(Base):
-    """Details about the code interpreter server"""
-
-    __tablename__ = "code_interpreter_server"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    server_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-
-
 class CacheStore(Base):
     """Key-value cache table used by ``PostgresCacheBackend``.
 

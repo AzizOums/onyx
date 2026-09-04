@@ -72,12 +72,8 @@ def admin_patch_settings(
         require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)
     ),
 ) -> Settings:
-    if global_version.is_ee_version():
-        from ee.onyx.utils.tier import get_tier
-
-        current_tier = get_tier()
-    else:
-        current_tier = Tier.COMMUNITY
+    # Community edition always runs at the community tier.
+    current_tier = Tier.COMMUNITY
 
     # Serialize the read-modify-write so two concurrent partial patches cannot
     # each merge onto a stale snapshot and drop the other's field.
@@ -142,7 +138,10 @@ def admin_patch_settings(
 
 
 def apply_license_status_to_settings(settings: Settings) -> Settings:
-    """MIT version: no-op, returns settings unchanged."""
+    """Community build: the ported features (user groups, group sharing,
+    enterprise settings/branding) are shipped unconditionally, so the frontend
+    should treat EE-gated UI as available. No license check exists."""
+    settings.ee_features_enabled = True
     return settings
 
 

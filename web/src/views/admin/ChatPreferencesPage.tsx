@@ -51,9 +51,7 @@ import {
   SEARCH_TOOL_ID,
   IMAGE_GENERATION_TOOL_ID,
   WEB_SEARCH_TOOL_ID,
-  PYTHON_TOOL_ID,
   OPEN_URL_TOOL_ID,
-  CODING_AGENT_TOOL_ID,
 } from "@/lib/tools/constants";
 import {
   EmptyMessageCard,
@@ -798,12 +796,6 @@ export default function ChatPreferencesPage() {
   const openURLTool = availableTools.find(
     (t) => t.in_code_tool_id === OPEN_URL_TOOL_ID
   );
-  const codeInterpreterTool = availableTools.find(
-    (t) => t.in_code_tool_id === PYTHON_TOOL_ID
-  );
-  const codingAgentTool = availableTools.find(
-    (t) => t.in_code_tool_id === CODING_AGENT_TOOL_ID
-  );
 
   // Connectors
   const { ccPairs } = useCCPairs();
@@ -1303,53 +1295,6 @@ export default function ChatPreferencesPage() {
                         </Card>
                       </Disabled>
 
-                      <Disabled disabled={!codeInterpreterTool}>
-                        <Card border="solid" rounding={4}>
-                          <InputHorizontal
-                            title={t("tools.codeInterpreter.title")}
-                            description={t("tools.codeInterpreter.description")}
-                            disabled={!codeInterpreterTool}
-                            withLabel
-                          >
-                            <Switch
-                              checked={
-                                codeInterpreterTool
-                                  ? isToolEnabled(codeInterpreterTool.id)
-                                  : false
-                              }
-                              onCheckedChange={(checked) =>
-                                codeInterpreterTool &&
-                                void toggleTool(codeInterpreterTool.id, checked)
-                              }
-                              disabled={!codeInterpreterTool}
-                            />
-                          </InputHorizontal>
-                        </Card>
-                      </Disabled>
-
-                      <Disabled disabled={!codingAgentTool}>
-                        <Card border="solid" rounding={4}>
-                          <InputHorizontal
-                            title={t("tools.codingAgent.title")}
-                            description={t("tools.codingAgent.description")}
-                            disabled={!codingAgentTool}
-                            withLabel
-                          >
-                            <Switch
-                              checked={
-                                codingAgentTool
-                                  ? isToolEnabled(codingAgentTool.id)
-                                  : false
-                              }
-                              onCheckedChange={(checked) =>
-                                codingAgentTool &&
-                                void toggleTool(codingAgentTool.id, checked)
-                              }
-                              disabled={!codingAgentTool}
-                            />
-                          </InputHorizontal>
-                        </Card>
-                      </Disabled>
                     </Section>
 
                     {/* Separator between built-in tools and MCP/OpenAPI tools */}

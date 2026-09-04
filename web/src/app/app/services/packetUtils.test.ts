@@ -30,8 +30,6 @@ describe("packetUtils", () => {
       PacketType.SEARCH_TOOL_START,
       PacketType.SEARCH_TOOL_QUERIES_DELTA,
       PacketType.SEARCH_TOOL_DOCUMENTS_DELTA,
-      PacketType.PYTHON_TOOL_START,
-      PacketType.PYTHON_TOOL_DELTA,
       PacketType.CUSTOM_TOOL_START,
       PacketType.CUSTOM_TOOL_DELTA,
       PacketType.REASONING_START,
@@ -91,8 +89,6 @@ describe("packetUtils", () => {
       PacketType.SEARCH_TOOL_START,
       PacketType.SEARCH_TOOL_QUERIES_DELTA,
       PacketType.SEARCH_TOOL_DOCUMENTS_DELTA,
-      PacketType.PYTHON_TOOL_START,
-      PacketType.PYTHON_TOOL_DELTA,
       PacketType.CUSTOM_TOOL_START,
       PacketType.CUSTOM_TOOL_DELTA,
       PacketType.FETCH_TOOL_START,
@@ -200,7 +196,7 @@ describe("packetUtils", () => {
     });
 
     test("returns false for other packet types", () => {
-      const packet = createPacket(PacketType.PYTHON_TOOL_START);
+      const packet = createPacket(PacketType.CUSTOM_TOOL_START);
       expect(isSearchToolPacket(packet)).toBe(false);
     });
   });

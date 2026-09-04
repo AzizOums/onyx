@@ -119,7 +119,7 @@ export function useCraftMcpServers(enabled: boolean = true) {
  * Hook to fetch all available tools from the backend.
  *
  * This hook fetches the complete list of tools that can be used with agents,
- * including built-in tools (SearchTool, ImageGenerationTool, WebSearchTool, PythonTool)
+ * including built-in tools (SearchTool, ImageGenerationTool, WebSearchTool)
  * and any dynamically configured tools (MCP servers, OpenAPI tools).
  *
  * @example

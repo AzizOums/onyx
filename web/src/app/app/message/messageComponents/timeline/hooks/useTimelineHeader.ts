@@ -88,14 +88,6 @@ export function useTimelineHeader(
       return { headerText: t("header.reading.label"), hasPackets, userStopped };
     }
 
-    if (packetType === PacketType.PYTHON_TOOL_START) {
-      return {
-        headerText: t("header.executingCode.label"),
-        hasPackets,
-        userStopped,
-      };
-    }
-
     if (packetType === PacketType.IMAGE_GENERATION_TOOL_START) {
       return {
         headerText: t("header.generatingImages.label"),

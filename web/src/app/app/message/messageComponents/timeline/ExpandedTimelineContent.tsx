@@ -15,11 +15,7 @@ import {
 import { ParallelTimelineTabs } from "./ParallelTimelineTabs";
 import { StepContainer } from "./StepContainer";
 import { TimelineStepComposer } from "./TimelineStepComposer";
-import {
-  isSearchToolPackets,
-  isPythonToolPackets,
-  isCodingAgentPackets,
-} from "@/app/app/message/messageComponents/timeline/packetHelpers";
+import { isSearchToolPackets } from "@/app/app/message/messageComponents/timeline/packetHelpers";
 
 // =============================================================================
 // TimelineStep Component - Memoized to prevent re-renders
@@ -50,10 +46,6 @@ const TimelineStep = React.memo(function TimelineStep({
     () => isSearchToolPackets(step.packets),
     [step.packets]
   );
-  const isPythonTool = useMemo(
-    () => isPythonToolPackets(step.packets),
-    [step.packets]
-  );
   const getCollapsedIcon = useCallback(
     (result: TimelineRendererResult) =>
       isSearchTool ? (result.icon as FunctionComponent<IconProps>) : undefined,
@@ -81,7 +73,7 @@ const TimelineStep = React.memo(function TimelineStep({
       animate={!stopPacketSeen}
       stopPacketSeen={stopPacketSeen}
       stopReason={stopReason}
-      defaultExpanded={isStreaming || (isSingleStep && !isPythonTool)}
+      defaultExpanded={isStreaming}
       isLastStep={isLastStep}
     >
       {renderStep}
@@ -122,11 +114,7 @@ export const ExpandedTimelineContent = React.memo(
     return (
       <div className="w-full">
         {turnGroups.map((turnGroup, turnIdx) => {
-          // Coding-agent groups always render via ParallelTimelineTabs so
-          // their tab-pill chrome is consistent with the multi-agent case.
-          const renderAsParallelTabs =
-            turnGroup.isParallel ||
-            turnGroup.steps.some((step) => isCodingAgentPackets(step.packets));
+          const renderAsParallelTabs = turnGroup.isParallel;
 
           return renderAsParallelTabs ? (
             <ParallelTimelineTabs

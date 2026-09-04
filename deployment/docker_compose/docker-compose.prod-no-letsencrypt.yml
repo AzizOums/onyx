@@ -42,7 +42,6 @@ services:
       - OPENSEARCH_ADMIN_PASSWORD=${OPENSEARCH_ADMIN_PASSWORD:-StrongPassword123!}
       - REDIS_HOST=${REDIS_HOST:-cache}
       - MODEL_SERVER_HOST=${MODEL_SERVER_HOST:-inference_model_server}
-      - CODE_INTERPRETER_BASE_URL=${CODE_INTERPRETER_BASE_URL:-http://code-interpreter:8000}
       - USE_IAM_AUTH=${USE_IAM_AUTH}
       - AWS_REGION_NAME=${AWS_REGION_NAME-}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID-}
@@ -468,23 +467,6 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-
-  code-interpreter:
-    image: onyxdotapp/code-interpreter:${CODE_INTERPRETER_IMAGE_TAG:-latest}
-    command: ["bash", "./entrypoint.sh", "code-interpreter-api"]
-    restart: unless-stopped
-    env_file:
-      - path: .env
-        required: false
-
-    # Below is needed for the `docker-out-of-docker` execution mode
-    # For Linux rootless Docker, set DOCKER_SOCK_PATH=${XDG_RUNTIME_DIR}/docker.sock
-    user: root
-    volumes:
-      - ${DOCKER_SOCK_PATH:-/var/run/docker.sock}:/var/run/docker.sock
-
-    # uncomment below + comment out the above to use the `docker-in-docker` execution mode
-    # privileged: true
 
 volumes:
   # Necessary for persisting data for use

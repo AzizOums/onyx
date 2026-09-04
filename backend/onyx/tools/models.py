@@ -95,8 +95,6 @@ class ToolResponse(BaseModel):
         # | WebContentResponse
         # This comes from custom tools, tool result needs to be saved
         | CustomToolCallSummary
-        # This comes from code interpreter, carries generated files
-        | PythonToolRichResponse
         # If the rich response is a string, this is what's saved to the tool call in the DB
         | str
         | None  # If nothing needs to be persisted outside of the string value passed to the LLM
@@ -212,7 +210,7 @@ class ChatFile(BaseModel):
         """Construct a ChatFile whose ``content`` is loaded on first access.
 
         Existing eager construction (``ChatFile(filename=..., content=...)``)
-        is unchanged. PythonTool's ``.content`` access transparently triggers
+        is unchanged. Tool ``.content`` access transparently triggers
         the loader and memoizes the result.
         """
         inst = cls(filename=filename, content=b"")
@@ -223,18 +221,6 @@ class ChatFile(BaseModel):
         if name == "content":
             maybe_materialize_lazy_content(self)
         return object.__getattribute__(self, name)
-
-
-class PythonToolRichResponse(BaseModel):
-    """Rich response from the Python tool carrying generated files."""
-
-    generated_files: list[PythonExecutionFile] = []
-
-
-class PythonToolOverrideKwargs(BaseModel):
-    """Override kwargs for the Python/Code Interpreter tool."""
-
-    chat_files: list[ChatFile] = []
 
 
 class SearchToolRunContext(BaseModel):
@@ -277,7 +263,6 @@ class ToolCallInfo(BaseModel):
     tool_call_response: str
     search_docs: list[SearchDoc] | None = None
     generated_images: list[GeneratedImage] | None = None
-    generated_files: list[PythonExecutionFile] | None = None
     # File-store ids of blobs custom tools saved during the call.
     generated_file_ids: list[str] | None = None
 
@@ -319,25 +304,3 @@ class LlmOpenUrlResult(BaseCiteableToolResult):
 
     type: Literal["open_url"] = "open_url"
     content: str
-
-
-class PythonExecutionFile(BaseModel):
-    """File generated during Python execution"""
-
-    filename: str
-    file_link: str
-
-
-class LlmPythonExecutionResult(BaseModel):
-    """Result from Python code execution"""
-
-    type: Literal["python_execution"] = "python_execution"
-
-    stdout: str
-    stderr: str
-    exit_code: int | None
-    timed_out: bool
-    generated_files: list[PythonExecutionFile]
-    error: str | None = None
-    # Set when some session files are absent
-    staging_notice: str | None = None

@@ -68,12 +68,6 @@ Very briefly describe the image(s) generated. Do not include any links or attach
 """.strip()
 
 
-FILE_REMINDER = """
-Your code execution generated file(s) with download links.
-If you reference or share these files, use the exact markdown format [filename](file_link) with the file_link from the execution result.
-""".strip()
-
-
 # Wrapped in <system-reminder> tags by translate_history_to_llm_format when
 # the per-request image cap drops images from the outgoing request.
 IMAGE_DROP_REMINDER = """

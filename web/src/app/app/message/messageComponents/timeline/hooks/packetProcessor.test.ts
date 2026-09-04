@@ -24,8 +24,6 @@ import {
   createFetchToolStartPacket,
   createFetchToolUrlsPacket,
   createFetchToolDocumentsPacket,
-  createPythonToolStartPacket,
-  createPythonToolDeltaPacket,
 } from "./__tests__/testHelpers";
 
 // ============================================================================
@@ -264,7 +262,6 @@ describe("packetProcessor", () => {
     // Parameterized tests for tool packet types
     test.each([
       [PacketType.SEARCH_TOOL_START, "SEARCH_TOOL_START"],
-      [PacketType.PYTHON_TOOL_START, "PYTHON_TOOL_START"],
       [PacketType.FETCH_TOOL_START, "FETCH_TOOL_START"],
       [PacketType.CUSTOM_TOOL_START, "CUSTOM_TOOL_START"],
       [PacketType.FILE_READER_START, "FILE_READER_START"],
@@ -671,128 +668,6 @@ describe("packetProcessor", () => {
     });
   });
 
-  describe("Python Tool flow", () => {
-    test("PYTHON_TOOL_START categorizes group as tool", () => {
-      const state = createInitialState(1);
-      const packets = [
-        createPythonToolStartPacket("print('hello')", { turn_index: 0 }),
-      ];
-      const result = processPackets(state, packets);
-
-      expect(result.toolGroupKeys.has("0-0")).toBe(true);
-    });
-
-    test("PYTHON_TOOL_START stores code in packet", () => {
-      const state = createInitialState(1);
-      const code = "import pandas as pd\ndf = pd.read_csv('data.csv')";
-      const packets = [createPythonToolStartPacket(code, { turn_index: 0 })];
-      const result = processPackets(state, packets);
-
-      const group = result.groupedPacketsMap.get("0-0");
-      expect((group![0]!.obj as { code: string }).code).toBe(code);
-    });
-
-    test("PYTHON_TOOL_DELTA stores stdout/stderr/file_ids", () => {
-      const state = createInitialState(1);
-      const packets = [
-        createPythonToolStartPacket("print('test')", { turn_index: 0 }),
-        createPythonToolDeltaPacket("test\n", "", [], { turn_index: 0 }),
-      ];
-      const result = processPackets(state, packets);
-
-      const group = result.groupedPacketsMap.get("0-0");
-      const delta = group![1]!.obj as {
-        stdout: string;
-        stderr: string;
-        file_ids: string[];
-      };
-      expect(delta.stdout).toBe("test\n");
-      expect(delta.stderr).toBe("");
-    });
-
-    test("PYTHON_TOOL_DELTA with file_ids (generated files)", () => {
-      const state = createInitialState(1);
-      const packets = [
-        createPythonToolStartPacket("plt.savefig('chart.png')", {
-          turn_index: 0,
-        }),
-        createPythonToolDeltaPacket("", "", ["file-123", "file-456"], {
-          turn_index: 0,
-        }),
-      ];
-      const result = processPackets(state, packets);
-
-      const group = result.groupedPacketsMap.get("0-0");
-      expect((group![1]!.obj as { file_ids: string[] }).file_ids).toEqual([
-        "file-123",
-        "file-456",
-      ]);
-    });
-
-    test("multiple DELTA packets (streaming output)", () => {
-      const state = createInitialState(1);
-      const packets = [
-        createPythonToolStartPacket("for i in range(3): print(i)", {
-          turn_index: 0,
-        }),
-        createPythonToolDeltaPacket("0\n", "", [], { turn_index: 0 }),
-        createPythonToolDeltaPacket("1\n", "", [], { turn_index: 0 }),
-        createPythonToolDeltaPacket("2\n", "", [], { turn_index: 0 }),
-        createPacket(PacketType.SECTION_END, { turn_index: 0 }),
-      ];
-      const result = processPackets(state, packets);
-
-      const group = result.groupedPacketsMap.get("0-0");
-      expect(group?.length).toBe(5); // START + 3 DELTAs + SECTION_END
-    });
-
-    test("python tool with stderr (error output)", () => {
-      const state = createInitialState(1);
-      const packets = [
-        createPythonToolStartPacket("undefined_var", { turn_index: 0 }),
-        createPythonToolDeltaPacket(
-          "",
-          "NameError: name 'undefined_var' is not defined",
-          [],
-          { turn_index: 0 }
-        ),
-        createPacket(PacketType.SECTION_END, { turn_index: 0 }),
-      ];
-      const result = processPackets(state, packets);
-
-      const group = result.groupedPacketsMap.get("0-0");
-      expect((group![1]!.obj as { stderr: string }).stderr).toContain(
-        "NameError"
-      );
-    });
-
-    test("PYTHON_TOOL_START resets finalAnswerComing if after message", () => {
-      const state = createInitialState(1);
-      const packets = [
-        createMessageStartPacket({ turn_index: 0 }),
-        createPythonToolStartPacket("print(1)", { turn_index: 1 }),
-      ];
-      const result = processPackets(state, packets);
-
-      expect(result.finalAnswerComing).toBe(false);
-    });
-
-    test("python tool with ERROR instead of SECTION_END", () => {
-      const state = createInitialState(1);
-      const packets = [
-        createPythonToolStartPacket("crash()", { turn_index: 0 }),
-        createPacket(
-          PacketType.ERROR,
-          { turn_index: 0 },
-          { message: "Execution failed" }
-        ),
-      ];
-      const result = processPackets(state, packets);
-
-      expect(result.groupKeysWithSectionEnd.has("0-0")).toBe(true);
-    });
-  });
-
   describe("handleStreamingStatusPacket", () => {
     test("sets finalAnswerComing on MESSAGE_START", () => {
       const state = createInitialState(1);
@@ -1028,7 +903,7 @@ describe("packetProcessor", () => {
   });
 
   describe("multi-tool scenarios", () => {
-    test("Search + Python + Fetch in same conversation", () => {
+    test("Search + Fetch in same conversation", () => {
       const state = createInitialState(1);
       const packets = [
         // Turn 0: Search
@@ -1039,36 +914,25 @@ describe("packetProcessor", () => {
         }),
         createPacket(PacketType.SECTION_END, { turn_index: 0, tab_index: 0 }),
 
-        // Turn 1: Python
-        createPythonToolStartPacket("analyze()", {
+        // Turn 1: Fetch
+        createFetchToolStartPacket({ turn_index: 1, tab_index: 0 }),
+        createFetchToolUrlsPacket(["https://api.example.com"], {
           turn_index: 1,
           tab_index: 0,
         }),
-        createPythonToolDeltaPacket("Result: 42", "", [], {
+        createFetchToolDocumentsPacket([{ document_id: "fetch-doc" }], {
           turn_index: 1,
           tab_index: 0,
         }),
         createPacket(PacketType.SECTION_END, { turn_index: 1, tab_index: 0 }),
 
-        // Turn 2: Fetch
-        createFetchToolStartPacket({ turn_index: 2, tab_index: 0 }),
-        createFetchToolUrlsPacket(["https://api.example.com"], {
-          turn_index: 2,
-          tab_index: 0,
-        }),
-        createFetchToolDocumentsPacket([{ document_id: "fetch-doc" }], {
-          turn_index: 2,
-          tab_index: 0,
-        }),
-        createPacket(PacketType.SECTION_END, { turn_index: 2, tab_index: 0 }),
-
-        // Turn 3: Final answer
-        createMessageStartPacket({ turn_index: 3, tab_index: 0 }),
+        // Turn 2: Final answer
+        createMessageStartPacket({ turn_index: 2, tab_index: 0 }),
         createStopPacket(),
       ];
       const result = processPackets(state, packets);
 
-      expect(result.toolGroups.length).toBe(3);
+      expect(result.toolGroups.length).toBe(2);
       expect(result.potentialDisplayGroups.length).toBe(1);
       expect(result.documentMap.has("search-doc")).toBe(true);
       expect(result.documentMap.has("fetch-doc")).toBe(true);
