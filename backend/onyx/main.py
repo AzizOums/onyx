@@ -115,7 +115,14 @@ from onyx.server.features.user_oauth_token.api import router as user_oauth_token
 from onyx.server.features.web_search.api import router as web_search_router
 from onyx.server.federated.api import router as federated_router
 from onyx.server.kg.api import admin_router as kg_admin_router
+from onyx.server.enterprise_settings.api import (
+    admin_router as enterprise_settings_admin_router,
+)
+from onyx.server.enterprise_settings.api import (
+    basic_router as enterprise_settings_router,
+)
 from onyx.server.manage.administrative import router as admin_router
+from onyx.server.user_group.api import router as user_group_router
 from onyx.server.manage.discord_bot.api import router as discord_bot_router
 from onyx.server.manage.embedding.api import admin_router as embedding_admin_router
 from onyx.server.manage.embedding.api import basic_router as embedding_router
@@ -595,6 +602,14 @@ def get_application(lifespan_override: Lifespan | None = None) -> FastAPI:
     include_router_with_global_prefix_prepended(application, security_admin_router)
     include_router_with_global_prefix_prepended(application, sso_admin_router)
     include_router_with_global_prefix_prepended(application, llm_admin_router)
+    # RBAC / group access control
+    include_router_with_global_prefix_prepended(application, user_group_router)
+    include_router_with_global_prefix_prepended(
+        application, enterprise_settings_router
+    )
+    include_router_with_global_prefix_prepended(
+        application, enterprise_settings_admin_router
+    )
     include_router_with_global_prefix_prepended(application, kg_admin_router)
     include_router_with_global_prefix_prepended(application, llm_router)
     include_router_with_global_prefix_prepended(

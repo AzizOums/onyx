@@ -1,5 +1,3 @@
-import { useTierAtLeast } from "@/hooks/useTierAtLeast";
-import { Tier } from "@/lib/settings/types";
 import React, { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { FormikProps } from "formik";
@@ -39,7 +37,9 @@ export const IsPublicGroupSelector = <T extends IsPublicGroupSelectorFormType>({
   const effectivePublicToWhom = publicToWhom ?? t("usersFallback.text");
   const { data: userGroups, isLoading: userGroupsIsLoading } = useUserGroups();
   const { isAdmin, user } = useUser();
-  const businessTier = useTierAtLeast(Tier.BUSINESS);
+  // Community build: public/group sharing backends are shipped in CE, so the
+  // selector is always available (backend still enforces per-object permissions).
+  const businessTier = true;
   const canActGlobally = isGlobalHolder ?? isAdmin;
 
   // A scoped manager can only create non-public objects. Group selection stays
