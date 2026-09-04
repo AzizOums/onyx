@@ -3,6 +3,8 @@ import { ChatPage } from "@tests/e2e/chat/ChatPage";
 import { TEST_ADMIN_CREDENTIALS } from "@tests/e2e/constants";
 import { AdminUsagePage } from "@tests/e2e/pages/AdminUsagePage";
 
+test.skip(true, "usage budgets/ledger are EE-only (backend no-ops in the Community build)");
+
 /**
  * Admin per-user usage table. Real e2e (no mocking): the admin sends a chat to
  * accrue usage, then the Usage page must list that usage per user. Requires a

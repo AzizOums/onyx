@@ -25,6 +25,8 @@
  */
 
 import { test, expect } from "@playwright/test";
+
+test.skip(true, "external permission sync beat tasks are EE-only and removed in the Community build");
 import type { Page, Route } from "@playwright/test";
 
 import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
