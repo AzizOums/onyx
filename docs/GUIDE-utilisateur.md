@@ -41,6 +41,11 @@ Anthropic, ou en local via **Ollama**). Tout reste **chez vous** : auto-héberg�
 - Tapez votre question → la réponse est streamée en direct.
 - **Joindre des fichiers** : glissez-déposez ou 📎 — les fichiers sont indexés
   et l'agent peut les lire (PDF, DOCX, TXT, images, Excel…).
+- **Images, audio, vidéo** : si le modèle sélectionné les accepte (affiché
+  dans le sélecteur), joignez-les directement — ils sont envoyés au modèle
+  (vision, transcription native). Sinon, un message vous invite à changer
+  de modèle ; les types acceptés par la zone de saisie suivent
+  automatiquement le modèle courant.
 - **Réponses citées** : les sources sont citées avec liens cliquables.
 - **Feedback** : 👍/👎 sur une réponse — aidez vos admins à améliorer les agents.
 - **Régénérer / éditer** : modifiez votre message et relancez la réponse.
@@ -96,6 +101,12 @@ documents de référence.
 - **Language Models** : configurer les fournisseurs LLM — OpenAI, Anthropic,
   **Ollama (local)**, Azure, Bedrock, Vertex… et choisir le modèle par défaut
   (chat, vision, naming).
+- **Catalogue models.dev** : dans les modales de provider (OpenAI-Compatible
+  et Custom), le bouton **« Browse models.dev catalog »** liste 213+
+  fournisseurs avec endpoint API, clés d'auth, documentation et **modalités
+  d'entrée par modèle** (texte/image/audio/vidéo/PDF, contexte). Sélectionnez
+  les modèles → ils sont ajoutés avec les bons flags (dont l'option
+  « Multimodal » par modèle).
 - **Web Search** : fournisseur de recherche internet (exigé par l'outil web).
 - **Image Generation** : fournisseur d'images (activé sur demande).
 - **Voice** : transcription (STT) et synthèse vocale (TTS) optionnelles.
@@ -161,6 +172,11 @@ configurés (ex. Image Generation n'apparaît qu'une fois un provider ajouté).
 **« Comment changer le modèle de chat ? »**
 Clic sur le sélecteur de modèle en bas de la barre de saisie (les agents
 peuvent aussi forcer leur modèle).
+
+**« Puis-je envoyer un fichier audio/vidéo ? »**
+Oui si le modèle courant l'accepte (ex. modèle multimodal) : la zone de
+saisie l'indique. Sinon, utilisez un modèle multimodal ou laissez l'admin
+activer le flag dans la configuration du modèle.
 
 **« Reset de mon mot de passe ? »**
 Cliquer « Mot de passe oublié » — nécessite le SMTP configuré par l'admin.

@@ -65,6 +65,32 @@
   backend : le front active les features portées, sans licence.
 - Auth : email/mot de passe natif + SSO SAML/OIDC (implémentations CE).
 
+### Chat multimodal & catalogue models.dev (feature ajoutée)
+
+**Principe** : les capacités d'entrée des modèles (texte/image/audio/vidéo/PDF)
+viennent de **[models.dev](https://models.dev)** (catalogue public, 213+
+providers) au lieu d'être codées en dur :
+- `backend/onyx/llm/modelsdev.py` : client + cache Redis 24 h
+  (`DISABLE_MODELSDEV=true` pour couper) — lookup avec normalisation des noms.
+- Flows `AUDIO_INPUT` / `VIDEO_INPUT` (`LLMModelFlowType`), persistés comme
+  `VISION` dans `llm_model_flow` et exposés dans les vues/entités modèles.
+- Endpoints admin : `GET /admin/llm/modelsdev/providers` (catalogue :
+  endpoint API, clés d'auth, docs) et
+  `GET /admin/llm/modelsdev/providers/{id}/models` (modalités, limites).
+- La discovery openai-compatible est **enrichie** par models.dev
+  (modalités + `max_input_tokens`).
+- Upload : nouveaux `ChatFileType.AUDIO` / `VIDEO` (extensions autorisées,
+  non indexés) ; le LLM reçoit des parts `input_audio` (base64) / vidéo
+  (data-URL) quand le modèle le supporte, sinon un marqueur texte.
+- Frontend : sélecteur de fichiers `accept` adaptatif au modèle courant +
+  toasts par modalité ; browser models.dev dans les modales de providers
+  (OpenAI-Compatible et Custom) ; option « Multimodal » par modèle.
+- Gateways sans clé : le client LiteLLM envoie un bearer vide (et non
+  `"not-needed"`, rejeté en 401 par les gateways strictes).
+- Notifications de versions upstream désactivées par défaut
+  (`FETCH_UPSTREAM_CHANGELOG=true` pour réactiver) ; les entrées admin
+  sans backend sont masquées de la sidebar (pas d'upsell mort).
+
 ---
 
 ## 2. Lancer en local (Docker Compose)
@@ -159,7 +185,9 @@ Référence complète : `deployment/docker_compose/env.template`.
 | `SANDBOX_BACKEND` | `docker` (compose) \| `kubernetes` (helm) | `kubernetes` |
 | `LICENSE_ENFORCEMENT_ENABLED` | **FLOSS : `false` obligatoire** | `true` |
 | `INTEGRATION_TESTS_MODE` | Mock LLM pour e2e uniquement | — |
-| `MCP_SERVER_ALLOW_LOOPBACK` | MCP vers 127.0.0.1 (dev/e2e) | `false` |
+| `MCP_SERVER_ALLOW_LOOPBACK` | Permet aux MCP d'atteindre le loopback (mocks e2e) | `false` |
+| `DISABLE_MODELSDEV` | Coupe les lookups models.dev (`true` = off) | — |
+| `FETCH_UPSTREAM_CHANGELOG` | Notifs de versions upstream (`true` = on) | — |
 | `LOG_LEVEL` | Verbosité globale | `info` |
 
 ---
@@ -269,8 +297,10 @@ au démarrage de l'API. Toujours tester une montée de version sur un staging.
 |---|---|---|
 | API ne démarre pas | `USER_AUTH_SECRET` vide | Générer `openssl rand -hex 32` |
 | 502 via nginx après rebuild | cache DNS nginx | `docker compose restart nginx` |
+| OpenSearch OOM-killed (exit 137) | Docker Desktop < 12 Go alloués | Monter la mémoire Docker, ou override local `OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g` (non commité) |
 | Workers crash-loop « OpenSearch readiness » | OpenSearch plus lent que le probe (60 s) | Relancer `background` après coup ; ajouter un healthcheck OpenSearch |
 | Fichiers bloqués « Processing » | worker en crash-loop (voir ci-dessus) | Vérifier `docker compose logs background` |
+| 401 gateway openai-compatible sans clé | bearer placeholder rejeté | Le backend envoie un bearer vide ; vérifier `api_key` nulle (pas de dummy) |
 | Mots de passe DB ignorés | volumes existants | `down -v` (destruction !) puis `up` |
 
 ---
@@ -292,6 +322,15 @@ E2E avec Ollama local :
 4. `PATH="$PWD/.venv/bin:$PATH"` pour les mocks MCP python.
 5. Specs retirés/ajustés dans ce build : EE par design (SCIM, usage budgets,
    permission-sync, default-deny permissions) et Search UI payante.
+6. Specs ajoutés : `multimodal_chat_input` (accept adaptatif + toast),
+   `llm_providers_modelsdev` (création provider depuis le catalogue).
+
+E2E multimodal (gateway gratuite OpenCode Zen, sans clé) :
+- Provider openai-compatible `https://opencode.ai/zen/v1`, modèle
+  `mimo-v2.5-free` (text/image/audio/video, quota gratuit limité).
+- Vérifié : discovery enrichie, persistance des flags, vision via Onyx
+  (carré rouge → « Red »), upload audio/vidéo acceptés. Si `FreeUsageLimitError`,
+  attendre la fenêtre de quota.
 
 Lint/format : `pre-commit run --files <paths>` (ruff, oxlint, oxfmt).
 
@@ -301,6 +340,10 @@ Lint/format : `pre-commit run --files <paths>` (ruff, oxlint, oxfmt).
 
 ```
 backend/          API FastAPI (onyx/), workers Celery, migrations alembic/
+  onyx/llm/modelsdev.py       client catalogue models.dev (cache Redis 24 h)
+  onyx/server/user_group/     API gestion des groupes (portée EE→CE)
+  onyx/server/enterprise_settings/  API settings/branding (portée EE→CE)
+  onyx/db/user_group_crud.py  couche DB groupes (portée EE→CE)
 web/              Frontend Next.js (src/), tests e2e (tests/e2e/)
 deployment/       docker_compose/ (compose + templates) et helm/ (chart K8s)
 cli/              onyx-cli (installer / gestion du cycle de vie)
