@@ -201,17 +201,16 @@ export function buildItems(
     if (nameId === null) continue;
     if (!userCanAccess(route.requiredPermission)) continue;
     if (route.visibleWhen && !route.visibleWhen(flags)) continue;
-
-    const disabled =
-      route.requiredTier !== null &&
-      !tierAtLeast(flags.tier, route.requiredTier);
+    // Community build: tier-gated entries (Enterprise/Business) have no
+    // backend in this build — hide them instead of showing dead upsells.
+    if (route.requiredTier !== null) continue;
 
     const item: SidebarItemEntry = {
       nameId,
       icon: route.icon,
       link: route.path,
       sectionId: sectionIdFor(route.section),
-      disabled,
+      disabled: false,
       requiredTier: route.requiredTier,
     };
 

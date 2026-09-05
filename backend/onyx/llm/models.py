@@ -173,7 +173,32 @@ class ImageContentPart(BaseModel):
     image_url: ImageUrlDetail
 
 
-ContentPart = TextContentPart | ImageContentPart
+class InputAudioDetail(BaseModel):
+    data: str  # base64
+    format: str  # mp3 | wav | ...
+
+
+class InputAudioContentPart(BaseModel):
+    """OpenAI-style audio input part; passed through by LiteLLM to
+    openai-compatible multimodal endpoints."""
+
+    type: Literal["input_audio"] = "input_audio"
+    input_audio: InputAudioDetail
+
+
+class VideoContentPart(BaseModel):
+    """Video has no OpenAI-standard part; openai-compatible multimodal
+    gateways accept it as a data-URL media part. Modeled as image_url so
+    strict OpenAI validation is bypassed only for providers we know accept
+    it (gated by the VIDEO_INPUT flow upstream of this model)."""
+
+    type: Literal["image_url"] = "image_url"
+    image_url: ImageUrlDetail
+
+
+ContentPart = (
+    TextContentPart | ImageContentPart | InputAudioContentPart | VideoContentPart
+)
 
 
 # The signature is minted by the provider and must be round-tripped unmodified

@@ -5255,6 +5255,9 @@
             },
             "textOnly": {
               "label": "仅文本"
+            },
+            "multimodal": {
+              "label": "多模态 (文本、图像、音频、视频)"
             }
           },
           "modelTable": {

@@ -28,6 +28,7 @@ import {
   useApiBaseSubDescription,
 } from "@/sections/modals/languageModels/shared";
 import { refreshLlmProviderCaches } from "@/lib/languageModels/cache";
+import { ModelsDevBrowser } from "@/sections/modals/languageModels/ModelsDevBrowser";
 
 interface OpenAICompatibleModalValues extends BaseLLMFormValues {
   api_key: string;
@@ -69,6 +70,25 @@ function OpenAICompatibleModalInternals({
       <APIBaseField
         subDescription={apiBaseSubDescription}
         placeholder="http://localhost:8000/v1"
+      />
+
+      <ModelsDevBrowser
+        onApply={(picked) =>
+          formikProps.setValues((prev) => ({
+            ...prev,
+            model_configurations: picked.map((m) => ({
+              name: m.id,
+              display_name: m.name,
+              is_visible: true,
+              max_input_tokens: m.context_limit,
+              supports_image_input: m.supports_image_input,
+              supports_audio_input: m.supports_audio_input,
+              supports_video_input: m.supports_video_input,
+              supports_reasoning: m.reasoning,
+              effectiveDisplayName: m.name,
+            })),
+          }))
+        }
       />
 
       <APIKeyField

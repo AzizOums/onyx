@@ -5255,6 +5255,9 @@
             },
             "textOnly": {
               "label": "Texte uniquement"
+            },
+            "multimodal": {
+              "label": "Multimodal (texte, image, audio, vidéo)"
             }
           },
           "modelTable": {

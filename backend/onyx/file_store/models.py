@@ -65,6 +65,10 @@ def maybe_materialize_lazy_content(instance: BaseModel) -> None:
 class ChatFileType(str, Enum):
     # Image types only contain the binary data
     IMAGE = "image"
+    # Audio attachments, sent natively to multimodal models (input_audio)
+    AUDIO = "audio"
+    # Video attachments, sent natively to multimodal models
+    VIDEO = "video"
     # Doc types are saved as both the binary, and the parsed text
     DOC = "document"
     # Plain text only contain the text
@@ -133,11 +137,15 @@ class InMemoryChatFile(BaseModel):
         return object.__getattribute__(self, name)
 
     def to_base64(self) -> str:
-        if self.file_type == ChatFileType.IMAGE:
+        if self.file_type in (
+            ChatFileType.IMAGE,
+            ChatFileType.AUDIO,
+            ChatFileType.VIDEO,
+        ):
             return base64.b64encode(self.content).decode()
         else:
             raise RuntimeError(
-                "Should not be trying to convert a non-image file to base64"
+                "Should not be trying to convert a non-media file to base64"
             )
 
     def to_file_descriptor(self) -> FileDescriptor:

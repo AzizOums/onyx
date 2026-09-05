@@ -5255,6 +5255,9 @@
             },
             "textOnly": {
               "label": "نص فقط"
+            },
+            "multimodal": {
+              "label": "متعدد الوسائط (نص، صورة، صوت، فيديو)"
             }
           },
           "modelTable": {

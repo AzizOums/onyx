@@ -499,10 +499,13 @@ class LitellmLLM(LLM):
         if self._api_surface in OPENAI_COMPATIBLE_SURFACES:
             self._custom_llm_provider = "openai"
             # LiteLLM's OpenAI client requires an api_key to be set.
-            # Many OpenAI-compatible servers don't need auth, so supply a
-            # placeholder to prevent LiteLLM from raising AuthenticationError.
+            # Keyless openai-compatible gateways reject non-empty placeholder
+            # tokens ("not-needed") with 401, while a blank bearer passes
+            # through. Send a single space: it satisfies the client-side
+            # validation, and the wire header reads "Bearer  ", which
+            # keyless servers treat as absent.
             if not self._api_key:
-                model_kwargs.setdefault("api_key", "not-needed")
+                model_kwargs.setdefault("api_key", " ")
             if self._api_base is not None:
                 base = self._api_base.rstrip("/")
                 self._api_base = base if base.endswith("/v1") else f"{base}/v1"

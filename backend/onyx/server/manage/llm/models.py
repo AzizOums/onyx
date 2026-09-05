@@ -238,6 +238,8 @@ class ModelConfigurationUpsertRequest(BaseModel):
     is_visible: bool
     max_input_tokens: int | None = None
     supports_image_input: bool | None = None
+    supports_audio_input: bool | None = None
+    supports_video_input: bool | None = None
     supports_reasoning: bool | None = None
     display_name: str | None = None  # For dynamic providers, from source API
     custom_display_name: str | None = None  # Admin-specified override
@@ -298,6 +300,14 @@ class ModelConfigurationUpsertRequest(BaseModel):
             is_visible=model_configuration_model.is_visible,
             max_input_tokens=model_configuration_model.max_input_tokens,
             supports_image_input=model_configuration_model.supports_image_input,
+            supports_audio_input=(
+                LLMModelFlowType.AUDIO_INPUT
+                in model_configuration_model.llm_model_flow_types
+            ),
+            supports_video_input=(
+                LLMModelFlowType.VIDEO_INPUT
+                in model_configuration_model.llm_model_flow_types
+            ),
             supports_reasoning=(
                 LLMModelFlowType.REASONING
                 in model_configuration_model.llm_model_flow_types
@@ -320,6 +330,8 @@ class ModelConfigurationView(BaseModel):
     # limit from a fallback inferred from the display model name.
     configured_max_input_tokens: int | None = Field(default=None, exclude=True)
     supports_image_input: bool
+    supports_audio_input: bool = False
+    supports_video_input: bool = False
     supports_reasoning: bool = False
     # Effort levels this model tells apart, ascending. Read alongside
     # supports_reasoning: an empty list on a reasoning model means the model
@@ -456,6 +468,14 @@ class ModelConfigurationView(BaseModel):
                     for name in model_identity_names
                 )
             ),
+            supports_audio_input=(
+                LLMModelFlowType.AUDIO_INPUT
+                in model_configuration_model.llm_model_flow_types
+            ),
+            supports_video_input=(
+                LLMModelFlowType.VIDEO_INPUT
+                in model_configuration_model.llm_model_flow_types
+            ),
             # Prefer the stored flow, then the Claude version parse, then
             # LiteLLM-based detection for legacy rows saved before the flow
             # existed. Mirrors multi_llm.py's is_reasoning.
@@ -523,6 +543,8 @@ class OllamaFinalModelResponse(BaseModel):
     display_name: str  # Generated from model name (e.g., "llama3:7b" → "Llama 3 7B")
     max_input_tokens: int | None  # From Ollama API or None if unavailable
     supports_image_input: bool
+    supports_audio_input: bool = False
+    supports_video_input: bool = False
 
 
 class OllamaModelDetails(BaseModel):
@@ -668,6 +690,8 @@ class SyncModelEntry(BaseModel):
     display_name: str
     max_input_tokens: int | None = None
     supports_image_input: bool = False
+    supports_audio_input: bool = False
+    supports_video_input: bool = False
     supports_reasoning: bool = False
 
 
@@ -804,6 +828,8 @@ class OpenAICompatibleFinalModelResponse(BaseModel):
     display_name: str  # Human-readable name from API
     max_input_tokens: int | None
     supports_image_input: bool
+    supports_audio_input: bool = False
+    supports_video_input: bool = False
     supports_reasoning: bool
 
 

@@ -756,6 +756,8 @@ def convert_chat_history(
             # Process files attached to this message
             text_files: list[tuple[ChatLoadedFile, FileDescriptor]] = []
             image_files: list[ChatLoadedFile] = []
+            audio_files: list[ChatLoadedFile] = []
+            video_files: list[ChatLoadedFile] = []
 
             if chat_message.files:
                 for file_descriptor in chat_message.files:
@@ -764,6 +766,10 @@ def convert_chat_history(
                     if loaded_file:
                         if loaded_file.file_type == ChatFileType.IMAGE:
                             image_files.append(loaded_file)
+                        elif loaded_file.file_type == ChatFileType.AUDIO:
+                            audio_files.append(loaded_file)
+                        elif loaded_file.file_type == ChatFileType.VIDEO:
+                            video_files.append(loaded_file)
                         else:
                             # Text files (DOC, PLAIN_TEXT, TABULAR) are added as separate messages
                             text_files.append((loaded_file, file_descriptor))
@@ -817,6 +823,8 @@ def convert_chat_history(
                     token_count=chat_message.token_count + image_token_count,
                     message_type=MessageType.USER,
                     image_files=image_files if image_files else None,
+                    audio_files=audio_files if audio_files else None,
+                    video_files=video_files if video_files else None,
                     image_token_count=image_token_count,
                 )
             )

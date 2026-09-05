@@ -5255,6 +5255,9 @@
             },
             "textOnly": {
               "label": "テキストのみ"
+            },
+            "multimodal": {
+              "label": "マルチモーダル (テキスト、画像、音声、動画)"
             }
           },
           "modelTable": {

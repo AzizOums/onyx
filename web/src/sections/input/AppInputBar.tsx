@@ -24,6 +24,7 @@ import { useDraft, draftKey } from "@/hooks/useDraft";
 import { getPastedFilesIfNoText } from "@/lib/clipboard";
 import PasteTilePopover from "@/sections/input/PasteTilePopover";
 import { cn } from "@opal/utils";
+import { chatInputAcceptString } from "@/lib/languageModels/utils";
 import { firstStrongTextDir } from "@/lib/rehypeDirection";
 import { Disabled } from "@opal/core";
 import { useUser } from "@/providers/UserProvider";
@@ -624,6 +625,11 @@ const AppInputBar = React.memo(
         <div className="flex flex-row items-center">
           {/* (+) button - always visible */}
           <FilePickerPopover
+            acceptedFileTypes={chatInputAcceptString(
+              llmManager.llmProviders || [],
+              llmManager.currentLlm.modelName || llmManager.currentLlm.name,
+              llmManager.currentLlm.name
+            )}
             onFileClick={handleFileClick}
             onPickRecent={(file: ProjectFile) => {
               // Check if file with same ID already exists

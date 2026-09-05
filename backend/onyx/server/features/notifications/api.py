@@ -79,10 +79,18 @@ def _check_for_notifications_to_create(
             "Failed to create permissions_migration_v1 announcement in notifications endpoint"
         )
 
-    try:
-        ensure_release_notes_fresh_and_notify(db_session)
-    except Exception:
-        logger.exception("Failed to check for release notes in notifications endpoint")
+    # Community build: do not phone home to the upstream changelog. Release
+    # notifications for upstream versions are confusing in a forked product;
+    # re-enable explicitly with FETCH_UPSTREAM_CHANGELOG=true if wanted.
+    import os
+
+    if os.environ.get("FETCH_UPSTREAM_CHANGELOG", "").lower() == "true":
+        try:
+            ensure_release_notes_fresh_and_notify(db_session)
+        except Exception:
+            logger.exception(
+                "Failed to check for release notes in notifications endpoint"
+            )
 
 
 def _ensure_system_announcement_notification(user: User, db_session: Session) -> bool:

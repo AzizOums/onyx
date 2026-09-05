@@ -33,6 +33,8 @@ import {
   type NebiusTokenfactoryModelResponse,
   type PortkeyFetchParams,
   type PortkeyModelResponse,
+  type ModelsDevModelInfo,
+  type ModelsDevProviderInfo,
 } from "@/lib/languageModels/types";
 
 /**
@@ -381,6 +383,8 @@ export const fetchLMStudioModels = async (
       is_visible: true,
       max_input_tokens: modelData.max_input_tokens,
       supports_image_input: modelData.supports_image_input,
+      supports_audio_input: modelData.supports_audio_input || false,
+      supports_video_input: modelData.supports_video_input || false,
       supports_reasoning: modelData.supports_reasoning,
       effectiveDisplayName: modelData.display_name || modelData.name,
     }));
@@ -440,6 +444,8 @@ export const fetchBifrostModels = async (
       is_visible: true,
       max_input_tokens: modelData.max_input_tokens,
       supports_image_input: modelData.supports_image_input,
+      supports_audio_input: modelData.supports_audio_input || false,
+      supports_video_input: modelData.supports_video_input || false,
       supports_reasoning: modelData.supports_reasoning,
       effectiveDisplayName: modelData.display_name || modelData.name,
     }));
@@ -499,6 +505,8 @@ export const fetchOpenAICompatibleModels = async (
       is_visible: true,
       max_input_tokens: modelData.max_input_tokens,
       supports_image_input: modelData.supports_image_input,
+      supports_audio_input: modelData.supports_audio_input || false,
+      supports_video_input: modelData.supports_video_input || false,
       supports_reasoning: modelData.supports_reasoning,
       effectiveDisplayName: modelData.display_name || modelData.name,
     }));
@@ -769,6 +777,8 @@ export const fetchPortkeyModels = async (
       is_visible: true,
       max_input_tokens: modelData.max_input_tokens,
       supports_image_input: modelData.supports_image_input,
+      supports_audio_input: modelData.supports_audio_input || false,
+      supports_video_input: modelData.supports_video_input || false,
       supports_reasoning: modelData.supports_reasoning,
       effectiveDisplayName: modelData.display_name || modelData.name,
     }));
@@ -779,4 +789,30 @@ export const fetchPortkeyModels = async (
       error instanceof Error ? error.message : "Unknown error";
     return { models: [], error: errorMessage };
   }
+};
+
+
+/**
+ * models.dev integration — provider catalog and per-model input modalities.
+ */
+export const fetchModelsDevProviders = async (): Promise<
+  ModelsDevProviderInfo[]
+> => {
+  const response = await fetch("/api/admin/llm/modelsdev/providers");
+  if (!response.ok) {
+    throw new Error("Failed to fetch models.dev providers");
+  }
+  return response.json();
+};
+
+export const fetchModelsDevProviderModels = async (
+  providerId: string
+): Promise<ModelsDevModelInfo[]> => {
+  const response = await fetch(
+    `/api/admin/llm/modelsdev/providers/${providerId}/models`
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch models.dev models");
+  }
+  return response.json();
 };

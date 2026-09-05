@@ -187,6 +187,9 @@ export interface FilePickerPopoverProps {
   handleUploadChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   trigger?: React.ReactNode | ((open: boolean) => React.ReactNode);
   selectedFileIds?: string[];
+  /** html `accept` for the upload input, derived from the selected model's
+   *  input modalities. Undefined = accept everything. */
+  acceptedFileTypes?: string;
 }
 
 export default function FilePickerPopover({
@@ -196,6 +199,7 @@ export default function FilePickerPopover({
   handleUploadChange,
   trigger,
   selectedFileIds,
+  acceptedFileTypes,
 }: FilePickerPopoverProps) {
   const t = useTranslations("common.filePicker");
   const { allRecentFiles } = useProjectsContext();
@@ -270,7 +274,7 @@ export default function FilePickerPopover({
         className="hidden"
         multiple
         onChange={handleUploadChange}
-        accept={"*/*"}
+        accept={acceptedFileTypes ?? "*/*"}
       />
 
       <recentFilesModal.Provider>
