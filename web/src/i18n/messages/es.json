@@ -5484,6 +5484,18 @@
             "placeholder": "Nombre visible",
             "title": "Nombre visible"
           },
+          "extraHeaders": {
+            "addButton": {
+              "label": "Añadir encabezado"
+            },
+            "description": "Encabezados HTTP adicionales enviados con cada solicitud a este proveedor (p. ej., `User-Agent: opencode/1.18.18` para las pasarelas que lo requieren). Nunca incluya secretos aquí: `Authorization` no está permitido, use el campo de clave API.",
+            "keyInput": {
+              "placeholder": "p. ej., User-Agent"
+            },
+            "keyTitle": "Encabezado",
+            "title": "Encabezados adicionales",
+            "valueTitle": "Valor"
+          },
           "optionalSuffix": {
             "label": "opcional"
           },

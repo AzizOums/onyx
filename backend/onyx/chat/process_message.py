@@ -5,7 +5,6 @@ An overview can be found in the README.md file in this directory.
 
 import contextvars
 import io
-import os
 import queue
 import re
 import threading
@@ -604,6 +603,9 @@ def build_chat_turn(
     incognito_policy_fn = partial(
         incognito_llm_request_policy, chat_session.incognito_record_mode
     )
+    # One stable upstream session per Onyx chat session for session-gated
+    # providers (OpenCode Zen free tier): affinity plus per-session quotas.
+    provider_session_scope = f"chat-session:{chat_session.id}"
     for override in selected_overrides:
         llm = get_llm_for_persona(
             persona=persona,
@@ -611,6 +613,7 @@ def build_chat_turn(
             llm_override=override,
             additional_headers=litellm_additional_headers,
             policy_fn=incognito_policy_fn,
+            provider_session_scope=provider_session_scope,
         )
         check_llm_cost_limit_for_provider(
             db_session=db_session,

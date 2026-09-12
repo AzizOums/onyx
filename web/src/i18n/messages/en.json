@@ -5484,6 +5484,18 @@
             "placeholder": "Display Name",
             "title": "Display Name"
           },
+          "extraHeaders": {
+            "addButton": {
+              "label": "Add Header"
+            },
+            "description": "Extra HTTP headers sent with every request to this provider (e.g. `User-Agent: opencode/1.18.18` for gateways that require it). Never put secrets here — `Authorization` is not allowed, use the API key field instead.",
+            "keyInput": {
+              "placeholder": "e.g. User-Agent"
+            },
+            "keyTitle": "Header",
+            "title": "Extra Headers",
+            "valueTitle": "Value"
+          },
           "optionalSuffix": {
             "label": "optional"
           },

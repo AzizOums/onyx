@@ -5484,6 +5484,18 @@
             "placeholder": "Anzeigename",
             "title": "Anzeigename"
           },
+          "extraHeaders": {
+            "addButton": {
+              "label": "Header hinzufügen"
+            },
+            "description": "Zusätzliche HTTP-Header für jede Anfrage an diesen Anbieter (z. B. `User-Agent: opencode/1.18.18` für Gateways, die dies erfordern). Keine Secrets hier eintragen — `Authorization` ist nicht erlaubt, verwenden Sie das API-Schlüssel-Feld.",
+            "keyInput": {
+              "placeholder": "z. B. User-Agent"
+            },
+            "keyTitle": "Header",
+            "title": "Zusätzliche Header",
+            "valueTitle": "Wert"
+          },
           "optionalSuffix": {
             "label": "optional"
           },

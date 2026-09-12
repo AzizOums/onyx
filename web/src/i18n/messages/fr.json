@@ -5484,6 +5484,18 @@
             "placeholder": "Nom d'affichage",
             "title": "Nom d'affichage"
           },
+          "extraHeaders": {
+            "addButton": {
+              "label": "Ajouter un en-tête"
+            },
+            "description": "En-têtes HTTP supplémentaires envoyés avec chaque requête à ce fournisseur (p. ex. `User-Agent: opencode/1.18.18` pour les passerelles qui l'exigent). N'y mettez jamais de secrets — `Authorization` n'est pas autorisé, utilisez le champ de clé API.",
+            "keyInput": {
+              "placeholder": "p. ex. User-Agent"
+            },
+            "keyTitle": "En-tête",
+            "title": "En-têtes supplémentaires",
+            "valueTitle": "Valeur"
+          },
           "optionalSuffix": {
             "label": "facultatif"
           },

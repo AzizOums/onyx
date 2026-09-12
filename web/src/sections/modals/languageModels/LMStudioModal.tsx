@@ -22,6 +22,7 @@ import {
   APIBaseField,
   ModelSelectionField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModalWrapper,
   useApiBaseSubDescription,
@@ -84,6 +85,8 @@ function LMStudioModalInternals({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField />
         </>

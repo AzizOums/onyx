@@ -16,6 +16,7 @@ import {
   APIKeyField,
   ModelSelectionField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModalWrapper,
 } from "@/sections/modals/languageModels/shared";
@@ -88,6 +89,8 @@ export default function AnthropicModal({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField />
         </>

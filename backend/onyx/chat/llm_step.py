@@ -32,25 +32,29 @@ from onyx.llm.model_response import Delta
 from onyx.llm.models import (
     AssistantMessage,
     ChatCompletionMessage,
+    ContentPart,
     FunctionCall,
     ImageContentPart,
     ImageUrlDetail,
+    InputAudioContentPart,
+    InputAudioDetail,
     ReasoningEffort,
     SystemMessage,
     TextContentPart,
     ToolCall,
     ToolMessage,
     UserMessage,
+    VideoContentPart,
+    VideoUrlContentPart,
+    VideoUrlDetail,
+)
+from onyx.llm.opencode import (
+    OPENCODE_MAX_VIDEO_BASE64_CHARS,
+    OPENCODE_PROVIDER_NAME,
+    OPENCODE_SUPPORTED_VIDEO_MIMES,
 )
 from onyx.llm.prompt_cache.processor import process_with_prompt_cache
 from onyx.llm.request_context import get_llm_request_params
-from onyx.llm.models import (
-    ContentPart,
-    ImageUrlDetail,
-    InputAudioContentPart,
-    InputAudioDetail,
-    VideoContentPart,
-)
 from onyx.llm.utils import (
     model_needs_formatting_reenabled,
     model_supports_audio_input,
@@ -1028,8 +1032,11 @@ def translate_history_to_llm_format(
                             e,
                         )
 
-                # Native video parts (data-URL passthrough for multimodal
-                # openai-compatible gateways)
+                # Native video parts. Xiaomi MiMo (via the OpenCode Zen
+                # gateway) requires the native video_url part and rejects an
+                # image_url part carrying a video MIME with an upstream 400;
+                # other openai-compatible gateways take the data-URL
+                # passthrough as image_url.
                 for video_file in msg.video_files or []:
                     if not supports_video_input:
                         content_parts.append(
@@ -1043,21 +1050,73 @@ def translate_history_to_llm_format(
                         continue
                     try:
                         mime = get_video_mime_from_filename(video_file.filename)
+                        is_opencode = (
+                            llm_config.model_provider == OPENCODE_PROVIDER_NAME
+                        )
+                        if is_opencode and mime not in OPENCODE_SUPPORTED_VIDEO_MIMES:
+                            logger.warning(
+                                "Skipping video file %s: MIME %s not supported "
+                                "by the OpenCode Zen gateway.",
+                                video_file.file_id,
+                                mime,
+                            )
+                            content_parts.append(
+                                TextContentPart(
+                                    type="text",
+                                    text=(
+                                        f"[attached video — file_id: "
+                                        f"{video_file.file_id} — format {mime} "
+                                        f"not supported by this provider]"
+                                    ),
+                                )
+                            )
+                            continue
+                        video_b64 = video_file.to_base64()
+                        if (
+                            is_opencode
+                            and len(video_b64) > OPENCODE_MAX_VIDEO_BASE64_CHARS
+                        ):
+                            logger.warning(
+                                "Skipping video file %s: base64 payload exceeds "
+                                "the OpenCode Zen gateway limit.",
+                                video_file.file_id,
+                            )
+                            content_parts.append(
+                                TextContentPart(
+                                    type="text",
+                                    text=(
+                                        f"[attached video — file_id: "
+                                        f"{video_file.file_id} — file too large "
+                                        f"for this provider]"
+                                    ),
+                                )
+                            )
+                            continue
                         content_parts.append(
                             TextContentPart(
                                 type="text",
                                 text=f"[attached video — file_id: {video_file.file_id}]",
                             )
                         )
-                        content_parts.append(
-                            VideoContentPart(
-                                type="image_url",
-                                image_url=ImageUrlDetail(
-                                    url=f"data:{mime};base64,{video_file.to_base64()}",
-                                    detail=None,
-                                ),
+                        if is_opencode:
+                            content_parts.append(
+                                VideoUrlContentPart(
+                                    type="video_url",
+                                    video_url=VideoUrlDetail(
+                                        url=f"data:{mime};base64,{video_b64}",
+                                    ),
+                                )
                             )
-                        )
+                        else:
+                            content_parts.append(
+                                VideoContentPart(
+                                    type="image_url",
+                                    image_url=ImageUrlDetail(
+                                        url=f"data:{mime};base64,{video_b64}",
+                                        detail=None,
+                                    ),
+                                )
+                            )
                     except Exception as e:
                         logger.warning(
                             "Failed to process video file %s: %s. Skipping video.",

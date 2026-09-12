@@ -5484,6 +5484,18 @@
             "placeholder": "표시 이름",
             "title": "표시 이름"
           },
+          "extraHeaders": {
+            "addButton": {
+              "label": "헤더 추가"
+            },
+            "description": "이 제공자에 대한 모든 요청과 함께 전송되는 추가 HTTP 헤더(예: 이를 요구하는 게이트웨이의 경우 `User-Agent: opencode/1.18.18`). 여기에 비밀 값을 입력하지 마세요. `Authorization`은 허용되지 않으며 API 키 필드를 사용하세요.",
+            "keyInput": {
+              "placeholder": "예: User-Agent"
+            },
+            "keyTitle": "헤더",
+            "title": "추가 헤더",
+            "valueTitle": "값"
+          },
           "optionalSuffix": {
             "label": "선택 사항"
           },

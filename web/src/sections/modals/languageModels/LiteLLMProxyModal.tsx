@@ -23,6 +23,7 @@ import {
   APIBaseField,
   ModelSelectionField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModalWrapper,
 } from "@/sections/modals/languageModels/shared";
@@ -73,6 +74,8 @@ function LiteLLMProxyModalInternals({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField />
         </>

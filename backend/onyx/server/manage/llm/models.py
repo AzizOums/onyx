@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
@@ -63,6 +64,69 @@ class CustomProviderOption(BaseModel):
     label: str
 
 
+EXTRA_HEADERS_MAX_COUNT = 32
+EXTRA_HEADERS_MAX_KEY_LENGTH = 128
+EXTRA_HEADERS_MAX_VALUE_LENGTH = 2048
+_EXTRA_HEADER_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9\-_.]*$")
+
+
+def normalize_extra_headers(
+    value: dict[str, str] | None,
+) -> dict[str, str] | None:
+    """Validate and normalize provider-level extra HTTP headers.
+
+    Returns None for empty input so the column stays null when unused.
+    `Authorization` is rejected: auth belongs in `api_key` / `custom_config`,
+    which get the masked-credential treatment on reads. Extra headers are
+    returned in full to admins, so they must never carry secrets.
+    """
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise OnyxError(OnyxErrorCode.BAD_REQUEST, "extra_headers must be an object.")
+    if len(value) > EXTRA_HEADERS_MAX_COUNT:
+        raise OnyxError(
+            OnyxErrorCode.BAD_REQUEST,
+            f"extra_headers holds at most {EXTRA_HEADERS_MAX_COUNT} entries.",
+        )
+    normalized: dict[str, str] = {}
+    for raw_key, raw_value in value.items():
+        key = raw_key.strip() if isinstance(raw_key, str) else ""
+        if not key or len(key) > EXTRA_HEADERS_MAX_KEY_LENGTH:
+            raise OnyxError(
+                OnyxErrorCode.BAD_REQUEST,
+                "extra_headers keys must be 1-128 characters.",
+            )
+        if not _EXTRA_HEADER_NAME_RE.match(key):
+            raise OnyxError(
+                OnyxErrorCode.BAD_REQUEST,
+                f"Invalid extra_headers key: {key!r}.",
+            )
+        if key.lower() == "authorization":
+            raise OnyxError(
+                OnyxErrorCode.BAD_REQUEST,
+                "extra_headers must not contain Authorization; "
+                "use the API key field instead.",
+            )
+        if key in normalized:
+            raise OnyxError(
+                OnyxErrorCode.BAD_REQUEST,
+                f"Duplicate extra_headers key: {key!r}.",
+            )
+        if not isinstance(raw_value, str) or not raw_value.strip():
+            raise OnyxError(
+                OnyxErrorCode.BAD_REQUEST,
+                f"extra_headers value for {key!r} must be a non-empty string.",
+            )
+        if len(raw_value.strip()) > EXTRA_HEADERS_MAX_VALUE_LENGTH:
+            raise OnyxError(
+                OnyxErrorCode.BAD_REQUEST,
+                f"extra_headers value for {key!r} is too long.",
+            )
+        normalized[key] = raw_value.strip()
+    return normalized or None
+
+
 class TestLLMRequest(BaseModel):
     # provider level
     id: int | None = None
@@ -72,6 +136,7 @@ class TestLLMRequest(BaseModel):
     api_base: str | None = None
     api_version: str | None = None
     custom_config: dict[str, str] | None = None
+    extra_headers: dict[str, str] | None = None
 
     # model level
     deployment_name: str | None = None
@@ -85,6 +150,13 @@ class TestLLMRequest(BaseModel):
     def normalize_provider(cls, value: str) -> str:
         """Normalize provider name by stripping whitespace and lowercasing."""
         return value.strip().lower()
+
+    @field_validator("extra_headers", mode="before")
+    @classmethod
+    def validate_extra_headers(
+        cls, value: dict[str, str] | None
+    ) -> dict[str, str] | None:
+        return normalize_extra_headers(value)
 
 
 class LLMProviderDescriptor(BaseModel):
@@ -138,11 +210,19 @@ class LLMProvider(BaseModel):
     api_base: str | None = None
     api_version: str | None = None
     custom_config: dict[str, str] | None = None
+    extra_headers: dict[str, str] | None = None
     is_public: bool = True
     is_auto_mode: bool = False
     groups: list[int] = Field(default_factory=list)
     personas: list[int] = Field(default_factory=list)
     deployment_name: str | None = None
+
+    @field_validator("extra_headers", mode="before")
+    @classmethod
+    def validate_extra_headers(
+        cls, value: dict[str, str] | None
+    ) -> dict[str, str] | None:
+        return normalize_extra_headers(value)
 
 
 class LLMProviderUpsertRequest(LLMProvider):
@@ -218,6 +298,7 @@ class LLMProviderView(LLMProvider):
             api_base=llm_provider_model.api_base,
             api_version=llm_provider_model.api_version,
             custom_config=llm_provider_model.custom_config,
+            extra_headers=llm_provider_model.extra_headers,
             is_public=llm_provider_model.is_public,
             is_auto_mode=llm_provider_model.is_auto_mode,
             groups=groups,

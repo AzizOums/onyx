@@ -196,8 +196,25 @@ class VideoContentPart(BaseModel):
     image_url: ImageUrlDetail
 
 
+class VideoUrlDetail(BaseModel):
+    url: str
+
+
+class VideoUrlContentPart(BaseModel):
+    """Native video part as served by Xiaomi MiMo (and relayed by the
+    OpenCode Zen gateway): `{"type": "video_url", ...}`. An image_url part
+    carrying a video MIME is rejected upstream with a 400."""
+
+    type: Literal["video_url"] = "video_url"
+    video_url: VideoUrlDetail
+
+
 ContentPart = (
-    TextContentPart | ImageContentPart | InputAudioContentPart | VideoContentPart
+    TextContentPart
+    | ImageContentPart
+    | InputAudioContentPart
+    | VideoContentPart
+    | VideoUrlContentPart
 )
 
 

@@ -641,6 +641,7 @@ export const fetchModels = async (
         signal,
       });
     case LLMProviderName.OPENAI_COMPATIBLE:
+    case LLMProviderName.OPENCODE:
       return fetchOpenAICompatibleModels({
         api_base: formValues.api_base,
         api_key: formValues.api_key,

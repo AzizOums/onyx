@@ -134,6 +134,12 @@ const PROVIDERS: Record<string, ProviderEntry> = {
     companyName: "Portkey",
     Modal: PortkeyModal,
   },
+  [LLMProviderName.OPENCODE]: {
+    icon: SvgPlug,
+    productName: "OpenCode Zen",
+    companyName: "OpenCode Zen",
+    Modal: OpenAICompatibleModal,
+  },
   [LLMProviderName.CUSTOM]: {
     icon: SvgServer,
     productName: "Custom Models",
@@ -197,6 +203,7 @@ export const AGGREGATOR_PROVIDERS = new Set([
   LLMProviderName.OPENAI_COMPATIBLE,
   LLMProviderName.NEBIUS_TOKENFACTORY,
   LLMProviderName.PORTKEY,
+  LLMProviderName.OPENCODE,
   LLMProviderName.VERTEX_AI,
 ]);
 

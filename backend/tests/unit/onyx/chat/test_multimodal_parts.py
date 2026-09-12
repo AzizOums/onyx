@@ -1,25 +1,24 @@
 """Unit tests for multimodal message translation (audio/video parts)."""
 
+import json
 from unittest.mock import patch
 
-import json
-
 from onyx.chat.llm_step import translate_history_to_llm_format
-from onyx.llm.interfaces import LLMConfig
 from onyx.chat.models import ChatLoadedFile, ChatMessageSimple
 from onyx.configs.constants import MessageType
 from onyx.file_store.models import ChatFileType
+from onyx.llm.interfaces import LLMConfig
 from onyx.llm.models import (
     InputAudioContentPart,
-    TextContentPart,
     VideoContentPart,
+    VideoUrlContentPart,
 )
 
 
-def _make_config() -> LLMConfig:
+def _make_config(provider: str = "openai_compatible") -> LLMConfig:
     return LLMConfig(
         model_name="mimo-v2.5-free",
-        model_provider="openai_compatible",
+        model_provider=provider,
         temperature=0.0,
         max_input_tokens=200000,
     )
@@ -106,7 +105,6 @@ def test_unsupported_modalities_degrade_to_text_markers() -> None:
         patch("onyx.chat.llm_step.model_supports_audio_input", return_value=False),
         patch("onyx.chat.llm_step.model_supports_video_input", return_value=False),
     ):
-        from typing import cast
 
         result = translate_history_to_llm_format([msg], _make_config())
     messages = result if isinstance(result, list) else [result]
@@ -124,3 +122,83 @@ def test_unsupported_modalities_degrade_to_text_markers() -> None:
     flat = json.dumps(dumped)
     print("\nDUMPED:", flat[:600])
     assert "audio-1" in flat and "video-1" in flat
+
+
+def test_opencode_video_part_uses_native_video_url() -> None:
+    """Xiaomi MiMo rejects image_url parts carrying a video MIME, so the
+    opencode provider must emit the native video_url part."""
+    msg = ChatMessageSimple(
+        message="Watch",
+        token_count=1,
+        message_type=MessageType.USER,
+        video_files=[_video_file()],
+    )
+    with (
+        patch("onyx.chat.llm_step.model_supports_image_input", return_value=False),
+        patch("onyx.chat.llm_step.model_supports_audio_input", return_value=False),
+        patch("onyx.chat.llm_step.model_supports_video_input", return_value=True),
+    ):
+        from typing import cast
+
+        result = translate_history_to_llm_format([msg], _make_config("opencode"))
+    messages = result if isinstance(result, list) else [result]
+    parts = cast(list, messages[0].content)
+    assert isinstance(parts, list)
+    assert not [p for p in parts if isinstance(p, VideoContentPart)]
+    video_parts = [p for p in parts if isinstance(p, VideoUrlContentPart)]
+    assert len(video_parts) == 1
+    assert video_parts[0].video_url.url.startswith("data:video/mp4;base64,")
+    dumped = messages[0].model_dump()["content"]
+    assert dumped[2] == {
+        "type": "video_url",
+        "video_url": {"url": video_parts[0].video_url.url},
+    }
+
+
+def test_opencode_unsupported_video_format_degrades_to_marker() -> None:
+    video = _video_file()
+    video.filename = "clip.webm"
+    msg = ChatMessageSimple(
+        message="Watch",
+        token_count=1,
+        message_type=MessageType.USER,
+        video_files=[video],
+    )
+    with (
+        patch("onyx.chat.llm_step.model_supports_image_input", return_value=False),
+        patch("onyx.chat.llm_step.model_supports_audio_input", return_value=False),
+        patch("onyx.chat.llm_step.model_supports_video_input", return_value=True),
+    ):
+        from typing import cast
+
+        result = translate_history_to_llm_format([msg], _make_config("opencode"))
+    messages = result if isinstance(result, list) else [result]
+    parts = cast(list, messages[0].content)
+    assert isinstance(parts, list)
+    assert not [p for p in parts if isinstance(p, VideoUrlContentPart)]
+    flat = json.dumps([m.model_dump() for m in messages])
+    assert "video-1" in flat and "not supported" in flat
+
+
+def test_opencode_oversized_video_degrades_to_marker() -> None:
+    msg = ChatMessageSimple(
+        message="Watch",
+        token_count=1,
+        message_type=MessageType.USER,
+        video_files=[_video_file()],
+    )
+    with (
+        patch("onyx.chat.llm_step.model_supports_image_input", return_value=False),
+        patch("onyx.chat.llm_step.model_supports_audio_input", return_value=False),
+        patch("onyx.chat.llm_step.model_supports_video_input", return_value=True),
+        patch("onyx.chat.llm_step.OPENCODE_MAX_VIDEO_BASE64_CHARS", 4),
+    ):
+        from typing import cast
+
+        result = translate_history_to_llm_format([msg], _make_config("opencode"))
+    messages = result if isinstance(result, list) else [result]
+    parts = cast(list, messages[0].content)
+    assert isinstance(parts, list)
+    assert not [p for p in parts if isinstance(p, VideoUrlContentPart)]
+    flat = json.dumps([m.model_dump() for m in messages])
+    assert "video-1" in flat and "too large" in flat

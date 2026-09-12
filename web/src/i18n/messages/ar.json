@@ -5484,6 +5484,18 @@
             "placeholder": "اسم العرض",
             "title": "اسم العرض"
           },
+          "extraHeaders": {
+            "addButton": {
+              "label": "إضافة ترويسة"
+            },
+            "description": "ترويسات HTTP إضافية تُرسل مع كل طلب إلى هذا الموفر (مثل `User-Agent: opencode/1.18.18` للبوابات التي تتطلب ذلك). لا تضع أسرارًا هنا أبدًا — `Authorization` غير مسموح، استخدم حقل مفتاح API.",
+            "keyInput": {
+              "placeholder": "مثل User-Agent"
+            },
+            "keyTitle": "الترويسة",
+            "title": "ترويسات إضافية",
+            "valueTitle": "القيمة"
+          },
           "optionalSuffix": {
             "label": "اختياري"
           },

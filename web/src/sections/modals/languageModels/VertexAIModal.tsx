@@ -27,6 +27,7 @@ import { LLMProviderConfiguredSource } from "@/lib/analytics/utils";
 import {
   ModelSelectionField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModalWrapper,
 } from "@/sections/modals/languageModels/shared";
@@ -162,6 +163,8 @@ function VertexAIModalInternals({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField disabled={!!existingLlmProvider} />
         </>

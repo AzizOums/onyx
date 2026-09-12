@@ -72,6 +72,7 @@ export enum LLMProviderName {
   OPENAI_COMPATIBLE = "openai_compatible",
   NEBIUS_TOKENFACTORY = "nebius_tokenfactory",
   PORTKEY = "portkey",
+  OPENCODE = "opencode",
   CUSTOM = "custom",
 }
 
@@ -104,6 +105,8 @@ export interface LLMProviderView {
   api_base: string | null;
   api_version: string | null;
   custom_config: { [key: string]: string } | null;
+  /** Extra HTTP headers sent with every request (e.g. User-Agent). Never secrets. */
+  extra_headers: { [key: string]: string } | null;
   is_public: boolean;
   is_auto_mode: boolean;
   groups: number[];

@@ -5484,6 +5484,18 @@
             "placeholder": "表示名",
             "title": "表示名"
           },
+          "extraHeaders": {
+            "addButton": {
+              "label": "ヘッダーを追加"
+            },
+            "description": "このプロバイダーへのすべてのリクエストとともに送信される追加のHTTPヘッダー（必要なゲートウェイ向けの `User-Agent: opencode/1.18.18` など）。ここにシークレットを入力しないでください。`Authorization` は使用できません。APIキー欄を使用してください。",
+            "keyInput": {
+              "placeholder": "例: User-Agent"
+            },
+            "keyTitle": "ヘッダー",
+            "title": "追加ヘッダー",
+            "valueTitle": "値"
+          },
           "optionalSuffix": {
             "label": "任意"
           },

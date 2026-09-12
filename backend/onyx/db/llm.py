@@ -353,6 +353,9 @@ def upsert_llm_provider(
     existing_llm_provider.api_base = api_base
     existing_llm_provider.api_version = llm_provider_upsert_request.api_version
     existing_llm_provider.custom_config = custom_config
+    # Empty dict means "clear"; the request validator already normalizes it
+    # to None, so assign directly.
+    existing_llm_provider.extra_headers = llm_provider_upsert_request.extra_headers
 
     existing_llm_provider.is_public = llm_provider_upsert_request.is_public
     existing_llm_provider.is_auto_mode = llm_provider_upsert_request.is_auto_mode

@@ -21,6 +21,7 @@ import {
   APIKeyField,
   APIBaseField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModalWrapper,
   useApiBaseSubDescription,
@@ -525,6 +526,8 @@ export default function CustomModal({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField />
         </>

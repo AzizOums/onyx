@@ -5484,6 +5484,18 @@
             "placeholder": "显示名称",
             "title": "显示名称"
           },
+          "extraHeaders": {
+            "addButton": {
+              "label": "添加请求头"
+            },
+            "description": "随每次请求发送给此提供商的额外 HTTP 请求头（例如，需要它的网关使用 `User-Agent: opencode/1.18.18`）。请勿在此处填写密钥——不允许使用 `Authorization`，请改用 API 密钥字段。",
+            "keyInput": {
+              "placeholder": "例如 User-Agent"
+            },
+            "keyTitle": "请求头",
+            "title": "额外请求头",
+            "valueTitle": "值"
+          },
           "optionalSuffix": {
             "label": "可选"
           },

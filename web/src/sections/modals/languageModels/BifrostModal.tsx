@@ -26,6 +26,7 @@ import {
   APIKeyField,
   ModelSelectionField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModalWrapper,
 } from "@/sections/modals/languageModels/shared";
@@ -127,6 +128,8 @@ function BifrostModalInternals({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField />
         </>

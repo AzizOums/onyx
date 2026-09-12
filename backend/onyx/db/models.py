@@ -3621,6 +3621,13 @@ class LLMProvider(Base):
     custom_config: Mapped[dict[str, str] | None] = mapped_column(
         postgresql.JSONB(), nullable=True
     )
+    # Extra HTTP headers sent with every LLM request for this provider
+    # (e.g. `User-Agent` required by some gateways for free-tier access).
+    # Never carries secrets: `Authorization` is rejected at the API layer and
+    # auth belongs in `api_key` / `custom_config`.
+    extra_headers: Mapped[dict[str, str] | None] = mapped_column(
+        postgresql.JSONB(), nullable=True
+    )
 
     # Deprecated: use LLMModelFlow with CHAT flow type instead
     default_model_name: Mapped[str | None] = mapped_column(String, nullable=True)

@@ -23,6 +23,7 @@ import {
   APIKeyField,
   ModelSelectionField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModalWrapper,
   useApiBaseSubDescription,
@@ -98,6 +99,8 @@ function OpenAICompatibleModalInternals({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField />
         </>

@@ -5484,6 +5484,18 @@
             "placeholder": "Nome de exibição",
             "title": "Nome de exibição"
           },
+          "extraHeaders": {
+            "addButton": {
+              "label": "Adicionar cabeçalho"
+            },
+            "description": "Cabeçalhos HTTP adicionais enviados com cada solicitação a este provedor (p. ex., `User-Agent: opencode/1.18.18` para gateways que exigem). Nunca coloque segredos aqui — `Authorization` não é permitido, use o campo de chave API.",
+            "keyInput": {
+              "placeholder": "p. ex., User-Agent"
+            },
+            "keyTitle": "Cabeçalho",
+            "title": "Cabeçalhos adicionais",
+            "valueTitle": "Valor"
+          },
           "optionalSuffix": {
             "label": "opcional"
           },

@@ -498,6 +498,7 @@ def test_llm_configuration(
         api_base=test_llm_request.api_base,
         api_version=test_llm_request.api_version,
         custom_config=test_custom_config,
+        provider_headers=test_llm_request.extra_headers,
         deployment_name=test_llm_request.deployment_name,
         max_input_tokens=max_input_tokens,
     )
@@ -1186,6 +1187,7 @@ def get_provider_contextual_cost(
                 api_base=provider.api_base,
                 api_version=provider.api_version,
                 custom_config=provider.custom_config,
+                provider_headers=provider.extra_headers,
                 max_input_tokens=get_max_input_tokens_from_llm_provider(
                     llm_provider=llm_provider, model_name=model_configuration.name
                 ),
