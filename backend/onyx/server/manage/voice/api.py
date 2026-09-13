@@ -114,7 +114,10 @@ def _validate_voice_api_base(provider_type: str, api_base: str | None) -> str | 
     if api_base is None:
         return None
 
-    allow_private_network = provider_type.lower() == "azure"
+    # Azure target URIs and explicit OpenAI-compatible bases (e.g. a local
+    # LocalAI / whisper / TTS server) may live on private networks. Both are
+    # typed by a full admin, same trust level as the Azure target URI.
+    allow_private_network = provider_type.lower() in ("azure", "openai")
     try:
         return validate_outbound_http_url(
             api_base, allow_private_network=allow_private_network

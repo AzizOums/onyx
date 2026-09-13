@@ -26,6 +26,8 @@ export interface VoiceOption {
 export interface VoiceFormValues {
   api_key: string;
   target_uri: string;
+  /** Self-hosted OpenAI-compatible base URL (LocalAI, Kokoro, whisper servers). */
+  api_base: string;
   stt_model: string;
   tts_model: string;
   default_voice: string;

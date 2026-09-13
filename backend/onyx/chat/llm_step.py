@@ -50,8 +50,8 @@ from onyx.llm.models import (
 )
 from onyx.llm.opencode import (
     OPENCODE_MAX_VIDEO_BASE64_CHARS,
-    OPENCODE_PROVIDER_NAME,
     OPENCODE_SUPPORTED_VIDEO_MIMES,
+    is_opencode_gateway,
 )
 from onyx.llm.prompt_cache.processor import process_with_prompt_cache
 from onyx.llm.request_context import get_llm_request_params
@@ -1050,8 +1050,8 @@ def translate_history_to_llm_format(
                         continue
                     try:
                         mime = get_video_mime_from_filename(video_file.filename)
-                        is_opencode = (
-                            llm_config.model_provider == OPENCODE_PROVIDER_NAME
+                        is_opencode = is_opencode_gateway(
+                            llm_config.model_provider, llm_config.api_base
                         )
                         if is_opencode and mime not in OPENCODE_SUPPORTED_VIDEO_MIMES:
                             logger.warning(

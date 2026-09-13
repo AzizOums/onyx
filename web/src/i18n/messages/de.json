@@ -4412,6 +4412,10 @@
         "title": "Verbinden Sie ein Modell zur Bilderzeugung, um es im Chat zu verwenden."
       },
       "form": {
+        "apiBase": {
+          "label": "API-Basis-URL",
+          "idle": "Optionale OpenAI-kompatible Basis-URL für einen selbst gehosteten Server (z. B. LocalAI). Leer = api.openai.com."
+        },
         "apiKey": {
           "comboPlaceholder": "Neuen API-Schlüssel eingeben oder vorhandenen Anbieter auswählen",
           "idle": "Geben Sie einen neuen API-Schlüssel ein oder wählen Sie einen vorhandenen Anbieter.",
@@ -4470,6 +4474,10 @@
           "idle": "Die Google Cloud-Region für Ihre Vertex AI-Modelle. Verfügbare Regionen finden Sie in der <link>Dokumentation von Google</link>.",
           "label": "Standort",
           "required": "Standort ist erforderlich"
+        },
+        "modelName": {
+          "label": "Modellname",
+          "idle": "Optionale Überschreibung, z. B. ein LocalAI-Galeriemodell. Leer = {model}."
         },
         "projectId": {
           "idle": "Das GCP-Projekt, in dem Vertex AI aktiviert ist. Onyx authentifiziert sich mit dem an den Pod gebundenen Dienstkonto (GKE Workload Identity).",
@@ -7887,6 +7895,10 @@
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "API-Basis-URL",
+          "description": "Optionale OpenAI-kompatible Basis-URL für einen selbst gehosteten Server (z. B. LocalAI, Kokoro, faster-whisper). Leer = api.openai.com. Aus einem Container heraus `host.docker.internal` statt `localhost` verwenden."
+        },
         "apiKey": {
           "description": "Fügen Sie Ihren [API-Schlüssel]({url}) von {provider} ein, um auf Ihre Modelle zuzugreifen.",
           "label": "API-Schlüssel",
@@ -7922,7 +7934,9 @@
           "selfHostedCapExceeded": "Selbst gehostete Endpunkte unterstützen höchstens {cap} gesprochene Sprachen (Erkennung zu Beginn)"
         },
         "sttModel": {
-          "label": "STT-Modell"
+          "label": "STT-Modell",
+          "openaiDescription": "Modellname auf Ihrem Server (Freitext für selbst gehostete Endpunkte).",
+          "placeholder": "z. B. whisper-1"
         },
         "targetUri": {
           "description": "Fügen Sie den Endpunkt ein, der im [Azure Portal (Keys and Endpoint)]({portalUrl}) angezeigt wird. Onyx extrahiert die Sprachregion aus dieser URL. Beispiele: `https://westus.api.cognitive.microsoft.com/` oder `https://westus.tts.speech.microsoft.com/`.",
@@ -7931,7 +7945,9 @@
         },
         "ttsModel": {
           "description": "Dieses Modell wird von Onyx standardmäßig für Text-zu-Sprache verwendet.",
-          "label": "Standardmodell"
+          "label": "Standardmodell",
+          "openaiDescription": "Modellname auf Ihrem Server (Freitext für selbst gehostete Endpunkte).",
+          "placeholder": "z. B. tts-1"
         },
         "updateButton": {
           "label": "Aktualisieren"

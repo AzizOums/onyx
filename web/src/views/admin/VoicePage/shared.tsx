@@ -110,6 +110,7 @@ export function VoiceProviderSetupModal({
         : Yup.string(),
     stt_model: Yup.string(),
     tts_model: Yup.string(),
+    api_base: Yup.string(),
     default_voice: Yup.string(),
     stt_languages:
       mode === "stt" && detail.sttLanguages
@@ -150,6 +151,10 @@ export function VoiceProviderSetupModal({
   const initialValues: VoiceFormValues = {
     api_key: existingProvider?.api_key ?? "",
     target_uri: existingProvider?.target_uri ?? "",
+    // The view maps api_base onto target_uri, so a stored self-hosted base
+    // round-trips through it.
+    api_base:
+      providerType === "openai" ? (existingProvider?.target_uri ?? "") : "",
     stt_model: existingProvider?.stt_model ?? "whisper-1",
     tts_model: initialTtsModel,
     default_voice: initialDefaultVoice,
@@ -170,7 +175,14 @@ export function VoiceProviderSetupModal({
         const testResponse = await testVoiceProvider({
           provider_type: providerType,
           api_key: apiKeyChanged ? values.api_key : undefined,
-          target_uri: values.target_uri || undefined,
+          target_uri:
+            providerType === "azure"
+              ? values.target_uri || undefined
+              : undefined,
+          api_base:
+            providerType === "openai"
+              ? values.api_base || undefined
+              : undefined,
           use_stored_key: shouldUseStoredKey,
         });
 
@@ -205,7 +217,10 @@ export function VoiceProviderSetupModal({
         provider_type: providerType,
         api_key: apiKeyChanged ? values.api_key : undefined,
         api_key_changed: apiKeyChanged,
-        target_uri: values.target_uri || undefined,
+        target_uri:
+          providerType === "azure" ? values.target_uri || undefined : undefined,
+        api_base:
+          providerType === "openai" ? values.api_base || undefined : undefined,
         custom_config: customConfig,
         stt_model: values.stt_model,
         tts_model: values.tts_model,
@@ -283,6 +298,21 @@ export function VoiceProviderSetupModal({
                     </InputVertical>
                   )}
 
+                  {providerType === "openai" && (
+                    <InputVertical
+                      title={t("setupModal.apiBase.label")}
+                      subDescription={markdown(
+                        t("setupModal.apiBase.description")
+                      )}
+                      withLabel="api_base"
+                    >
+                      <InputTypeInField
+                        name="api_base"
+                        placeholder="http://host.docker.internal:8080/v1"
+                      />
+                    </InputVertical>
+                  )}
+
                   <InputVertical
                     title={t("setupModal.apiKey.label")}
                     subDescription={markdown(
@@ -317,42 +347,77 @@ export function VoiceProviderSetupModal({
                     </InputVertical>
                   )}
 
-                  {mode === "stt" && (detail.sttModels?.length ?? 0) > 1 && (
-                    <InputVertical
-                      title={t("setupModal.sttModel.label")}
-                      withLabel="stt_model"
-                    >
-                      <InputSelectField name="stt_model">
-                        <InputSelect.Trigger />
-                        <InputSelect.Content>
-                          {detail.sttModels!.map((m) => (
-                            <InputSelect.Item key={m.id} value={m.id}>
-                              {m.name}
-                            </InputSelect.Item>
-                          ))}
-                        </InputSelect.Content>
-                      </InputSelectField>
-                    </InputVertical>
-                  )}
-
-                  {mode === "tts" && (
-                    <>
-                      {(detail.ttsModels?.length ?? 0) > 1 && (
-                        <InputVertical
-                          title={t("setupModal.ttsModel.label")}
-                          subDescription={t("setupModal.ttsModel.description")}
-                          withLabel="tts_model"
-                        >
-                          <InputSelectField name="tts_model">
+                  {mode === "stt" &&
+                    ((detail.sttModels?.length ?? 0) > 1 ||
+                      providerType === "openai") && (
+                      <InputVertical
+                        title={t("setupModal.sttModel.label")}
+                        subDescription={
+                          providerType === "openai"
+                            ? t("setupModal.sttModel.openaiDescription")
+                            : undefined
+                        }
+                        withLabel="stt_model"
+                      >
+                        {providerType === "openai" ? (
+                          <InputComboBoxField
+                            name="stt_model"
+                            options={(detail.sttModels ?? []).map((m) => ({
+                              value: m.id,
+                              label: m.name,
+                            }))}
+                            placeholder={t("setupModal.sttModel.placeholder")}
+                            strict={false}
+                          />
+                        ) : (
+                          <InputSelectField name="stt_model">
                             <InputSelect.Trigger />
                             <InputSelect.Content>
-                              {detail.ttsModels!.map((m) => (
+                              {detail.sttModels!.map((m) => (
                                 <InputSelect.Item key={m.id} value={m.id}>
                                   {m.name}
                                 </InputSelect.Item>
                               ))}
                             </InputSelect.Content>
                           </InputSelectField>
+                        )}
+                      </InputVertical>
+                    )}
+
+                  {mode === "tts" && (
+                    <>
+                      {(detail.ttsModels?.length ?? 0) > 1 && (
+                        <InputVertical
+                          title={t("setupModal.ttsModel.label")}
+                          subDescription={
+                            providerType === "openai"
+                              ? t("setupModal.ttsModel.openaiDescription")
+                              : t("setupModal.ttsModel.description")
+                          }
+                          withLabel="tts_model"
+                        >
+                          {providerType === "openai" ? (
+                            <InputComboBoxField
+                              name="tts_model"
+                              options={(detail.ttsModels ?? []).map((m) => ({
+                                value: m.id,
+                                label: m.name,
+                              }))}
+                              placeholder={t("setupModal.ttsModel.placeholder")}
+                              strict={false}
+                            />
+                          ) : (
+                            <InputSelectField name="tts_model">
+                              <InputSelect.Trigger />
+                              <InputSelect.Content>
+                                {detail.ttsModels!.map((m) => (
+                                  <InputSelect.Item key={m.id} value={m.id}>
+                                    {m.name}
+                                  </InputSelect.Item>
+                                ))}
+                              </InputSelect.Content>
+                            </InputSelectField>
+                          )}
                         </InputVertical>
                       )}
 

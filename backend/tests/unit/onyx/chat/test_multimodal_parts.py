@@ -155,6 +155,33 @@ def test_opencode_video_part_uses_native_video_url() -> None:
     }
 
 
+def test_zen_compat_row_also_uses_native_video_url() -> None:
+    """Rows created before the native provider (openai_compatible pointed
+    at Zen) get the same video wire format."""
+    config = _make_config("openai_compatible")
+    config.api_base = "https://opencode.ai/zen/v1"
+    msg = ChatMessageSimple(
+        message="Watch",
+        token_count=1,
+        message_type=MessageType.USER,
+        video_files=[_video_file()],
+    )
+    with (
+        patch("onyx.chat.llm_step.model_supports_image_input", return_value=False),
+        patch("onyx.chat.llm_step.model_supports_audio_input", return_value=False),
+        patch("onyx.chat.llm_step.model_supports_video_input", return_value=True),
+    ):
+        from typing import cast
+
+        result = translate_history_to_llm_format([msg], config)
+    messages = result if isinstance(result, list) else [result]
+    parts = cast(list, messages[0].content)
+    assert isinstance(parts, list)
+    video_parts = [p for p in parts if isinstance(p, VideoUrlContentPart)]
+    assert len(video_parts) == 1
+    assert video_parts[0].video_url.url.startswith("data:video/mp4;base64,")
+
+
 def test_opencode_unsupported_video_format_degrades_to_marker() -> None:
     video = _video_file()
     video.filename = "clip.webm"

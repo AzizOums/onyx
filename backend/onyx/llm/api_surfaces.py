@@ -13,6 +13,10 @@ from onyx.llm.well_known_providers.constants import (
     BIFROST_API_MODE_CONFIG_KEY,
     BIFROST_API_MODE_RESPONSES,
     BIFROST_DEFAULT_API_MODE,
+    OPENCODE_API_MODE_CHAT_COMPLETIONS,
+    OPENCODE_API_MODE_CONFIG_KEY,
+    OPENCODE_API_MODE_RESPONSES,
+    OPENCODE_DEFAULT_API_MODE,
     PORTKEY_API_MODE_CHAT_COMPLETIONS,
     PORTKEY_API_MODE_CONFIG_KEY,
     PORTKEY_API_MODE_MESSAGES,
@@ -37,7 +41,6 @@ OPENAI_COMPATIBLE_SURFACES = frozenset(
 _STATIC_SURFACES: dict[str, LlmApiSurface] = {
     LlmProviderNames.OPENAI_COMPATIBLE: LlmApiSurface.OPENAI_CHAT_COMPLETIONS,
     LlmProviderNames.NEBIUS_TOKENFACTORY: LlmApiSurface.OPENAI_CHAT_COMPLETIONS,
-    LlmProviderNames.OPENCODE: LlmApiSurface.OPENAI_CHAT_COMPLETIONS,
 }
 
 # Admin-selected surfaces: {provider: (config_key, {stored value: surface}, default)}
@@ -60,6 +63,17 @@ _SELECTABLE_SURFACES: dict[str, tuple[str, dict[str, LlmApiSurface], str]] = {
             BIFROST_API_MODE_RESPONSES: LlmApiSurface.OPENAI_RESPONSES,
         },
         BIFROST_DEFAULT_API_MODE,
+    ),
+    # OpenCode Zen exposes both surfaces on the same /v1 base. Most free
+    # models speak chat completions, but muse-spark contributor-free models
+    # are Responses-only upstream. Default preserves existing behavior.
+    LlmProviderNames.OPENCODE: (
+        OPENCODE_API_MODE_CONFIG_KEY,
+        {
+            OPENCODE_API_MODE_CHAT_COMPLETIONS: LlmApiSurface.OPENAI_CHAT_COMPLETIONS,
+            OPENCODE_API_MODE_RESPONSES: LlmApiSurface.OPENAI_RESPONSES,
+        },
+        OPENCODE_DEFAULT_API_MODE,
     ),
 }
 

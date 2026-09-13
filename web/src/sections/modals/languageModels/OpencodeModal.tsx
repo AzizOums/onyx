@@ -4,11 +4,14 @@ import { useTranslations } from "next-intl";
 import { useSWRConfig } from "swr";
 import { useFormikContext } from "formik";
 import { InputDivider, toast } from "@opal/layouts";
+import { Tabs, Text } from "@opal/components";
 import {
   LLMProviderFormProps,
   LLMProviderName,
   LLMProviderView,
+  OpencodeApiMode,
 } from "@/lib/languageModels/types";
+import type { KeyValue } from "@/refresh-components/inputs/InputKeyValue";
 import { fetchOpenAICompatibleModels } from "@/lib/languageModels/svc";
 import {
   useInitialValues,
@@ -30,28 +33,62 @@ import {
 } from "@/sections/modals/languageModels/shared";
 import { refreshLlmProviderCaches } from "@/lib/languageModels/cache";
 import { ModelsDevBrowser } from "@/sections/modals/languageModels/ModelsDevBrowser";
-import type { KeyValue } from "@/refresh-components/inputs/InputKeyValue";
 
-interface OpenAICompatibleModalValues extends BaseLLMFormValues {
+// Static client identity for the Zen gateway, prefilled so a new provider
+// works out of the box (free tier needs no API key). Keep in sync with
+// backend/onyx/llm/opencode.py. Session/request ids are minted per chat
+// session and turn by the backend — never store them here.
+const PRESET_EXTRA_HEADERS: KeyValue[] = [
+  { key: "User-Agent", value: "opencode/1.18.18" },
+  { key: "x-opencode-client", value: "cli" },
+];
+
+const DEFAULT_API_MODE: OpencodeApiMode = "chat_completions";
+const OPENCODE_API_MODE_KEY = "opencode_api_mode";
+
+const API_MODE_TABS = [
+  {
+    value: "chat_completions",
+    titleKey: "bifrost.apiMode.chatCompletions.label",
+    subtitle: "/v1/chat/completions",
+  },
+  {
+    value: "responses",
+    titleKey: "bifrost.apiMode.responses.label",
+    subtitle: "/v1/responses",
+  },
+] as const satisfies readonly {
+  value: OpencodeApiMode;
+  titleKey: string;
+  subtitle: string;
+}[];
+
+interface OpencodeModalValues extends BaseLLMFormValues {
   api_key: string;
   api_base: string;
 }
 
-interface OpenAICompatibleModalInternalsProps {
+interface OpencodeModalInternalsProps {
   existingLlmProvider: LLMProviderView | undefined;
   isOnboarding: boolean;
 }
 
-function OpenAICompatibleModalInternals({
+function OpencodeModalInternals({
   existingLlmProvider,
   isOnboarding,
-}: OpenAICompatibleModalInternalsProps) {
+}: OpencodeModalInternalsProps) {
   const t = useTranslations("admin.languageModels.modals");
-  const formikProps = useFormikContext<OpenAICompatibleModalValues>();
+  const formikProps = useFormikContext<OpencodeModalValues>();
+  const { setFieldValue, values } = formikProps;
   const apiBaseSubDescription = useApiBaseSubDescription(
     t("openAiCompatible.apiBaseField.description"),
     t("openAiCompatible.apiBaseField.learnMore")
   );
+
+  const mode =
+    (values.custom_config?.[OPENCODE_API_MODE_KEY] as
+      | OpencodeApiMode
+      | undefined) ?? DEFAULT_API_MODE;
 
   const isFetchDisabled = !formikProps.values.api_base;
 
@@ -69,9 +106,34 @@ function OpenAICompatibleModalInternals({
 
   return (
     <>
+      <Tabs
+        value={mode}
+        onValueChange={(next) =>
+          setFieldValue("custom_config", {
+            ...values.custom_config,
+            [OPENCODE_API_MODE_KEY]: next as OpencodeApiMode,
+          })
+        }
+      >
+        <Tabs.List>
+          {API_MODE_TABS.map((tab) => (
+            <Tabs.Trigger key={tab.value} value={tab.value}>
+              <div className="flex flex-col items-start">
+                <Text font="main-ui-action" color="inherit">
+                  {t(tab.titleKey)}
+                </Text>
+                <Text font="secondary-body" color="text-03">
+                  {tab.subtitle}
+                </Text>
+              </div>
+            </Tabs.Trigger>
+          ))}
+        </Tabs.List>
+      </Tabs>
+
       <APIBaseField
         subDescription={apiBaseSubDescription}
-        placeholder="http://localhost:8000/v1"
+        placeholder="https://opencode.ai/zen/v1"
       />
 
       <ModelsDevBrowser
@@ -123,36 +185,38 @@ function OpenAICompatibleModalInternals({
   );
 }
 
-export interface OpenAICompatibleModalProps extends LLMProviderFormProps {
-  /** Override the provider id (e.g. a dedicated gateway reusing this form). */
-  providerOverride?: LLMProviderName;
-  /** Extra headers prefilled for a brand-new provider (edits keep stored ones). */
-  presetExtraHeaders?: KeyValue[];
-}
-
-export default function OpenAICompatibleModal({
+export default function OpencodeModal({
   variant = "llm-configuration",
   existingLlmProvider,
   shouldMarkAsDefault,
   onOpenChange,
   onSuccess,
   analyticsSource,
-  providerOverride,
-  presetExtraHeaders,
-}: OpenAICompatibleModalProps) {
+}: LLMProviderFormProps) {
   const t = useTranslations("admin.languageModels.modals");
   const isOnboarding = variant === "onboarding";
   const { mutate } = useSWRConfig();
-  const providerName = providerOverride ?? LLMProviderName.OPENAI_COMPATIBLE;
 
   const onClose = () => onOpenChange?.(false);
 
   const initialValues = {
-    ...useInitialValues(isOnboarding, providerName, existingLlmProvider),
-    ...(!existingLlmProvider && presetExtraHeaders
-      ? { extra_headers_list: presetExtraHeaders }
+    ...useInitialValues(isOnboarding, LLMProviderName.OPENCODE, existingLlmProvider),
+    ...(!existingLlmProvider
+      ? { extra_headers_list: PRESET_EXTRA_HEADERS }
       : {}),
-  } as OpenAICompatibleModalValues;
+  } as OpencodeModalValues;
+
+  // useInitialValues drops custom_config, so seed it for submitProvider's
+  // custom_config_changed diff, preserving any other stored entries.
+  // Pre-existing providers without a stored mode keep old chat behavior.
+  const initialMode =
+    (existingLlmProvider?.custom_config?.[OPENCODE_API_MODE_KEY] as
+      | OpencodeApiMode
+      | undefined) ?? DEFAULT_API_MODE;
+  initialValues.custom_config = {
+    ...existingLlmProvider?.custom_config,
+    [OPENCODE_API_MODE_KEY]: initialMode,
+  };
 
   const validationSchema = buildValidationSchema(t, isOnboarding, {
     apiBase: true,
@@ -160,7 +224,7 @@ export default function OpenAICompatibleModal({
 
   return (
     <ModalWrapper
-      providerName={providerName}
+      providerName={LLMProviderName.OPENCODE}
       llmProvider={existingLlmProvider}
       onClose={onClose}
       initialValues={initialValues}
@@ -174,7 +238,7 @@ export default function OpenAICompatibleModal({
             (isOnboarding
               ? LLMProviderConfiguredSource.CHAT_ONBOARDING
               : LLMProviderConfiguredSource.ADMIN_PAGE),
-          providerName,
+          providerName: LLMProviderName.OPENCODE,
           values,
           initialValues,
           existingLlmProvider,
@@ -197,7 +261,7 @@ export default function OpenAICompatibleModal({
         });
       }}
     >
-      <OpenAICompatibleModalInternals
+      <OpencodeModalInternals
         existingLlmProvider={existingLlmProvider}
         isOnboarding={isOnboarding}
       />

@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { PasswordInputTypeIn } from "@opal/components";
+import { InputTypeIn, PasswordInputTypeIn } from "@opal/components";
 import * as Yup from "yup";
 import { FormikField } from "@/refresh-components/form/FormikField";
 import { FormField } from "@/refresh-components/form/FormField";
@@ -16,13 +16,19 @@ import {
 import { ImageGenerationCredentials } from "@/views/admin/ImageGenerationPage/svc";
 import { ImageProvider } from "@/views/admin/ImageGenerationPage/constants";
 
-// OpenAI form values - just API key
+// OpenAI form values - API key plus optional self-hosted overrides
 interface OpenAIFormValues {
   api_key: string;
+  /** OpenAI-compatible base URL (e.g. LocalAI). Empty = api.openai.com. */
+  api_base: string;
+  /** Model name override (e.g. a LocalAI gallery model). Empty = catalog model. */
+  model_name: string;
 }
 
 const initialValues: OpenAIFormValues = {
   api_key: "",
+  api_base: "",
+  model_name: "",
 };
 
 function OpenAIFormFields(props: ImageGenFormChildProps<OpenAIFormValues>) {
@@ -39,76 +45,138 @@ function OpenAIFormFields(props: ImageGenFormChildProps<OpenAIFormValues>) {
   } = props;
 
   return (
-    <FormikField<string>
-      name="api_key"
-      render={(field, helper, meta, state) => (
-        <FormField
-          name="api_key"
-          state={apiStatus === "error" ? "error" : state}
-          className="w-full"
-        >
-          <FormField.Label>{t("form.apiKey.label")}</FormField.Label>
-          <FormField.Control>
-            {apiKeyOptions.length > 0 ? (
-              <InputComboBox
-                value={field.value}
-                onChange={(e) => {
-                  helper.setValue(e.target.value);
-                  resetApiState();
-                }}
-                onValueChange={(value) => {
-                  helper.setValue(value);
-                  resetApiState();
-                }}
-                onBlur={field.onBlur}
-                options={apiKeyOptions}
-                placeholder={
-                  isLoadingCredentials
-                    ? t("form.loading.placeholder")
-                    : t("form.apiKey.comboPlaceholder")
-                }
-                disabled={disabled}
-                isError={apiStatus === "error"}
-              />
-            ) : (
-              <PasswordInputTypeIn
+    <>
+      <FormikField<string>
+        name="api_base"
+        render={(field, helper, meta, state) => (
+          <FormField
+            name="api_base"
+            state={apiStatus === "error" ? "error" : state}
+            className="w-full"
+          >
+            <FormField.Label>{t("form.apiBase.label")}</FormField.Label>
+            <FormField.Control>
+              <InputTypeIn
                 {...field}
                 onChange={(e) => {
                   field.onChange(e);
                   resetApiState();
                 }}
-                placeholder={
-                  isLoadingCredentials
-                    ? t("form.loading.placeholder")
-                    : t("form.apiKey.placeholder")
-                }
-                disabled={disabled}
-                error={apiStatus === "error"}
+                placeholder="http://host.docker.internal:8080/v1"
+                variant={disabled ? "disabled" : undefined}
               />
-            )}
-          </FormField.Control>
-          {showApiMessage ? (
-            <FormField.APIMessage
-              state={apiStatus}
-              messages={{
-                loading: t("form.apiKeyTest.loading", {
-                  title: imageProvider.title,
-                }),
-                success: t("form.apiKeyTest.success"),
-                error: errorMessage || t("form.apiKeyTest.error"),
-              }}
-            />
-          ) : (
+            </FormField.Control>
             <FormField.Message
               messages={{
-                idle: t("form.apiKey.idle"),
+                idle: t("form.apiBase.idle"),
                 error: meta.error,
               }}
             />
-          )}
-        </FormField>
-      )}
-    />
+          </FormField>
+        )}
+      />
+      <FormikField<string>
+        name="model_name"
+        render={(field, helper, meta, state) => (
+          <FormField
+            name="model_name"
+            state={apiStatus === "error" ? "error" : state}
+            className="w-full"
+          >
+            <FormField.Label>{t("form.modelName.label")}</FormField.Label>
+            <FormField.Control>
+              <InputTypeIn
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  resetApiState();
+                }}
+                placeholder={imageProvider.model_name}
+                variant={disabled ? "disabled" : undefined}
+              />
+            </FormField.Control>
+            <FormField.Message
+              messages={{
+                idle: t("form.modelName.idle", {
+                  model: imageProvider.model_name,
+                }),
+                error: meta.error,
+              }}
+            />
+          </FormField>
+        )}
+      />
+      <FormikField<string>
+        name="api_key"
+        render={(field, helper, meta, state) => (
+          <FormField
+            name="api_key"
+            state={apiStatus === "error" ? "error" : state}
+            className="w-full"
+          >
+            <FormField.Label>{t("form.apiKey.label")}</FormField.Label>
+            <FormField.Control>
+              {apiKeyOptions.length > 0 ? (
+                <InputComboBox
+                  value={field.value}
+                  onChange={(e) => {
+                    helper.setValue(e.target.value);
+                    resetApiState();
+                  }}
+                  onValueChange={(value) => {
+                    helper.setValue(value);
+                    resetApiState();
+                  }}
+                  onBlur={field.onBlur}
+                  options={apiKeyOptions}
+                  placeholder={
+                    isLoadingCredentials
+                      ? t("form.loading.placeholder")
+                      : t("form.apiKey.comboPlaceholder")
+                  }
+                  disabled={disabled}
+                  isError={apiStatus === "error"}
+                />
+              ) : (
+                <PasswordInputTypeIn
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    resetApiState();
+                  }}
+                  placeholder={
+                    isLoadingCredentials
+                      ? t("form.loading.placeholder")
+                      : t("form.apiKey.placeholder")
+                  }
+                  disabled={disabled}
+                  error={apiStatus === "error"}
+                />
+              )}
+            </FormField.Control>
+            {showApiMessage ? (
+              <FormField.APIMessage
+                state={apiStatus}
+                messages={{
+                  loading: t("form.apiKeyTest.loading", {
+                    title: imageProvider.title,
+                  }),
+                  success: t("form.apiKeyTest.success"),
+                  error: errorMessage || t("form.apiKeyTest.error"),
+                }}
+              />
+            ) : (
+              <FormField.Message
+                messages={{
+                  idle: t("form.apiKey.idle"),
+                  error: meta.error,
+                }}
+              />
+            )}
+          </FormField>
+        )}
+      />
+    </>
   );
 }
 
@@ -118,18 +186,28 @@ function getInitialValuesFromCredentials(
 ): Partial<OpenAIFormValues> {
   return {
     api_key: credentials.api_key || "",
+    api_base: credentials.api_base || "",
+    model_name: "",
   };
 }
 
 function transformValues(
   values: OpenAIFormValues,
-  imageProvider: ImageProvider
+  imageProvider: ImageProvider,
+  storedModelName?: string
 ): ImageGenSubmitPayload {
+  // Empty override keeps a previously stored custom model on edit.
+  const storedOverride =
+    storedModelName && storedModelName !== imageProvider.model_name
+      ? storedModelName
+      : undefined;
   return {
-    modelName: imageProvider.model_name,
+    modelName:
+      values.model_name.trim() || storedOverride || imageProvider.model_name,
     imageProviderId: imageProvider.image_provider_id,
     provider: "openai",
     apiKey: values.api_key,
+    apiBase: values.api_base.trim() || undefined,
   };
 }
 
@@ -157,7 +235,9 @@ export function OpenAIImageGenForm(props: ImageGenFormBaseProps) {
       initialValues={initialValues}
       validationSchema={validationSchema}
       getInitialValuesFromCredentials={getInitialValuesFromCredentials}
-      transformValues={(values) => transformValues(values, imageProvider)}
+      transformValues={(values) =>
+        transformValues(values, imageProvider, existingConfig?.model_name)
+      }
     >
       {(childProps) => <OpenAIFormFields {...childProps} />}
     </ImageGenFormWrapper>

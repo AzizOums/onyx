@@ -4412,6 +4412,10 @@
         "title": "连接一个图像生成模型，以便在对话中使用。"
       },
       "form": {
+        "apiBase": {
+          "label": "API 基础 URL",
+          "idle": "自托管服务器（例如 LocalAI）的可选 OpenAI 兼容基础 URL。留空 = api.openai.com。"
+        },
         "apiKey": {
           "comboPlaceholder": "输入新的 API 密钥或选择现有提供商",
           "idle": "输入新的 API 密钥或选择现有提供商。",
@@ -4470,6 +4474,10 @@
           "idle": "用于 Vertex AI 模型的 Google Cloud 区域。可用区域请参见 <link>Google 文档</link>。",
           "label": "位置",
           "required": "位置为必填项"
+        },
+        "modelName": {
+          "label": "模型名称",
+          "idle": "可选覆盖，例如 LocalAI 图库模型。留空 = {model}。"
         },
         "projectId": {
           "idle": "已启用 Vertex AI 的 GCP 项目。Onyx 使用 pod 绑定的服务账号进行身份验证（GKE Workload Identity）。",
@@ -7887,6 +7895,10 @@
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "API 基础 URL",
+          "description": "自托管服务器（例如 LocalAI、Kokoro、faster-whisper）的可选 OpenAI 兼容基础 URL。留空 = api.openai.com。在容器内请使用 `host.docker.internal` 而不是 `localhost`。"
+        },
         "apiKey": {
           "description": "粘贴来自 {provider} 的 [API 密钥]({url})，以访问您的模型。",
           "label": "API 密钥",
@@ -7922,7 +7934,9 @@
           "selfHostedCapExceeded": "自托管端点最多支持 {cap} 种语音语言（在开始时检测）"
         },
         "sttModel": {
-          "label": "STT 模型"
+          "label": "STT 模型",
+          "openaiDescription": "您服务器上的模型名称（自托管端点可自由填写）。",
+          "placeholder": "例如 whisper-1"
         },
         "targetUri": {
           "description": "粘贴 [Azure Portal（密钥和终结点）]({portalUrl}) 中显示的终结点。Onyx 会从该 URL 中提取语音区域。示例：`https://westus.api.cognitive.microsoft.com/` 或 `https://westus.tts.speech.microsoft.com/`。",
@@ -7931,7 +7945,9 @@
         },
         "ttsModel": {
           "description": "Onyx 将默认使用此模型进行文字转语音。",
-          "label": "默认模型"
+          "label": "默认模型",
+          "openaiDescription": "您服务器上的模型名称（自托管端点可自由填写）。",
+          "placeholder": "例如 tts-1"
         },
         "updateButton": {
           "label": "更新"

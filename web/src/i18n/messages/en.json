@@ -4412,6 +4412,10 @@
         "title": "Connect an image generation model to use in chat."
       },
       "form": {
+        "apiBase": {
+          "label": "API Base URL",
+          "idle": "Optional OpenAI-compatible base URL for a self-hosted server (e.g. LocalAI). Empty = api.openai.com."
+        },
         "apiKey": {
           "comboPlaceholder": "Enter new API key or select existing provider",
           "idle": "Enter a new API key or select an existing provider.",
@@ -4470,6 +4474,10 @@
           "idle": "The Google Cloud region for your Vertex AI models. See <link>Google's documentation</link> for available regions.",
           "label": "Location",
           "required": "Location is required"
+        },
+        "modelName": {
+          "label": "Model Name",
+          "idle": "Optional override, e.g. a LocalAI gallery model. Empty = {model}."
         },
         "projectId": {
           "idle": "The GCP project where Vertex AI is enabled. Onyx authenticates with the pod's bound service account (GKE Workload Identity).",
@@ -7887,6 +7895,10 @@
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "API Base URL",
+          "description": "Optional OpenAI-compatible base URL for a self-hosted server (e.g. LocalAI, Kokoro, faster-whisper). Empty = api.openai.com. From inside a container, use `host.docker.internal` instead of `localhost`."
+        },
         "apiKey": {
           "description": "Paste your [API key]({url}) from {provider} to access your models.",
           "label": "API Key",
@@ -7922,7 +7934,9 @@
           "selfHostedCapExceeded": "Self-hosted endpoints support at most {cap} spoken languages (at-start detection)"
         },
         "sttModel": {
-          "label": "STT Model"
+          "label": "STT Model",
+          "openaiDescription": "Model name on your server (free text for self-hosted endpoints).",
+          "placeholder": "e.g. whisper-1"
         },
         "targetUri": {
           "description": "Paste the endpoint shown in [Azure Portal (Keys and Endpoint)]({portalUrl}). Onyx extracts the speech region from this URL. Examples: `https://westus.api.cognitive.microsoft.com/` or `https://westus.tts.speech.microsoft.com/`.",
@@ -7931,7 +7945,9 @@
         },
         "ttsModel": {
           "description": "This model will be used by Onyx by default for text-to-speech.",
-          "label": "Default Model"
+          "label": "Default Model",
+          "openaiDescription": "Model name on your server (free text for self-hosted endpoints).",
+          "placeholder": "e.g. tts-1"
         },
         "updateButton": {
           "label": "Update"

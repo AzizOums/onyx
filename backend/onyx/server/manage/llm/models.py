@@ -478,6 +478,14 @@ class ModelConfigurationView(BaseModel):
                         for name in model_identity_names
                     )
                 ),
+                supports_audio_input=(
+                    LLMModelFlowType.AUDIO_INPUT
+                    in model_configuration_model.llm_model_flow_types
+                ),
+                supports_video_input=(
+                    LLMModelFlowType.VIDEO_INPUT
+                    in model_configuration_model.llm_model_flow_types
+                ),
                 # Prefer the stored flow, then the Claude version parse, then
                 # the LiteLLM cost map, then a name/display-name substring
                 # heuristic. Mirrors multi_llm.py's is_reasoning.

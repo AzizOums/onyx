@@ -14,6 +14,9 @@ import secrets
 
 OPENCODE_PROVIDER_NAME = "opencode"
 OPENCODE_API_BASE = "https://opencode.ai/zen/v1"
+# Anonymous bearer for the keyless free tier. A blank placeholder (" ")
+# produces an illegal `Authorization` header that httpx refuses to send.
+OPENCODE_PUBLIC_API_KEY = "public"
 # Mirrors the official client's User-Agent so the free-tier gate lets
 # requests through. Keep in sync with a released opencode version.
 OPENCODE_USER_AGENT = "opencode/1.18.18"
@@ -21,6 +24,20 @@ OPENCODE_CLIENT = "cli"
 
 SESSION_ID_PREFIX = "ses_"
 REQUEST_ID_PREFIX = "msg_"
+
+
+def is_opencode_gateway(provider: str | None, api_base: str | None) -> bool:
+    """True for the native `opencode` provider and for generic
+    openai-compatible rows pointed at the Zen gateway.
+
+    Existing rows created before the native provider (e.g. an
+    `openai_compatible` provider with the Zen base URL) get the same
+    client identity, session handling, and video wire format.
+    """
+    if provider == OPENCODE_PROVIDER_NAME:
+        return True
+    return bool(api_base) and "opencode.ai/zen" in api_base
+
 
 # Xiaomi MiMo video limits, enforced client-side so an oversized or
 # unsupported upload degrades to a text marker instead of an upstream 400.

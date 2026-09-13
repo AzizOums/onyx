@@ -4412,6 +4412,10 @@
         "title": "チャットで使用する画像生成モデルを接続してください。"
       },
       "form": {
+        "apiBase": {
+          "label": "APIベースURL",
+          "idle": "セルフホストサーバー（LocalAIなど）用のオプションのOpenAI互換ベースURL。空欄 = api.openai.com。"
+        },
         "apiKey": {
           "comboPlaceholder": "新しい API キーを入力するか、既存のプロバイダーを選択",
           "idle": "新しい API キーを入力するか、既存のプロバイダーを選択してください。",
@@ -4470,6 +4474,10 @@
           "idle": "Vertex AI モデルを使用する Google Cloud リージョンです。利用できるリージョンは <link>Google のドキュメント</link> を参照してください。",
           "label": "リージョン",
           "required": "リージョンは必須です"
+        },
+        "modelName": {
+          "label": "モデル名",
+          "idle": "オプションの上書き（LocalAIギャラリーモデルなど）。空欄 = {model}。"
         },
         "projectId": {
           "idle": "Vertex AI を有効にした GCP プロジェクトです。Onyx は Pod にバインドされたサービスアカウント (GKE Workload Identity) で認証します。",
@@ -7887,6 +7895,10 @@
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "APIベースURL",
+          "description": "セルフホストサーバー（LocalAI、Kokoro、faster-whisperなど）用のオプションのOpenAI互換ベースURL。空欄 = api.openai.com。コンテナ内からは `localhost` の代わりに `host.docker.internal` を使用してください。"
+        },
         "apiKey": {
           "description": "モデルにアクセスするには、{provider} の [API キー]({url}) を貼り付けてください。",
           "label": "API キー",
@@ -7922,7 +7934,9 @@
           "selfHostedCapExceeded": "セルフホストのエンドポイントは音声言語を最大 {cap} 個までサポートします（開始時に検出）"
         },
         "sttModel": {
-          "label": "STT モデル"
+          "label": "STT モデル",
+          "openaiDescription": "サーバー上のモデル名（セルフホストエンドポイント用の自由記述）。",
+          "placeholder": "例: whisper-1"
         },
         "targetUri": {
           "description": "[Azure Portal（キーとエンドポイント）]({portalUrl}) に表示されるエンドポイントを貼り付けてください。Onyx はこの URL から音声リージョンを抽出します。例：`https://westus.api.cognitive.microsoft.com/` または `https://westus.tts.speech.microsoft.com/`。",
@@ -7931,7 +7945,9 @@
         },
         "ttsModel": {
           "description": "このモデルが、Onyx のテキスト読み上げでデフォルトとして使用されます。",
-          "label": "デフォルトモデル"
+          "label": "デフォルトモデル",
+          "openaiDescription": "サーバー上のモデル名（セルフホストエンドポイント用の自由記述）。",
+          "placeholder": "例: tts-1"
         },
         "updateButton": {
           "label": "更新"

@@ -4412,6 +4412,10 @@
         "title": "Conecta un modelo de generación de imágenes para usarlo en el chat."
       },
       "form": {
+        "apiBase": {
+          "label": "URL base de la API",
+          "idle": "URL base opcional compatible con OpenAI para un servidor autoalojado (p. ej., LocalAI). Vacío = api.openai.com."
+        },
         "apiKey": {
           "comboPlaceholder": "Introduce una nueva clave de API o selecciona un proveedor existente",
           "idle": "Introduce una nueva clave de API o selecciona un proveedor existente.",
@@ -4470,6 +4474,10 @@
           "idle": "La región de Google Cloud de tus modelos de Vertex AI. Consulta <link>la documentación de Google</link> para ver las regiones disponibles.",
           "label": "Ubicación",
           "required": "La ubicación es obligatoria"
+        },
+        "modelName": {
+          "label": "Nombre del modelo",
+          "idle": "Anulación opcional, p. ej., un modelo de galería LocalAI. Vacío = {model}."
         },
         "projectId": {
           "idle": "El proyecto de GCP donde Vertex AI está activado. Onyx se autentica con la cuenta de servicio asociada al pod (GKE Workload Identity).",
@@ -7887,6 +7895,10 @@
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "URL base de la API",
+          "description": "URL base opcional compatible con OpenAI para un servidor autoalojado (p. ej., LocalAI, Kokoro, faster-whisper). Vacío = api.openai.com. Desde un contenedor, use `host.docker.internal` en lugar de `localhost`."
+        },
         "apiKey": {
           "description": "Pega tu [clave de API]({url}) de {provider} para acceder a tus modelos.",
           "label": "Clave de API",
@@ -7922,7 +7934,9 @@
           "selfHostedCapExceeded": "Los endpoints autoalojados admiten como máximo {cap} idiomas hablados (detección al inicio)"
         },
         "sttModel": {
-          "label": "Modelo de STT"
+          "label": "Modelo de STT",
+          "openaiDescription": "Nombre del modelo en su servidor (texto libre para endpoints autoalojados).",
+          "placeholder": "p. ej., whisper-1"
         },
         "targetUri": {
           "description": "Pega el endpoint que aparece en [Azure Portal (Claves y punto de conexión)]({portalUrl}). Onyx extrae la región de voz de esta URL. Ejemplos: `https://westus.api.cognitive.microsoft.com/` o `https://westus.tts.speech.microsoft.com/`.",
@@ -7931,7 +7945,9 @@
         },
         "ttsModel": {
           "description": "Onyx usará este modelo de forma predeterminada para la síntesis de voz.",
-          "label": "Modelo predeterminado"
+          "label": "Modelo predeterminado",
+          "openaiDescription": "Nombre del modelo en su servidor (texto libre para endpoints autoalojados).",
+          "placeholder": "p. ej., tts-1"
         },
         "updateButton": {
           "label": "Actualizar"

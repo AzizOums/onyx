@@ -26,7 +26,6 @@ from onyx.server.features.notifications.models import (
     PaginatedNotifications,
 )
 from onyx.server.features.notifications.utils import (
-    ensure_permissions_migration_notification,
     ensure_system_announcement_notification,
 )
 from onyx.server.features.release_notes.utils import (
@@ -70,13 +69,6 @@ def _check_for_notifications_to_create(
     except Exception:
         logger.exception(
             "Failed to check for build mode intro in notifications endpoint"
-        )
-
-    try:
-        ensure_permissions_migration_notification(user, db_session)
-    except Exception:
-        logger.exception(
-            "Failed to create permissions_migration_v1 announcement in notifications endpoint"
         )
 
     # Community build: do not phone home to the upstream changelog. Release

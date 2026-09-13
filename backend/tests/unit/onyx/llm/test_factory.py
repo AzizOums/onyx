@@ -18,6 +18,7 @@ from onyx.llm.factory import (
 from onyx.llm.interfaces import LlmRequestPolicy
 from onyx.llm.opencode import (
     OPENCODE_PROVIDER_NAME,
+    is_opencode_gateway,
     opencode_request_headers,
     opencode_session_id,
 )
@@ -284,6 +285,61 @@ def test_llm_from_provider_passes_stored_extra_headers() -> None:
         assert mock_get_llm.call_args.kwargs["provider_headers"] == {
             "User-Agent": "opencode/1.18.18"
         }
+
+
+def test_is_opencode_gateway_matches_native_and_zen_rows() -> None:
+    assert is_opencode_gateway("opencode", None) is True
+    assert is_opencode_gateway("opencode", "https://opencode.ai/zen/v1") is True
+    # Rows created before the native provider (generic openai-compatible
+    # pointed at Zen) get the same treatment.
+    assert is_opencode_gateway("openai_compatible", "https://opencode.ai/zen/v1") is True
+    assert is_opencode_gateway("openai_compatible", "http://localhost:8000/v1") is False
+    assert is_opencode_gateway("openai", None) is False
+    assert is_opencode_gateway(None, None) is False
+
+
+def test_get_llm_uses_public_bearer_for_keyless_zen() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=OPENCODE_PROVIDER_NAME,
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            api_key=None,
+            api_base="https://opencode.ai/zen/v1",
+            max_input_tokens=4096,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["api_key"] == "public"
+
+
+def test_get_llm_uses_public_bearer_for_keyless_zen_compat_row() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai_compatible",
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            api_key=None,
+            api_base="https://opencode.ai/zen/v1",
+            max_input_tokens=4096,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["api_key"] == "public"
+        assert "x-opencode-session" in kwargs["extra_headers"]
+
+
+def test_get_llm_keeps_real_key_and_skips_public_for_others() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai",
+            model="gpt-4o",
+            deployment_name=None,
+            api_key=None,
+            max_input_tokens=4096,
+        )
+
+        assert mock_litellm_llm.call_args.kwargs["api_key"] is None
 
 
 def test_opencode_session_id_is_stable_and_prefixed() -> None:

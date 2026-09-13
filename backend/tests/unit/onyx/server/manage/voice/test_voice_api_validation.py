@@ -4,9 +4,17 @@ from onyx.error_handling.exceptions import OnyxError
 from onyx.server.manage.voice.api import _validate_voice_api_base
 
 
-def test_validate_voice_api_base_blocks_private_for_non_azure() -> None:
+def test_validate_voice_api_base_blocks_private_for_other_types() -> None:
     with pytest.raises(OnyxError, match="Invalid target URI"):
-        _validate_voice_api_base("openai", "http://127.0.0.1:11434")
+        _validate_voice_api_base("elevenlabs", "http://127.0.0.1:11434")
+
+
+def test_validate_voice_api_base_allows_private_for_openai() -> None:
+    # Self-hosted OpenAI-compatible servers (LocalAI, Kokoro, whisper)
+    # live on private networks; the admin-typed base URL is trusted like
+    # the Azure target URI.
+    validated = _validate_voice_api_base("openai", "http://127.0.0.1:11434")
+    assert validated == "http://127.0.0.1:11434"
 
 
 def test_validate_voice_api_base_allows_private_for_azure() -> None:

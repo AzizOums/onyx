@@ -23,7 +23,11 @@ from onyx.llm.constants import LlmProviderNames
 from onyx.llm.interfaces import LLM, LlmRequestPolicy
 from onyx.llm.models import ReasoningEffort, UserChatDefaults
 from onyx.llm.multi_llm import LitellmLLM
-from onyx.llm.opencode import OPENCODE_PROVIDER_NAME, opencode_request_headers
+from onyx.llm.opencode import (
+    OPENCODE_PUBLIC_API_KEY,
+    is_opencode_gateway,
+    opencode_request_headers,
+)
 from onyx.llm.override_models import LLMOverride
 from onyx.llm.utils import (
     get_max_input_tokens_from_llm_provider,
@@ -505,12 +509,18 @@ def get_llm(
     if temperature is None:
         temperature = GEN_AI_TEMPERATURE
 
+    uses_zen_gateway = is_opencode_gateway(provider, api_base)
+    if uses_zen_gateway and not api_key:
+        # Keyless free tier: the gateway serves free models to the
+        # anonymous "public" bearer.
+        api_key = OPENCODE_PUBLIC_API_KEY
+
     extra_headers = build_llm_extra_headers(additional_headers)
 
     # Auto client identity for session-gated providers. Loses to the
     # admin-configured headers below so an explicit Extra Headers entry
     # always wins.
-    if provider == OPENCODE_PROVIDER_NAME:
+    if uses_zen_gateway:
         extra_headers.update(opencode_request_headers(provider_session_scope))
 
     # Admin-configured headers for this provider (e.g. a gateway-mandated
