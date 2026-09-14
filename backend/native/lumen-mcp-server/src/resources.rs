@@ -10,6 +10,59 @@ use serde::{Deserialize, Serialize};
 use crate::auth::AccessToken;
 use crate::upstream::{ApiClient, UpstreamError};
 
+/// Serialize the way Python's `json.dumps` does by default.
+///
+/// The Python resources return `json.dumps(...)`, whose default separators are
+/// `", "` and `": "`. `serde_json` writes neither space, so the bodies would
+/// differ byte for byte even though the data matches. MCP clients receive this
+/// text verbatim, so the spacing is part of the contract.
+mod python_json {
+    use std::io;
+
+    use serde::Serialize;
+    use serde_json::ser::Formatter;
+
+    struct PythonFormatter;
+
+    impl Formatter for PythonFormatter {
+        fn begin_array_value<W: ?Sized + io::Write>(
+            &mut self,
+            writer: &mut W,
+            first: bool,
+        ) -> io::Result<()> {
+            if first {
+                Ok(())
+            } else {
+                writer.write_all(b", ")
+            }
+        }
+
+        fn begin_object_key<W: ?Sized + io::Write>(
+            &mut self,
+            writer: &mut W,
+            first: bool,
+        ) -> io::Result<()> {
+            if first {
+                Ok(())
+            } else {
+                writer.write_all(b", ")
+            }
+        }
+
+        fn begin_object_value<W: ?Sized + io::Write>(&mut self, writer: &mut W) -> io::Result<()> {
+            writer.write_all(b": ")
+        }
+    }
+
+    pub fn to_string<T: Serialize>(value: &T) -> Result<String, serde_json::Error> {
+        let mut buffer = Vec::with_capacity(128);
+        let mut serializer = serde_json::Serializer::with_formatter(&mut buffer, PythonFormatter);
+        value.serialize(&mut serializer)?;
+        // The formatter only ever writes UTF-8, as serde_json does.
+        Ok(String::from_utf8(buffer).expect("serde_json emits UTF-8"))
+    }
+}
+
 pub const MIME_TYPE: &str = "application/json";
 
 pub const INDEXED_SOURCES_URI: &str = "resource://indexed_sources";
@@ -111,7 +164,7 @@ pub async fn indexed_sources_body(
         entries = sources.len(),
         "Lumen MCP Server: indexed_sources resource returning entries"
     );
-    Ok(serde_json::to_string(&sources).unwrap_or_else(|_| "[]".to_string()))
+    Ok(python_json::to_string(&sources).unwrap_or_else(|_| "[]".to_string()))
 }
 
 /// Body of `resource://document_sets`: entries sorted by name.
@@ -126,7 +179,7 @@ pub async fn document_sets_body(
         entries = sets.len(),
         "Lumen MCP Server: document_sets resource returning entries"
     );
-    Ok(serde_json::to_string(&sets).unwrap_or_else(|_| "[]".to_string()))
+    Ok(python_json::to_string(&sets).unwrap_or_else(|_| "[]".to_string()))
 }
 
 /// Body of `resource://agents`: entries sorted by name.
@@ -138,7 +191,7 @@ pub async fn agents_body(client: &ApiClient, token: &AccessToken) -> Result<Stri
         entries = agents.len(),
         "Lumen MCP Server: agents resource returning entries"
     );
-    Ok(serde_json::to_string(&agents).unwrap_or_else(|_| "[]".to_string()))
+    Ok(python_json::to_string(&agents).unwrap_or_else(|_| "[]".to_string()))
 }
 
 #[cfg(test)]
@@ -153,8 +206,8 @@ mod tests {
         assert_eq!(entry.name, "Wiki");
         assert_eq!(entry.description.as_deref(), Some("Docs"));
         assert_eq!(
-            serde_json::to_string(&entry).unwrap(),
-            r#"{"name":"Wiki","description":"Docs"}"#
+            python_json::to_string(&entry).unwrap(),
+            r#"{"name": "Wiki", "description": "Docs"}"#
         );
     }
 
@@ -164,8 +217,8 @@ mod tests {
         let entry: AgentEntry = serde_json::from_str(raw).unwrap();
         assert_eq!(entry.id, 5);
         assert_eq!(
-            serde_json::to_string(&entry).unwrap(),
-            r#"{"id":5,"name":"Support","description":null}"#
+            python_json::to_string(&entry).unwrap(),
+            r#"{"id": 5, "name": "Support", "description": null}"#
         );
     }
 

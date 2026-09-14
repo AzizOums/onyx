@@ -51,7 +51,7 @@ async fn indexed_sources_are_sorted_and_stringified() {
         .await
         .expect("the resource resolves");
 
-    assert_eq!(body, r#"["42","github","jira"]"#);
+    assert_eq!(body, r#"["42", "github", "jira"]"#);
     assert_eq!(
         mock.requests_for("/manage/indexed-sources")[0].authorization,
         Some(format!("Bearer {TOKEN}"))
@@ -75,7 +75,7 @@ async fn document_sets_are_projected_and_sorted_by_name() {
 
     assert_eq!(
         body,
-        r#"[{"name":"Alpha","description":null},{"name":"Zeta","description":"z"}]"#
+        r#"[{"name": "Alpha", "description": null}, {"name": "Zeta", "description": "z"}]"#
     );
 }
 
@@ -96,7 +96,7 @@ async fn agents_are_projected_and_sorted_by_name() {
 
     assert_eq!(
         body,
-        r#"[{"id":3,"name":"Analytics","description":null},{"id":9,"name":"Support","description":"help"}]"#
+        r#"[{"id": 3, "name": "Analytics", "description": null}, {"id": 9, "name": "Support", "description": "help"}]"#
     );
 }
 

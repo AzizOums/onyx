@@ -1,0 +1,99 @@
+{
+  "open_urls": {
+    "additionalProperties": false,
+    "properties": {
+      "urls": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "urls"
+    ],
+    "type": "object"
+  },
+  "search_indexed_documents": {
+    "additionalProperties": false,
+    "properties": {
+      "agent": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "document_set_names": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "query": {
+        "type": "string"
+      },
+      "skip_query_expansion": {
+        "default": false,
+        "type": "boolean"
+      },
+      "source_types": {
+        "anyOf": [
+          {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "time_cutoff": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "type": "object"
+  },
+  "search_web": {
+    "additionalProperties": false,
+    "properties": {
+      "limit": {
+        "default": 5,
+        "type": "integer"
+      },
+      "query": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "query"
+    ],
+    "type": "object"
+  }
+}

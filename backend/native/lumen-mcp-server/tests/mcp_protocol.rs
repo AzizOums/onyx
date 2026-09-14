@@ -255,7 +255,7 @@ async fn a_resource_read_returns_the_json_body() {
         rmcp::model::ResourceContents::TextResourceContents {
             text, mime_type, ..
         } => {
-            assert_eq!(text, r#"["github","jira"]"#);
+            assert_eq!(text, r#"["github", "jira"]"#);
             assert_eq!(mime_type.as_deref(), Some("application/json"));
         }
         other => panic!("expected text contents, got {other:?}"),

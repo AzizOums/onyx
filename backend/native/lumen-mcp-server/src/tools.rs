@@ -5,7 +5,7 @@
 //! decide when and how to call each tool, so a reworded description changes
 //! behaviour just as much as reworded code.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::sync::LazyLock;
 use std::time::Instant;
 
@@ -558,44 +558,35 @@ pub async fn open_urls(client: &ApiClient, token: &AccessToken, args: OpenUrlsAr
     outcome
 }
 
-/// JSON Schema for each tool's arguments, as MCP clients receive it.
+/// Argument schemas, exported from the Python server.
+///
+/// FastMCP derives these from the Python signatures through Pydantic, which
+/// emits shapes a hand-written schema does not match (`anyOf` for optionals,
+/// `additionalProperties: false`). MCP clients read them to decide how to call
+/// a tool, so they are exported rather than rewritten. Regenerate with
+/// `scripts/export_contracts.py`; `test_exported_contracts.py` catches drift.
+static TOOL_SCHEMAS: LazyLock<BTreeMap<String, Map<String, Value>>> = LazyLock::new(|| {
+    serde_json::from_str(include_str!("../data/tool_schemas.json"))
+        .expect("the exported tool schemas are valid JSON")
+});
+
+fn schema_for(tool: &str) -> Map<String, Value> {
+    TOOL_SCHEMAS
+        .get(tool)
+        .cloned()
+        .unwrap_or_else(|| panic!("no exported schema for {tool}"))
+}
+
 pub fn search_indexed_documents_schema() -> Map<String, Value> {
-    let schema = json!({
-        "type": "object",
-        "properties": {
-            "query": { "type": "string" },
-            "source_types": { "type": ["array", "null"], "items": { "type": "string" }, "default": null },
-            "document_set_names": { "type": ["array", "null"], "items": { "type": "string" }, "default": null },
-            "time_cutoff": { "type": ["string", "null"], "default": null },
-            "skip_query_expansion": { "type": "boolean", "default": false },
-            "agent": { "type": ["string", "null"], "default": null }
-        },
-        "required": ["query"]
-    });
-    schema.as_object().cloned().unwrap_or_default()
+    schema_for("search_indexed_documents")
 }
 
 pub fn search_web_schema() -> Map<String, Value> {
-    let schema = json!({
-        "type": "object",
-        "properties": {
-            "query": { "type": "string" },
-            "limit": { "type": "integer", "default": 5 }
-        },
-        "required": ["query"]
-    });
-    schema.as_object().cloned().unwrap_or_default()
+    schema_for("search_web")
 }
 
 pub fn open_urls_schema() -> Map<String, Value> {
-    let schema = json!({
-        "type": "object",
-        "properties": {
-            "urls": { "type": "array", "items": { "type": "string" } }
-        },
-        "required": ["urls"]
-    });
-    schema.as_object().cloned().unwrap_or_default()
+    schema_for("open_urls")
 }
 
 #[cfg(test)]
@@ -744,6 +735,17 @@ mod tests {
         assert!(DOCUMENT_SOURCES.contains("jira"));
         assert!(DOCUMENT_SOURCES.contains("google_drive"));
         assert!(!DOCUMENT_SOURCES.contains("not_a_source"));
+    }
+
+    #[test]
+    fn the_exported_schemas_cover_every_tool() {
+        for tool in ["search_indexed_documents", "search_web", "open_urls"] {
+            let schema = schema_for(tool);
+            assert_eq!(schema["type"], "object", "{tool}");
+            // Pydantic emits this; a hand-written schema would not.
+            assert_eq!(schema["additionalProperties"], false, "{tool}");
+            assert!(schema.contains_key("properties"), "{tool}");
+        }
     }
 
     #[test]
