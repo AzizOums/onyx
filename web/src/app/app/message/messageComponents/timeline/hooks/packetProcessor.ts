@@ -318,6 +318,13 @@ function processPacket(state: ProcessorState, packet: Packet): void {
     return;
   }
 
+  // Debug metadata about a tool call, sent only in INTEGRATION_TESTS_MODE. It
+  // shares the placement of the tool it describes, so keep it out of the
+  // groups entirely.
+  if (packet.obj.type === PacketType.TOOL_CALL_DEBUG) {
+    return;
+  }
+
   // Handle turn transitions (inject SECTION_END for previous groups)
   handleTurnTransition(state, packet);
 
@@ -333,21 +340,18 @@ function processPacket(state: ProcessorState, packet: Packet): void {
     state.groupKeysWithSectionEnd.add(groupKey);
   }
 
-  // Check if this is the first packet in the group (before adding)
-  const existingGroup = state.groupedPacketsMap.get(groupKey);
-  const isFirstPacket = !existingGroup;
-
   // Add packet to group
   addPacketToGroup(state, packet, groupKey);
 
-  // Categorize on first packet of each group
-  if (isFirstPacket) {
-    if (isToolPacket(packet, false)) {
-      state.toolGroupKeys.add(groupKey);
-    }
-    if (isDisplayPacket(packet)) {
-      state.displayGroupKeys.add(groupKey);
-    }
+  // Categorize on every packet, not only the first one. A group can be led by
+  // a packet the frontend does not render (or does not know), and the category
+  // must not depend on which packet happened to arrive first: the live stream
+  // and the history replay of the same turn must produce the same groups.
+  if (isToolPacket(packet, false)) {
+    state.toolGroupKeys.add(groupKey);
+  }
+  if (isDisplayPacket(packet)) {
+    state.displayGroupKeys.add(groupKey);
   }
 
   // Track image generation for header display (regardless of group position)

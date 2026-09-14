@@ -29,6 +29,10 @@ export enum PacketType {
   // Tool call argument delta (streams tool args before tool executes)
   TOOL_CALL_ARGUMENT_DELTA = "tool_call_argument_delta",
 
+  // Debug metadata about a tool call. Only sent when the backend runs with
+  // INTEGRATION_TESTS_MODE. Carries no renderable content.
+  TOOL_CALL_DEBUG = "tool_call_debug",
+
   // Custom tool packets
   CUSTOM_TOOL_START = "custom_tool_start",
   CUSTOM_TOOL_ARGS = "custom_tool_args",
@@ -303,6 +307,16 @@ export interface ChatHeartbeat extends BaseObj {
 
 export type ChatHeartbeatObj = ChatHeartbeat;
 
+// Debug metadata about a tool call, emitted only when the backend runs with
+// INTEGRATION_TESTS_MODE. It shares the placement of the tool it describes and
+// has nothing to render, so the processor drops it and its payload
+// (tool_call_id, tool_name, tool_args) is left out of this type.
+export interface ToolCallDebug extends BaseObj {
+  type: "tool_call_debug";
+}
+
+export type ToolCallDebugObj = ToolCallDebug;
+
 export type SectionEndObj = SectionEnd;
 
 export type TopLevelBranchingObj = TopLevelBranching;
@@ -385,6 +399,7 @@ export type ObjTypes =
   | ReasoningObj
   | StopObj
   | ChatHeartbeatObj
+  | ToolCallDebugObj
   | SectionEndObj
   | TopLevelBranchingObj
   | CitationObj
