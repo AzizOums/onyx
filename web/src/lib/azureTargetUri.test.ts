@@ -13,6 +13,7 @@ const baseProvider: LLMProviderView = {
   api_base: "https://my-resource.openai.azure.com",
   api_version: "2025-01-01-preview",
   custom_config: null,
+  extra_headers: null,
   is_public: true,
   is_auto_mode: true,
   groups: [],

@@ -4412,6 +4412,10 @@
         "title": "Verbinden Sie ein Modell zur Bilderzeugung, um es im Chat zu verwenden."
       },
       "form": {
+        "apiBase": {
+          "label": "API-Basis-URL",
+          "idle": "Optionale OpenAI-kompatible Basis-URL für einen selbst gehosteten Server (z. B. LocalAI). Leer = api.openai.com."
+        },
         "apiKey": {
           "comboPlaceholder": "Neuen API-Schlüssel eingeben oder vorhandenen Anbieter auswählen",
           "idle": "Geben Sie einen neuen API-Schlüssel ein oder wählen Sie einen vorhandenen Anbieter.",
@@ -4471,6 +4475,12 @@
           "label": "Standort",
           "required": "Standort ist erforderlich"
         },
+        "modelName": {
+          "label": "Modellname",
+          "idle": "Optionale Überschreibung, z. B. ein LocalAI-Galeriemodell. Leer = {model}.",
+          "required": "Modellname ist erforderlich",
+          "customPlaceholder": "Rufe Modelle vom obigen Server ab und wähle eines"
+        },
         "projectId": {
           "idle": "Das GCP-Projekt, in dem Vertex AI aktiviert ist. Onyx authentifiziert sich mit dem an den Pod gebundenen Dienstkonto (GKE Workload Identity).",
           "label": "GCP-Projekt-ID",
@@ -4484,6 +4494,13 @@
         },
         "unknownError": {
           "message": "Ein unbekannter Fehler ist aufgetreten"
+        },
+        "fetchModels": {
+          "label": "Modelle abrufen",
+          "loading": "Modelle werden abgerufen…",
+          "missingBase": "Gib zuerst eine API-Basis-URL ein",
+          "empty": "Keine Modelle auf diesem Server gefunden",
+          "success": "{count} Modelle gefunden"
         }
       },
       "header": {
@@ -4524,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "Das neueste Bilderzeugungsmodell von OpenAI mit der höchsten Prompt-Treue."
+        },
+        "customOpenaiCompatible": {
+          "description": "Verbinde einen selbst gehosteten OpenAI-kompatiblen Bildserver (api_base + Modell per Fetch)."
         }
       },
       "setDefaultError": {
@@ -5255,6 +5275,9 @@
             },
             "textOnly": {
               "label": "Nur Text"
+            },
+            "multimodal": {
+              "label": "Multimodal (Text, Bild, Audio, Video)"
             }
           },
           "modelTable": {
@@ -5480,6 +5503,18 @@
             "description": "Dient zur Identifizierung dieses Anbieters in der App.",
             "placeholder": "Anzeigename",
             "title": "Anzeigename"
+          },
+          "extraHeaders": {
+            "addButton": {
+              "label": "Header hinzufügen"
+            },
+            "description": "Zusätzliche HTTP-Header für jede Anfrage an diesen Anbieter (z. B. `User-Agent: opencode/1.18.18` für Gateways, die dies erfordern). Keine Secrets hier eintragen — `Authorization` ist nicht erlaubt, verwenden Sie das API-Schlüssel-Feld.",
+            "keyInput": {
+              "placeholder": "z. B. User-Agent"
+            },
+            "keyTitle": "Header",
+            "title": "Zusätzliche Header",
+            "valueTitle": "Wert"
           },
           "optionalSuffix": {
             "label": "optional"
@@ -7869,9 +7904,19 @@
         },
         "whisper": {
           "subtitle": "Allzweck-Spracherkennungsmodell von OpenAI."
+        },
+        "customStt": {
+          "subtitle": "Selbst gehosteter OpenAI-kompatibler Speech-to-Text-Server"
+        },
+        "customTts": {
+          "subtitle": "Selbst gehosteter OpenAI-kompatibler Text-to-Speech-Server"
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "API-Basis-URL",
+          "description": "Optionale OpenAI-kompatible Basis-URL für einen selbst gehosteten Server (z. B. LocalAI, Kokoro, faster-whisper). Leer = api.openai.com. Aus einem Container heraus `host.docker.internal` statt `localhost` verwenden."
+        },
         "apiKey": {
           "description": "Fügen Sie Ihren [API-Schlüssel]({url}) von {provider} ein, um auf Ihre Modelle zuzugreifen.",
           "label": "API-Schlüssel",
@@ -7907,7 +7952,9 @@
           "selfHostedCapExceeded": "Selbst gehostete Endpunkte unterstützen höchstens {cap} gesprochene Sprachen (Erkennung zu Beginn)"
         },
         "sttModel": {
-          "label": "STT-Modell"
+          "label": "STT-Modell",
+          "openaiDescription": "Modellname auf Ihrem Server (Freitext für selbst gehostete Endpunkte).",
+          "placeholder": "z. B. whisper-1"
         },
         "targetUri": {
           "description": "Fügen Sie den Endpunkt ein, der im [Azure Portal (Keys and Endpoint)]({portalUrl}) angezeigt wird. Onyx extrahiert die Sprachregion aus dieser URL. Beispiele: `https://westus.api.cognitive.microsoft.com/` oder `https://westus.tts.speech.microsoft.com/`.",
@@ -7916,7 +7963,9 @@
         },
         "ttsModel": {
           "description": "Dieses Modell wird von Onyx standardmäßig für Text-zu-Sprache verwendet.",
-          "label": "Standardmodell"
+          "label": "Standardmodell",
+          "openaiDescription": "Modellname auf Ihrem Server (Freitext für selbst gehostete Endpunkte).",
+          "placeholder": "z. B. tts-1"
         },
         "updateButton": {
           "label": "Aktualisieren"
@@ -7926,6 +7975,13 @@
           "label": "Stimme",
           "loadingPlaceholder": "Stimmen werden geladen...",
           "placeholder": "Wählen Sie eine Stimme oder geben Sie eine Stimmen-ID ein"
+        },
+        "fetchModels": {
+          "label": "Modelle abrufen",
+          "loading": "Modelle werden abgerufen…",
+          "missingBase": "Gib zuerst eine API-Basis-URL ein",
+          "empty": "Keine Modelle auf diesem Server gefunden",
+          "success": "{count} Modelle gefunden"
         }
       },
       "speechToText": {

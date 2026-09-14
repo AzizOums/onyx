@@ -1,5 +1,5 @@
 import { SvgAzure, SvgElevenLabs, SvgOpenai } from "@opal/logos";
-import { SvgMicrophone } from "@opal/icons";
+import { SvgMicrophone, SvgPlug } from "@opal/icons";
 import type { IconProps } from "@opal/types";
 
 /** Whether the provider is being configured for speech-to-text or text-to-speech. */
@@ -135,6 +135,16 @@ export const VOICE_PROVIDER_DETAILS: Record<string, VoiceProviderDetail> = {
       url: "https://elevenlabs.io/docs/voices/premade-voices",
       label: "ElevenLabs",
     },
+  },
+  // Self-hosted OpenAI-compatible audio server (STT and/or TTS). Separate
+  // type so a cloud OpenAI row and a local row coexist, and STT/TTS
+  // defaults can live on different rows. Models come from the server's
+  // `/models` listing via Fetch (no static catalog).
+  openai_compatible: {
+    label: "Custom",
+    icon: SvgPlug,
+    sttModels: [],
+    ttsModels: [],
   },
 };
 

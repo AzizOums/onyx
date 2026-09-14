@@ -231,7 +231,6 @@ class ChatTurnSetup:
     tool_id_to_name_map: dict[int, str]
     forced_tool_id: int | None
     files: list[ChatLoadedFile]
-    chat_files_for_tools: list[ChatFile]
     custom_agent_prompt: str | None
     user_memory_context: UserMemoryContext
     # For deep research: was the last assistant message a clarification request?

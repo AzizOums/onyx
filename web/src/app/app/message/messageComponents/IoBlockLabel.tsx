@@ -3,8 +3,8 @@ import { Text } from "@opal/components";
 
 /**
  * Small "Request" / "Response" label used by tool renderers that show a
- * paired input/output (e.g. CustomToolRenderer, CodingAgentRenderer's bash
- * step). Arrow-exchange icon + secondary-body label.
+ * paired input/output (e.g. CustomToolRenderer). Arrow-exchange icon +
+ * secondary-body label.
  */
 export function IoBlockLabel({ label }: { label: string }) {
   return (

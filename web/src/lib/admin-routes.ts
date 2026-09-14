@@ -46,8 +46,6 @@ export interface FeatureFlags {
   enableCloud: boolean;
   tier: Tier | undefined;
   customAnalyticsEnabled: boolean;
-  hasSubscription: boolean;
-  hooksEnabled: boolean;
   opensearchEnabled: boolean;
   queryHistoryEnabled: boolean;
   craftAvailable: boolean;
@@ -130,16 +128,6 @@ export const ADMIN_ROUTES = {
     icon: SvgAudio,
     title: "Voice",
     sidebarLabel: "Voice",
-    requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
-    section: "",
-    requiredTier: null,
-    visibleWhen: null,
-  },
-  CODE_INTERPRETER: {
-    path: "/admin/code-interpreter",
-    icon: SvgTerminal,
-    title: "Code Interpreter",
-    sidebarLabel: "Code Interpreter",
     requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
     section: "",
     requiredTier: null,
@@ -309,7 +297,7 @@ export const ADMIN_ROUTES = {
     sidebarLabel: "Service Accounts",
     requiredPermission: Permission.MANAGE_SERVICE_ACCOUNT_API_KEYS,
     section: "Integrations",
-    requiredTier: Tier.BUSINESS,
+    requiredTier: null,
     visibleWhen: null,
   },
   SLACK_BOTS: {
@@ -332,16 +320,6 @@ export const ADMIN_ROUTES = {
     requiredTier: null,
     visibleWhen: null,
   },
-  HOOKS: {
-    path: "/admin/hooks",
-    icon: SvgShareWebhook,
-    title: "Hook Extensions",
-    sidebarLabel: "Hook Extensions",
-    requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
-    section: "Integrations",
-    requiredTier: Tier.ENTERPRISE,
-    visibleWhen: (f: FeatureFlags) => f.hooksEnabled,
-  },
 
   // ── Permissions ───────────────────────────────────────────────────
   USERS: {
@@ -361,7 +339,7 @@ export const ADMIN_ROUTES = {
     sidebarLabel: "Groups",
     requiredPermission: Permission.MANAGE_USER_GROUPS,
     section: "Permissions",
-    requiredTier: Tier.BUSINESS,
+    requiredTier: null,
     visibleWhen: null,
   },
   SCIM: {
@@ -387,16 +365,6 @@ export const ADMIN_ROUTES = {
   },
 
   // ── Organization ──────────────────────────────────────────────────
-  BILLING: {
-    path: "/admin/billing",
-    icon: SvgWallet,
-    title: "Plans & Billing",
-    sidebarLabel: "Plans & Billing",
-    requiredPermission: Permission.FULL_ADMIN_PANEL_ACCESS,
-    section: "Organization",
-    requiredTier: null,
-    visibleWhen: (f: FeatureFlags) => f.hasSubscription,
-  },
   THEME: {
     path: "/admin/theme",
     icon: SvgPaintBrush,

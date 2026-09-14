@@ -10,8 +10,6 @@ import {
   Stop,
   ImageGenerationToolDelta,
   MessageStart,
-  ToolCallArgumentDelta,
-  isCodeInterpreterToolType,
 } from "@/app/app/services/streamingModels";
 import { CitationMap } from "@/app/app/interfaces";
 import { OnyxDocument } from "@/lib/search/interfaces";
@@ -139,8 +137,6 @@ const CONTENT_PACKET_TYPES_SET = new Set<PacketType>([
   PacketType.MESSAGE_START,
   PacketType.SEARCH_TOOL_START,
   PacketType.IMAGE_GENERATION_TOOL_START,
-  PacketType.PYTHON_TOOL_START,
-  PacketType.TOOL_CALL_ARGUMENT_DELTA,
   PacketType.CUSTOM_TOOL_START,
   PacketType.FILE_READER_START,
   PacketType.FETCH_TOOL_START,
@@ -149,19 +145,12 @@ const CONTENT_PACKET_TYPES_SET = new Set<PacketType>([
   PacketType.REASONING_START,
   PacketType.DEEP_RESEARCH_PLAN_START,
   PacketType.RESEARCH_AGENT_START,
-  PacketType.CODING_AGENT_START,
 ]);
 
 function hasContentPackets(packets: Packet[]): boolean {
-  return packets.some((packet) => {
-    const type = packet.obj.type as PacketType;
-    if (type === PacketType.TOOL_CALL_ARGUMENT_DELTA) {
-      return isCodeInterpreterToolType(
-        (packet.obj as ToolCallArgumentDelta).tool_type
-      );
-    }
-    return CONTENT_PACKET_TYPES_SET.has(type);
-  });
+  return packets.some((packet) =>
+    CONTENT_PACKET_TYPES_SET.has(packet.obj.type as PacketType)
+  );
 }
 
 /**
@@ -329,6 +318,13 @@ function processPacket(state: ProcessorState, packet: Packet): void {
     return;
   }
 
+  // Debug metadata about a tool call, sent only in INTEGRATION_TESTS_MODE. It
+  // shares the placement of the tool it describes, so keep it out of the
+  // groups entirely.
+  if (packet.obj.type === PacketType.TOOL_CALL_DEBUG) {
+    return;
+  }
+
   // Handle turn transitions (inject SECTION_END for previous groups)
   handleTurnTransition(state, packet);
 
@@ -344,21 +340,18 @@ function processPacket(state: ProcessorState, packet: Packet): void {
     state.groupKeysWithSectionEnd.add(groupKey);
   }
 
-  // Check if this is the first packet in the group (before adding)
-  const existingGroup = state.groupedPacketsMap.get(groupKey);
-  const isFirstPacket = !existingGroup;
-
   // Add packet to group
   addPacketToGroup(state, packet, groupKey);
 
-  // Categorize on first packet of each group
-  if (isFirstPacket) {
-    if (isToolPacket(packet, false)) {
-      state.toolGroupKeys.add(groupKey);
-    }
-    if (isDisplayPacket(packet)) {
-      state.displayGroupKeys.add(groupKey);
-    }
+  // Categorize on every packet, not only the first one. A group can be led by
+  // a packet the frontend does not render (or does not know), and the category
+  // must not depend on which packet happened to arrive first: the live stream
+  // and the history replay of the same turn must produce the same groups.
+  if (isToolPacket(packet, false)) {
+    state.toolGroupKeys.add(groupKey);
+  }
+  if (isDisplayPacket(packet)) {
+    state.displayGroupKeys.add(groupKey);
   }
 
   // Track image generation for header display (regardless of group position)

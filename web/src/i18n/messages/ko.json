@@ -4412,6 +4412,10 @@
         "title": "채팅에서 사용할 이미지 생성 모델을 연결하세요."
       },
       "form": {
+        "apiBase": {
+          "label": "API 기본 URL",
+          "idle": "셀프 호스팅 서버(예: LocalAI)용 선택적 OpenAI 호환 기본 URL. 비워 두면 api.openai.com."
+        },
         "apiKey": {
           "comboPlaceholder": "새 API 키를 입력하거나 기존 제공업체를 선택하세요",
           "idle": "새 API 키를 입력하거나 기존 제공업체를 선택하세요.",
@@ -4471,6 +4475,12 @@
           "label": "위치",
           "required": "위치는 필수입니다"
         },
+        "modelName": {
+          "label": "모델 이름",
+          "idle": "선택적 재정의(예: LocalAI 갤러리 모델). 비워 두면 {model}.",
+          "required": "Model name is required",
+          "customPlaceholder": "Fetch models from the server above, then pick one"
+        },
         "projectId": {
           "idle": "Vertex AI가 활성화된 GCP 프로젝트입니다. Onyx는 Pod에 연결된 서비스 계정으로 인증합니다 (GKE Workload Identity).",
           "label": "GCP 프로젝트 ID",
@@ -4484,6 +4494,13 @@
         },
         "unknownError": {
           "message": "알 수 없는 오류가 발생했습니다"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "header": {
@@ -4524,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "프롬프트 재현도가 가장 높은 OpenAI의 최신 이미지 생성 모델입니다."
+        },
+        "customOpenaiCompatible": {
+          "description": "Connect a self-hosted OpenAI-compatible image server (api_base + model from Fetch)."
         }
       },
       "setDefaultError": {
@@ -5255,6 +5275,9 @@
             },
             "textOnly": {
               "label": "텍스트 전용"
+            },
+            "multimodal": {
+              "label": "멀티모달 (텍스트, 이미지, 오디오, 비디오)"
             }
           },
           "modelTable": {
@@ -5480,6 +5503,18 @@
             "description": "앱에서 이 제공자를 식별하는 데 사용됩니다.",
             "placeholder": "표시 이름",
             "title": "표시 이름"
+          },
+          "extraHeaders": {
+            "addButton": {
+              "label": "헤더 추가"
+            },
+            "description": "이 제공자에 대한 모든 요청과 함께 전송되는 추가 HTTP 헤더(예: 이를 요구하는 게이트웨이의 경우 `User-Agent: opencode/1.18.18`). 여기에 비밀 값을 입력하지 마세요. `Authorization`은 허용되지 않으며 API 키 필드를 사용하세요.",
+            "keyInput": {
+              "placeholder": "예: User-Agent"
+            },
+            "keyTitle": "헤더",
+            "title": "추가 헤더",
+            "valueTitle": "값"
           },
           "optionalSuffix": {
             "label": "선택 사항"
@@ -7869,9 +7904,19 @@
         },
         "whisper": {
           "subtitle": "OpenAI의 범용 음성 인식 모델."
+        },
+        "customStt": {
+          "subtitle": "Self-hosted OpenAI-compatible speech-to-text server"
+        },
+        "customTts": {
+          "subtitle": "Self-hosted OpenAI-compatible text-to-speech server"
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "API 기본 URL",
+          "description": "셀프 호스팅 서버(LocalAI, Kokoro, faster-whisper 등)용 선택적 OpenAI 호환 기본 URL. 비워 두면 api.openai.com. 컨테이너 내부에서는 `localhost` 대신 `host.docker.internal`을 사용하세요."
+        },
         "apiKey": {
           "description": "모델을 사용하려면 {provider}의 [API 키]({url})를 붙여넣으세요.",
           "label": "API 키",
@@ -7907,7 +7952,9 @@
           "selfHostedCapExceeded": "자체 호스팅 엔드포인트는 음성 언어를 최대 {cap}개까지 지원합니다(시작 시 감지)"
         },
         "sttModel": {
-          "label": "STT 모델"
+          "label": "STT 모델",
+          "openaiDescription": "서버의 모델 이름(셀프 호스팅 엔드포인트용 자유 텍스트).",
+          "placeholder": "예: whisper-1"
         },
         "targetUri": {
           "description": "[Azure Portal(키 및 엔드포인트)]({portalUrl})에 표시된 엔드포인트를 붙여넣으세요. Onyx는 이 URL에서 음성 지역을 추출합니다. 예: `https://westus.api.cognitive.microsoft.com/` 또는 `https://westus.tts.speech.microsoft.com/`.",
@@ -7916,7 +7963,9 @@
         },
         "ttsModel": {
           "description": "Onyx는 기본적으로 이 모델을 텍스트 음성 변환에 사용합니다.",
-          "label": "기본 모델"
+          "label": "기본 모델",
+          "openaiDescription": "서버의 모델 이름(셀프 호스팅 엔드포인트용 자유 텍스트).",
+          "placeholder": "예: tts-1"
         },
         "updateButton": {
           "label": "업데이트"
@@ -7926,6 +7975,13 @@
           "label": "음성",
           "loadingPlaceholder": "음성을 불러오는 중...",
           "placeholder": "음성을 선택하거나 음성 ID를 입력하세요"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "speechToText": {

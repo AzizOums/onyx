@@ -18,6 +18,10 @@ export interface ModelConfiguration {
   is_visible: boolean;
   max_input_tokens: number | null;
   supports_image_input: boolean;
+  /** Model accepts audio attachments (native multimodal input). */
+  supports_audio_input?: boolean;
+  /** Model accepts video attachments (native multimodal input). */
+  supports_video_input?: boolean;
   supports_reasoning: boolean;
   /**
    * Effort levels this model tells apart, ascending, as resolved by the
@@ -68,12 +72,15 @@ export enum LLMProviderName {
   OPENAI_COMPATIBLE = "openai_compatible",
   NEBIUS_TOKENFACTORY = "nebius_tokenfactory",
   PORTKEY = "portkey",
+  OPENCODE = "opencode",
   CUSTOM = "custom",
 }
 
 export type PortkeyApiMode = "chat_completions" | "responses" | "messages";
 
 export type BifrostApiMode = "chat_completions" | "responses";
+
+export type OpencodeApiMode = "chat_completions" | "responses";
 
 export interface SimpleKnownModel {
   name: string;
@@ -100,6 +107,8 @@ export interface LLMProviderView {
   api_base: string | null;
   api_version: string | null;
   custom_config: { [key: string]: string } | null;
+  /** Extra HTTP headers sent with every request (e.g. User-Agent). Never secrets. */
+  extra_headers: { [key: string]: string } | null;
   is_public: boolean;
   is_auto_mode: boolean;
   groups: number[];
@@ -146,6 +155,8 @@ export interface LMStudioModelResponse {
   display_name: string;
   max_input_tokens: number | null;
   supports_image_input: boolean;
+  supports_audio_input?: boolean;
+  supports_video_input?: boolean;
   supports_reasoning: boolean;
 }
 
@@ -211,6 +222,8 @@ export interface LiteLLMProxyModelResponse {
   litellm_params_model: string;
   max_input_tokens: number | null;
   supports_image_input: boolean;
+  supports_audio_input?: boolean;
+  supports_video_input?: boolean;
   supports_reasoning: boolean;
 }
 
@@ -226,6 +239,8 @@ export interface BifrostModelResponse {
   display_name: string;
   max_input_tokens: number | null;
   supports_image_input: boolean;
+  supports_audio_input?: boolean;
+  supports_video_input?: boolean;
   supports_reasoning: boolean;
 }
 
@@ -241,7 +256,33 @@ export interface OpenAICompatibleModelResponse {
   display_name: string;
   max_input_tokens: number | null;
   supports_image_input: boolean;
+  supports_audio_input?: boolean;
+  supports_video_input?: boolean;
   supports_reasoning: boolean;
+}
+
+export interface ModelsDevProviderInfo {
+  id: string;
+  name: string;
+  api: string | null;
+  doc: string | null;
+  env_keys: string[];
+  npm: string | null;
+  model_count: number;
+}
+
+export interface ModelsDevModelInfo {
+  id: string;
+  name: string;
+  input_modalities: string[];
+  context_limit: number | null;
+  max_output_tokens: number | null;
+  reasoning: boolean;
+  tool_call: boolean;
+  supports_image_input: boolean;
+  supports_audio_input: boolean;
+  supports_video_input: boolean;
+  supports_pdf_input: boolean;
 }
 
 export interface NebiusTokenfactoryFetchParams {
@@ -256,6 +297,8 @@ export interface NebiusTokenfactoryModelResponse {
   display_name: string;
   max_input_tokens: number | null;
   supports_image_input: boolean;
+  supports_audio_input?: boolean;
+  supports_video_input?: boolean;
   supports_reasoning: boolean;
   quantization: string | null;
   country_code: string | null;
@@ -275,6 +318,8 @@ export interface PortkeyModelResponse {
   display_name: string;
   max_input_tokens: number | null;
   supports_image_input: boolean;
+  supports_audio_input?: boolean;
+  supports_video_input?: boolean;
   supports_reasoning: boolean;
 }
 

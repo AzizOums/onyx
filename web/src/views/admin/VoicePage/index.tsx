@@ -28,10 +28,12 @@ type ModelSubtitleKey =
   | "models.whisper.subtitle"
   | "models.azureSpeechStt.subtitle"
   | "models.elevenlabsStt.subtitle"
+  | "models.customStt.subtitle"
   | "models.tts1.subtitle"
   | "models.tts1Hd.subtitle"
   | "models.azureSpeechTts.subtitle"
-  | "models.elevenlabsTts.subtitle";
+  | "models.elevenlabsTts.subtitle"
+  | "models.customTts.subtitle";
 
 interface ModelDetails {
   id: string;
@@ -67,6 +69,12 @@ const STT_MODELS: ModelDetails[] = [
     label: "ElevenAPI",
     subtitleKey: "models.elevenlabsStt.subtitle",
     providerType: "elevenlabs",
+  },
+  {
+    id: "custom",
+    label: "Custom",
+    subtitleKey: "models.customStt.subtitle",
+    providerType: "openai_compatible",
   },
 ];
 
@@ -114,6 +122,18 @@ const TTS_PROVIDER_GROUPS: ProviderGroup[] = [
       },
     ],
   },
+  {
+    providerType: "openai_compatible",
+    providerLabel: "Custom",
+    models: [
+      {
+        id: "custom",
+        label: "Custom",
+        subtitleKey: "models.customTts.subtitle",
+        providerType: "openai_compatible",
+      },
+    ],
+  },
 ];
 
 const route = ADMIN_ROUTES.VOICE;
@@ -152,7 +172,10 @@ function ModelCard({
             status !== "disconnected" ? (provider ?? null) : null
           }
           mode={mode}
-          defaultModelId={model.id}
+          // Custom servers keep their stored model id ("custom" is a card id, not a model).
+          defaultModelId={
+            model.providerType === "openai_compatible" ? undefined : model.id
+          }
           onSuccess={() => {
             onMutate();
             setupModal.toggle(false);
@@ -228,6 +251,14 @@ export default function VoicePage() {
   ): "disconnected" | "connected" | "selected" => {
     const provider = providersByType.get(model.providerType);
     if (!provider || !provider.api_key) return "disconnected";
+
+    // Custom servers have user-picked model ids: selected = default, no id match.
+    if (model.providerType === "openai_compatible") {
+      const isActive =
+        mode === "stt" ? provider.is_default_stt : provider.is_default_tts;
+      if (isActive) return "selected";
+      return "connected";
+    }
 
     const isActive =
       mode === "stt"
@@ -333,13 +364,18 @@ export default function VoicePage() {
                             !!p.api_key
                         ).length > 0
                       }
-                      onSelect={() => {
-                        const p = providersByType.get(model.providerType);
-                        if (p?.id)
-                          activateVoiceProvider(p.id, "tts", model.id).then(
-                            () => mutate()
-                          );
-                      }}
+                    onSelect={() => {
+                      const p = providersByType.get(model.providerType);
+                      if (p?.id)
+                        activateVoiceProvider(
+                          p.id,
+                          "tts",
+                          // Custom servers keep their stored model id.
+                          model.providerType === "openai_compatible"
+                            ? undefined
+                            : model.id
+                        ).then(() => mutate());
+                    }}
                       onDeselect={() => {
                         const p = providersByType.get(model.providerType);
                         if (p?.id)

@@ -52,7 +52,9 @@ import { StreamStopReason } from "@/lib/search/interfaces";
 import { createChatSession } from "@/app/app/services/lib";
 import {
   getFinalLLM,
+  modelSupportsAudioInput,
   modelSupportsImageInput,
+  modelSupportsVideoInput,
   structureValue,
 } from "@/lib/languageModels/utils";
 import {
@@ -573,6 +575,16 @@ export default function useChatController({
       // chat session, it is unexpected for that model to be used when they
       // return to this session the next day.
       let finalLLM = modelOverride || llmManager.currentLlm;
+      // Hand the sent-with model to the manager before navigation lands on
+      // the (possibly brand-new) session: without this, the cross-session
+      // reset drops the manual selection and the pill flickers to the
+      // default model for the whole generation.
+      llmManager.noteModelHandoff(currChatSessionId, {
+        name: finalLLM.name || "",
+        provider: finalLLM.provider || "",
+        modelName: finalLLM.modelName || "",
+        modelConfigurationId: finalLLM.modelConfigurationId,
+      });
       updateLlmOverrideForChatSession(
         currChatSessionId,
         structureValue(
@@ -1522,14 +1534,40 @@ export default function useChatController({
         llmManager.llmProviders || [],
         llmModel
       );
+      const llmAcceptsAudio = modelSupportsAudioInput(
+        llmManager.llmProviders || [],
+        llmModel
+      );
+      const llmAcceptsVideo = modelSupportsVideoInput(
+        llmManager.llmProviders || [],
+        llmModel
+      );
 
       const imageFiles = acceptedFiles.filter((file) =>
         file.type.startsWith("image/")
+      );
+      const audioFiles = acceptedFiles.filter((file) =>
+        file.type.startsWith("audio/")
+      );
+      const videoFiles = acceptedFiles.filter((file) =>
+        file.type.startsWith("video/")
       );
 
       if (imageFiles.length > 0 && !llmAcceptsImages) {
         toast.error(
           "The current model does not support image input. Please select a model with Vision support."
+        );
+        return;
+      }
+      if (audioFiles.length > 0 && !llmAcceptsAudio) {
+        toast.error(
+          "The current model does not support audio input. Please select a multimodal model."
+        );
+        return;
+      }
+      if (videoFiles.length > 0 && !llmAcceptsVideo) {
+        toast.error(
+          "The current model does not support video input. Please select a multimodal model."
         );
         return;
       }

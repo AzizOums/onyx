@@ -181,3 +181,16 @@ class DefaultImageGenerationConfig(BaseModel):
             api_version=llm_provider.api_version,
             deployment_name=llm_provider.deployment_name,
         )
+
+
+class AvailableImageModelsRequest(BaseModel):
+    """Request model for listing models on an OpenAI-compatible image server."""
+
+    api_base: str
+    api_key: str | None = None
+
+
+class AvailableImageModel(BaseModel):
+    """A single model id from the server's `/models` listing (embeddings excluded)."""
+
+    name: str

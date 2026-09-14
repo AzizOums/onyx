@@ -4412,6 +4412,10 @@
         "title": "チャットで使用する画像生成モデルを接続してください。"
       },
       "form": {
+        "apiBase": {
+          "label": "APIベースURL",
+          "idle": "セルフホストサーバー（LocalAIなど）用のオプションのOpenAI互換ベースURL。空欄 = api.openai.com。"
+        },
         "apiKey": {
           "comboPlaceholder": "新しい API キーを入力するか、既存のプロバイダーを選択",
           "idle": "新しい API キーを入力するか、既存のプロバイダーを選択してください。",
@@ -4471,6 +4475,12 @@
           "label": "リージョン",
           "required": "リージョンは必須です"
         },
+        "modelName": {
+          "label": "モデル名",
+          "idle": "オプションの上書き（LocalAIギャラリーモデルなど）。空欄 = {model}。",
+          "required": "Model name is required",
+          "customPlaceholder": "Fetch models from the server above, then pick one"
+        },
         "projectId": {
           "idle": "Vertex AI を有効にした GCP プロジェクトです。Onyx は Pod にバインドされたサービスアカウント (GKE Workload Identity) で認証します。",
           "label": "GCP プロジェクト ID",
@@ -4484,6 +4494,13 @@
         },
         "unknownError": {
           "message": "不明なエラーが発生しました"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "header": {
@@ -4524,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "プロンプト忠実度が最も高い、OpenAI の最新の画像生成モデルです。"
+        },
+        "customOpenaiCompatible": {
+          "description": "Connect a self-hosted OpenAI-compatible image server (api_base + model from Fetch)."
         }
       },
       "setDefaultError": {
@@ -5255,6 +5275,9 @@
             },
             "textOnly": {
               "label": "テキストのみ"
+            },
+            "multimodal": {
+              "label": "マルチモーダル (テキスト、画像、音声、動画)"
             }
           },
           "modelTable": {
@@ -5480,6 +5503,18 @@
             "description": "アプリ内でこのプロバイダーを識別するために使用します。",
             "placeholder": "表示名",
             "title": "表示名"
+          },
+          "extraHeaders": {
+            "addButton": {
+              "label": "ヘッダーを追加"
+            },
+            "description": "このプロバイダーへのすべてのリクエストとともに送信される追加のHTTPヘッダー（必要なゲートウェイ向けの `User-Agent: opencode/1.18.18` など）。ここにシークレットを入力しないでください。`Authorization` は使用できません。APIキー欄を使用してください。",
+            "keyInput": {
+              "placeholder": "例: User-Agent"
+            },
+            "keyTitle": "ヘッダー",
+            "title": "追加ヘッダー",
+            "valueTitle": "値"
           },
           "optionalSuffix": {
             "label": "任意"
@@ -7869,9 +7904,19 @@
         },
         "whisper": {
           "subtitle": "OpenAI の汎用音声認識モデル。"
+        },
+        "customStt": {
+          "subtitle": "Self-hosted OpenAI-compatible speech-to-text server"
+        },
+        "customTts": {
+          "subtitle": "Self-hosted OpenAI-compatible text-to-speech server"
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "APIベースURL",
+          "description": "セルフホストサーバー（LocalAI、Kokoro、faster-whisperなど）用のオプションのOpenAI互換ベースURL。空欄 = api.openai.com。コンテナ内からは `localhost` の代わりに `host.docker.internal` を使用してください。"
+        },
         "apiKey": {
           "description": "モデルにアクセスするには、{provider} の [API キー]({url}) を貼り付けてください。",
           "label": "API キー",
@@ -7907,7 +7952,9 @@
           "selfHostedCapExceeded": "セルフホストのエンドポイントは音声言語を最大 {cap} 個までサポートします（開始時に検出）"
         },
         "sttModel": {
-          "label": "STT モデル"
+          "label": "STT モデル",
+          "openaiDescription": "サーバー上のモデル名（セルフホストエンドポイント用の自由記述）。",
+          "placeholder": "例: whisper-1"
         },
         "targetUri": {
           "description": "[Azure Portal（キーとエンドポイント）]({portalUrl}) に表示されるエンドポイントを貼り付けてください。Onyx はこの URL から音声リージョンを抽出します。例：`https://westus.api.cognitive.microsoft.com/` または `https://westus.tts.speech.microsoft.com/`。",
@@ -7916,7 +7963,9 @@
         },
         "ttsModel": {
           "description": "このモデルが、Onyx のテキスト読み上げでデフォルトとして使用されます。",
-          "label": "デフォルトモデル"
+          "label": "デフォルトモデル",
+          "openaiDescription": "サーバー上のモデル名（セルフホストエンドポイント用の自由記述）。",
+          "placeholder": "例: tts-1"
         },
         "updateButton": {
           "label": "更新"
@@ -7926,6 +7975,13 @@
           "label": "ボイス",
           "loadingPlaceholder": "ボイスを読み込んでいます...",
           "placeholder": "ボイスを選択するか、ボイス ID を入力"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "speechToText": {

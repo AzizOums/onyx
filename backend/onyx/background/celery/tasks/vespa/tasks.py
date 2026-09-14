@@ -68,15 +68,16 @@ from onyx.redis.redis_pool import (
     get_redis_replica_client,
     redis_lock_dump,
 )
+from onyx.db.user_group_crud import (
+    delete_user_group,
+    fetch_user_groups,
+    fetch_user_group,
+    mark_user_group_as_synced,
+    prepare_user_group_for_deletion,
+)
 from onyx.redis.redis_usergroup import RedisUserGroup
 from onyx.redis.tenant_redis_client import TenantRedisClient
 from onyx.utils.logger import setup_logger
-from onyx.utils.variable_functionality import (
-    fetch_versioned_implementation,
-    fetch_versioned_implementation_with_fallback,
-    global_version,
-    noop_fallback,
-)
 
 logger = setup_logger()
 
@@ -143,30 +144,20 @@ def check_for_vespa_sync_task(self: Task, *, tenant_id: str) -> bool | None:
 
         # check if any user groups are not synced
         lock_beat.reacquire()
-        if global_version.is_ee_version():
-            try:
-                fetch_user_groups = fetch_versioned_implementation(
-                    "onyx.db.user_group", "fetch_user_groups"
+        usergroup_ids: list[int] = []
+        with get_session_with_current_tenant() as db_session:
+            user_groups = fetch_user_groups(
+                db_session=db_session, only_up_to_date=False
+            )
+
+            usergroup_ids.extend(usergroup.id for usergroup in user_groups)
+
+        for usergroup_id in usergroup_ids:
+            lock_beat.reacquire()
+            with get_session_with_current_tenant() as db_session:
+                try_generate_user_group_sync_tasks(
+                    self.app, usergroup_id, db_session, r, lock_beat, tenant_id
                 )
-            except ModuleNotFoundError:
-                # Always exceptions on the MIT version, which is expected
-                # We shouldn't actually get here if the ee version check works
-                pass
-            else:
-                usergroup_ids: list[int] = []
-                with get_session_with_current_tenant() as db_session:
-                    user_groups = fetch_user_groups(
-                        db_session=db_session, only_up_to_date=False
-                    )
-
-                    usergroup_ids.extend(usergroup.id for usergroup in user_groups)
-
-                for usergroup_id in usergroup_ids:
-                    lock_beat.reacquire()
-                    with get_session_with_current_tenant() as db_session:
-                        try_generate_user_group_sync_tasks(
-                            self.app, usergroup_id, db_session, r, lock_beat, tenant_id
-                        )
 
         # 2/3: VALIDATE: TODO
 
@@ -190,13 +181,6 @@ def check_for_vespa_sync_task(self: Task, *, tenant_id: str) -> bool | None:
                 with get_session_with_current_tenant() as db_session:
                     monitor_document_set_taskset(tenant_id, key_bytes, r, db_session)
             elif key_str.startswith(RedisUserGroup.FENCE_PREFIX):
-                monitor_usergroup_taskset = (
-                    fetch_versioned_implementation_with_fallback(
-                        "onyx.background.celery.tasks.vespa.tasks",
-                        "monitor_usergroup_taskset",
-                        noop_fallback,
-                    )
-                )
                 with get_session_with_current_tenant() as db_session:
                     monitor_usergroup_taskset(tenant_id, key_bytes, r, db_session)
 
@@ -310,12 +294,6 @@ def try_generate_user_group_sync_tasks(
     if rug.fenced:
         # don't generate sync tasks if tasks are still pending
         return None
-
-    # race condition with the monitor/cleanup function if we use a cached result!
-    fetch_user_group = cast(
-        Callable[[Session, int], UserGroup | None],
-        fetch_versioned_implementation("onyx.db.user_group", "fetch_user_group"),
-    )
 
     usergroup = fetch_user_group(db_session, usergroup_id)
     if not usergroup:
@@ -637,3 +615,94 @@ def document_index_metadata_sync_task(
         )
 
     return completion_status == OnyxCeleryTaskCompletionStatus.SUCCEEDED
+
+
+def monitor_usergroup_taskset(
+    tenant_id: str, key_bytes: bytes, r: TenantRedisClient, db_session: Session
+) -> None:
+    """Watch a user-group sync task set and finalize the group when done.
+
+    Ported from the EE tree: flips ``is_up_to_date`` (or completes deletion)
+    once every spawned sync task has finished, then clears the fence.
+    """
+    fence_key = key_bytes.decode("utf-8")
+    usergroup_id_str = RedisUserGroup.get_id_from_fence_key(fence_key)
+    if not usergroup_id_str:
+        task_logger.warning(f"Could not parse usergroup id from {fence_key}")
+        return
+
+    try:
+        usergroup_id = int(usergroup_id_str)
+    except ValueError:
+        task_logger.exception(f"usergroup_id ({usergroup_id_str}) is not an integer!")
+        raise
+
+    rug = RedisUserGroup(tenant_id, usergroup_id)
+    if not rug.fenced:
+        return
+
+    initial_count = rug.payload
+    if initial_count is None:
+        return
+
+    count = r.scard(rug.taskset_key)
+    task_logger.info(
+        f"User group sync progress: usergroup_id={usergroup_id} remaining={count} initial={initial_count}"
+    )
+    if count > 0:
+        update_sync_record_status(
+            db_session=db_session,
+            entity_id=usergroup_id,
+            sync_type=SyncType.USER_GROUP,
+            sync_status=SyncStatus.IN_PROGRESS,
+            num_docs_synced=count,
+        )
+        return
+
+    user_group = fetch_user_group(db_session=db_session, user_group_id=usergroup_id)
+    if user_group:
+        usergroup_name = user_group.name
+        try:
+            if user_group.is_up_for_deletion:
+                # this prepare should have been run when the deletion was scheduled,
+                # but run it again to be sure we're ready to go
+                mark_user_group_as_synced(db_session, user_group)
+                prepare_user_group_for_deletion(db_session, usergroup_id)
+                delete_user_group(db_session=db_session, user_group=user_group)
+
+                update_sync_record_status(
+                    db_session=db_session,
+                    entity_id=usergroup_id,
+                    sync_type=SyncType.USER_GROUP,
+                    sync_status=SyncStatus.SUCCESS,
+                    num_docs_synced=initial_count,
+                )
+
+                task_logger.info(
+                    f"Deleted usergroup: name={usergroup_name} id={usergroup_id}"
+                )
+            else:
+                mark_user_group_as_synced(db_session=db_session, user_group=user_group)
+
+                update_sync_record_status(
+                    db_session=db_session,
+                    entity_id=usergroup_id,
+                    sync_type=SyncType.USER_GROUP,
+                    sync_status=SyncStatus.SUCCESS,
+                    num_docs_synced=initial_count,
+                )
+
+                task_logger.info(
+                    f"Synced usergroup. name={usergroup_name} id={usergroup_id}"
+                )
+        except Exception as e:
+            update_sync_record_status(
+                db_session=db_session,
+                entity_id=usergroup_id,
+                sync_type=SyncType.USER_GROUP,
+                sync_status=SyncStatus.FAILED,
+                num_docs_synced=initial_count,
+            )
+            raise e
+
+    rug.reset()

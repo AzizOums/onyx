@@ -1246,34 +1246,6 @@ minio:
   tolerations: []
   affinity: {}
 
-# Code Interpreter - Python code execution service (beta feature)
-# The code-interpreter subchart's enable condition lives at
-# codeInterpreter.enabled, but the subchart itself is configured under the
-# hyphenated `code-interpreter:` key below — the dependency has no alias, so
-# Helm only passes values nested under the dependency's name. Any other key
-# placed in THIS block is silently ignored.
-codeInterpreter:
-  enabled: true
-
-  # Used by the parent chart to compose CODE_INTERPRETER_BASE_URL; must match
-  # the subchart's service port.
-  service:
-    port: 8000
-
-# Values passed through to the code-interpreter subchart.
-code-interpreter:
-  # API container resources. Workspace archives staged into sandboxes are
-  # routinely tens of MB and the base64-encoded snapshot path roughly doubles
-  # in-flight memory; the subchart's default 512Mi limit repeatedly OOMKilled
-  # this pod in production (and parent OOMs leak spawned code-exec pods).
-  resources:
-    requests:
-      cpu: 100m
-      memory: 512Mi
-    limits:
-      cpu: 1000m
-      memory: 2Gi
-
 ingress:
   enabled: false
   className: ""

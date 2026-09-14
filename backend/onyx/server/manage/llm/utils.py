@@ -10,6 +10,10 @@ Utilities for dynamic LLM providers (Bedrock, Ollama, OpenRouter):
 import re
 from typing import TypedDict
 
+import httpx
+
+from onyx.error_handling.error_codes import OnyxErrorCode
+from onyx.error_handling.exceptions import OnyxError
 from onyx.llm.constants import (
     BEDROCK_MODEL_NAME_MAPPINGS,
     MODEL_PREFIX_TO_VENDOR,
@@ -18,6 +22,9 @@ from onyx.llm.constants import (
     PROVIDER_DISPLAY_NAMES,
     LlmProviderNames,
 )
+from onyx.utils.logger import setup_logger
+
+logger = setup_logger()
 
 
 class ModelMetadata(TypedDict):
@@ -407,3 +414,78 @@ def is_embedding_model(model_name: str) -> bool:
     is_embedding_mode = model_info.get("mode") == "embedding"
 
     return is_embedding_mode
+
+
+def fetch_openai_compatible_model_ids(
+    api_base: str,
+    api_key: str | None = None,
+    source_name: str = "OpenAI-Compatible",
+) -> list[str]:
+    """List model ids from any OpenAI-compatible `/models` endpoint.
+
+    Shared by the image-generation and voice admin flows, which target
+    servers (e.g. local image/audio servers) outside the text-LLM provider
+    registry. Embeddings are excluded; anything else is returned as-is —
+    the caller owns capability filtering. Raises OnyxError on failure.
+    """
+    cleaned_api_base = api_base.strip().rstrip("/")
+    if cleaned_api_base.endswith("/v1"):
+        url = f"{cleaned_api_base}/models"
+    else:
+        url = f"{cleaned_api_base}/v1/models"
+
+    headers = {
+        "HTTP-Referer": "https://onyx.app",
+        "X-Title": "Onyx",
+    }
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+
+    try:
+        response = httpx.get(url, headers=headers, timeout=10.0)
+        response.raise_for_status()
+        response_json = response.json()
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 401:
+            raise OnyxError(
+                OnyxErrorCode.VALIDATION_ERROR,
+                f"Authentication failed: invalid or missing API key for {source_name}.",
+            )
+        elif e.response.status_code == 404:
+            raise OnyxError(
+                OnyxErrorCode.VALIDATION_ERROR,
+                f"{source_name} models endpoint not found at {url}. Please verify the API base URL.",
+            )
+        else:
+            raise OnyxError(
+                OnyxErrorCode.BAD_GATEWAY,
+                f"Failed to fetch {source_name} models: {e}",
+            )
+    except httpx.RequestError as e:
+        logger.warning(
+            "Could not reach OpenAI-compatible models endpoint for %s at %s: %s",
+            source_name,
+            url,
+            e,
+        )
+        raise OnyxError(
+            OnyxErrorCode.BAD_GATEWAY,
+            f"Could not reach {source_name} models endpoint at {url}.",
+        )
+
+    models = response_json.get("data", [])
+    if not isinstance(models, list):
+        raise OnyxError(
+            OnyxErrorCode.VALIDATION_ERROR,
+            f"Unexpected models response from {source_name} at {url}.",
+        )
+
+    model_ids = [
+        model.get("id", "")
+        for model in models
+        if isinstance(model, dict) and model.get("id")
+    ]
+    return sorted(
+        {model_id for model_id in model_ids if not is_embedding_model(model_id)},
+        key=str.lower,
+    )

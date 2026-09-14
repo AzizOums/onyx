@@ -43,6 +43,21 @@ def get_voice_provider(provider: VoiceProvider) -> VoiceProviderInterface:
             default_voice=default_voice,
         )
 
+    elif provider_type == "openai_compatible":
+        # Self-hosted OpenAI-compatible audio server (STT and/or TTS).
+        # Same wire protocol as OpenAI; kept as a separate type so a cloud
+        # OpenAI row and a local row coexist, and STT/TTS defaults can live
+        # on different rows.
+        from onyx.voice.providers.openai import OpenAIVoiceProvider
+
+        return OpenAIVoiceProvider(
+            api_key=api_key,
+            api_base=api_base,
+            stt_model=stt_model,
+            tts_model=tts_model,
+            default_voice=default_voice,
+        )
+
     elif provider_type == "azure":
         from onyx.voice.providers.azure import AzureVoiceProvider
 

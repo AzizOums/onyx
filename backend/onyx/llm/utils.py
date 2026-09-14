@@ -585,6 +585,72 @@ def model_supports_image_input(
     )
 
 
+def _model_supports_multimodal_flow(
+    model_name: str,
+    model_provider: str,
+    deployment_name: str | None,
+    flow: LLMModelFlowType,
+) -> bool:
+    """Shared implementation for AUDIO_INPUT / VIDEO_INPUT capability checks.
+
+    Reads the admin-configured model_configuration flows first; falls back to
+    the models.dev catalog (input modalities) when no stored flow exists.
+    """
+    try:
+        with get_session_with_current_tenant() as db_session:
+            model_config = db_session.scalar(
+                select(ModelConfiguration)
+                .join(
+                    LLMProvider,
+                    ModelConfiguration.llm_provider_id == LLMProvider.id,
+                )
+                .where(
+                    ModelConfiguration.name == model_name,
+                    LLMProvider.provider == model_provider,
+                )
+            )
+            if model_config and flow in model_config.llm_model_flow_types:
+                return True
+    except Exception as e:
+        logger.warning(
+            "Failed to query database for %s model %s %s support: %s",
+            model_provider,
+            model_name,
+            flow.value,
+            e,
+        )
+
+    # Fallback to the models.dev catalog for capability truth.
+    from onyx.llm.modelsdev import lookup_modelsdev_model
+
+    model = lookup_modelsdev_model(model_provider, model_name)
+    if model is None:
+        model = lookup_modelsdev_model(None, model_name)
+    if flow == LLMModelFlowType.AUDIO_INPUT:
+        return model.supports_audio_input if model else False
+    return model.supports_video_input if model else False
+
+
+def model_supports_audio_input(
+    model_name: str,
+    model_provider: str,
+    deployment_name: str | None = None,
+) -> bool:
+    return _model_supports_multimodal_flow(
+        model_name, model_provider, deployment_name, LLMModelFlowType.AUDIO_INPUT
+    )
+
+
+def model_supports_video_input(
+    model_name: str,
+    model_provider: str,
+    deployment_name: str | None = None,
+) -> bool:
+    return _model_supports_multimodal_flow(
+        model_name, model_provider, deployment_name, LLMModelFlowType.VIDEO_INPUT
+    )
+
+
 def model_needs_formatting_reenabled(
     model_name: str, deployment_name: str | None = None
 ) -> bool:

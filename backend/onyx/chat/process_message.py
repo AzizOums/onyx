@@ -5,7 +5,6 @@ An overview can be found in the README.md file in this directory.
 
 import contextvars
 import io
-import os
 import queue
 import re
 import threading
@@ -99,7 +98,6 @@ from onyx.error_handling.exceptions import OnyxError, log_onyx_error
 from onyx.file_processing.extract_file_text import extract_file_text
 from onyx.file_store.models import ChatFileType, InMemoryChatFile
 from onyx.file_store.utils import (
-    get_default_file_store,
     load_in_memory_chat_files,
     verify_user_files,
 )
@@ -142,7 +140,7 @@ from onyx.server.settings.store import load_settings
 from onyx.server.usage_limits import check_llm_cost_limit_for_provider
 from onyx.server.utils import get_json_line
 from onyx.tools.constants import FILE_READER_TOOL_ID, SEARCH_TOOL_ID
-from onyx.tools.models import ChatFile, SearchToolUsage
+from onyx.tools.models import SearchToolUsage
 from onyx.tools.tool_constructor import (
     CustomToolConfig,
     FileReaderToolConfig,
@@ -215,99 +213,6 @@ def _should_enable_slack_search(
     return (source_types is not None and DocumentSource.SLACK in source_types) or (
         persona.id == DEFAULT_PERSONA_ID and source_types is None
     )
-
-
-def _convert_loaded_files_to_chat_files(
-    loaded_files: list[ChatLoadedFile],
-) -> list[ChatFile]:
-    """Convert ChatLoadedFile objects to ChatFile for tool usage (e.g., PythonTool).
-
-    Returns lazy ChatFile objects: ``.content`` materializes via the underlying
-    ``loaded_file.content`` only when a tool actually accesses it. Previously
-    this function gated on ``len(loaded_file.content) > 0`` to filter out
-    zero-byte files, but evaluating ``len(content)`` would force every lazy
-    file to materialize and defeat the OOM fix. The guard is dropped; tools
-    receive zero-byte content for empty files, which PythonTool handles fine
-    (sha256 of empty bytes + upload of an empty body — the LLM will see the
-    empty result and react).
-    """
-    chat_files: list[ChatFile] = []
-    for loaded_file in loaded_files:
-        filename = loaded_file.filename or f"file_{loaded_file.file_id}"
-        # Pull content via a closure so the bytes only flow through one
-        # materialization (the ChatLoadedFile's loader), then ride along.
-        chat_files.append(
-            ChatFile.lazy_from_filename(
-                filename=filename,
-                loader=lambda lf=loaded_file: lf.content,
-            )
-        )
-    return chat_files
-
-
-def _deduped_filename(filename: str, seen_filenames: set[str], file_id: str) -> str:
-    if filename not in seen_filenames:
-        seen_filenames.add(filename)
-        return filename
-
-    stem, suffix = os.path.splitext(filename)
-    deduped_filename = f"{stem}_{file_id}{suffix}"
-    seen_filenames.add(deduped_filename)
-    return deduped_filename
-
-
-def _load_context_user_files_for_tools(
-    user_files: list[UserFile],
-    existing_filenames: set[str],
-) -> list[ChatFile]:
-    """Stage tabular project/persona files for code-interpreter as lazy
-    ChatFile instances.
-
-    Raw bytes are not read here; each ChatFile carries a loader closure that
-    pulls from the file store only when PythonTool actually accesses
-    ``.content`` during staging. This avoids loading every project/persona
-    file into RAM for chats that never invoke the Python tool.
-    """
-    if not user_files:
-        return []
-
-    chat_files: list[ChatFile] = []
-    seen_file_ids: set[str] = set()
-
-    for user_file in user_files:
-        if user_file.file_id in seen_file_ids:
-            continue
-        seen_file_ids.add(user_file.file_id)
-
-        if not mime_type_to_chat_file_type(user_file.file_type).use_metadata_only():
-            continue
-
-        filename = _deduped_filename(
-            user_file.name or f"file_{user_file.id}",
-            existing_filenames,
-            str(user_file.id),
-        )
-
-        def _load(
-            file_id: str = user_file.file_id, user_file_id: UUID = user_file.id
-        ) -> bytes:
-            # Preserve the pre-lazy degraded-but-functional behavior: if the
-            # underlying file is gone or temporarily unreachable, log it and
-            # hand PythonTool an empty payload instead of letting the
-            # exception propagate out of ChatFile.__getattribute__.
-            try:
-                return get_default_file_store().read_file(file_id, mode="b").read()
-            except Exception as e:
-                logger.warning(
-                    "Failed to load context file %s for Python execution: %s",
-                    user_file_id,
-                    e,
-                )
-                return b""
-
-        chat_files.append(ChatFile.lazy_from_filename(filename=filename, loader=_load))
-
-    return chat_files
 
 
 def resolve_context_user_files(
@@ -698,6 +603,9 @@ def build_chat_turn(
     incognito_policy_fn = partial(
         incognito_llm_request_policy, chat_session.incognito_record_mode
     )
+    # One stable upstream session per Onyx chat session for session-gated
+    # providers (OpenCode Zen free tier): affinity plus per-session quotas.
+    provider_session_scope = f"chat-session:{chat_session.id}"
     for override in selected_overrides:
         llm = get_llm_for_persona(
             persona=persona,
@@ -705,6 +613,7 @@ def build_chat_turn(
             llm_override=override,
             additional_headers=litellm_additional_headers,
             policy_fn=incognito_policy_fn,
+            provider_session_scope=provider_session_scope,
         )
         check_llm_cost_limit_for_provider(
             db_session=db_session,
@@ -930,17 +839,8 @@ def build_chat_turn(
     ):
         forced_tool_id = None
 
-    # TODO(nmgarza5): Once summarization is done, we don't need to load all files from the beginning.
     # Load all files needed for this chat chain into memory.
     files = load_all_chat_files(chat_history, db_session)
-    # Convert loaded files to ChatFile format for tools like PythonTool
-    chat_files_for_tools = _convert_loaded_files_to_chat_files(files)
-    chat_files_for_tools.extend(
-        _load_context_user_files_for_tools(
-            context_user_files,
-            {chat_file.filename for chat_file in chat_files_for_tools},
-        )
-    )
 
     # ── Reserve assistant message ID(s) → yield to frontend ──────────────────
     if is_multi:
@@ -1088,7 +988,6 @@ def build_chat_turn(
         tool_id_to_name_map=tool_id_to_name_map,
         forced_tool_id=forced_tool_id,
         files=files,
-        chat_files_for_tools=chat_files_for_tools,
         custom_agent_prompt=custom_agent_prompt,
         user_memory_context=user_memory_context,
         skip_clarification=skip_clarification,
@@ -1401,7 +1300,6 @@ def _run_models(
                     forced_tool_id=setup.forced_tool_id,
                     user_identity=setup.user_identity,
                     chat_session_id=str(setup.chat_session_id),
-                    chat_files=setup.chat_files_for_tools,
                     reasoning_effort=setup.reasoning_effort,
                     include_citations=setup.new_msg_req.include_citations,
                     all_injected_file_metadata=setup.all_injected_file_metadata,

@@ -5,7 +5,6 @@ from typing import Any, Literal
 
 from onyx.chat.chat_state import ChatStateContainer
 from onyx.chat.chat_utils import (
-    build_python_chat_files_from_search_docs,
     create_tool_call_failure_messages,
 )
 from onyx.chat.citation_processor import (
@@ -65,11 +64,9 @@ from onyx.server.query_and_chat.streaming_models import (
 from onyx.tools.built_in_tools import CITEABLE_TOOLS_NAMES, STOPPING_TOOLS_NAMES
 from onyx.tools.interface import Tool
 from onyx.tools.models import (
-    ChatFile,
     CustomToolCallSummary,
     CustomToolUserFileSnapshot,
     MemoryToolResponseSnapshot,
-    PythonToolRichResponse,
     ToolCallInfo,
     ToolCallKickoff,
     ToolResponse,
@@ -77,7 +74,6 @@ from onyx.tools.models import (
 from onyx.tools.tool_implementations.images.models import FinalImageGenerationResponse
 from onyx.tools.tool_implementations.memory.models import MemoryToolResponse
 from onyx.tools.tool_implementations.open_url.open_url_tool import OpenURLTool
-from onyx.tools.tool_implementations.python.python_tool import PythonTool
 from onyx.tools.tool_implementations.search.search_tool import SearchTool
 from onyx.tools.tool_implementations.web_search.utils import extract_url_snippet_map
 from onyx.tools.tool_implementations.web_search.web_search_tool import WebSearchTool
@@ -720,7 +716,6 @@ def select_reminder_text(
     out_of_cycles: bool,
     persona_task_prompt: str | None,
     include_citation_reminder: bool,
-    include_file_reminder: bool,
 ) -> str | None:
     """Choose the reminder appended after a tool cycle.
 
@@ -735,7 +730,6 @@ def select_reminder_text(
     return build_reminder_message(
         reminder_text=persona_task_prompt,
         include_citation_reminder=include_citation_reminder,
-        include_file_reminder=include_file_reminder,
         is_last_cycle=out_of_cycles,
     )
 
@@ -754,7 +748,6 @@ def run_llm_loop(
     forced_tool_id: int | None = None,
     user_identity: LLMUserIdentity | None = None,
     chat_session_id: str | None = None,
-    chat_files: list[ChatFile] | None = None,
     reasoning_effort: ReasoningEffort = ReasoningEffort.AUTO,
     include_citations: bool = True,
     all_injected_file_metadata: dict[str, FileToolMetadata] | None = None,
@@ -774,11 +767,6 @@ def run_llm_loop(
         )  # Here for lazy load LiteLLM
 
         initialize_litellm()
-
-        # Normalize chat_files to a mutable list so we can extend it mid-loop
-        # when a search hit carries an attached file the Python tool should
-        # see.
-        chat_files = list(chat_files or [])
 
         # Track when the loop starts for calculating time-to-answer
         loop_start_time = time.monotonic()
@@ -839,7 +827,6 @@ def run_llm_loop(
         just_ran_web_search: bool = False
         has_open_url_tool: bool = any(isinstance(tool, OpenURLTool) for tool in tools)
         has_called_search_tool: bool = False
-        code_interpreter_file_generated: bool = False
         fallback_extraction_attempted: bool = False
         citation_mapping: dict[int, str] = {}  # Maps citation_num -> document_id/URL
 
@@ -1008,7 +995,6 @@ def run_llm_loop(
                 persona_task_prompt=processed_task_prompt,
                 include_citation_reminder=should_cite_documents
                 or always_cite_documents,
-                include_file_reminder=code_interpreter_file_generated,
             )
 
             reminder_msg = (
@@ -1123,7 +1109,6 @@ def run_llm_loop(
                 next_citation_num=citation_processor.get_next_citation_number(),
                 max_concurrent_tools=None,
                 skip_search_query_expansion=has_called_search_tool,
-                chat_files=chat_files,
                 url_snippet_map=extract_url_snippet_map(gathered_documents or []),
                 inject_memories_in_prompt=inject_memories_in_prompt,
             )
@@ -1149,18 +1134,6 @@ def run_llm_loop(
                 # Track if search tool was called (for skipping query expansion on subsequent calls)
                 if tool_call.tool_name == SearchTool.NAME:
                     has_called_search_tool = True
-
-                # Track if code interpreter generated files with download links
-                if (
-                    tool_call.tool_name == PythonTool.NAME
-                    and not code_interpreter_file_generated
-                ):
-                    try:
-                        parsed = json.loads(tool_response.llm_facing_response)
-                        if parsed.get("generated_files"):
-                            code_interpreter_file_generated = True
-                    except (json.JSONDecodeError, AttributeError):
-                        pass
 
                 tools_by_name = {tool.name: tool for tool in final_tools}
 
@@ -1194,34 +1167,12 @@ def run_llm_loop(
                     if search_docs and tool_call.tool_name == WebSearchTool.NAME:
                         just_ran_web_search = True
 
-                    # Stage any raw source files attached to these hits into
-                    # the session's chat_files so the next Python tool call
-                    # sees them already uploaded under their display names.
-                    if search_docs:
-                        staged = build_python_chat_files_from_search_docs(
-                            search_docs=search_docs,
-                        )
-                        if staged:
-                            existing_filenames = {cf.filename for cf in chat_files}
-                            chat_files.extend(
-                                cf
-                                for cf in staged
-                                if cf.filename not in existing_filenames
-                            )
-
                 # Extract generated_images if this is an image generation tool response
                 generated_images = None
                 if isinstance(
                     tool_response.rich_response, FinalImageGenerationResponse
                 ):
                     generated_images = tool_response.rich_response.generated_images
-
-                # Extract generated_files if this is a code interpreter response
-                generated_files = None
-                if isinstance(tool_response.rich_response, PythonToolRichResponse):
-                    generated_files = (
-                        tool_response.rich_response.generated_files or None
-                    )
 
                 # Custom tools save image/CSV blobs and return their ids.
                 generated_file_ids = None
@@ -1299,7 +1250,6 @@ def run_llm_loop(
                     tool_call_response=saved_response,
                     search_docs=displayed_docs or search_docs,
                     generated_images=generated_images,
-                    generated_files=generated_files,
                     generated_file_ids=generated_file_ids,
                 )
                 # Add to state container for partial save support

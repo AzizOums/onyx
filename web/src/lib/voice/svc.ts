@@ -31,6 +31,7 @@ export async function testVoiceProvider(request: {
   provider_type: string;
   api_key?: string;
   target_uri?: string;
+  api_base?: string;
   use_stored_key?: boolean;
 }): Promise<Response> {
   return fetch(`${VOICE_PROVIDERS_URL}/test`, {
@@ -56,6 +57,45 @@ export async function fetchVoicesByType(
   providerType: string
 ): Promise<Response> {
   return fetch(`/api/admin/voice/voices?provider_type=${providerType}`);
+}
+
+export interface FetchedVoiceModel {
+  id: string;
+}
+
+/**
+ * Lists models on an OpenAI-compatible audio server (`GET {base}/models`).
+ * Embeddings are excluded server-side; pick an STT/TTS model, then the
+ * connection test verifies it transcribes/synthesizes.
+ */
+export async function fetchVoiceModels(
+  apiBase: string,
+  apiKey?: string
+): Promise<{ models: FetchedVoiceModel[]; error?: string }> {
+  try {
+    const response = await fetch("/api/admin/voice/available-models", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ api_base: apiBase, api_key: apiKey || null }),
+    });
+    if (!response.ok) {
+      let errorMessage = "Failed to fetch models";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.detail || errorData.message || errorMessage;
+      } catch {
+        // ignore JSON parsing errors
+      }
+      return { models: [], error: errorMessage };
+    }
+    const models: FetchedVoiceModel[] = await response.json();
+    return { models };
+  } catch (error) {
+    return {
+      models: [],
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
 }
 
 /** Permanently removes a voice provider and its stored credentials. */

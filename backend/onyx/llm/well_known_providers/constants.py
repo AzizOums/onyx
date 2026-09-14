@@ -33,6 +33,16 @@ PORTKEY_DEFAULT_API_MODE = PORTKEY_API_MODE_CHAT_COMPLETIONS
 PORTKEY_DEFAULT_API_BASE_OPENAI = "https://api.portkey.ai/v1"
 PORTKEY_DEFAULT_API_BASE_ANTHROPIC = "https://api.portkey.ai"
 
+OPENCODE_PROVIDER_NAME = "opencode"
+# Which API surface an OpenCode Zen provider targets; stored in custom_config.
+# Chat completions serves most free models, but muse-spark contributor-free
+# models are Responses-only upstream (500 on /chat/completions, 200 on
+# /responses). The admin picks per provider, mirroring Bifrost/Portkey.
+OPENCODE_API_MODE_CONFIG_KEY = "opencode_api_mode"
+OPENCODE_API_MODE_CHAT_COMPLETIONS = "chat_completions"
+OPENCODE_API_MODE_RESPONSES = "responses"
+OPENCODE_DEFAULT_API_MODE = OPENCODE_API_MODE_CHAT_COMPLETIONS
+
 # Providers that use optional Bearer auth from custom_config
 PROVIDERS_WITH_SPECIAL_API_KEY_HANDLING: dict[str, str] = {
     LlmProviderNames.LM_STUDIO: LM_STUDIO_API_KEY_CONFIG_KEY,

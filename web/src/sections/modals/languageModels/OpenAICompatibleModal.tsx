@@ -23,11 +23,14 @@ import {
   APIKeyField,
   ModelSelectionField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModalWrapper,
   useApiBaseSubDescription,
 } from "@/sections/modals/languageModels/shared";
 import { refreshLlmProviderCaches } from "@/lib/languageModels/cache";
+import { ModelsDevBrowser } from "@/sections/modals/languageModels/ModelsDevBrowser";
+import type { KeyValue } from "@/refresh-components/inputs/InputKeyValue";
 
 interface OpenAICompatibleModalValues extends BaseLLMFormValues {
   api_key: string;
@@ -71,6 +74,25 @@ function OpenAICompatibleModalInternals({
         placeholder="http://localhost:8000/v1"
       />
 
+      <ModelsDevBrowser
+        onApply={(picked) =>
+          formikProps.setValues((prev) => ({
+            ...prev,
+            model_configurations: picked.map((m) => ({
+              name: m.id,
+              display_name: m.name,
+              is_visible: true,
+              max_input_tokens: m.context_limit,
+              supports_image_input: m.supports_image_input,
+              supports_audio_input: m.supports_audio_input,
+              supports_video_input: m.supports_video_input,
+              supports_reasoning: m.reasoning,
+              effectiveDisplayName: m.name,
+            })),
+          }))
+        }
+      />
+
       <APIKeyField
         optional
         subDescription={t("openAiCompatible.apiKeyField.description")}
@@ -78,6 +100,8 @@ function OpenAICompatibleModalInternals({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField />
         </>
@@ -99,6 +123,13 @@ function OpenAICompatibleModalInternals({
   );
 }
 
+export interface OpenAICompatibleModalProps extends LLMProviderFormProps {
+  /** Override the provider id (e.g. a dedicated gateway reusing this form). */
+  providerOverride?: LLMProviderName;
+  /** Extra headers prefilled for a brand-new provider (edits keep stored ones). */
+  presetExtraHeaders?: KeyValue[];
+}
+
 export default function OpenAICompatibleModal({
   variant = "llm-configuration",
   existingLlmProvider,
@@ -106,18 +137,22 @@ export default function OpenAICompatibleModal({
   onOpenChange,
   onSuccess,
   analyticsSource,
-}: LLMProviderFormProps) {
+  providerOverride,
+  presetExtraHeaders,
+}: OpenAICompatibleModalProps) {
   const t = useTranslations("admin.languageModels.modals");
   const isOnboarding = variant === "onboarding";
   const { mutate } = useSWRConfig();
+  const providerName = providerOverride ?? LLMProviderName.OPENAI_COMPATIBLE;
 
   const onClose = () => onOpenChange?.(false);
 
-  const initialValues = useInitialValues(
-    isOnboarding,
-    LLMProviderName.OPENAI_COMPATIBLE,
-    existingLlmProvider
-  ) as OpenAICompatibleModalValues;
+  const initialValues = {
+    ...useInitialValues(isOnboarding, providerName, existingLlmProvider),
+    ...(!existingLlmProvider && presetExtraHeaders
+      ? { extra_headers_list: presetExtraHeaders }
+      : {}),
+  } as OpenAICompatibleModalValues;
 
   const validationSchema = buildValidationSchema(t, isOnboarding, {
     apiBase: true,
@@ -125,7 +160,7 @@ export default function OpenAICompatibleModal({
 
   return (
     <ModalWrapper
-      providerName={LLMProviderName.OPENAI_COMPATIBLE}
+      providerName={providerName}
       llmProvider={existingLlmProvider}
       onClose={onClose}
       initialValues={initialValues}
@@ -139,7 +174,7 @@ export default function OpenAICompatibleModal({
             (isOnboarding
               ? LLMProviderConfiguredSource.CHAT_ONBOARDING
               : LLMProviderConfiguredSource.ADMIN_PAGE),
-          providerName: LLMProviderName.OPENAI_COMPATIBLE,
+          providerName,
           values,
           initialValues,
           existingLlmProvider,

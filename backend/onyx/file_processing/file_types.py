@@ -94,7 +94,23 @@ class OnyxFileExtensions:
         ".jpeg",
         ".webp",
     }
+    AUDIO_EXTENSIONS = {
+        ".mp3",
+        ".wav",
+        ".m4a",
+        ".ogg",
+        ".flac",
+        ".aiff",
+    }
+    VIDEO_EXTENSIONS = {
+        ".mp4",
+        ".webm",
+        ".mov",
+        ".mkv",
+    }
 
     TEXT_AND_DOCUMENT_EXTENSIONS = PLAIN_TEXT_EXTENSIONS.union(DOCUMENT_EXTENSIONS)
 
-    ALL_ALLOWED_EXTENSIONS = TEXT_AND_DOCUMENT_EXTENSIONS.union(IMAGE_EXTENSIONS)
+    ALL_ALLOWED_EXTENSIONS = TEXT_AND_DOCUMENT_EXTENSIONS.union(
+        IMAGE_EXTENSIONS
+    ).union(AUDIO_EXTENSIONS).union(VIDEO_EXTENSIONS)

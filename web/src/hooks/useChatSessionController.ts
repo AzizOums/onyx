@@ -287,12 +287,19 @@ export default function useChatSessionController({
         // Added and deleted in this function only, so an entry can never
         // outlive its tail.
         resumingRuns.add(runId);
+        // The run is still generating server-side: surface the streaming
+        // state so the input bar offers ■ stop (server cancel via the stop
+        // fence) instead of ↑ send. Released in the finally below.
+        useChatSessionStore.getState().updateChatState(sessionId, "streaming");
         // The reserved row's placeholder text would render above the live
         // timeline.
         node.message = "";
         const accumulated: Packet[] = [];
         let lastFlush = 0;
         let trailingFlush: ReturnType<typeof setTimeout> | null = null;
+        // Whether the tail observed a terminal packet. Decides in the
+        // finally whether the input bar goes back to idle.
+        let sawStopPacket = false;
         // updateSessionAndMessageTree re-points currentSessionId at this
         // session; once the user navigates elsewhere, any further store write
         // from this tail would hijack their new session's sends.
@@ -328,6 +335,9 @@ export default function useChatSessionController({
             if (packet.obj.type === "chat_heartbeat") {
               continue;
             }
+            if (packet.obj.type === "stop") {
+              sawStopPacket = true;
+            }
             accumulated.push(packet);
             const now = Date.now();
             if (now - lastFlush >= 100) {
@@ -355,6 +365,7 @@ export default function useChatSessionController({
             flush();
             // Settle final state (message text, citations, documents) from
             // the persisted session.
+            let runStillActive = !sawStopPacket;
             try {
               const settledResponse = await fetch(
                 `/api/chat/get-chat-session/${sessionId}`
@@ -366,9 +377,18 @@ export default function useChatSessionController({
                   sessionId,
                   processRawChatHistory(settled.messages, settled.packets)
                 );
+                runStillActive = settled.current_run != null;
               }
             } catch (error) {
               console.error("Post-resume session refresh failed", { error });
+            }
+            // The run ended (terminal STOP seen) or is gone server-side:
+            // release the input bar. A newer run keeps streaming state via
+            // its own lifecycle — never clobber it here.
+            if (sawStopPacket || !runStillActive) {
+              useChatSessionStore
+                .getState()
+                .updateChatState(sessionId, "input");
             }
           }
         }

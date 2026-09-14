@@ -312,7 +312,7 @@ describe("usePacedTurnGroups", () => {
       expect(result.current.pacedTurnGroups.length).toBe(1);
 
       // Add step of different type
-      const step2 = createStep(1, 0, PacketType.PYTHON_TOOL_START);
+      const step2 = createStep(1, 0, PacketType.CUSTOM_TOOL_START);
       rerender({
         turnGroups: [createTurnGroup([step1]), createTurnGroup([step2])],
       });

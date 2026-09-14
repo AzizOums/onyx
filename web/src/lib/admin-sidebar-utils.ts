@@ -1,5 +1,4 @@
 import { IconFunctionComponent } from "@opal/types";
-import { SvgArrowUpCircle } from "@opal/icons";
 import {
   ADMIN_ROUTES,
   AdminRouteEntry,
@@ -21,7 +20,6 @@ export type AdminNavItemId =
   | "webSearch"
   | "imageGeneration"
   | "voice"
-  | "codeInterpreter"
   | "chatPreferences"
   | "craftAccess"
   | "craftApps"
@@ -50,7 +48,6 @@ export type AdminNavItemId =
   | "queryHistory"
   | "tracing"
   | "exportLogs"
-  | "upgradePlan";
 
 /**
  * Stable id of one sidebar section heading. The visible label is the
@@ -77,7 +74,6 @@ export const NAV_ITEM_IDS: Record<
   WEB_SEARCH: "webSearch",
   IMAGE_GENERATION: "imageGeneration",
   VOICE: "voice",
-  CODE_INTERPRETER: "codeInterpreter",
   CHAT_PREFERENCES: "chatPreferences",
   CRAFT_ACCESS: "craftAccess",
   CRAFT_APPS: "craftApps",
@@ -96,12 +92,10 @@ export const NAV_ITEM_IDS: Record<
   API_KEYS: "serviceAccounts",
   SLACK_BOTS: "slackIntegration",
   DISCORD_BOTS: "discordIntegration",
-  HOOKS: "hookExtensions",
   USERS: "users",
   GROUPS: "groups",
   SCIM: "scim",
   OAUTH_TEST: null,
-  BILLING: "plansAndBilling",
   THEME: "appearanceAndTheming",
   SECURITY_HARDENING: "securityAndHardening",
   SSO_PROVIDERS: "ssoProviders",
@@ -207,17 +201,16 @@ export function buildItems(
     if (nameId === null) continue;
     if (!userCanAccess(route.requiredPermission)) continue;
     if (route.visibleWhen && !route.visibleWhen(flags)) continue;
-
-    const disabled =
-      route.requiredTier !== null &&
-      !tierAtLeast(flags.tier, route.requiredTier);
+    // Community build: tier-gated entries (Enterprise/Business) have no
+    // backend in this build — hide them instead of showing dead upsells.
+    if (route.requiredTier !== null) continue;
 
     const item: SidebarItemEntry = {
       nameId,
       icon: route.icon,
       link: route.path,
       sectionId: sectionIdFor(route.section),
-      disabled,
+      disabled: false,
       requiredTier: route.requiredTier,
     };
 
@@ -227,18 +220,6 @@ export function buildItems(
     }
 
     items.push(item);
-  }
-
-  if (
-    userCanAccess(Permission.FULL_ADMIN_PANEL_ACCESS) &&
-    !flags.hasSubscription
-  ) {
-    items.push({
-      sectionId: null,
-      nameId: "upgradePlan",
-      icon: SvgArrowUpCircle,
-      link: ADMIN_ROUTES.BILLING.path,
-    });
   }
 
   return items;

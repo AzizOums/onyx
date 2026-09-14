@@ -32,9 +32,6 @@ from onyx.server.features.mcp.credentials import (
 from onyx.tools.built_in_tools import get_built_in_tool_by_id
 from onyx.tools.interface import Tool
 from onyx.tools.models import DynamicSchemaInfo, SearchToolUsage
-from onyx.tools.tool_implementations.coding_agent.coding_agent_tool import (
-    CodingAgentTool,
-)
 from onyx.tools.tool_implementations.custom.custom_tool import (
     build_custom_tools_from_openapi_schema_and_headers,
 )
@@ -45,7 +42,6 @@ from onyx.tools.tool_implementations.images.image_generation_tool import (
 from onyx.tools.tool_implementations.mcp.mcp_tool import MCPTool
 from onyx.tools.tool_implementations.memory.memory_tool import MemoryTool
 from onyx.tools.tool_implementations.open_url.open_url_tool import OpenURLTool
-from onyx.tools.tool_implementations.python.python_tool import PythonTool
 from onyx.tools.tool_implementations.search.search_tool import SearchTool
 from onyx.tools.tool_implementations.web_search.web_search_tool import WebSearchTool
 from onyx.utils.headers import header_dict_to_header_list
@@ -334,22 +330,6 @@ def _construct_tools_impl(
                     raise ValueError(
                         "Open URL tool requires a web content provider, please contact your Onyx admin to get it configured!"
                     )
-
-            # Handle Python/Code Interpreter Tool
-            elif tool_cls.__name__ == PythonTool.__name__:
-                tool_dict[db_tool_model.id] = [
-                    PythonTool(tool_id=db_tool_model.id, emitter=emitter)
-                ]
-
-            # Handle Coding Agent Tool
-            elif tool_cls.__name__ == CodingAgentTool.__name__:
-                tool_dict[db_tool_model.id] = [
-                    CodingAgentTool(
-                        tool_id=db_tool_model.id,
-                        emitter=emitter,
-                        llm=llm,
-                    )
-                ]
 
             # Handle File Reader Tool
             elif tool_cls.__name__ == FileReaderTool.__name__:

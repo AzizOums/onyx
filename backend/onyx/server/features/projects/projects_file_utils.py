@@ -221,6 +221,27 @@ def categorize_uploaded_files(
 
             extension = get_file_ext(filename)
 
+            # Audio/video attachments: stored as-is (no text extraction), sent
+            # natively to multimodal models. Never indexed.
+            if (
+                extension in OnyxFileExtensions.AUDIO_EXTENSIONS
+                or extension in OnyxFileExtensions.VIDEO_EXTENSIONS
+            ):
+                if (
+                    max_upload_size_bytes is not None
+                    and is_upload_too_large(upload, max_upload_size_bytes)
+                ):
+                    results.rejected.append(
+                        RejectedFile(
+                            filename=filename, reason="File exceeds size limit"
+                        )
+                    )
+                    continue
+                results.acceptable.append(upload)
+                results.acceptable_file_to_token_count[filename] = 0
+                results.skip_indexing.add(filename)
+                continue
+
             # If image, estimate tokens via dedicated method first
             if extension in OnyxFileExtensions.IMAGE_EXTENSIONS:
                 try:

@@ -12,6 +12,7 @@ from onyx.db.engine.sql_engine import get_session_with_current_tenant
 from onyx.db.models import Sandbox
 from onyx.redis.redis_pool import get_redis_client
 from onyx.redis.redis_tenant_work_gating import maybe_mark_tenant_active
+from onyx.server.features.build.configs import ENABLE_CRAFT
 from onyx.server.features.build.configs import SANDBOX_IDLE_TIMEOUT_SECONDS
 from onyx.server.features.build.db.sandbox import (
     get_latest_snapshot_for_session,
@@ -55,6 +56,12 @@ def cleanup_idle_sandboxes_task(self: Task, *, tenant_id: str) -> None:  # noqa:
     RUNNING for retry next sweep.
     """
     task_logger.info(f"cleanup_idle_sandboxes_task starting for tenant {tenant_id}")
+
+    # Craft disabled: there are no sandboxes to sweep and the sandbox manager
+    # would fail to initialize (K8s kubeconfig / Docker proxy requirements).
+    if not ENABLE_CRAFT:
+        task_logger.debug("cleanup_idle_sandboxes_task - craft disabled, skipping")
+        return
 
     redis_client = get_redis_client(tenant_id=tenant_id)
     lock: RedisLock = redis_client.lock(

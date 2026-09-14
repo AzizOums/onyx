@@ -28,6 +28,7 @@ import {
   APIKeyField,
   ModelSelectionField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModalWrapper,
 } from "@/sections/modals/languageModels/shared";
@@ -185,6 +186,8 @@ function PortkeyModalInternals({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField />
         </>

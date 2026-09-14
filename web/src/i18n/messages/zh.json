@@ -4412,6 +4412,10 @@
         "title": "连接一个图像生成模型，以便在对话中使用。"
       },
       "form": {
+        "apiBase": {
+          "label": "API 基础 URL",
+          "idle": "自托管服务器（例如 LocalAI）的可选 OpenAI 兼容基础 URL。留空 = api.openai.com。"
+        },
         "apiKey": {
           "comboPlaceholder": "输入新的 API 密钥或选择现有提供商",
           "idle": "输入新的 API 密钥或选择现有提供商。",
@@ -4471,6 +4475,12 @@
           "label": "位置",
           "required": "位置为必填项"
         },
+        "modelName": {
+          "label": "模型名称",
+          "idle": "可选覆盖，例如 LocalAI 图库模型。留空 = {model}。",
+          "required": "Model name is required",
+          "customPlaceholder": "Fetch models from the server above, then pick one"
+        },
         "projectId": {
           "idle": "已启用 Vertex AI 的 GCP 项目。Onyx 使用 pod 绑定的服务账号进行身份验证（GKE Workload Identity）。",
           "label": "GCP 项目 ID",
@@ -4484,6 +4494,13 @@
         },
         "unknownError": {
           "message": "发生未知错误"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "header": {
@@ -4524,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "OpenAI 最新的图像生成模型，提示词还原度最高。"
+        },
+        "customOpenaiCompatible": {
+          "description": "Connect a self-hosted OpenAI-compatible image server (api_base + model from Fetch)."
         }
       },
       "setDefaultError": {
@@ -5255,6 +5275,9 @@
             },
             "textOnly": {
               "label": "仅文本"
+            },
+            "multimodal": {
+              "label": "多模态 (文本、图像、音频、视频)"
             }
           },
           "modelTable": {
@@ -5480,6 +5503,18 @@
             "description": "用于在应用中标识此提供商。",
             "placeholder": "显示名称",
             "title": "显示名称"
+          },
+          "extraHeaders": {
+            "addButton": {
+              "label": "添加请求头"
+            },
+            "description": "随每次请求发送给此提供商的额外 HTTP 请求头（例如，需要它的网关使用 `User-Agent: opencode/1.18.18`）。请勿在此处填写密钥——不允许使用 `Authorization`，请改用 API 密钥字段。",
+            "keyInput": {
+              "placeholder": "例如 User-Agent"
+            },
+            "keyTitle": "请求头",
+            "title": "额外请求头",
+            "valueTitle": "值"
           },
           "optionalSuffix": {
             "label": "可选"
@@ -7869,9 +7904,19 @@
         },
         "whisper": {
           "subtitle": "OpenAI 的通用语音识别模型。"
+        },
+        "customStt": {
+          "subtitle": "Self-hosted OpenAI-compatible speech-to-text server"
+        },
+        "customTts": {
+          "subtitle": "Self-hosted OpenAI-compatible text-to-speech server"
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "API 基础 URL",
+          "description": "自托管服务器（例如 LocalAI、Kokoro、faster-whisper）的可选 OpenAI 兼容基础 URL。留空 = api.openai.com。在容器内请使用 `host.docker.internal` 而不是 `localhost`。"
+        },
         "apiKey": {
           "description": "粘贴来自 {provider} 的 [API 密钥]({url})，以访问您的模型。",
           "label": "API 密钥",
@@ -7907,7 +7952,9 @@
           "selfHostedCapExceeded": "自托管端点最多支持 {cap} 种语音语言（在开始时检测）"
         },
         "sttModel": {
-          "label": "STT 模型"
+          "label": "STT 模型",
+          "openaiDescription": "您服务器上的模型名称（自托管端点可自由填写）。",
+          "placeholder": "例如 whisper-1"
         },
         "targetUri": {
           "description": "粘贴 [Azure Portal（密钥和终结点）]({portalUrl}) 中显示的终结点。Onyx 会从该 URL 中提取语音区域。示例：`https://westus.api.cognitive.microsoft.com/` 或 `https://westus.tts.speech.microsoft.com/`。",
@@ -7916,7 +7963,9 @@
         },
         "ttsModel": {
           "description": "Onyx 将默认使用此模型进行文字转语音。",
-          "label": "默认模型"
+          "label": "默认模型",
+          "openaiDescription": "您服务器上的模型名称（自托管端点可自由填写）。",
+          "placeholder": "例如 tts-1"
         },
         "updateButton": {
           "label": "更新"
@@ -7926,6 +7975,13 @@
           "label": "音色",
           "loadingPlaceholder": "正在加载音色...",
           "placeholder": "选择音色或输入音色 ID"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "speechToText": {

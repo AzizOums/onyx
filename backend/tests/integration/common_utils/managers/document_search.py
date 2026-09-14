@@ -1,7 +1,3 @@
-from ee.onyx.server.query_and_chat.models import (
-    SearchFullResponse,
-    SendSearchQueryRequest,
-)
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser
@@ -14,32 +10,25 @@ class DocumentSearchManager:
         user_performing_action: DATestUser,
     ) -> list[str]:
         """
-        Search for documents using the EE search API.
+        Search for documents using the Community Edition search API.
 
         Args:
             query: The search query string
             user_performing_action: The user performing the search (for auth)
 
         Returns:
-            A list of document content strings (blurbs) from the search results
+            A list of document content strings from the search results
         """
-        search_request = SendSearchQueryRequest(
-            search_query=query,
-            filters=None,
-            stream=False,
-        )
         result = client.post(
-            url=f"{API_SERVER_URL}/search/send-search-message",
-            json=search_request.model_dump(),
+            url=f"{API_SERVER_URL}/search",
+            json={"query": query},
             headers=user_performing_action.headers,
         )
         result.raise_for_status()
         result_json = result.json()
-        search_response = SearchFullResponse(**result_json)
 
-        # Return the blurbs as the document content
-        # For small documents (like test docs), the blurb should contain the full content
+        # Return the content of each result section
         document_content_list: list[str] = [
-            doc.blurb for doc in search_response.search_docs
+            section["content"] for section in result_json["results"]
         ]
         return document_content_list

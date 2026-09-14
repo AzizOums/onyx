@@ -32,19 +32,55 @@ from onyx.llm.model_response import Delta
 from onyx.llm.models import (
     AssistantMessage,
     ChatCompletionMessage,
+    ContentPart,
     FunctionCall,
     ImageContentPart,
     ImageUrlDetail,
+    InputAudioContentPart,
+    InputAudioDetail,
     ReasoningEffort,
     SystemMessage,
     TextContentPart,
     ToolCall,
     ToolMessage,
     UserMessage,
+    VideoContentPart,
+    VideoUrlContentPart,
+    VideoUrlDetail,
+)
+from onyx.llm.opencode import (
+    OPENCODE_MAX_VIDEO_BASE64_CHARS,
+    OPENCODE_SUPPORTED_VIDEO_MIMES,
+    is_opencode_gateway,
 )
 from onyx.llm.prompt_cache.processor import process_with_prompt_cache
 from onyx.llm.request_context import get_llm_request_params
-from onyx.llm.utils import model_needs_formatting_reenabled, model_supports_image_input
+from onyx.llm.utils import (
+    model_needs_formatting_reenabled,
+    model_supports_audio_input,
+    model_supports_image_input,
+    model_supports_video_input,
+)
+
+
+def get_audio_format_from_filename(filename: str | None) -> str:
+    """Map a filename extension to the OpenAI input_audio format token."""
+    ext = (filename or "").rsplit(".", 1)[-1].lower()
+    if ext == "aiff":
+        return "aiff"
+    if ext == "mpeg":
+        return "mp3"
+    return ext or "mp3"
+
+
+def get_video_mime_from_filename(filename: str | None) -> str:
+    ext = (filename or "").rsplit(".", 1)[-1].lower()
+    return {
+        "mp4": "video/mp4",
+        "webm": "video/webm",
+        "mov": "video/quicktime",
+        "mkv": "video/x-matroska",
+    }.get(ext, "video/mp4")
 from onyx.prompts.chat_prompts import (
     CODE_BLOCK_MARKDOWN,
     IMAGE_DROP_REMINDER,
@@ -873,8 +909,26 @@ def translate_history_to_llm_format(
     # provider 400, so replay a text marker instead. Admins can mark custom
     # vision models with the VISION flow type to keep images flowing.
     supports_image_input = True
+    supports_audio_input = True
+    supports_video_input = True
     if any(msg.message_type == MessageType.USER and msg.image_files for msg in history):
         supports_image_input = model_supports_image_input(
+            llm_config.model_name,
+            llm_config.model_provider,
+            llm_config.deployment_name,
+        )
+    if any(
+        msg.message_type == MessageType.USER and msg.audio_files for msg in history
+    ):
+        supports_audio_input = model_supports_audio_input(
+            llm_config.model_name,
+            llm_config.model_provider,
+            llm_config.deployment_name,
+        )
+    if any(
+        msg.message_type == MessageType.USER and msg.video_files for msg in history
+    ):
+        supports_video_input = model_supports_video_input(
             llm_config.model_name,
             llm_config.model_provider,
             llm_config.deployment_name,
@@ -930,18 +984,148 @@ def translate_history_to_llm_format(
             messages.append(system_msg)
 
         elif msg.message_type == MessageType.USER:
-            # Handle user messages with potential images
-            if msg.image_files:
-                # Build content parts: text + images
-                content_parts: list[TextContentPart | ImageContentPart] = [
+            # Handle user messages with potential images / audio / video
+            if msg.image_files or msg.audio_files or msg.video_files:
+                # Build content parts: text + multimodal attachments
+                content_parts: list[ContentPart] = [
                     TextContentPart(
                         type="text",
                         text=msg.message,
                     )
                 ]
 
+                # Native audio parts (OpenAI input_audio passthrough)
+                for audio_file in msg.audio_files or []:
+                    if not supports_audio_input:
+                        content_parts.append(
+                            TextContentPart(
+                                type="text",
+                                text=NON_VISION_IMAGE_MARKER.format(
+                                    file_id=audio_file.file_id
+                                ),
+                            )
+                        )
+                        continue
+                    try:
+                        audio_format = get_audio_format_from_filename(
+                            audio_file.filename
+                        )
+                        content_parts.append(
+                            TextContentPart(
+                                type="text",
+                                text=f"[attached audio — file_id: {audio_file.file_id}]",
+                            )
+                        )
+                        content_parts.append(
+                            InputAudioContentPart(
+                                type="input_audio",
+                                input_audio=InputAudioDetail(
+                                    data=audio_file.to_base64(),
+                                    format=audio_format,
+                                ),
+                            )
+                        )
+                    except Exception as e:
+                        logger.warning(
+                            "Failed to process audio file %s: %s. Skipping audio.",
+                            audio_file.file_id,
+                            e,
+                        )
+
+                # Native video parts. Xiaomi MiMo (via the OpenCode Zen
+                # gateway) requires the native video_url part and rejects an
+                # image_url part carrying a video MIME with an upstream 400;
+                # other openai-compatible gateways take the data-URL
+                # passthrough as image_url.
+                for video_file in msg.video_files or []:
+                    if not supports_video_input:
+                        content_parts.append(
+                            TextContentPart(
+                                type="text",
+                                text=NON_VISION_IMAGE_MARKER.format(
+                                    file_id=video_file.file_id
+                                ),
+                            )
+                        )
+                        continue
+                    try:
+                        mime = get_video_mime_from_filename(video_file.filename)
+                        is_opencode = is_opencode_gateway(
+                            llm_config.model_provider, llm_config.api_base
+                        )
+                        if is_opencode and mime not in OPENCODE_SUPPORTED_VIDEO_MIMES:
+                            logger.warning(
+                                "Skipping video file %s: MIME %s not supported "
+                                "by the OpenCode Zen gateway.",
+                                video_file.file_id,
+                                mime,
+                            )
+                            content_parts.append(
+                                TextContentPart(
+                                    type="text",
+                                    text=(
+                                        f"[attached video — file_id: "
+                                        f"{video_file.file_id} — format {mime} "
+                                        f"not supported by this provider]"
+                                    ),
+                                )
+                            )
+                            continue
+                        video_b64 = video_file.to_base64()
+                        if (
+                            is_opencode
+                            and len(video_b64) > OPENCODE_MAX_VIDEO_BASE64_CHARS
+                        ):
+                            logger.warning(
+                                "Skipping video file %s: base64 payload exceeds "
+                                "the OpenCode Zen gateway limit.",
+                                video_file.file_id,
+                            )
+                            content_parts.append(
+                                TextContentPart(
+                                    type="text",
+                                    text=(
+                                        f"[attached video — file_id: "
+                                        f"{video_file.file_id} — file too large "
+                                        f"for this provider]"
+                                    ),
+                                )
+                            )
+                            continue
+                        content_parts.append(
+                            TextContentPart(
+                                type="text",
+                                text=f"[attached video — file_id: {video_file.file_id}]",
+                            )
+                        )
+                        if is_opencode:
+                            content_parts.append(
+                                VideoUrlContentPart(
+                                    type="video_url",
+                                    video_url=VideoUrlDetail(
+                                        url=f"data:{mime};base64,{video_b64}",
+                                    ),
+                                )
+                            )
+                        else:
+                            content_parts.append(
+                                VideoContentPart(
+                                    type="image_url",
+                                    image_url=ImageUrlDetail(
+                                        url=f"data:{mime};base64,{video_b64}",
+                                        detail=None,
+                                    ),
+                                )
+                            )
+                    except Exception as e:
+                        logger.warning(
+                            "Failed to process video file %s: %s. Skipping video.",
+                            video_file.file_id,
+                            e,
+                        )
+
                 # Add image parts (skipping any beyond the per-request cap)
-                for img_idx, img_file in enumerate(msg.image_files):
+                for img_idx, img_file in enumerate(msg.image_files or []):
                     if img_file.file_type != ChatFileType.IMAGE:
                         continue
                     if (

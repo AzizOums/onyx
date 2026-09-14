@@ -43,10 +43,8 @@ import {
 import {
   IMAGE_GENERATION_TOOL_ID,
   WEB_SEARCH_TOOL_ID,
-  PYTHON_TOOL_ID,
   SEARCH_TOOL_ID,
   OPEN_URL_TOOL_ID,
-  CODING_AGENT_TOOL_ID,
 } from "@/lib/tools/constants";
 import Text from "@/refresh-components/texts/Text";
 import SimpleCollapsible from "@/refresh-components/SimpleCollapsible";
@@ -657,7 +655,6 @@ export default function AgentEditorPage({
   // The built-in tools are:
   // - image-gen
   // - web-search
-  // - code-interpreter
   const { tools: availableTools, isLoading: isToolsLoading } =
     useAvailableTools();
   const searchTool = availableTools?.find(
@@ -671,12 +668,6 @@ export default function AgentEditorPage({
   );
   const openURLTool = availableTools?.find(
     (t) => t.in_code_tool_id === OPEN_URL_TOOL_ID
-  );
-  const codeInterpreterTool = availableTools?.find(
-    (t) => t.in_code_tool_id === PYTHON_TOOL_ID
-  );
-  const codingAgentTool = availableTools?.find(
-    (t) => t.in_code_tool_id === CODING_AGENT_TOOL_ID
   );
   const isImageGenerationAvailable = !!imageGenTool;
   const imageGenerationDisabledTooltip = isImageGenerationAvailable
@@ -772,18 +763,6 @@ export default function AgentEditorPage({
       !!openURLTool &&
       (existingAgent?.tools?.some(
         (tool) => tool.in_code_tool_id === OPEN_URL_TOOL_ID
-      ) ??
-        false),
-    code_interpreter:
-      !!codeInterpreterTool &&
-      (existingAgent?.tools?.some(
-        (tool) => tool.in_code_tool_id === PYTHON_TOOL_ID
-      ) ??
-        false),
-    coding_agent:
-      !!codingAgentTool &&
-      (existingAgent?.tools?.some(
-        (tool) => tool.in_code_tool_id === CODING_AGENT_TOOL_ID
       ) ??
         false),
     // MCP servers - dynamically add fields for each server with nested tool fields
@@ -928,13 +907,6 @@ export default function AgentEditorPage({
       if (values.open_url && openURLTool) {
         toolIds.push(openURLTool.id);
       }
-      if (values.code_interpreter && codeInterpreterTool) {
-        toolIds.push(codeInterpreterTool.id);
-      }
-      if (values.coding_agent && codingAgentTool) {
-        toolIds.push(codingAgentTool.id);
-      }
-
       // Collect enabled MCP tool IDs
       mcpServers.forEach((server) => {
         const serverFieldName = `mcp_server_${server.id}`;
@@ -1710,44 +1682,6 @@ export default function AgentEditorPage({
                                   <SwitchField
                                     name="open_url"
                                     disabled={!openURLTool}
-                                  />
-                                </InputHorizontal>
-                              </Card>
-                            </Disabled>
-
-                            <Disabled disabled={!codeInterpreterTool}>
-                              <Card border="solid" rounding={4}>
-                                <InputHorizontal
-                                  withLabel="code_interpreter"
-                                  title={t(
-                                    "editor.actions.codeInterpreter.title"
-                                  )}
-                                  description={t(
-                                    "editor.actions.codeInterpreter.description"
-                                  )}
-                                  disabled={!codeInterpreterTool}
-                                >
-                                  <SwitchField
-                                    name="code_interpreter"
-                                    disabled={!codeInterpreterTool}
-                                  />
-                                </InputHorizontal>
-                              </Card>
-                            </Disabled>
-
-                            <Disabled disabled={!codingAgentTool}>
-                              <Card border="solid" rounding={4}>
-                                <InputHorizontal
-                                  withLabel="coding_agent"
-                                  title={t("editor.actions.codingAgent.title")}
-                                  description={t(
-                                    "editor.actions.codingAgent.description"
-                                  )}
-                                  disabled={!codingAgentTool}
-                                >
-                                  <SwitchField
-                                    name="coding_agent"
-                                    disabled={!codingAgentTool}
                                   />
                                 </InputHorizontal>
                               </Card>

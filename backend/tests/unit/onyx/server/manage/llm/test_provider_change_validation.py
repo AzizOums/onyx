@@ -8,9 +8,14 @@ from unittest.mock import patch
 
 import pytest
 
+from onyx.error_handling.error_codes import OnyxErrorCode
 from onyx.error_handling.exceptions import OnyxError
 from onyx.llm.well_known_providers.constants import BIFROST_API_MODE_CONFIG_KEY
 from onyx.server.manage.llm.api import _validate_llm_provider_change
+from onyx.server.manage.llm.models import (
+    LLMProviderUpsertRequest,
+    normalize_extra_headers,
+)
 
 _BASE = "https://bifrost.example.com/v1"
 
@@ -78,3 +83,67 @@ def test_api_base_change_still_rejected() -> None:
 def test_single_tenant_skips_validation() -> None:
     # MULTI_TENANT is False in unit tests: everything passes.
     _validate(None, {"anything": "goes"})
+
+
+def test_normalize_extra_headers_passthrough_none() -> None:
+    assert normalize_extra_headers(None) is None
+
+
+def test_normalize_extra_headers_empty_dict_becomes_none() -> None:
+    assert normalize_extra_headers({}) is None
+
+
+def test_normalize_extra_headers_strips_whitespace() -> None:
+    assert normalize_extra_headers({"  User-Agent  ": "  opencode/1.18.18  "}) == {
+        "User-Agent": "opencode/1.18.18"
+    }
+
+
+def test_normalize_extra_headers_rejects_authorization() -> None:
+    with pytest.raises(OnyxError) as exc_info:
+        normalize_extra_headers({"Authorization": "Bearer secret"})
+    assert exc_info.value.error_code == OnyxErrorCode.BAD_REQUEST
+
+    with pytest.raises(OnyxError):
+        normalize_extra_headers({"authorization": "Bearer secret"})
+
+
+def test_normalize_extra_headers_rejects_bad_names() -> None:
+    for bad_key in ["", "has space", "colon:name", "semi;colon", "é"]:
+        with pytest.raises(OnyxError):
+            normalize_extra_headers({bad_key: "value"})
+
+
+def test_normalize_extra_headers_rejects_empty_value() -> None:
+    with pytest.raises(OnyxError):
+        normalize_extra_headers({"X-Custom": "   "})
+
+
+def test_normalize_extra_headers_rejects_duplicates_after_strip() -> None:
+    with pytest.raises(OnyxError):
+        normalize_extra_headers({"X-A": "1", "  X-A  ": "2"})
+
+
+def test_normalize_extra_headers_enforces_count_limit() -> None:
+    with pytest.raises(OnyxError):
+        normalize_extra_headers({f"X-H-{i}": "v" for i in range(33)})
+
+
+def test_upsert_request_normalizes_extra_headers() -> None:
+    request = LLMProviderUpsertRequest(
+        provider="openai_compatible",
+        api_key_changed=False,
+        custom_config_changed=False,
+        extra_headers={"User-Agent": "opencode/1.18.18"},
+    )
+    assert request.extra_headers == {"User-Agent": "opencode/1.18.18"}
+
+
+def test_upsert_request_rejects_authorization_header() -> None:
+    with pytest.raises(OnyxError):
+        LLMProviderUpsertRequest(
+            provider="openai_compatible",
+            api_key_changed=False,
+            custom_config_changed=False,
+            extra_headers={"Authorization": "Bearer secret"},
+        )

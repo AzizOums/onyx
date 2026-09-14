@@ -259,6 +259,14 @@ export interface LlmManager {
    * for retry. */
   persistOverrides: (sessionId: string) => Promise<void>;
   updateModelOverrideBasedOnChatSession: (chatSession?: ChatSession) => void;
+  /**
+   * Records the model a send was issued with for a (possibly brand-new)
+   * session. When navigation lands on that session, the cross-session reset
+   * adopts this selection instead of dropping it — otherwise the pill
+   * flickers to the default model for the whole generation until the
+   * session row (written in the background) arrives.
+   */
+  noteModelHandoff: (sessionId: string, llm: LlmDescriptor) => void;
   imageFilesPresent: boolean;
   updateImageFilesPresent: (present: boolean) => void;
   activeAgent: MinimalAgent | null;
@@ -512,7 +520,14 @@ export function useLlmManager(
   // from any previously-seen defined session. Tracks only the last
   // *defined* session id so a round-trip through new-chat (A → undefined
   // → B) still resets, while A → undefined (new-chat) preserves it.
+  // Exception: a session just created by a send carries the selection it
+  // was sent with (see noteModelHandoff) — adopting it instead of resetting
+  // keeps the pill on the user's model during generation.
   const prevDefinedSessionIdRef = useRef<string | undefined>(undefined);
+  const modelHandoffRef = useRef<{
+    sessionId: string;
+    llm: LlmDescriptor;
+  } | null>(null);
   useEffect(() => {
     const nextId = currentChatSession?.id;
     if (
@@ -520,7 +535,13 @@ export function useLlmManager(
       prevDefinedSessionIdRef.current !== undefined &&
       nextId !== prevDefinedSessionIdRef.current
     ) {
-      setUserHasManuallyOverriddenLLM(false);
+      if (modelHandoffRef.current?.sessionId === nextId) {
+        setManualLlm(modelHandoffRef.current.llm);
+        setUserHasManuallyOverriddenLLM(true);
+        modelHandoffRef.current = null;
+      } else {
+        setUserHasManuallyOverriddenLLM(false);
+      }
     }
     if (nextId !== undefined) {
       prevDefinedSessionIdRef.current = nextId;
@@ -623,6 +644,11 @@ export function useLlmManager(
     setManualLlm(newLlm);
     setUserHasManuallyOverriddenLLM(true);
   };
+
+  // Records the model a send was issued with (see noteModelHandoff docs).
+  const noteModelHandoff = useCallback((sessionId: string, llm: LlmDescriptor) => {
+    modelHandoffRef.current = { sessionId, llm };
+  }, []);
 
   const updateCurrentLlmToModelName = (modelName: string) => {
     setManualLlm(getValidLlmDescriptor(modelName));
@@ -874,6 +900,7 @@ export function useLlmManager(
     updateModelOverrideBasedOnChatSession,
     currentLlm,
     updateCurrentLlm,
+    noteModelHandoff,
     temperature,
     updateTemperature,
     temperatureExplicitlySet,

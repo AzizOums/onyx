@@ -26,7 +26,7 @@ import { humanReadableFormat, humanReadableFormatWithTime } from "@opal/time";
 import type { IconFunctionComponent, RichStr } from "@opal/types";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import { SWR_KEYS } from "@/lib/swr-keys";
-import { UsageReport } from "@/app/ee/admin/performance/usage/types";
+import { UsageReport } from "@/views/admin/WorkspaceAnalyticsPage/usage-types";
 import {
   PendingReport,
   ReportPeriod,

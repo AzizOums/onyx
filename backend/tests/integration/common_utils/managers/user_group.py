@@ -3,7 +3,6 @@ from uuid import uuid4
 
 import httpx
 
-from ee.onyx.server.user_group.models import UserGroup
 from tests.integration.common_utils.constants import API_SERVER_URL, MAX_DELAY
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser, DATestUserGroup
@@ -168,7 +167,7 @@ class UserGroupManager:
     def get_all(
         user_performing_action: DATestUser,
         include_default: bool = False,
-    ) -> list[UserGroup]:
+    ) -> list[DATestUserGroup]:
         params: dict[str, str] = {}
         if include_default:
             params["include_default"] = "true"
@@ -178,13 +177,13 @@ class UserGroupManager:
             params=params,
         )
         response.raise_for_status()
-        return [UserGroup(**ug) for ug in response.json()]
+        return [DATestUserGroup(**ug) for ug in response.json()]
 
     @staticmethod
     def get_default(
         user_performing_action: DATestUser,
         name: str,
-    ) -> UserGroup:
+    ) -> DATestUserGroup:
         """Fetch a seeded default group ("Admin" or "Basic") by name."""
         all_groups = UserGroupManager.get_all(
             user_performing_action=user_performing_action,

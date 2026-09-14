@@ -38,6 +38,7 @@ import LiteLLMProxyModal from "@/sections/modals/languageModels/LiteLLMProxyModa
 import BifrostModal from "@/sections/modals/languageModels/BifrostModal";
 import OpenAICompatibleModal from "@/sections/modals/languageModels/OpenAICompatibleModal";
 import NebiusTokenfactoryModal from "@/sections/modals/languageModels/NebiusTokenfactoryModal";
+import OpencodeModal from "@/sections/modals/languageModels/OpencodeModal";
 import PortkeyModal from "@/sections/modals/languageModels/PortkeyModal";
 
 // ─── Text (LLM) providers ────────────────────────────────────────────────────
@@ -134,6 +135,12 @@ const PROVIDERS: Record<string, ProviderEntry> = {
     companyName: "Portkey",
     Modal: PortkeyModal,
   },
+  [LLMProviderName.OPENCODE]: {
+    icon: SvgPlug,
+    productName: "OpenCode Zen",
+    companyName: "OpenCode Zen",
+    Modal: OpencodeModal,
+  },
   [LLMProviderName.CUSTOM]: {
     icon: SvgServer,
     productName: "Custom Models",
@@ -197,6 +204,7 @@ export const AGGREGATOR_PROVIDERS = new Set([
   LLMProviderName.OPENAI_COMPATIBLE,
   LLMProviderName.NEBIUS_TOKENFACTORY,
   LLMProviderName.PORTKEY,
+  LLMProviderName.OPENCODE,
   LLMProviderName.VERTEX_AI,
 ]);
 

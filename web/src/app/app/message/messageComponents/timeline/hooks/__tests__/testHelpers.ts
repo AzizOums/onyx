@@ -146,26 +146,3 @@ export function createFetchToolDocumentsPacket(
     documents,
   });
 }
-
-// Python Tool helpers
-export function createPythonToolStartPacket(
-  code: string,
-  placement: Partial<Placement> = {}
-): Packet {
-  return createPacket(PacketType.PYTHON_TOOL_START, placement, {
-    code,
-  });
-}
-
-export function createPythonToolDeltaPacket(
-  stdout: string,
-  stderr: string,
-  fileIds: string[],
-  placement: Partial<Placement> = {}
-): Packet {
-  return createPacket(PacketType.PYTHON_TOOL_DELTA, placement, {
-    stdout,
-    stderr,
-    file_ids: fileIds,
-  });
-}

@@ -319,13 +319,17 @@ function MicrophoneButton({
   // Icon: show loader when processing, otherwise mic
   const icon = isProcessing ? SvgSimpleLoader : SvgMicrophone;
 
-  // Disable when processing or TTS is playing (don't want to pick up TTS audio)
+  // Disable when processing or TTS is playing (don't want to pick up TTS audio).
+  // While recording the button always stays enabled: it is the only way to
+  // stop dictation, including during generation (the parent disables the bar
+  // while streaming, which must not lock an active recording on).
   const isDisabled =
-    disabled ||
-    isProcessing ||
-    isTTSPlaying ||
-    isTTSLoading ||
-    isAwaitingAutoPlaybackStart;
+    !isRecording &&
+    (disabled ||
+      isProcessing ||
+      isTTSPlaying ||
+      isTTSLoading ||
+      isAwaitingAutoPlaybackStart);
 
   // Recording = darkened (primary), not recording = light (tertiary)
   const prominence = isRecording ? "primary" : "tertiary";

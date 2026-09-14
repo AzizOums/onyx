@@ -4412,6 +4412,10 @@
         "title": "اربط نموذج توليد صور لاستخدامه في المحادثة."
       },
       "form": {
+        "apiBase": {
+          "label": "عنوان API الأساسي",
+          "idle": "عنوان أساسي اختياري متوافق مع OpenAI لخادم مستضاف ذاتيًا (مثل LocalAI). فارغ = api.openai.com."
+        },
         "apiKey": {
           "comboPlaceholder": "أدخل مفتاح API جديدًا أو اختر موفرًا موجودًا",
           "idle": "أدخل مفتاح API جديدًا أو اختر موفرًا موجودًا.",
@@ -4471,6 +4475,12 @@
           "label": "الموقع",
           "required": "الموقع مطلوب"
         },
+        "modelName": {
+          "label": "اسم النموذج",
+          "idle": "تجاوز اختياري، مثل نموذج معرض LocalAI. فارغ = {model}.",
+          "required": "Model name is required",
+          "customPlaceholder": "Fetch models from the server above, then pick one"
+        },
         "projectId": {
           "idle": "مشروع GCP الذي فُعّل فيه Vertex AI. يصادق Onyx بحساب الخدمة المرتبط بالحاوية (GKE Workload Identity).",
           "label": "معرّف مشروع GCP",
@@ -4484,6 +4494,13 @@
         },
         "unknownError": {
           "message": "حدث خطأ غير معروف"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "header": {
@@ -4524,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "أحدث نموذج توليد صور من OpenAI بأعلى دقة التزام بالمطالبات."
+        },
+        "customOpenaiCompatible": {
+          "description": "Connect a self-hosted OpenAI-compatible image server (api_base + model from Fetch)."
         }
       },
       "setDefaultError": {
@@ -5255,6 +5275,9 @@
             },
             "textOnly": {
               "label": "نص فقط"
+            },
+            "multimodal": {
+              "label": "متعدد الوسائط (نص، صورة، صوت، فيديو)"
             }
           },
           "modelTable": {
@@ -5480,6 +5503,18 @@
             "description": "يُستخدم لتمييز هذا الموفر في التطبيق.",
             "placeholder": "اسم العرض",
             "title": "اسم العرض"
+          },
+          "extraHeaders": {
+            "addButton": {
+              "label": "إضافة ترويسة"
+            },
+            "description": "ترويسات HTTP إضافية تُرسل مع كل طلب إلى هذا الموفر (مثل `User-Agent: opencode/1.18.18` للبوابات التي تتطلب ذلك). لا تضع أسرارًا هنا أبدًا — `Authorization` غير مسموح، استخدم حقل مفتاح API.",
+            "keyInput": {
+              "placeholder": "مثل User-Agent"
+            },
+            "keyTitle": "الترويسة",
+            "title": "ترويسات إضافية",
+            "valueTitle": "القيمة"
           },
           "optionalSuffix": {
             "label": "اختياري"
@@ -7869,9 +7904,19 @@
         },
         "whisper": {
           "subtitle": "نموذج OpenAI للتعرف على الكلام للأغراض العامة."
+        },
+        "customStt": {
+          "subtitle": "Self-hosted OpenAI-compatible speech-to-text server"
+        },
+        "customTts": {
+          "subtitle": "Self-hosted OpenAI-compatible text-to-speech server"
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "عنوان API الأساسي",
+          "description": "عنوان أساسي اختياري متوافق مع OpenAI لخادم مستضاف ذاتيًا (مثل LocalAI أو Kokoro أو faster-whisper). فارغ = api.openai.com. من داخل حاوية، استخدم `host.docker.internal` بدلًا من `localhost`."
+        },
         "apiKey": {
           "description": "الصق [مفتاح API]({url}) من {provider} للوصول إلى نماذجك.",
           "label": "مفتاح API",
@@ -7907,7 +7952,9 @@
           "selfHostedCapExceeded": "تدعم نقاط النهاية المستضافة ذاتيًا ما لا يزيد على {cap} لغات منطوقة (اكتشاف عند البدء)"
         },
         "sttModel": {
-          "label": "نموذج تحويل الكلام إلى نص"
+          "label": "نموذج تحويل الكلام إلى نص",
+          "openaiDescription": "اسم النموذج على خادمك (نص حر لنقاط النهاية المستضافة ذاتيًا).",
+          "placeholder": "مثل whisper-1"
         },
         "targetUri": {
           "description": "الصق نقطة النهاية الظاهرة في [بوابة Azure (المفاتيح ونقطة النهاية)]({portalUrl}). يستخرج Onyx منطقة الكلام من هذا العنوان. أمثلة: `https://westus.api.cognitive.microsoft.com/` أو `https://westus.tts.speech.microsoft.com/`.",
@@ -7916,7 +7963,9 @@
         },
         "ttsModel": {
           "description": "سيستخدم Onyx هذا النموذج افتراضيًا لتحويل النص إلى كلام.",
-          "label": "النموذج الافتراضي"
+          "label": "النموذج الافتراضي",
+          "openaiDescription": "اسم النموذج على خادمك (نص حر لنقاط النهاية المستضافة ذاتيًا).",
+          "placeholder": "مثل tts-1"
         },
         "updateButton": {
           "label": "تحديث"
@@ -7926,6 +7975,13 @@
           "label": "الصوت",
           "loadingPlaceholder": "جارٍ تحميل الأصوات...",
           "placeholder": "اختر صوتًا أو أدخل معرّف صوت"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "speechToText": {

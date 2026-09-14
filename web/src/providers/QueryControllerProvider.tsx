@@ -1,8 +1,6 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import { paidTierGated } from "@/ce";
-import { QueryControllerProvider as EEQueryControllerProvider } from "@/ee/providers/QueryControllerProvider";
 import { SearchDocWithContent, BaseFilters } from "@/lib/search/interfaces";
 
 export type AppMode = "auto" | "search" | "chat";
@@ -54,4 +52,13 @@ export function useQueryController(): QueryControllerValue {
   return useContext(QueryControllerContext);
 }
 
-export const QueryControllerProvider = paidTierGated(EEQueryControllerProvider);
+// Community build: the paid-tier search controller is removed, so this
+// provider is a passthrough and consumers use the context defaults
+// (chat-only mode).
+export function QueryControllerProvider({
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
+  return <>{children}</>;
+}

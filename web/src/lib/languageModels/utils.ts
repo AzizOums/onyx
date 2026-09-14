@@ -163,6 +163,32 @@ export const modelSupportsImageInput = (
   return modelConfiguration?.supports_image_input || false;
 };
 
+export const modelSupportsAudioInput = (
+  llmProviders: LLMProviderDescriptor[],
+  modelName: string,
+  providerName: string | null = null
+): boolean => {
+  const modelConfiguration = findModelConfiguration(
+    llmProviders,
+    modelName,
+    providerName
+  );
+  return modelConfiguration?.supports_audio_input || false;
+};
+
+export const modelSupportsVideoInput = (
+  llmProviders: LLMProviderDescriptor[],
+  modelName: string,
+  providerName: string | null = null
+): boolean => {
+  const modelConfiguration = findModelConfiguration(
+    llmProviders,
+    modelName,
+    providerName
+  );
+  return modelConfiguration?.supports_video_input || false;
+};
+
 /** Display name for form-state model rows, which do not reliably carry
  *  effectiveDisplayName. Everything else should read that field instead. */
 export function modelDisplayName(
@@ -186,4 +212,38 @@ export function getDisplayName(
     if (mc) return mc.effectiveDisplayName;
   }
   return undefined;
+}
+
+/** Mime accept string for the chat file picker, derived from the selected
+ *  model's input modalities. Documents/text are always allowed (RAG path);
+ *  images require image input, audio requires audio input, video requires
+ *  video input. Undefined = accept everything (e.g. unknown model). */
+export function chatInputAcceptString(
+  llmProviders: LLMProviderDescriptor[],
+  modelName: string,
+  providerName: string | null = null
+): string | undefined {
+  const modelConfiguration = findModelConfiguration(
+    llmProviders,
+    modelName,
+    providerName
+  );
+  if (!modelConfiguration) return undefined;
+
+  const types: string[] = [];
+  // Documents / text / tabular: always accepted via extraction
+  types.push(
+    "text/*",
+    "application/pdf",
+    ".doc",
+    ".docx",
+    ".pptx",
+    ".csv",
+    ".xlsx"
+  );
+  if (modelConfiguration.supports_image_input) types.push("image/*");
+  if (modelConfiguration.supports_audio_input) types.push("audio/*");
+  if (modelConfiguration.supports_video_input) types.push("video/*");
+
+  return types.join(",");
 }

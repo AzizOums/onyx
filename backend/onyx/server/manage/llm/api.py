@@ -54,6 +54,11 @@ from onyx.llm.factory import (
     get_llm,
     get_max_input_tokens_from_llm_provider,
 )
+from onyx.llm.modelsdev import (
+    fetch_modelsdev_catalog,
+    lookup_modelsdev_model,
+    modelsdev_enabled,
+)
 from onyx.llm.model_capabilities import (
     get_bedrock_token_limit,
     litellm_thinks_model_supports_image_input,
@@ -493,6 +498,7 @@ def test_llm_configuration(
         api_base=test_llm_request.api_base,
         api_version=test_llm_request.api_version,
         custom_config=test_custom_config,
+        provider_headers=test_llm_request.extra_headers,
         deployment_name=test_llm_request.deployment_name,
         max_input_tokens=max_input_tokens,
     )
@@ -1181,6 +1187,7 @@ def get_provider_contextual_cost(
                 api_base=provider.api_base,
                 api_version=provider.api_version,
                 custom_config=provider.custom_config,
+                provider_headers=provider.extra_headers,
                 max_input_tokens=get_max_input_tokens_from_llm_provider(
                     llm_provider=llm_provider, model_name=model_configuration.name
                 ),
@@ -2167,6 +2174,92 @@ def get_nebius_tokenfactory_available_models(
     return sorted_results
 
 
+
+
+@admin_router.get("/modelsdev/providers")
+def list_modelsdev_providers(
+    _: User = Depends(require_permission(Permission.MANAGE_LLMS)),
+) -> list[dict[str, Any]]:
+    """Browse the models.dev provider catalog (endpoints, auth env keys, docs)."""
+    if not modelsdev_enabled():
+        raise OnyxError(OnyxErrorCode.NOT_FOUND, "models.dev integration is disabled")
+    catalog = fetch_modelsdev_catalog()
+    providers = []
+    for provider in sorted(catalog.values(), key=lambda p: p.name.lower()):
+        if not provider.models:
+            continue
+        providers.append(
+            {
+                "id": provider.id,
+                "name": provider.name,
+                "api": provider.api,
+                "doc": provider.doc,
+                "env_keys": provider.env_keys,
+                "npm": provider.npm,
+                "model_count": len(provider.models),
+            }
+        )
+    return providers
+
+
+@admin_router.get("/modelsdev/providers/{provider_id}/models")
+def list_modelsdev_provider_models(
+    provider_id: str,
+    _: User = Depends(require_permission(Permission.MANAGE_LLMS)),
+) -> list[dict[str, Any]]:
+    """List a models.dev provider's models with their input modalities."""
+    if not modelsdev_enabled():
+        raise OnyxError(OnyxErrorCode.NOT_FOUND, "models.dev integration is disabled")
+    catalog = fetch_modelsdev_catalog()
+    provider = catalog.get(provider_id)
+    if provider is None:
+        raise OnyxError(
+            OnyxErrorCode.NOT_FOUND, f"Unknown models.dev provider: {provider_id}"
+        )
+    models = []
+    for model in sorted(provider.models.values(), key=lambda m: m.name.lower()):
+        models.append(
+            {
+                "id": model.id,
+                "name": model.name,
+                "input_modalities": model.input_modalities,
+                "context_limit": model.context_limit,
+                "max_output_tokens": model.max_output_tokens,
+                "reasoning": model.reasoning,
+                "tool_call": model.tool_call,
+                "supports_image_input": model.supports_image_input,
+                "supports_audio_input": model.supports_audio_input,
+                "supports_video_input": model.supports_video_input,
+                "supports_pdf_input": model.supports_pdf_input,
+            }
+        )
+    return models
+
+
+
+
+def _modelsdev_capabilities(model_name: str, provider_key: str | None) -> dict[str, Any]:
+    """Best-effort capability enrichment from the models.dev catalog.
+
+    Returns a dict possibly containing: supports_image_input,
+    supports_audio_input, supports_video_input, max_input_tokens.
+    Missing keys mean "unknown — keep the caller's value".
+    """
+    if not modelsdev_enabled():
+        return {}
+    model = lookup_modelsdev_model(provider_key, model_name)
+    if model is None:
+        return {}
+    caps: dict[str, Any] = {
+        "supports_image_input": model.supports_image_input,
+        "supports_audio_input": model.supports_audio_input,
+        "supports_video_input": model.supports_video_input,
+    }
+    if model.context_limit:
+        caps["max_input_tokens"] = model.context_limit
+    return caps
+
+
 @admin_router.post("/openai-compatible/available-models")
 def get_openai_compatible_server_available_models(
     request: OpenAICompatibleModelsRequest,
@@ -2202,14 +2295,25 @@ def get_openai_compatible_server_available_models(
             if is_embedding_model(model_id):
                 continue
 
+            # models.dev first: exact catalog data for image/audio/video
+            # support and context limits, falling back to LiteLLM heuristics
+            # for models the catalog doesn't know.
+            md = _modelsdev_capabilities(model_id, provider_key=None)
+            image_support = md.get(
+                "supports_image_input",
+                litellm_thinks_model_supports_image_input(
+                    model_id, LlmProviderNames.OPENAI_COMPATIBLE
+                ),
+            )
             results.append(
                 OpenAICompatibleFinalModelResponse(
                     name=model_id,
                     display_name=model_name,
-                    max_input_tokens=model.get("context_length"),
-                    supports_image_input=litellm_thinks_model_supports_image_input(
-                        model_id, LlmProviderNames.OPENAI_COMPATIBLE
-                    ),
+                    max_input_tokens=md.get("max_input_tokens")
+                    or model.get("context_length"),
+                    supports_image_input=image_support,
+                    supports_audio_input=md.get("supports_audio_input", False),
+                    supports_video_input=md.get("supports_video_input", False),
                     # Reasoning support from the LiteLLM cost map, with the
                     # substring heuristic covering models LiteLLM doesn't know
                     supports_reasoning=model_is_reasoning_model(
@@ -2243,6 +2347,8 @@ def get_openai_compatible_server_available_models(
                     display_name=r.display_name,
                     max_input_tokens=r.max_input_tokens,
                     supports_image_input=r.supports_image_input,
+                    supports_audio_input=r.supports_audio_input,
+                    supports_video_input=r.supports_video_input,
                     supports_reasoning=r.supports_reasoning,
                 )
                 for r in sorted_results

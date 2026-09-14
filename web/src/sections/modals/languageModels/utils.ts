@@ -5,6 +5,7 @@ import {
   type ModelConfiguration,
   type ReasoningEffortOverride,
 } from "@/lib/languageModels/types";
+import type { KeyValue } from "@/refresh-components/inputs/InputKeyValue";
 import {
   ALL_REASONING_STOPS,
   maxReasoningStop,
@@ -36,6 +37,11 @@ function buildModelConfigurations(
   return Array.from(modelMap.values()).map(clampModelSettings);
 }
 
+/** Default API base per provider for new providers (mirrors the backend). */
+const PROVIDER_DEFAULT_API_BASE: Partial<Record<LLMProviderName, string>> = {
+  [LLMProviderName.OPENCODE]: "https://opencode.ai/zen/v1",
+};
+
 /** Shared initial values for all LLM provider forms (both onboarding and admin). */
 export function useInitialValues(
   isOnboarding: boolean,
@@ -60,7 +66,17 @@ export function useInitialValues(
       ? providerName
       : (existingLlmProvider?.name ?? undefined),
     api_key: existingLlmProvider?.api_key ?? undefined,
-    api_base: existingLlmProvider?.api_base ?? undefined,
+    api_base:
+      existingLlmProvider?.api_base ??
+      PROVIDER_DEFAULT_API_BASE[providerName],
+    extra_headers_list: existingLlmProvider?.extra_headers
+      ? Object.entries(existingLlmProvider.extra_headers).map(
+          ([key, value]) => ({
+            key,
+            value: String(value),
+          })
+        )
+      : [],
     is_public: existingLlmProvider?.is_public ?? true,
     is_auto_mode: existingLlmProvider?.is_auto_mode ?? true,
     groups: existingLlmProvider?.groups ?? [],
@@ -139,6 +155,8 @@ export interface BaseLLMFormValues {
   /** The full model list with is_visible set directly by user interaction. */
   model_configurations: ModelConfiguration[];
   custom_config?: Record<string, string>;
+  /** Extra headers as key-value rows; converted to `extra_headers` on submit. */
+  extra_headers_list?: KeyValue[];
 }
 
 /** Bound stored policy by current capability, which can shrink after a save. */

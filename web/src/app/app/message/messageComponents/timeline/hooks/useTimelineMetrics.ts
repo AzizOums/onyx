@@ -4,7 +4,6 @@ import {
   TransformedStep,
 } from "@/app/app/message/messageComponents/timeline/transformers";
 import {
-  isCodingAgentPackets,
   isResearchAgentPackets,
   stepSupportsCollapsedStreaming,
 } from "@/app/app/message/messageComponents/timeline/packetHelpers";
@@ -15,7 +14,6 @@ export interface TimelineMetrics {
   lastTurnGroup: TurnGroup | undefined;
   lastStep: TransformedStep | undefined;
   lastStepIsResearchAgent: boolean;
-  lastStepIsCodingAgent: boolean;
   lastStepSupportsCollapsedStreaming: boolean;
 }
 
@@ -41,9 +39,6 @@ export function useTimelineMetrics(
     const lastStepIsResearchAgent = lastStep
       ? isResearchAgentPackets(lastStep.packets)
       : false;
-    const lastStepIsCodingAgent = lastStep
-      ? isCodingAgentPackets(lastStep.packets)
-      : false;
     const lastStepSupportsCollapsedStreaming = lastStep
       ? stepSupportsCollapsedStreaming(lastStep.packets)
       : false;
@@ -54,7 +49,6 @@ export function useTimelineMetrics(
       lastTurnGroup,
       lastStep,
       lastStepIsResearchAgent,
-      lastStepIsCodingAgent,
       lastStepSupportsCollapsedStreaming,
     };
   }, [turnGroups, userStopped]);

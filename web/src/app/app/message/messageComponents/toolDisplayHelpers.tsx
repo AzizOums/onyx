@@ -9,7 +9,6 @@ import { constructCurrentSearchState } from "./timeline/renderers/search/searchS
 import {
   SvgGlobe,
   SvgSearchMenu,
-  SvgTerminal,
   SvgLink,
   SvgImage,
   SvgUser,
@@ -17,7 +16,6 @@ import {
   SvgBookOpen,
   SvgSlowTime,
   SvgXCircle,
-  SvgCode,
 } from "@opal/icons";
 
 /**
@@ -45,17 +43,6 @@ export function isToolComplete(packets: Packet[]): boolean {
           p.obj.type === PacketType.ERROR) &&
         (p.placement.sub_turn_index === undefined ||
           p.placement.sub_turn_index === null)
-    );
-  }
-
-  // For coding agents, the CodingAgentFinal packet (or an error) marks completion.
-  // Nested BashTool packets are part of the same group and don't indicate the
-  // agent is done.
-  if (firstPacket.obj.type === PacketType.CODING_AGENT_START) {
-    return packets.some(
-      (p) =>
-        p.obj.type === PacketType.CODING_AGENT_FINAL ||
-        p.obj.type === PacketType.ERROR
     );
   }
 
@@ -105,8 +92,6 @@ export function getToolName(packets: Packet[], t: TimelineTranslate): string {
         ? t("toolNames.webSearch")
         : t("toolNames.internalSearch");
     }
-    case PacketType.PYTHON_TOOL_START:
-      return t("toolNames.codeInterpreter");
     case PacketType.FETCH_TOOL_START:
       return t("toolNames.openUrls");
     case PacketType.CUSTOM_TOOL_START:
@@ -120,8 +105,6 @@ export function getToolName(packets: Packet[], t: TimelineTranslate): string {
       return t("toolNames.generatePlan");
     case PacketType.RESEARCH_AGENT_START:
       return t("toolNames.researchAgent");
-    case PacketType.CODING_AGENT_START:
-      return t("toolNames.codingAgent");
     case PacketType.REASONING_START:
       return t("toolNames.thinking");
     case PacketType.MEMORY_TOOL_START:
@@ -147,8 +130,6 @@ export function getToolIcon(packets: Packet[]): React.ReactNode {
         <SvgSearchMenu className="w-3.5 h-3.5" />
       );
     }
-    case PacketType.PYTHON_TOOL_START:
-      return <SvgTerminal className="w-3.5 h-3.5" />;
     case PacketType.FETCH_TOOL_START:
       return <SvgLink className="w-3.5 h-3.5" />;
     case PacketType.CUSTOM_TOOL_START:
@@ -159,8 +140,6 @@ export function getToolIcon(packets: Packet[]): React.ReactNode {
       return <FiList className="w-3.5 h-3.5" />;
     case PacketType.RESEARCH_AGENT_START:
       return <SvgUser className="w-3.5 h-3.5" />;
-    case PacketType.CODING_AGENT_START:
-      return <SvgCode className="w-3.5 h-3.5" />;
     case PacketType.REASONING_START:
       return <SvgSlowTime className="w-3.5 h-3.5" />;
     case PacketType.MEMORY_TOOL_START:

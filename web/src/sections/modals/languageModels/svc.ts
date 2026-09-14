@@ -16,6 +16,23 @@ import {
 
 // ─── Test helpers ─────────────────────────────────────────────────────────
 
+interface KeyValueRow {
+  key: string;
+  value: string;
+}
+
+function keyValueListToDict(
+  items: KeyValueRow[] | undefined
+): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const { key, value } of items ?? []) {
+    if (key.trim() !== "") {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
 const submitLlmTestRequest = async (
   payload: Record<string, unknown>,
   fallbackErrorMessage: string
@@ -78,6 +95,9 @@ export const testApiKeyHelper = async (
       ...(formValues?.custom_config as Record<string, unknown> | undefined),
       ...customConfigOverride,
     },
+    extra_headers: keyValueListToDict(
+      formValues?.extra_headers_list as KeyValueRow[] | undefined
+    ),
     model: modelName ?? (formValues?.test_model_name as string) ?? "",
   };
 
@@ -88,8 +108,14 @@ export const testCustomProvider = async (
   t: LlmModalsTranslator,
   formValues: Record<string, unknown>
 ): Promise<TestApiKeyResult> => {
+  const { extra_headers_list, ...rest } = formValues;
   return await submitLlmTestRequest(
-    { ...formValues },
+    {
+      ...rest,
+      extra_headers: keyValueListToDict(
+        extra_headers_list as KeyValueRow[] | undefined
+      ),
+    },
     t("toasts.testCustomProviderFailed")
   );
 };
@@ -132,7 +158,15 @@ export async function submitProvider<T extends BaseLLMFormValues>({
 }: SubmitProviderParams<T>): Promise<void> {
   setSubmitting(true);
 
-  const { test_model_name, api_key, name: rawName, ...rest } = values;
+  const {
+    test_model_name,
+    api_key,
+    name: rawName,
+    extra_headers_list,
+    ...rest
+  } = values;
+  const { extra_headers_list: initialHeadersList, ...restInitial } =
+    initialValues;
   const testModelName =
     test_model_name ||
     values.model_configurations.find((m) => m.is_visible)?.name ||
@@ -143,6 +177,9 @@ export async function submitProvider<T extends BaseLLMFormValues>({
     values.custom_config,
     initialValues.custom_config
   );
+
+  const extraHeaders = keyValueListToDict(extra_headers_list);
+  const initialExtraHeaders = keyValueListToDict(initialHeadersList);
 
   const normalizedApiBase =
     typeof rest.api_base === "string" && rest.api_base.trim() === ""
@@ -173,12 +210,17 @@ export async function submitProvider<T extends BaseLLMFormValues>({
     ...(apiKeyForRequest !== undefined ? { api_key: apiKeyForRequest } : {}),
     api_key_changed: apiKeyForRequest !== undefined,
     custom_config_changed: customConfigChanged,
+    extra_headers: extraHeaders,
+  };
+  const initialValuesForCompare = {
+    ...restInitial,
+    extra_headers: initialExtraHeaders,
   };
 
   // Skip test on updates where api_key is absent (credentials not changing)
   if (
     (!existingLlmProvider || apiKeyForRequest !== undefined) &&
-    !isEqual(finalValues, initialValues)
+    !isEqual(finalValues, initialValuesForCompare)
   ) {
     setStatus({ isTesting: true });
 

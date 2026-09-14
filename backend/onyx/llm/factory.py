@@ -23,6 +23,11 @@ from onyx.llm.constants import LlmProviderNames
 from onyx.llm.interfaces import LLM, LlmRequestPolicy
 from onyx.llm.models import ReasoningEffort, UserChatDefaults
 from onyx.llm.multi_llm import LitellmLLM
+from onyx.llm.opencode import (
+    OPENCODE_PUBLIC_API_KEY,
+    is_opencode_gateway,
+    opencode_request_headers,
+)
 from onyx.llm.override_models import LLMOverride
 from onyx.llm.utils import (
     get_max_input_tokens_from_llm_provider,
@@ -157,6 +162,7 @@ def get_llm_for_persona(
     llm_override: LLMOverride | None = None,
     additional_headers: dict[str, str] | None = None,
     policy_fn: Callable[[str], LlmRequestPolicy] | None = None,
+    provider_session_scope: str | None = None,
 ) -> LLM:
     """Get the appropriate LLM for a persona, with the following priority:
     1. LLM override (model configuration id, else provider + model version)
@@ -170,7 +176,11 @@ def get_llm_for_persona(
 
     if persona is None:
         logger.warning("No persona provided, using default LLM")
-        return get_default_llm(policy_fn=policy_fn, user_defaults=user_defaults)
+        return get_default_llm(
+            policy_fn=policy_fn,
+            user_defaults=user_defaults,
+            provider_session_scope=provider_session_scope,
+        )
 
     mc_id_override = llm_override.model_configuration_id if llm_override else None
     provider_name_override = llm_override.model_provider if llm_override else None
@@ -187,6 +197,7 @@ def get_llm_for_persona(
             additional_headers=additional_headers,
             policy_fn=policy_fn,
             user_defaults=user_defaults,
+            provider_session_scope=provider_session_scope,
         )
 
     with get_session_with_current_tenant() as db_session:
@@ -203,6 +214,7 @@ def get_llm_for_persona(
                 additional_headers=additional_headers,
                 policy_fn=policy_fn,
                 user_defaults=user_defaults,
+                provider_session_scope=provider_session_scope,
             )
         provider_model, model = resolved
 
@@ -226,6 +238,7 @@ def get_llm_for_persona(
                 additional_headers=additional_headers,
                 policy_fn=policy_fn,
                 user_defaults=user_defaults,
+                provider_session_scope=provider_session_scope,
             )
 
         llm_provider = LLMProviderView.from_model(provider_model)
@@ -237,6 +250,7 @@ def get_llm_for_persona(
         additional_headers=additional_headers,
         policy_fn=policy_fn,
         user_defaults=user_defaults,
+        provider_session_scope=provider_session_scope,
     )
 
 
@@ -244,6 +258,7 @@ def get_default_llm_with_vision(
     timeout: int | None = None,
     temperature: float | None = None,
     additional_headers: dict[str, str] | None = None,
+    provider_session_scope: str | None = None,
 ) -> LLM | None:
     """Get an LLM that supports image input, with the following priority:
     1. Use the designated default vision provider if it exists and supports image input
@@ -260,6 +275,7 @@ def get_default_llm_with_vision(
             timeout=timeout,
             temperature=temperature,
             additional_headers=additional_headers,
+            provider_session_scope=provider_session_scope,
         )
 
     provider_map = {}
@@ -353,6 +369,7 @@ def llm_from_provider(
     additional_headers: dict[str, str] | None = None,
     policy_fn: Callable[[str], LlmRequestPolicy] | None = None,
     user_defaults: UserChatDefaults | None = None,
+    provider_session_scope: str | None = None,
 ) -> LLM:
     model_configuration = _get_model_configuration(
         llm_provider=llm_provider, model_name=model_name
@@ -388,6 +405,8 @@ def llm_from_provider(
         api_base=llm_provider.api_base,
         api_version=llm_provider.api_version,
         custom_config=llm_provider.custom_config,
+        provider_headers=llm_provider.extra_headers,
+        provider_session_scope=provider_session_scope,
         timeout=timeout,
         temperature=temperature,
         additional_headers=additional_headers,
@@ -443,6 +462,7 @@ def get_default_llm(
     additional_headers: dict[str, str] | None = None,
     policy_fn: Callable[[str], LlmRequestPolicy] | None = None,
     user_defaults: UserChatDefaults | None = None,
+    provider_session_scope: str | None = None,
 ) -> LLM:
     with get_session_with_current_tenant() as db_session:
         model = fetch_default_llm_model(db_session)
@@ -458,6 +478,7 @@ def get_default_llm(
             additional_headers=additional_headers,
             policy_fn=policy_fn,
             user_defaults=user_defaults,
+            provider_session_scope=provider_session_scope,
         )
 
 
@@ -470,6 +491,11 @@ def get_llm(
     api_base: str | None = None,
     api_version: str | None = None,
     custom_config: dict[str, str] | None = None,
+    provider_headers: dict[str, str] | None = None,
+    # Stable scope for providers that need a session identity (OpenCode Zen
+    # free tier). The chat path passes one scope per chat session; without it
+    # the session id is ephemeral (fresh upstream session per call).
+    provider_session_scope: str | None = None,
     temperature: float | None = None,
     timeout: int | None = None,
     additional_headers: dict[str, str] | None = None,
@@ -483,7 +509,25 @@ def get_llm(
     if temperature is None:
         temperature = GEN_AI_TEMPERATURE
 
+    uses_zen_gateway = is_opencode_gateway(provider, api_base)
+    if uses_zen_gateway and not api_key:
+        # Keyless free tier: the gateway serves free models to the
+        # anonymous "public" bearer.
+        api_key = OPENCODE_PUBLIC_API_KEY
+
     extra_headers = build_llm_extra_headers(additional_headers)
+
+    # Auto client identity for session-gated providers. Loses to the
+    # admin-configured headers below so an explicit Extra Headers entry
+    # always wins.
+    if uses_zen_gateway:
+        extra_headers.update(opencode_request_headers(provider_session_scope))
+
+    # Admin-configured headers for this provider (e.g. a gateway-mandated
+    # User-Agent). They beat request-scoped and deployment-env headers but
+    # lose to the built-in auth headers below and to policy headers.
+    if provider_headers:
+        extra_headers.update(provider_headers)
 
     # Some providers (e.g. LM Studio) carry an optional Bearer token in
     # custom_config that must be turned into an Authorization header.

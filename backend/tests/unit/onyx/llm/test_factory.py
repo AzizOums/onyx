@@ -16,6 +16,12 @@ from onyx.llm.factory import (
     llm_from_provider,
 )
 from onyx.llm.interfaces import LlmRequestPolicy
+from onyx.llm.opencode import (
+    OPENCODE_PROVIDER_NAME,
+    is_opencode_gateway,
+    opencode_request_headers,
+    opencode_session_id,
+)
 from onyx.llm.well_known_providers.constants import (
     BIFROST_PROVIDER_NAME,
     LM_STUDIO_API_KEY_CONFIG_KEY,
@@ -209,6 +215,244 @@ def test_get_llm_without_policy_headers_keeps_the_existing_merge() -> None:
 
         kwargs = mock_litellm_llm.call_args.kwargs
         assert kwargs["extra_headers"] == {"x-request-scoped": "a"}
+
+
+def test_get_llm_merges_provider_headers_over_request_headers() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai",
+            model="gpt-4o",
+            deployment_name=None,
+            max_input_tokens=4096,
+            additional_headers={"x-request-scoped": "a", "User-Agent": "other"},
+            provider_headers={"User-Agent": "opencode/1.18.18"},
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"] == {
+            "x-request-scoped": "a",
+            "User-Agent": "opencode/1.18.18",
+        }
+
+
+def test_get_llm_policy_headers_win_over_provider_headers() -> None:
+    policy = incognito_llm_extra_headers(
+        IncognitoRecordMode.USAGE_ONLY, BIFROST_PROVIDER_NAME
+    )
+    header = BIFROST_DISABLE_CONTENT_LOGGING_HEADER
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=BIFROST_PROVIDER_NAME,
+            model="gpt-4o",
+            deployment_name=None,
+            max_input_tokens=4096,
+            provider_headers={header: "false"},
+            policy_headers=policy,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"][header] == "true"
+
+
+def test_get_llm_special_auth_wins_over_provider_headers() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=LlmProviderNames.LM_STUDIO,
+            model="test-model",
+            deployment_name=None,
+            max_input_tokens=4096,
+            custom_config={LM_STUDIO_API_KEY_CONFIG_KEY: "test-key"},
+            provider_headers={"X-Custom": "yes"},
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"] == {
+            "X-Custom": "yes",
+            "Authorization": "Bearer test-key",
+        }
+
+
+def test_llm_from_provider_passes_stored_extra_headers() -> None:
+    provider = _build_provider_view(
+        provider="openai",
+        max_input_tokens=4096,
+    )
+    provider.extra_headers = {"User-Agent": "opencode/1.18.18"}
+
+    with patch("onyx.llm.factory.get_llm") as mock_get_llm:
+        llm_from_provider(model_name="test-model", llm_provider=provider)
+
+        assert mock_get_llm.call_args.kwargs["provider_headers"] == {
+            "User-Agent": "opencode/1.18.18"
+        }
+
+
+def test_is_opencode_gateway_matches_native_and_zen_rows() -> None:
+    assert is_opencode_gateway("opencode", None) is True
+    assert is_opencode_gateway("opencode", "https://opencode.ai/zen/v1") is True
+    # Rows created before the native provider (generic openai-compatible
+    # pointed at Zen) get the same treatment.
+    assert is_opencode_gateway("openai_compatible", "https://opencode.ai/zen/v1") is True
+    assert is_opencode_gateway("openai_compatible", "http://localhost:8000/v1") is False
+    assert is_opencode_gateway("openai", None) is False
+    assert is_opencode_gateway(None, None) is False
+
+
+def test_get_llm_uses_public_bearer_for_keyless_zen() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=OPENCODE_PROVIDER_NAME,
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            api_key=None,
+            api_base="https://opencode.ai/zen/v1",
+            max_input_tokens=4096,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["api_key"] == "public"
+
+
+def test_get_llm_uses_public_bearer_for_keyless_zen_compat_row() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai_compatible",
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            api_key=None,
+            api_base="https://opencode.ai/zen/v1",
+            max_input_tokens=4096,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["api_key"] == "public"
+        assert "x-opencode-session" in kwargs["extra_headers"]
+
+
+def test_get_llm_keeps_real_key_and_skips_public_for_others() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai",
+            model="gpt-4o",
+            deployment_name=None,
+            api_key=None,
+            max_input_tokens=4096,
+        )
+
+        assert mock_litellm_llm.call_args.kwargs["api_key"] is None
+
+
+def test_opencode_session_id_is_stable_and_prefixed() -> None:
+    first = opencode_session_id("chat-session:123")
+    assert first.startswith("ses_")
+    assert len(first) == len("ses_") + 32
+    assert opencode_session_id("chat-session:123") == first
+    assert opencode_session_id("chat-session:456") != first
+
+
+def test_opencode_request_headers_carry_client_identity() -> None:
+    headers = opencode_request_headers("chat-session:123")
+    assert headers["User-Agent"].startswith("opencode/")
+    assert headers["x-opencode-client"] == "cli"
+    assert headers["x-opencode-session"] == opencode_session_id("chat-session:123")
+    assert headers["x-opencode-request"].startswith("msg_")
+    # Same scope keeps the session (affinity) but mints a fresh request id.
+    again = opencode_request_headers("chat-session:123")
+    assert again["x-opencode-session"] == headers["x-opencode-session"]
+    assert again["x-opencode-request"] != headers["x-opencode-request"]
+
+
+def test_get_llm_adds_opencode_identity_headers() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=OPENCODE_PROVIDER_NAME,
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            max_input_tokens=4096,
+            provider_session_scope="chat-session:123",
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        # The request id is minted fresh per build, so compare the rest.
+        assert kwargs["extra_headers"]["x-opencode-request"].startswith("msg_")
+        assert {
+            k: v
+            for k, v in kwargs["extra_headers"].items()
+            if k != "x-opencode-request"
+        } == {
+            k: v
+            for k, v in opencode_request_headers("chat-session:123").items()
+            if k != "x-opencode-request"
+        }
+
+
+def test_get_llm_stored_headers_win_over_opencode_identity() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=OPENCODE_PROVIDER_NAME,
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            max_input_tokens=4096,
+            provider_session_scope="chat-session:123",
+            provider_headers={"x-opencode-session": "ses_custom"},
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"]["x-opencode-session"] == "ses_custom"
+        assert kwargs["extra_headers"]["x-opencode-client"] == "cli"
+
+
+def test_get_llm_policy_headers_win_over_opencode_identity() -> None:
+    policy = incognito_llm_extra_headers(
+        IncognitoRecordMode.USAGE_ONLY, BIFROST_PROVIDER_NAME
+    )
+    header = BIFROST_DISABLE_CONTENT_LOGGING_HEADER
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=OPENCODE_PROVIDER_NAME,
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            max_input_tokens=4096,
+            provider_session_scope="chat-session:123",
+            policy_headers=policy,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"][header] == "true"
+        assert "x-opencode-session" in kwargs["extra_headers"]
+
+
+def test_get_llm_skips_opencode_identity_for_other_providers() -> None:
+    with patch("onyx.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai",
+            model="gpt-4o",
+            deployment_name=None,
+            max_input_tokens=4096,
+            provider_session_scope="chat-session:123",
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"] == {}
+
+
+def test_llm_from_provider_passes_session_scope() -> None:
+    provider = _build_provider_view(
+        provider=OPENCODE_PROVIDER_NAME,
+        max_input_tokens=4096,
+    )
+
+    with patch("onyx.llm.factory.get_llm") as mock_get_llm:
+        llm_from_provider(
+            model_name="mimo-v2.5-free",
+            llm_provider=provider,
+            provider_session_scope="chat-session:123",
+        )
+
+        assert (
+            mock_get_llm.call_args.kwargs["provider_session_scope"]
+            == "chat-session:123"
+        )
 
 
 def test_llm_from_provider_resolves_policy_headers_for_the_winning_provider() -> None:

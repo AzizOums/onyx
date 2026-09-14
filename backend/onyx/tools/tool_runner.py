@@ -18,7 +18,6 @@ from onyx.tools.models import (
     ChatMinimalTextMessage,
     OpenURLToolOverrideKwargs,
     ParallelToolCallResponse,
-    PythonToolOverrideKwargs,
     SearchToolOverrideKwargs,
     ToolCallException,
     ToolCallKickoff,
@@ -26,16 +25,11 @@ from onyx.tools.models import (
     ToolResponse,
     WebSearchToolOverrideKwargs,
 )
-from onyx.tools.tool_implementations.coding_agent.coding_agent_tool import (
-    CodingAgentTool,
-    CodingAgentToolOverrideKwargs,
-)
 from onyx.tools.tool_implementations.memory.memory_tool import (
     MemoryTool,
     MemoryToolOverrideKwargs,
 )
 from onyx.tools.tool_implementations.open_url.open_url_tool import OpenURLTool
-from onyx.tools.tool_implementations.python.python_tool import PythonTool
 from onyx.tools.tool_implementations.search.search_tool import SearchTool
 from onyx.tools.tool_implementations.web_search.web_search_tool import WebSearchTool
 from onyx.tracing.framework.create import function_span
@@ -243,8 +237,6 @@ def run_tool_calls(
     max_concurrent_tools: int | None = None,
     # Skip query expansion for repeat search tool calls
     skip_search_query_expansion: bool = False,
-    # Files from the chat session to pass to tools like PythonTool
-    chat_files: list[ChatFile] | None = None,
     # A map of url -> summary for passing web results to open url tool
     url_snippet_map: dict[str, str] | None = None,
     # When False, don't pass memory context to search tools for query expansion
@@ -351,9 +343,7 @@ def run_tool_calls(
             SearchToolOverrideKwargs
             | WebSearchToolOverrideKwargs
             | OpenURLToolOverrideKwargs
-            | PythonToolOverrideKwargs
             | MemoryToolOverrideKwargs
-            | CodingAgentToolOverrideKwargs
             | None
         ) = None
 
@@ -397,12 +387,6 @@ def run_tool_calls(
             )
             starting_citation_num += 100
 
-        elif isinstance(tool, PythonTool):
-            override_kwargs = PythonToolOverrideKwargs(
-                chat_files=chat_files or [],
-            )
-        elif isinstance(tool, CodingAgentTool):
-            override_kwargs = CodingAgentToolOverrideKwargs()
         elif isinstance(tool, MemoryTool):
             override_kwargs = MemoryToolOverrideKwargs(
                 user_name=(

@@ -103,7 +103,3 @@ services:
       # start_interval to apply at all.
       start_period: 30s
       start_interval: 1s
-
-  code-interpreter:
-    ports:
-      - "${CODE_INTERPRETER_HOST_PORT:-8000}:8000"

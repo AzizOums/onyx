@@ -19,7 +19,6 @@ export function useAdminNavLabels(): Record<AdminNavItemId, string> {
       webSearch: t("adminNav.items.webSearch.label"),
       imageGeneration: t("adminNav.items.imageGeneration.label"),
       voice: t("adminNav.items.voice.label"),
-      codeInterpreter: t("adminNav.items.codeInterpreter.label"),
       chatPreferences: t("adminNav.items.chatPreferences.label"),
       craftAccess: t("adminNav.items.craftAccess.label"),
       craftApps: t("adminNav.items.craftApps.label"),

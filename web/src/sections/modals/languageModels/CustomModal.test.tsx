@@ -259,6 +259,7 @@ describe("Custom LLM Provider Configuration Workflow", () => {
         },
       ],
       custom_config: {},
+      extra_headers: null,
       is_public: true,
       // Simulates a provider saved before custom providers were excluded from
       // auto mode; the next update must flip it back to false.
@@ -343,6 +344,7 @@ describe("Custom LLM Provider Configuration Workflow", () => {
         },
       ],
       custom_config: {},
+      extra_headers: null,
       is_public: true,
       is_auto_mode: false,
       groups: [],

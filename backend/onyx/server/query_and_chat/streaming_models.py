@@ -29,8 +29,6 @@ class StreamingType(Enum):
     IMAGE_GENERATION_START = "image_generation_start"
     IMAGE_GENERATION_HEARTBEAT = "image_generation_heartbeat"
     IMAGE_GENERATION_FINAL = "image_generation_final"
-    PYTHON_TOOL_START = "python_tool_start"
-    PYTHON_TOOL_DELTA = "python_tool_delta"
     CUSTOM_TOOL_START = "custom_tool_start"
     CUSTOM_TOOL_ARGS = "custom_tool_args"
     CUSTOM_TOOL_DELTA = "custom_tool_delta"
@@ -53,13 +51,6 @@ class StreamingType(Enum):
     INTERMEDIATE_REPORT_START = "intermediate_report_start"
     INTERMEDIATE_REPORT_DELTA = "intermediate_report_delta"
     INTERMEDIATE_REPORT_CITED_DOCS = "intermediate_report_cited_docs"
-
-    CODING_AGENT_START = "coding_agent_start"
-    CODING_AGENT_THINKING_DELTA = "coding_agent_thinking_delta"
-    CODING_AGENT_FINAL = "coding_agent_final"
-
-    BASH_TOOL_START = "bash_tool_start"
-    BASH_TOOL_DELTA = "bash_tool_delta"
 
 
 class BaseObj(BaseModel):
@@ -252,19 +243,6 @@ class ImageGenerationFinal(BaseObj):
     images: list[GeneratedImage]
 
 
-class PythonToolStart(BaseObj):
-    type: Literal["python_tool_start"] = StreamingType.PYTHON_TOOL_START.value
-    code: str
-
-
-class PythonToolDelta(BaseObj):
-    type: Literal["python_tool_delta"] = StreamingType.PYTHON_TOOL_DELTA.value
-
-    stdout: str = ""
-    stderr: str = ""
-    file_ids: list[str] = []
-
-
 # Custom tool being called, first allocate a placeholder block for it on the UI
 class CustomToolStart(BaseObj):
     type: Literal["custom_tool_start"] = StreamingType.CUSTOM_TOOL_START.value
@@ -391,43 +369,6 @@ class IntermediateReportCitedDocs(BaseObj):
 
 
 ################################################
-# Coding Agent Packets
-################################################
-class CodingAgentStart(BaseObj):
-    type: Literal["coding_agent_start"] = StreamingType.CODING_AGENT_START.value
-    query: str
-    repo: str
-
-
-class CodingAgentThinkingDelta(BaseObj):
-    type: Literal["coding_agent_thinking_delta"] = (
-        StreamingType.CODING_AGENT_THINKING_DELTA.value
-    )
-    content: str
-
-
-class CodingAgentFinal(BaseObj):
-    type: Literal["coding_agent_final"] = StreamingType.CODING_AGENT_FINAL.value
-    answer: str
-
-
-################################################
-# Bash Tool Packets
-################################################
-class BashToolStart(BaseObj):
-    type: Literal["bash_tool_start"] = StreamingType.BASH_TOOL_START.value
-    cmd: str
-
-
-class BashToolDelta(BaseObj):
-    type: Literal["bash_tool_delta"] = StreamingType.BASH_TOOL_DELTA.value
-    stdout: str = ""
-    stderr: str = ""
-    exit_code: int | None = None
-    timed_out: bool = False
-
-
-################################################
 # Packet Object
 ################################################
 # Discriminated union of all possible packet object types
@@ -452,8 +393,6 @@ PacketObj = Union[
     OpenUrlStart,
     OpenUrlUrls,
     OpenUrlDocuments,
-    PythonToolStart,
-    PythonToolDelta,
     CustomToolStart,
     CustomToolArgs,
     CustomToolDelta,
@@ -477,13 +416,6 @@ PacketObj = Union[
     IntermediateReportStart,
     IntermediateReportDelta,
     IntermediateReportCitedDocs,
-    # Coding Agent Packets
-    CodingAgentStart,
-    CodingAgentThinkingDelta,
-    CodingAgentFinal,
-    # Bash Tool Packets
-    BashToolStart,
-    BashToolDelta,
 ]
 
 

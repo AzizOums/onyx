@@ -1,26 +1,80 @@
 import { act, renderHook } from "@tests/setup/test-utils";
 import { useLlmManager } from "@/lib/hooks";
 import { ChatSession, ChatSessionSharedStatus } from "@/app/app/interfaces";
-import { ReasoningEffortOverride } from "@/lib/languageModels/types";
+import {
+  ReasoningEffortOverride,
+  type LLMProviderDescriptor,
+  type ModelConfiguration,
+} from "@/lib/languageModels/types";
 import {
   updateReasoningEffortForChatSession,
   updateTemperatureOverrideForChatSession,
 } from "@/app/app/services/lib";
+import { useLLMProviders } from "@/lib/languageModels/hooks";
 
 jest.mock("@/providers/UserProvider", () => ({
   useUser: () => ({ user: null }),
 }));
 jest.mock("@/lib/languageModels/hooks", () => ({
-  useLLMProviders: () => ({
-    llmProviders: [],
-    defaultText: undefined,
-    isLoading: false,
-  }),
+  useLLMProviders: jest.fn(),
 }));
 jest.mock("@/app/app/services/lib", () => ({
   updateReasoningEffortForChatSession: jest.fn(),
   updateTemperatureOverrideForChatSession: jest.fn(),
 }));
+
+const modelConfiguration = (
+  name: string,
+  id: number
+): ModelConfiguration =>
+  ({
+    id,
+    name,
+    is_visible: true,
+    max_input_tokens: null,
+    supports_image_input: false,
+    supports_reasoning: false,
+    effectiveDisplayName: name,
+  }) as ModelConfiguration;
+
+const mockProviders = [
+  {
+    id: 1,
+    name: "opencode",
+    provider: "opencode",
+    provider_display_name: "OpenCode Zen",
+    model_configurations: [
+      modelConfiguration("mimo-v2.5-free", 3),
+      modelConfiguration("muse-spark-1.3-contributor-free", 5),
+    ],
+  },
+] as LLMProviderDescriptor[];
+
+function mockProviderList() {
+  jest.mocked(useLLMProviders).mockReturnValue({
+    llmProviders: mockProviders,
+    defaultText: { provider_id: 1, model_name: "mimo-v2.5-free" },
+    defaultVision: null,
+    defaultChatNaming: null,
+    defaultCraft: null,
+    isLoading: false,
+    error: undefined,
+    refetch: jest.fn(),
+  } as unknown as ReturnType<typeof useLLMProviders>);
+}
+
+function mockEmptyProviderList() {
+  jest.mocked(useLLMProviders).mockReturnValue({
+    llmProviders: [],
+    defaultText: undefined,
+    defaultVision: undefined,
+    defaultChatNaming: undefined,
+    defaultCraft: undefined,
+    isLoading: false,
+    error: undefined,
+    refetch: jest.fn(),
+  } as unknown as ReturnType<typeof useLLMProviders>);
+}
 
 function makeSession(
   id: string,
@@ -46,6 +100,7 @@ interface HookProps {
 
 describe("useLlmManager override persistence", () => {
   beforeEach(() => {
+    mockEmptyProviderList();
     const ok = { ok: true, status: 200 } as Response;
     jest.mocked(updateReasoningEffortForChatSession).mockResolvedValue(ok);
     jest.mocked(updateTemperatureOverrideForChatSession).mockResolvedValue(ok);
@@ -93,5 +148,65 @@ describe("useLlmManager override persistence", () => {
     // Coming back reads the row too, not the old local choice.
     rerender({ session: makeSession("session-1", null) });
     expect(result.current.reasoningEffort).toBeNull();
+  });
+});
+
+describe("useLlmManager model handoff", () => {
+  const spark = {
+    name: "opencode",
+    provider: "opencode",
+    modelName: "muse-spark-1.3-contributor-free",
+    modelConfigurationId: 5,
+  };
+
+  beforeEach(() => {
+    mockProviderList();
+  });
+
+  test("arrival at a send-created session keeps the sent-with model", () => {
+    const { result, rerender } = renderHook(
+      (props: HookProps) => useLlmManager(props.session),
+      { initialProps: {} }
+    );
+
+    act(() => result.current.updateCurrentLlm(spark));
+    expect(result.current.currentLlm.modelName).toBe(spark.modelName);
+
+    // Viewing session A, then new chat, then the send creates session B.
+    rerender({ session: makeSession("session-a", null) });
+    rerender({});
+    act(() => result.current.noteModelHandoff("session-b", spark));
+    rerender({ session: makeSession("session-b", null) });
+
+    expect(result.current.currentLlm.modelName).toBe(spark.modelName);
+  });
+
+  test("arrival without a handoff still resets to the default model", () => {
+    const { result, rerender } = renderHook(
+      (props: HookProps) => useLlmManager(props.session),
+      { initialProps: {} }
+    );
+
+    act(() => result.current.updateCurrentLlm(spark));
+    rerender({ session: makeSession("session-a", null) });
+    rerender({});
+    rerender({ session: makeSession("session-b", null) });
+
+    expect(result.current.currentLlm.modelName).toBe("mimo-v2.5-free");
+  });
+
+  test("a later navigation still resets after the handoff is consumed", () => {
+    const { result, rerender } = renderHook(
+      (props: HookProps) => useLlmManager(props.session),
+      { initialProps: {} }
+    );
+
+    act(() => result.current.updateCurrentLlm(spark));
+    act(() => result.current.noteModelHandoff("session-b", spark));
+    rerender({ session: makeSession("session-b", null) });
+    expect(result.current.currentLlm.modelName).toBe(spark.modelName);
+
+    rerender({ session: makeSession("session-c", null) });
+    expect(result.current.currentLlm.modelName).toBe("mimo-v2.5-free");
   });
 });

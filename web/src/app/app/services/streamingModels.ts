@@ -22,14 +22,16 @@ export enum PacketType {
   SEARCH_TOOL_DOCUMENTS_DELTA = "search_tool_documents_delta",
   IMAGE_GENERATION_TOOL_START = "image_generation_start",
   IMAGE_GENERATION_TOOL_DELTA = "image_generation_final",
-  PYTHON_TOOL_START = "python_tool_start",
-  PYTHON_TOOL_DELTA = "python_tool_delta",
   FETCH_TOOL_START = "open_url_start",
   FETCH_TOOL_URLS = "open_url_urls",
   FETCH_TOOL_DOCUMENTS = "open_url_documents",
 
   // Tool call argument delta (streams tool args before tool executes)
   TOOL_CALL_ARGUMENT_DELTA = "tool_call_argument_delta",
+
+  // Debug metadata about a tool call. Only sent when the backend runs with
+  // INTEGRATION_TESTS_MODE. Carries no renderable content.
+  TOOL_CALL_DEBUG = "tool_call_debug",
 
   // Custom tool packets
   CUSTOM_TOOL_START = "custom_tool_start",
@@ -62,26 +64,8 @@ export enum PacketType {
   INTERMEDIATE_REPORT_START = "intermediate_report_start",
   INTERMEDIATE_REPORT_DELTA = "intermediate_report_delta",
   INTERMEDIATE_REPORT_CITED_DOCS = "intermediate_report_cited_docs",
-
-  // Coding Agent packets
-  CODING_AGENT_START = "coding_agent_start",
-  CODING_AGENT_THINKING_DELTA = "coding_agent_thinking_delta",
-  CODING_AGENT_FINAL = "coding_agent_final",
-
-  // Bash Tool packets
-  BASH_TOOL_START = "bash_tool_start",
-  BASH_TOOL_DELTA = "bash_tool_delta",
 }
 
-export const CODE_INTERPRETER_TOOL_TYPES = {
-  // Legacy LLM-facing name; still present in sessions persisted before the
-  // rename (OpenAI reserves the function name "python" and rejects it).
-  PYTHON: "python",
-  RUN_PYTHON: "run_python",
-} as const;
-
-export const isCodeInterpreterToolType = (toolType: string): boolean =>
-  (Object.values(CODE_INTERPRETER_TOOL_TYPES) as string[]).includes(toolType);
 
 // Basic Message Packets
 export interface MessageStart extends BaseObj {
@@ -168,18 +152,6 @@ export interface ImageGenerationToolStart extends BaseObj {
 export interface ImageGenerationToolDelta extends BaseObj {
   type: "image_generation_final";
   images: GeneratedImage[];
-}
-
-export interface PythonToolStart extends BaseObj {
-  type: "python_tool_start";
-  code: string;
-}
-
-export interface PythonToolDelta extends BaseObj {
-  type: "python_tool_delta";
-  stdout: string;
-  stderr: string;
-  file_ids: string[];
 }
 
 export interface ToolCallArgumentDelta extends BaseObj {
@@ -324,37 +296,6 @@ export interface IntermediateReportCitedDocs extends BaseObj {
   cited_docs: OnyxDocument[] | null;
 }
 
-// Coding Agent Packets
-export interface CodingAgentStart extends BaseObj {
-  type: "coding_agent_start";
-  query: string;
-  repo: string | null;
-}
-
-export interface CodingAgentThinkingDelta extends BaseObj {
-  type: "coding_agent_thinking_delta";
-  content: string;
-}
-
-export interface CodingAgentFinal extends BaseObj {
-  type: "coding_agent_final";
-  answer: string;
-}
-
-// Bash Tool Packets
-export interface BashToolStart extends BaseObj {
-  type: "bash_tool_start";
-  cmd: string;
-}
-
-export interface BashToolDelta extends BaseObj {
-  type: "bash_tool_delta";
-  stdout: string;
-  stderr: string;
-  exit_code: number | null;
-  timed_out: boolean;
-}
-
 export type ChatObj = MessageStart | MessageDelta | MessageEnd;
 
 export type StopObj = Stop;
@@ -365,6 +306,16 @@ export interface ChatHeartbeat extends BaseObj {
 }
 
 export type ChatHeartbeatObj = ChatHeartbeat;
+
+// Debug metadata about a tool call, emitted only when the backend runs with
+// INTEGRATION_TESTS_MODE. It shares the placement of the tool it describes and
+// has nothing to render, so the processor drops it and its payload
+// (tool_call_id, tool_name, tool_args) is left out of this type.
+export interface ToolCallDebug extends BaseObj {
+  type: "tool_call_debug";
+}
+
+export type ToolCallDebugObj = ToolCallDebug;
 
 export type SectionEndObj = SectionEnd;
 
@@ -383,12 +334,6 @@ export type SearchToolObj =
 export type ImageGenerationToolObj =
   | ImageGenerationToolStart
   | ImageGenerationToolDelta
-  | SectionEnd
-  | PacketError;
-export type PythonToolObj =
-  | PythonToolStart
-  | PythonToolDelta
-  | ToolCallArgumentDelta
   | SectionEnd
   | PacketError;
 export type FetchToolObj =
@@ -417,7 +362,6 @@ export type MemoryToolObj =
 export type NewToolObj =
   | SearchToolObj
   | ImageGenerationToolObj
-  | PythonToolObj
   | FetchToolObj
   | CustomToolObj
   | FileReaderToolObj
@@ -448,15 +392,6 @@ export type ResearchAgentObj =
   | IntermediateReportCitedDocs
   | SectionEnd;
 
-export type CodingAgentObj =
-  | CodingAgentStart
-  | CodingAgentThinkingDelta
-  | CodingAgentFinal
-  | BashToolStart
-  | BashToolDelta
-  | SectionEnd
-  | PacketError;
-
 // Union type for all possible streaming objects
 export type ObjTypes =
   | ChatObj
@@ -464,12 +399,12 @@ export type ObjTypes =
   | ReasoningObj
   | StopObj
   | ChatHeartbeatObj
+  | ToolCallDebugObj
   | SectionEndObj
   | TopLevelBranchingObj
   | CitationObj
   | DeepResearchPlanObj
   | ResearchAgentObj
-  | CodingAgentObj
   | PacketErrorObj
   | CitationObj;
 
@@ -511,11 +446,6 @@ export interface SearchToolPacket {
 export interface ImageGenerationToolPacket {
   placement: Placement;
   obj: ImageGenerationToolObj;
-}
-
-export interface PythonToolPacket {
-  placement: Placement;
-  obj: PythonToolObj;
 }
 
 export interface FetchToolPacket {
@@ -562,7 +492,3 @@ export interface ResearchAgentPacket {
   obj: ResearchAgentObj;
 }
 
-export interface CodingAgentPacket {
-  placement: Placement;
-  obj: CodingAgentObj;
-}

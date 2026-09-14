@@ -1421,7 +1421,6 @@ class TestSelectReminderText:
             out_of_cycles=False,
             persona_task_prompt=None,
             include_citation_reminder=False,
-            include_file_reminder=False,
         )
         kwargs.update(overrides)
         return select_reminder_text(**kwargs)

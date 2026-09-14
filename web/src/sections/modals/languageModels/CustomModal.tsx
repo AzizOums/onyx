@@ -15,11 +15,13 @@ import {
   useInitialValues,
 } from "@/sections/modals/languageModels/utils";
 import { submitProvider } from "@/sections/modals/languageModels/svc";
+import { ModelsDevBrowser } from "@/sections/modals/languageModels/ModelsDevBrowser";
 import { LLMProviderConfiguredSource } from "@/lib/analytics/utils";
 import {
   APIKeyField,
   APIBaseField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModalWrapper,
   useApiBaseSubDescription,
@@ -57,6 +59,8 @@ type CustomModelConfiguration = Pick<
   | "name"
   | "max_input_tokens"
   | "supports_image_input"
+  | "supports_audio_input"
+  | "supports_video_input"
   | "supports_reasoning"
   | "supported_reasoning_efforts"
   | "reasoning_effort_max"
@@ -93,9 +97,22 @@ function ModelConfigurationItem({
         onChange={(e) => onChange({ ...model, display_name: e.target.value })}
       />
       <InputSelect
-        value={model.supports_image_input ? "text-image" : "text-only"}
+        value={
+          model.supports_image_input &&
+          model.supports_audio_input &&
+          model.supports_video_input
+            ? "multimodal"
+            : model.supports_image_input
+              ? "text-image"
+              : "text-only"
+        }
         onValueChange={(value) =>
-          onChange({ ...model, supports_image_input: value === "text-image" })
+          onChange({
+            ...model,
+            supports_image_input: value !== "text-only",
+            supports_audio_input: value === "multimodal",
+            supports_video_input: value === "multimodal",
+          })
         }
       >
         <InputSelect.Trigger
@@ -107,6 +124,9 @@ function ModelConfigurationItem({
           </InputSelect.Item>
           <InputSelect.Item value="text-image">
             {t("custom.modelRow.textImage.label")}
+          </InputSelect.Item>
+          <InputSelect.Item value="multimodal">
+            {t("custom.modelRow.multimodal.label")}
           </InputSelect.Item>
         </InputSelect.Content>
       </InputSelect>
@@ -133,6 +153,34 @@ function ModelConfigurationItem({
         onClick={onRemove}
       />
     </>
+  );
+}
+
+function ModelsDevAwarePicker() {
+  const formikProps = useFormikContext<{
+    model_configurations: CustomModelConfiguration[];
+  }>();
+  return (
+    <ModelsDevBrowser
+      onApply={(picked) => {
+        const mapped: CustomModelConfiguration[] = picked.map((m) => ({
+          name: m.id,
+          display_name: m.name,
+          max_input_tokens: m.context_limit,
+          is_visible: true,
+          supports_image_input: m.supports_image_input,
+          supports_audio_input: m.supports_audio_input,
+          supports_video_input: m.supports_video_input,
+          supports_reasoning: m.reasoning,
+          supported_reasoning_efforts: undefined,
+          reasoning_effort_max: null,
+          reasoning_effort_default: null,
+          temperature_default: null,
+          effectiveDisplayName: m.name,
+        }));
+        formikProps.setFieldValue("model_configurations", mapped);
+      }}
+    />
   );
 }
 
@@ -301,6 +349,8 @@ export default function CustomModal({
         is_visible: mc.is_visible,
         max_input_tokens: mc.max_input_tokens ?? null,
         supports_image_input: mc.supports_image_input,
+        supports_audio_input: mc.supports_audio_input ?? false,
+        supports_video_input: mc.supports_video_input ?? false,
         supports_reasoning: mc.supports_reasoning,
         supported_reasoning_efforts: mc.supported_reasoning_efforts,
         reasoning_effort_max: mc.reasoning_effort_max,
@@ -448,6 +498,8 @@ export default function CustomModal({
 
       <APIBaseField optional subDescription={apiBaseSubDescription} />
 
+      <ModelsDevAwarePicker />
+
       <InputPadder>
         <InputVertical
           withLabel="api_version"
@@ -474,6 +526,8 @@ export default function CustomModal({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField />
         </>

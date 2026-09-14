@@ -381,6 +381,7 @@ export default function LanguageModelsPage() {
         title: t("groups.gateways.title"),
         providerNames: [
           LLMProviderName.OPENROUTER,
+          LLMProviderName.OPENCODE,
           LLMProviderName.LITELLM_PROXY,
           LLMProviderName.PORTKEY,
           LLMProviderName.NEBIUS_TOKENFACTORY,

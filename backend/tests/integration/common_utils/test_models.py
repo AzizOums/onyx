@@ -114,11 +114,31 @@ class DATestCCPair(BaseModel):
     documents: list[SimpleTestDocument] = Field(default_factory=list)
 
 
+class DATestUserGroupUser(BaseModel):
+    id: str
+    email: str = ""
+    is_default: bool = False
+    is_active: bool = True
+    role: str | None = None
+
+
+class DATestUserGroupCCPair(BaseModel):
+    id: int
+
+
 class DATestUserGroup(BaseModel):
     id: int
     name: str
     user_ids: list[str]
     cc_pair_ids: list[int]
+    # Present in API responses for default/seeded groups and permission status.
+    is_default: bool = False
+    is_up_to_date: bool = True
+    users: list[DATestUserGroupUser] = []
+    cc_pairs: list[DATestUserGroupCCPair] = []
+    permissions: list[str] = []
+    manager_ids: list[str] = []
+    incognito_enabled: bool = False
 
 
 class DATestLLMProvider(BaseModel):

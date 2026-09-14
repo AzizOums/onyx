@@ -4412,6 +4412,10 @@
         "title": "Connectez un modèle de génération d'images à utiliser dans la discussion."
       },
       "form": {
+        "apiBase": {
+          "label": "URL de base de l'API",
+          "idle": "URL de base optionnelle compatible OpenAI pour un serveur auto-hébergé (p. ex. LocalAI). Vide = api.openai.com."
+        },
         "apiKey": {
           "comboPlaceholder": "Saisissez une nouvelle clé d'API ou sélectionnez un fournisseur existant",
           "idle": "Saisissez une nouvelle clé d'API ou sélectionnez un fournisseur existant.",
@@ -4471,6 +4475,12 @@
           "label": "Emplacement",
           "required": "L'emplacement est obligatoire"
         },
+        "modelName": {
+          "label": "Nom du modèle",
+          "idle": "Remplacement optionnel, p. ex. un modèle de galerie LocalAI. Vide = {model}.",
+          "required": "Le nom du modèle est requis",
+          "customPlaceholder": "Récupère les modèles du serveur ci-dessus, puis choisis-en un"
+        },
         "projectId": {
           "idle": "Le projet GCP où Vertex AI est activé. Onyx s'authentifie avec le compte de service lié au pod (GKE Workload Identity).",
           "label": "ID du projet GCP",
@@ -4484,6 +4494,13 @@
         },
         "unknownError": {
           "message": "Une erreur inconnue est survenue"
+        },
+        "fetchModels": {
+          "label": "Récupérer les modèles",
+          "loading": "Récupération des modèles…",
+          "missingBase": "Saisis d’abord une URL de base API",
+          "empty": "Aucun modèle trouvé sur ce serveur",
+          "success": "{count} modèle(s) trouvé(s)"
         }
       },
       "header": {
@@ -4524,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "Dernier modèle de génération d'images d'OpenAI, avec la meilleure fidélité aux prompts."
+        },
+        "customOpenaiCompatible": {
+          "description": "Connecte un serveur d'images auto-hébergé compatible OpenAI (api_base + modèle via Fetch)."
         }
       },
       "setDefaultError": {
@@ -5255,6 +5275,9 @@
             },
             "textOnly": {
               "label": "Texte uniquement"
+            },
+            "multimodal": {
+              "label": "Multimodal (texte, image, audio, vidéo)"
             }
           },
           "modelTable": {
@@ -5480,6 +5503,18 @@
             "description": "Sert à identifier ce fournisseur dans l'application.",
             "placeholder": "Nom d'affichage",
             "title": "Nom d'affichage"
+          },
+          "extraHeaders": {
+            "addButton": {
+              "label": "Ajouter un en-tête"
+            },
+            "description": "En-têtes HTTP supplémentaires envoyés avec chaque requête à ce fournisseur (p. ex. `User-Agent: opencode/1.18.18` pour les passerelles qui l'exigent). N'y mettez jamais de secrets — `Authorization` n'est pas autorisé, utilisez le champ de clé API.",
+            "keyInput": {
+              "placeholder": "p. ex. User-Agent"
+            },
+            "keyTitle": "En-tête",
+            "title": "En-têtes supplémentaires",
+            "valueTitle": "Valeur"
           },
           "optionalSuffix": {
             "label": "facultatif"
@@ -7869,9 +7904,19 @@
         },
         "whisper": {
           "subtitle": "Modèle de reconnaissance vocale polyvalent d'OpenAI."
+        },
+        "customStt": {
+          "subtitle": "Serveur speech-to-text auto-hébergé compatible OpenAI"
+        },
+        "customTts": {
+          "subtitle": "Serveur text-to-speech auto-hébergé compatible OpenAI"
         }
       },
       "setupModal": {
+        "apiBase": {
+          "label": "URL de base de l'API",
+          "description": "URL de base optionnelle compatible OpenAI pour un serveur auto-hébergé (p. ex. LocalAI, Kokoro, faster-whisper). Vide = api.openai.com. Depuis un conteneur, utilisez `host.docker.internal` au lieu de `localhost`."
+        },
         "apiKey": {
           "description": "Collez votre [clé d'API]({url}) de {provider} pour accéder à vos modèles.",
           "label": "Clé d'API",
@@ -7907,7 +7952,9 @@
           "selfHostedCapExceeded": "Les points de terminaison auto-hébergés prennent en charge au maximum {cap} langues parlées (détection au démarrage)"
         },
         "sttModel": {
-          "label": "Modèle de reconnaissance vocale"
+          "label": "Modèle de reconnaissance vocale",
+          "openaiDescription": "Nom du modèle sur votre serveur (texte libre pour les endpoints auto-hébergés).",
+          "placeholder": "p. ex. whisper-1"
         },
         "targetUri": {
           "description": "Collez le point de terminaison affiché dans le [portail Azure (Keys and Endpoint)]({portalUrl}). Onyx en extrait la région de service vocal. Exemples : `https://westus.api.cognitive.microsoft.com/` ou `https://westus.tts.speech.microsoft.com/`.",
@@ -7916,7 +7963,9 @@
         },
         "ttsModel": {
           "description": "Ce modèle sera utilisé par défaut par Onyx pour la synthèse vocale.",
-          "label": "Modèle par défaut"
+          "label": "Modèle par défaut",
+          "openaiDescription": "Nom du modèle sur votre serveur (texte libre pour les endpoints auto-hébergés).",
+          "placeholder": "p. ex. tts-1"
         },
         "updateButton": {
           "label": "Mettre à jour"
@@ -7926,6 +7975,13 @@
           "label": "Voix",
           "loadingPlaceholder": "Chargement des voix...",
           "placeholder": "Sélectionnez une voix ou saisissez un ID de voix"
+        },
+        "fetchModels": {
+          "label": "Récupérer les modèles",
+          "loading": "Récupération des modèles…",
+          "missingBase": "Saisis d’abord une URL de base API",
+          "empty": "Aucun modèle trouvé sur ce serveur",
+          "success": "{count} modèle(s) trouvé(s)"
         }
       },
       "speechToText": {

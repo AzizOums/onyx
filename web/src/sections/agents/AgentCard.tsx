@@ -88,18 +88,6 @@ export default function AgentCard({ agent, onView }: AgentCardProps) {
                 description={agent.description}
                 rightChildren={
                   <>
-                    {can(agent, "view_stats") && businessTier && (
-                      <Hoverable.Item group="AgentCard">
-                        <Button
-                          icon={SvgBarChart}
-                          prominence="tertiary"
-                          onClick={noProp(() =>
-                            router.push(`/ee/agents/stats/${agent.id}` as Route)
-                          )}
-                          tooltip={t("card.viewStats.tooltip")}
-                        />
-                      </Hoverable.Item>
-                    )}
                     {can(agent, "edit") && (
                       <Hoverable.Item group="AgentCard">
                         <Button

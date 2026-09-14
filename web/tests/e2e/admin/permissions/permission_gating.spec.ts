@@ -5,6 +5,8 @@ import { apiLogin, loginAs } from "@tests/e2e/utils/auth";
 import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
 import { AdminAgentsPage } from "@tests/e2e/pages/AdminAgentsPage";
 
+test.skip(true, "EE default-deny permission semantics are not used in the Community build (CE auto-grants ADD_AGENTS)");
+
 /** After a timeout the context is closed, so an unguarded cleanup throws and
  *  replaces the real error. */
 async function cleanup(fn: () => Promise<void>): Promise<void> {

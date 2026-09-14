@@ -3,7 +3,7 @@
 import { markdown } from "@opal/utils";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Formik, Form } from "formik";
+import { Formik, Form, useFormikContext } from "formik";
 import * as Yup from "yup";
 import { SvgOnyxLogo } from "@opal/logos";
 import { Modal } from "@opal/components";
@@ -27,6 +27,7 @@ import {
   testVoiceProvider,
   upsertVoiceProvider,
   fetchVoicesByType,
+  fetchVoiceModels,
   deleteVoiceProvider,
 } from "@/lib/voice/svc";
 import {
@@ -43,6 +44,76 @@ import {
 export { type ProviderMode } from "@/lib/voice/utils";
 
 const AZURE_PORTAL_URL = "https://portal.azure.com/";
+
+function mergeDiscoveredModels(
+  base: Array<{ id: string; name: string }> | undefined,
+  discovered: string[]
+): Array<{ id: string; name: string }> {
+  const seen = new Set((base ?? []).map((m) => m.id));
+  const merged = [...(base ?? [])];
+  for (const id of discovered) {
+    if (!seen.has(id)) {
+      seen.add(id);
+      merged.push({ id, name: id });
+    }
+  }
+  return merged;
+}
+
+// ---------------------------------------------------------------------------
+// Fetches STT/TTS model ids from an OpenAI-compatible audio server
+// (`GET {api_base}/models`) into the surrounding Formik-adjacent state.
+// Shown only for the openai provider type, whose model fields are free-type.
+// ---------------------------------------------------------------------------
+
+function VoiceModelFetchButton({
+  onModels,
+}: {
+  onModels: (ids: string[]) => void;
+}) {
+  const t = useTranslations("admin.voice");
+  const { values } = useFormikContext<VoiceFormValues>();
+  const [isFetching, setIsFetching] = useState(false);
+
+  const handleFetch = async () => {
+    const apiBase = (values.api_base ?? "").trim();
+    if (!apiBase) {
+      toast.error(t("setupModal.fetchModels.missingBase"));
+      return;
+    }
+    setIsFetching(true);
+    const { models, error } = await fetchVoiceModels(
+      apiBase,
+      values.api_key || undefined
+    );
+    setIsFetching(false);
+    if (error) {
+      toast.error(error);
+      return;
+    }
+    if (models.length === 0) {
+      toast.error(t("setupModal.fetchModels.empty"));
+      return;
+    }
+    onModels(models.map((m) => m.id));
+    toast.success(t("setupModal.fetchModels.success", { count: models.length }));
+  };
+
+  return (
+    <div className="flex flex-row justify-end w-full">
+      <Button
+        prominence="secondary"
+        size="sm"
+        disabled={isFetching}
+        onClick={() => void handleFetch()}
+      >
+        {isFetching
+          ? t("setupModal.fetchModels.loading")
+          : t("setupModal.fetchModels.label")}
+      </Button>
+    </div>
+  );
+}
 
 // ---------------------------------------------------------------------------
 // VoiceProviderSetupModal
@@ -66,6 +137,10 @@ export function VoiceProviderSetupModal({
   const t = useTranslations("admin.voice");
   const onClose = useModalClose();
   const detail = getVoiceProviderDetail(providerType);
+  // Custom servers speak the OpenAI wire protocol: same api_base field,
+  // free-type model combos, and model Fetch as the openai provider type.
+  const isOpenAIFamily =
+    providerType === "openai" || providerType === "openai_compatible";
   const initialTtsModel = defaultModelId
     ? resolveModelId(defaultModelId)
     : (existingProvider?.tts_model ?? "tts-1");
@@ -77,6 +152,21 @@ export function VoiceProviderSetupModal({
   const [isLoadingVoices, setIsLoadingVoices] = useState(false);
   const [initialDefaultVoice, setInitialDefaultVoice] = useState(
     existingProvider?.default_voice ?? ""
+  );
+
+  // Model ids discovered from an OpenAI-compatible audio server
+  // (`GET {api_base}/models`), merged into the free-type STT/TTS combos.
+  const [discoveredModels, setDiscoveredModels] = useState<string[]>([]);
+  const handleDiscoveredModels = (ids: string[]) => {
+    setDiscoveredModels((prev) => Array.from(new Set([...prev, ...ids])));
+  };
+  const sttModelOptions = mergeDiscoveredModels(
+    detail.sttModels,
+    discoveredModels
+  );
+  const ttsModelOptions = mergeDiscoveredModels(
+    detail.ttsModels,
+    discoveredModels
   );
 
   // Fetch voices on mount
@@ -110,6 +200,7 @@ export function VoiceProviderSetupModal({
         : Yup.string(),
     stt_model: Yup.string(),
     tts_model: Yup.string(),
+    api_base: Yup.string(),
     default_voice: Yup.string(),
     stt_languages:
       mode === "stt" && detail.sttLanguages
@@ -150,6 +241,10 @@ export function VoiceProviderSetupModal({
   const initialValues: VoiceFormValues = {
     api_key: existingProvider?.api_key ?? "",
     target_uri: existingProvider?.target_uri ?? "",
+    // The view maps api_base onto target_uri, so a stored self-hosted base
+    // round-trips through it.
+    api_base:
+      isOpenAIFamily ? (existingProvider?.target_uri ?? "") : "",
     stt_model: existingProvider?.stt_model ?? "whisper-1",
     tts_model: initialTtsModel,
     default_voice: initialDefaultVoice,
@@ -170,7 +265,14 @@ export function VoiceProviderSetupModal({
         const testResponse = await testVoiceProvider({
           provider_type: providerType,
           api_key: apiKeyChanged ? values.api_key : undefined,
-          target_uri: values.target_uri || undefined,
+          target_uri:
+            providerType === "azure"
+              ? values.target_uri || undefined
+              : undefined,
+          api_base:
+            isOpenAIFamily
+              ? values.api_base || undefined
+              : undefined,
           use_stored_key: shouldUseStoredKey,
         });
 
@@ -205,7 +307,10 @@ export function VoiceProviderSetupModal({
         provider_type: providerType,
         api_key: apiKeyChanged ? values.api_key : undefined,
         api_key_changed: apiKeyChanged,
-        target_uri: values.target_uri || undefined,
+        target_uri:
+          providerType === "azure" ? values.target_uri || undefined : undefined,
+        api_base:
+          isOpenAIFamily ? values.api_base || undefined : undefined,
         custom_config: customConfig,
         stt_model: values.stt_model,
         tts_model: values.tts_model,
@@ -283,6 +388,21 @@ export function VoiceProviderSetupModal({
                     </InputVertical>
                   )}
 
+                  {isOpenAIFamily && (
+                    <InputVertical
+                      title={t("setupModal.apiBase.label")}
+                      subDescription={markdown(
+                        t("setupModal.apiBase.description")
+                      )}
+                      withLabel="api_base"
+                    >
+                      <InputTypeInField
+                        name="api_base"
+                        placeholder="http://host.docker.internal:8080/v1"
+                      />
+                    </InputVertical>
+                  )}
+
                   <InputVertical
                     title={t("setupModal.apiKey.label")}
                     subDescription={markdown(
@@ -317,42 +437,90 @@ export function VoiceProviderSetupModal({
                     </InputVertical>
                   )}
 
-                  {mode === "stt" && (detail.sttModels?.length ?? 0) > 1 && (
-                    <InputVertical
-                      title={t("setupModal.sttModel.label")}
-                      withLabel="stt_model"
-                    >
-                      <InputSelectField name="stt_model">
-                        <InputSelect.Trigger />
-                        <InputSelect.Content>
-                          {detail.sttModels!.map((m) => (
-                            <InputSelect.Item key={m.id} value={m.id}>
-                              {m.name}
-                            </InputSelect.Item>
-                          ))}
-                        </InputSelect.Content>
-                      </InputSelectField>
-                    </InputVertical>
-                  )}
-
-                  {mode === "tts" && (
-                    <>
-                      {(detail.ttsModels?.length ?? 0) > 1 && (
-                        <InputVertical
-                          title={t("setupModal.ttsModel.label")}
-                          subDescription={t("setupModal.ttsModel.description")}
-                          withLabel="tts_model"
-                        >
-                          <InputSelectField name="tts_model">
+                  {mode === "stt" &&
+                    ((detail.sttModels?.length ?? 0) > 1 ||
+                      isOpenAIFamily) && (
+                      <InputVertical
+                        title={t("setupModal.sttModel.label")}
+                        subDescription={
+                          isOpenAIFamily
+                            ? t("setupModal.sttModel.openaiDescription")
+                            : undefined
+                        }
+                        withLabel="stt_model"
+                      >
+                        {isOpenAIFamily ? (
+                          <>
+                            <InputComboBoxField
+                              name="stt_model"
+                              options={sttModelOptions.map((m) => ({
+                                value: m.id,
+                                label: m.name,
+                              }))}
+                              placeholder={t("setupModal.sttModel.placeholder")}
+                              strict={false}
+                            />
+                            <VoiceModelFetchButton
+                              onModels={handleDiscoveredModels}
+                            />
+                          </>
+                        ) : (
+                          <InputSelectField name="stt_model">
                             <InputSelect.Trigger />
                             <InputSelect.Content>
-                              {detail.ttsModels!.map((m) => (
+                              {detail.sttModels!.map((m) => (
                                 <InputSelect.Item key={m.id} value={m.id}>
                                   {m.name}
                                 </InputSelect.Item>
                               ))}
                             </InputSelect.Content>
                           </InputSelectField>
+                        )}
+                      </InputVertical>
+                    )}
+
+                  {mode === "tts" && (
+                    <>
+                      {((detail.ttsModels?.length ?? 0) > 1 ||
+                        isOpenAIFamily) && (
+                        <InputVertical
+                          title={t("setupModal.ttsModel.label")}
+                          subDescription={
+                            isOpenAIFamily
+                              ? t("setupModal.ttsModel.openaiDescription")
+                              : t("setupModal.ttsModel.description")
+                          }
+                          withLabel="tts_model"
+                        >
+                          {isOpenAIFamily ? (
+                            <>
+                              <InputComboBoxField
+                                name="tts_model"
+                                options={ttsModelOptions.map((m) => ({
+                                  value: m.id,
+                                  label: m.name,
+                                }))}
+                                placeholder={t(
+                                  "setupModal.ttsModel.placeholder"
+                                )}
+                                strict={false}
+                              />
+                              <VoiceModelFetchButton
+                                onModels={handleDiscoveredModels}
+                              />
+                            </>
+                          ) : (
+                            <InputSelectField name="tts_model">
+                              <InputSelect.Trigger />
+                              <InputSelect.Content>
+                                {detail.ttsModels!.map((m) => (
+                                  <InputSelect.Item key={m.id} value={m.id}>
+                                    {m.name}
+                                  </InputSelect.Item>
+                                ))}
+                              </InputSelect.Content>
+                            </InputSelectField>
+                          )}
                         </InputVertical>
                       )}
 

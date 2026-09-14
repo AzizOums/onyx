@@ -21,6 +21,7 @@ import { LLMProviderConfiguredSource } from "@/lib/analytics/utils";
 import {
   APIKeyField,
   DisplayNameField,
+  ExtraHeadersField,
   ModelAccessField,
   ModelSelectionField,
   ModalWrapper,
@@ -183,6 +184,8 @@ export default function AzureModal({
 
       {!isOnboarding && (
         <>
+          <InputDivider />
+          <ExtraHeadersField />
           <InputDivider />
           <DisplayNameField />
         </>

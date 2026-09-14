@@ -20,9 +20,7 @@ from pathlib import Path
 import httpx
 from pydantic import BaseModel
 
-from ee.onyx.server.query_and_chat.models import SendSearchQueryRequest
 from onyx.configs.constants import DocumentSource
-from onyx.context.search.models import BaseFilters
 
 DEFAULT_TEST_QUERIES = [
     "onboarding checklist",
@@ -102,15 +100,14 @@ def make_one_search_request(
     client: httpx.Client,
     search_url: str,
     request_headers: dict[str, str],
-    request_body: SendSearchQueryRequest,
+    request_body: dict,
     timeout_s: float,
 ) -> Result:
-    request_body_dict = request_body.model_dump()
     start = time.perf_counter()
     try:
         resp = client.post(
             search_url,
-            json=request_body_dict,
+            json=request_body,
             headers=request_headers,
             timeout=timeout_s,
         )
@@ -144,27 +141,21 @@ def make_one_search_request(
 def worker_loop(
     search_url: str,
     request_headers: dict[str, str],
-    base_request_body: SendSearchQueryRequest,
+    base_request_body: dict,
     queries: Queries,
     timeout_s: float,
     results: list[Result],
     results_lock: threading.Lock,
     stop_condition: StopCondition,
 ) -> None:
-    thread_local_base_request_body = base_request_body.model_copy()
+    thread_local_base_request_body = base_request_body.copy()
     with httpx.Client() as client:
         num_requests_made = 0
         timestamp_s = time.perf_counter()
         while not stop_condition.should_stop(
             num_requests_made=num_requests_made, current_timestamp_s=timestamp_s
         ):
-            thread_local_base_request_body.search_query = queries.get_random_query()
-            source_type_filter = queries.get_random_source_type_set_or_none()
-            thread_local_base_request_body.filters = None
-            if source_type_filter:
-                thread_local_base_request_body.filters = BaseFilters(
-                    source_type=source_type_filter
-                )
+            thread_local_base_request_body["query"] = queries.get_random_query()
             result = make_one_search_request(
                 client,
                 search_url,
@@ -242,7 +233,7 @@ def load_source_types(args: argparse.Namespace) -> set[DocumentSource] | None:
 def run_load_test(
     search_url: str,
     request_headers: dict[str, str],
-    base_request_body: SendSearchQueryRequest,
+    base_request_body: dict,
     queries: Queries,
     timeout_s: float,
     concurrency: int,
@@ -281,7 +272,7 @@ def run(args: argparse.Namespace) -> None:
     # Accept either the bare host (https://st-dev.onyx.app) or one ending in
     # /api.
     api_root = base_url if base_url.endswith("/api") else base_url + "/api"
-    search_url = f"{api_root}/search/send-search-message"
+    search_url = f"{api_root}/search"
 
     headers = {
         "Authorization": f"Bearer {token}",
@@ -312,11 +303,10 @@ def run(args: argparse.Namespace) -> None:
 
     print()
     print(f"Load test: concurrency={args.concurrency}.")
-    base_request = SendSearchQueryRequest(
-        search_query="",  # Overwritten per request.
-    )
-    if args.num_hits:
-        base_request.num_hits = args.num_hits
+    base_request = {
+        "query": "",  # Overwritten per request.
+    }
+    # /api/search returns ranked sections; no num_hits knob is exposed.
     stop_condition = StopCondition(
         num_requests_to_make=(
             args.requests_per_worker if args.requests_per_worker else None

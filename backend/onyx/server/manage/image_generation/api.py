@@ -23,6 +23,8 @@ from onyx.image_gen.interfaces import ImageGenerationProviderCredentials
 from onyx.llm.model_capabilities import get_max_input_tokens
 from onyx.llm.utils import collect_credential_values, litellm_exception_to_safe_error
 from onyx.server.manage.image_generation.models import (
+    AvailableImageModel,
+    AvailableImageModelsRequest,
     ImageGenerationConfigCreate,
     ImageGenerationConfigUpdate,
     ImageGenerationConfigView,
@@ -38,6 +40,7 @@ from onyx.server.manage.llm.models import (
     ModelConfigurationUpsertRequest,
 )
 from onyx.server.manage.llm.provider_cache import invalidate_provider_listing_cache
+from onyx.server.manage.llm.utils import fetch_openai_compatible_model_ids
 from onyx.utils.logger import setup_logger
 
 logger = setup_logger()
@@ -301,6 +304,25 @@ def test_image_generation(
             e, secrets=collect_credential_values(api_key, custom_config)
         )
         raise OnyxError(OnyxErrorCode.VALIDATION_ERROR, safe_error.message)
+
+
+@admin_router.post("/available-models")
+def list_available_models(
+    request: AvailableImageModelsRequest,
+    _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+) -> list[AvailableImageModel]:
+    """List models on an OpenAI-compatible image server (`GET {base}/models`).
+
+    Embeddings are excluded; anything else is returned as-is since the
+    listing carries no image-capability signal. Pick a model, then use
+    Test to verify it generates images.
+    """
+    model_ids = fetch_openai_compatible_model_ids(
+        api_base=request.api_base,
+        api_key=request.api_key,
+        source_name="Image generation",
+    )
+    return [AvailableImageModel(name=model_id) for model_id in model_ids]
 
 
 @admin_router.post("/config")

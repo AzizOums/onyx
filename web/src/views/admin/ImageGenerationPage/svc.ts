@@ -47,6 +47,45 @@ export interface ImageGenerationConfigCreateOptions {
 // API Endpoints
 const IMAGE_GEN_CONFIG_URL = "/api/admin/image-generation/config";
 const IMAGE_GEN_TEST_URL = "/api/admin/image-generation/test";
+const IMAGE_GEN_MODELS_URL = "/api/admin/image-generation/available-models";
+
+export interface FetchedImageGenModel {
+  name: string;
+}
+
+/**
+ * List models on an OpenAI-compatible image server (`GET {base}/models`).
+ * Embeddings are excluded server-side; pick a model, then Test verifies it.
+ */
+export async function fetchImageGenModels(
+  apiBase: string,
+  apiKey?: string
+): Promise<{ models: FetchedImageGenModel[]; error?: string }> {
+  try {
+    const response = await fetch(IMAGE_GEN_MODELS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ api_base: apiBase, api_key: apiKey || null }),
+    });
+    if (!response.ok) {
+      let errorMessage = "Failed to fetch models";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.detail || errorData.message || errorMessage;
+      } catch {
+        // ignore JSON parsing errors
+      }
+      return { models: [], error: errorMessage };
+    }
+    const models: FetchedImageGenModel[] = await response.json();
+    return { models };
+  } catch (error) {
+    return {
+      models: [],
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
 
 /**
  * Test API key for image generation provider

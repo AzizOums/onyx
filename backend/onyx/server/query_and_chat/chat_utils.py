@@ -78,6 +78,12 @@ def mime_type_to_chat_file_type(mime_type: str | None) -> ChatFileType:
     if normalized_mime_type in OnyxMimeTypes.IMAGE_MIME_TYPES:
         return ChatFileType.IMAGE
 
+    if normalized_mime_type.startswith("audio/"):
+        return ChatFileType.AUDIO
+
+    if normalized_mime_type.startswith("video/"):
+        return ChatFileType.VIDEO
+
     if normalized_mime_type in OnyxMimeTypes.TABULAR_MIME_TYPES:
         return ChatFileType.TABULAR
 

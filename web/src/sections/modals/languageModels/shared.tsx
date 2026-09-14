@@ -17,6 +17,9 @@ import type {
 } from "@/lib/languageModels/types";
 import { Checkbox } from "@opal/components";
 import InputTypeInField from "@/refresh-components/form/InputTypeInField";
+import KeyValueInput, {
+  type KeyValue,
+} from "@/refresh-components/inputs/InputKeyValue";
 import { InputTypeIn } from "@opal/components";
 import InputComboBox from "@/refresh-components/inputs/InputComboBox";
 import InputSelect from "@/refresh-components/inputs/InputSelect";
@@ -185,6 +188,41 @@ export function APIBaseField({
           rightChildren={rightChildren}
         />
       </InputVertical>
+    </InputPadder>
+  );
+}
+
+// ─── ExtraHeadersField ──────────────────────────────────────────────────────
+
+/**
+ * Extra HTTP headers sent with every LLM request for the provider (e.g. a
+ * gateway-mandated `User-Agent`). Never secrets: `Authorization` is rejected
+ * by the backend, auth belongs in the API key field.
+ */
+export function ExtraHeadersField() {
+  const t = useTranslations("admin.languageModels.modals");
+  const formikProps = useFormikContext<{ extra_headers_list: KeyValue[] }>();
+  return (
+    <InputPadder>
+      <Section gap={3}>
+        <Content
+          title={t("setup.extraHeaders.title")}
+          description={markdown(t("setup.extraHeaders.description"))}
+          width="full"
+          variant="section"
+          sizePreset="main-content"
+        />
+        <KeyValueInput
+          items={formikProps.values.extra_headers_list ?? []}
+          keyTitle={t("setup.extraHeaders.keyTitle")}
+          valueTitle={t("setup.extraHeaders.valueTitle")}
+          keyPlaceholder={t("setup.extraHeaders.keyInput.placeholder")}
+          onChange={(items) =>
+            formikProps.setFieldValue("extra_headers_list", items)
+          }
+          addButtonLabel={t("setup.extraHeaders.addButton.label")}
+        />
+      </Section>
     </InputPadder>
   );
 }

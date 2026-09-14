@@ -1,10 +1,8 @@
 "use client";
 
 import {
-  CODING_AGENT_TOOL_ID,
   FILE_READER_TOOL_ID,
   IMAGE_GENERATION_TOOL_ID,
-  PYTHON_TOOL_ID,
   SEARCH_TOOL_ID,
   WEB_SEARCH_TOOL_ID,
 } from "@/lib/tools/constants";
@@ -84,10 +82,6 @@ export default function ToolsPopover({
           "toolsPopover.tooltips.imageGeneration.description"
         ),
         [WEB_SEARCH_TOOL_ID]: t("toolsPopover.tooltips.webSearch.description"),
-        [PYTHON_TOOL_ID]: t("toolsPopover.tooltips.python.description"),
-        [CODING_AGENT_TOOL_ID]: t(
-          "toolsPopover.tooltips.codingAgent.description"
-        ),
       },
       defaultDescription: t("toolsPopover.tooltips.default.description"),
       configure: t("toolsPopover.tooltips.configureSuffix.text"),
@@ -101,9 +95,6 @@ export default function ToolsPopover({
         "toolsPopover.configureLinks.imageGeneration.tooltip"
       ),
       [WEB_SEARCH_TOOL_ID]: t("toolsPopover.configureLinks.webSearch.tooltip"),
-      [PYTHON_TOOL_ID]: t(
-        "toolsPopover.configureLinks.codeInterpreter.tooltip"
-      ),
       openapi: t("toolsPopover.configureLinks.openapi.tooltip"),
     }),
     [t]

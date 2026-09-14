@@ -231,19 +231,6 @@ export default function AgentRowActions({
                       title={t("rowActions.shareItem.title")}
                     />
                   ) : undefined,
-                  businessTier && canViewStats ? (
-                    <LineItemButton
-                      sizePreset="main-ui"
-                      rounding={2}
-                      key="stats"
-                      icon={SvgBarChart}
-                      onClick={() => {
-                        setPopoverOpen(false);
-                        router.push(`/ee/agents/stats/${agent.id}` as Route);
-                      }}
-                      title={t("rowActions.statsItem.title")}
-                    />
-                  ) : undefined,
                   canDeleteRow ? (
                     <LineItemButton
                       sizePreset="main-ui"

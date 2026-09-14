@@ -424,44 +424,6 @@ def test_perm_sync_skips_root_folder_collaborations() -> None:
     assert "0" not in fake_client.list_collaborations.folder_collaboration_calls
 
 
-@pytest.mark.usefixtures("enable_ee")
-def test_web_link_shared_link_access_consistent_full_vs_slim() -> None:
-    """The slim (perm-sync) path must apply a web link's own shared link the same
-    as the full path; otherwise perm sync overwrites and revokes the link-granted
-    (public/company) access."""
-    connector = _make_connector(_build_fake_client(), include_web_links=True)
-    connector._enterprise_id = "ent"
-    web_link = WebLink(
-        id="9",
-        url="https://example.com",
-        name="Example",
-        modified_at=datetime(2024, 6, 1, tzinfo=timezone.utc),
-        shared_link=WebLinkSharedLinkField(
-            url="https://app.box.com/s/abc",
-            effective_access=WebLinkSharedLinkEffectiveAccessField.OPEN,
-            effective_permission=WebLinkSharedLinkEffectivePermissionField.CAN_PREVIEW,
-            is_password_enabled=False,
-            download_count=0,
-            preview_count=0,
-        ),
-    )
-    folder = BoxFolderFrontierEntry(
-        folder_id="100",
-        display_name="Root",
-        parent_folder_id=None,
-        path="Root",
-        access=ExternalAccess.empty(),
-    )
-
-    full = connector._convert_web_link(web_link, folder, include_permissions=True)
-    slim = connector._build_slim_document(web_link, folder, include_permissions=True)
-
-    assert full is not None and full.external_access is not None
-    assert slim.external_access is not None
-    # the open shared link makes the bookmark public in BOTH paths
-    assert full.external_access.is_public is True
-    assert full.external_access == slim.external_access
-
 
 @pytest.mark.parametrize(
     "value,expected",

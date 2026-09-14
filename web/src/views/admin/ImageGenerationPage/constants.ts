@@ -12,7 +12,8 @@ export type ImageProviderDescriptionKey =
   | "providers.azureGptImage1.description"
   | "providers.gemini25FlashImage.description"
   | "providers.gemini3ProImage.description"
-  | "providers.gemini3ProImagePreview.description";
+  | "providers.gemini3ProImagePreview.description"
+  | "providers.customOpenaiCompatible.description";
 
 export interface ImageProvider {
   image_provider_id: string; // Static unique key for UI-DB mapping
@@ -106,6 +107,19 @@ export const IMAGE_PROVIDER_GROUPS: ProviderGroup[] = [
         title: "Gemini 3 Pro Image Preview",
         descriptionKey: "providers.gemini3ProImagePreview.description",
         deprecated: true,
+      },
+    ],
+  },
+  {
+    name: "Custom",
+    providers: [
+      {
+        image_provider_id: "custom_openai_compatible",
+        // No catalog model: the admin picks one via Fetch from their server.
+        model_name: "",
+        provider_name: "openai",
+        title: "Custom (OpenAI-compatible)",
+        descriptionKey: "providers.customOpenaiCompatible.description",
       },
     ],
   },

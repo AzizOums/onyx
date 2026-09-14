@@ -21,7 +21,10 @@ from onyx.db.voice import (
 )
 from onyx.error_handling.error_codes import OnyxErrorCode
 from onyx.error_handling.exceptions import OnyxError
+from onyx.server.manage.llm.utils import fetch_openai_compatible_model_ids
 from onyx.server.manage.voice.models import (
+    AvailableVoiceModel,
+    AvailableVoiceModelsRequest,
     VoiceOption,
     VoiceProviderTestRequest,
     VoiceProviderUpdateSuccess,
@@ -114,7 +117,14 @@ def _validate_voice_api_base(provider_type: str, api_base: str | None) -> str | 
     if api_base is None:
         return None
 
-    allow_private_network = provider_type.lower() == "azure"
+    # Azure target URIs and explicit OpenAI-compatible bases (e.g. a local
+    # LocalAI / whisper / TTS server) may live on private networks. Both are
+    # typed by a full admin, same trust level as the Azure target URI.
+    allow_private_network = provider_type.lower() in (
+        "azure",
+        "openai",
+        "openai_compatible",
+    )
     try:
         return validate_outbound_http_url(
             api_base, allow_private_network=allow_private_network
@@ -444,3 +454,22 @@ def get_voices_by_type(
         raise OnyxError(OnyxErrorCode.VALIDATION_ERROR, str(exc)) from exc
 
     return [VoiceOption(**voice) for voice in provider.get_available_voices()]
+
+
+@admin_router.post("/available-models")
+def list_available_models(
+    request: AvailableVoiceModelsRequest,
+    _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+) -> list[AvailableVoiceModel]:
+    """List models on an OpenAI-compatible audio server (`GET {base}/models`).
+
+    Embeddings are excluded; anything else is returned as-is since the
+    listing carries no audio-capability signal. Pick an STT/TTS model,
+    then use Test to verify it transcribes/synthesizes.
+    """
+    model_ids = fetch_openai_compatible_model_ids(
+        api_base=request.api_base,
+        api_key=request.api_key,
+        source_name="Voice",
+    )
+    return [AvailableVoiceModel(id=model_id) for model_id in model_ids]

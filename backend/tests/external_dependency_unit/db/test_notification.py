@@ -337,11 +337,6 @@ def test_get_notifications_api_runs_ensure_checks_on_first_page(
     )
     monkeypatch.setattr(
         notifications_api,
-        "ensure_permissions_migration_notification",
-        record_call("permissions"),
-    )
-    monkeypatch.setattr(
-        notifications_api,
         "ensure_release_notes_fresh_and_notify",
         record_call("release_notes"),
     )
@@ -352,7 +347,7 @@ def test_get_notifications_api_runs_ensure_checks_on_first_page(
         user=user,
         db_session=db_session,
     )
-    assert calls == ["build", "permissions", "release_notes"]
+    assert calls == ["build", "release_notes"]
 
     calls.clear()
     notifications_api.get_notifications_api(
@@ -379,7 +374,6 @@ def test_get_notifications_api_filters_by_type_and_skips_generic_checks(
 
     for hook in (
         "ensure_build_mode_intro_notification",
-        "ensure_permissions_migration_notification",
         "ensure_release_notes_fresh_and_notify",
     ):
         monkeypatch.setattr(notifications_api, hook, record_call(hook))
@@ -476,11 +470,6 @@ def test_notification_summary_runs_ensure_checks_before_counting(
     )
     monkeypatch.setattr(
         notifications_api,
-        "ensure_permissions_migration_notification",
-        record_call("permissions"),
-    )
-    monkeypatch.setattr(
-        notifications_api,
         "ensure_release_notes_fresh_and_notify",
         record_call("release_notes"),
     )
@@ -492,7 +481,7 @@ def test_notification_summary_runs_ensure_checks_before_counting(
 
     assert summary.total_items == 0
     assert summary.undismissed_count == 0
-    assert calls == ["build", "permissions", "release_notes"]
+    assert calls == ["build", "release_notes"]
 
 
 def test_notification_summary_and_dismiss_all_api(
@@ -645,11 +634,6 @@ def _disable_notification_ensure_checks(monkeypatch: pytest.MonkeyPatch) -> None
     )
     monkeypatch.setattr(
         notifications_api,
-        "ensure_permissions_migration_notification",
-        noop_ensure,
-    )
-    monkeypatch.setattr(
-        notifications_api,
         "ensure_release_notes_fresh_and_notify",
         noop_ensure,
     )
@@ -748,7 +732,6 @@ def test_get_notifications_api_polled_ensures_run_once_per_window(
 
     for hook in (
         "ensure_build_mode_intro_notification",
-        "ensure_permissions_migration_notification",
         "ensure_release_notes_fresh_and_notify",
     ):
         monkeypatch.setattr(notifications_api, hook, record_call(hook))

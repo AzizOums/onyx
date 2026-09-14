@@ -162,6 +162,9 @@ class ChatMessageSimple(BaseModel):
     message_type: MessageType
     # Only for USER type messages
     image_files: list[ChatLoadedFile] | None = None
+    # Native multimodal attachments (sent as input_audio / video parts)
+    audio_files: list[ChatLoadedFile] | None = None
+    video_files: list[ChatLoadedFile] | None = None
     # Portion of token_count contributed by image_files. Kept separate so
     # budgeting can discount it when a non-vision model replays the images
     # as text markers instead.

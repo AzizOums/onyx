@@ -353,6 +353,9 @@ def upsert_llm_provider(
     existing_llm_provider.api_base = api_base
     existing_llm_provider.api_version = llm_provider_upsert_request.api_version
     existing_llm_provider.custom_config = custom_config
+    # Empty dict means "clear"; the request validator already normalizes it
+    # to None, so assign directly.
+    existing_llm_provider.extra_headers = llm_provider_upsert_request.extra_headers
 
     existing_llm_provider.is_public = llm_provider_upsert_request.is_public
     existing_llm_provider.is_auto_mode = llm_provider_upsert_request.is_auto_mode
@@ -388,6 +391,8 @@ def upsert_llm_provider(
         merged: set[LLMModelFlowType] = set()
         for capability_flow, sent in (
             (LLMModelFlowType.VISION, mc_request.supports_image_input),
+            (LLMModelFlowType.AUDIO_INPUT, mc_request.supports_audio_input),
+            (LLMModelFlowType.VIDEO_INPUT, mc_request.supports_video_input),
             (LLMModelFlowType.REASONING, mc_request.supports_reasoning),
         ):
             keeps = sent if sent is not None else capability_flow in stored_flows
@@ -439,6 +444,8 @@ def upsert_llm_provider(
         # model holding that flow's default must keep it.
         for capability_flow in (
             LLMModelFlowType.VISION,
+            LLMModelFlowType.AUDIO_INPUT,
+            LLMModelFlowType.VIDEO_INPUT,
             LLMModelFlowType.REASONING,
         ):
             if (
@@ -569,6 +576,10 @@ def sync_model_configurations(
             supported_flows = [LLMModelFlowType.CHAT]
             if model.supports_image_input:
                 supported_flows.append(LLMModelFlowType.VISION)
+            if model.supports_audio_input:
+                supported_flows.append(LLMModelFlowType.AUDIO_INPUT)
+            if model.supports_video_input:
+                supported_flows.append(LLMModelFlowType.VIDEO_INPUT)
             if model.supports_reasoning:
                 supported_flows.append(LLMModelFlowType.REASONING)
 
@@ -590,6 +601,16 @@ def sync_model_configurations(
         missing_flows: list[LLMModelFlowType] = []
         if model.supports_image_input and LLMModelFlowType.VISION not in existing_flows:
             missing_flows.append(LLMModelFlowType.VISION)
+        if (
+            model.supports_audio_input
+            and LLMModelFlowType.AUDIO_INPUT not in existing_flows
+        ):
+            missing_flows.append(LLMModelFlowType.AUDIO_INPUT)
+        if (
+            model.supports_video_input
+            and LLMModelFlowType.VIDEO_INPUT not in existing_flows
+        ):
+            missing_flows.append(LLMModelFlowType.VIDEO_INPUT)
         if (
             model.supports_reasoning
             and LLMModelFlowType.REASONING not in existing_flows
