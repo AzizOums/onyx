@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["lumen_text", "lumen-mcp-server"]
+members = ["lumen_text", "lumen-mcp-server", "lumen-db"]
 
 [workspace.package]
 edition = "2021"
@@ -28,6 +28,7 @@ rmcp = { version = "3.3", default-features = false, features = [
     "transport-streamable-http-server",
 ] }
 serde = { version = "1.0", features = ["derive"] }
+uuid = { version = "1", features = ["serde", "v4"] }
 serde_json = "1.0"
 thiserror = "2.0"
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "sync", "time"] }
