@@ -8,6 +8,57 @@ const CHUNK_INTERVAL_MS = 250;
 const DUPLICATE_FINAL_TRANSCRIPT_WINDOW_MS = 1500;
 // When VAD-based auto-stop is disabled, force-stop after this much silence as a fallback
 const SILENCE_FALLBACK_TIMEOUT_MS = 10000;
+// Client-side silence auto-stop: no server is_final is required (the chunked
+// fallback transcriber never emits one, so local STT servers would record
+// forever). Stops after sustained near-silence even in push-to-talk mode.
+const CLIENT_SILENCE_RMS_THRESHOLD = 0.05;
+const CLIENT_SILENCE_AUTO_STOP_MS = 8000;
+// Absolute cap: never record longer than this, whatever the server does.
+const MAX_RECORDING_DURATION_MS = 120000;
+// Whisper hallucinates repeated sentences on noise (keyboard clicks, fans).
+// Runs of this many identical consecutive sentences collapse to two.
+const REPEAT_COLLAPSE_THRESHOLD = 3;
+const REPEAT_COLLAPSE_KEEP = 2;
+
+/**
+ * Collapses runs of 3+ identical consecutive sentences to two.
+ * Guards the input box against hallucination loops ("... ... ...") while
+ * leaving legitimate speech (including double-ups) untouched.
+ */
+export function collapseRepeatedSentences(text: string): string {
+  const parts = text.split(/([.!?…\n]+)/);
+  const out: string[] = [];
+  let runKey: string | null = null;
+  let runLength = 0;
+
+  const flushRun = () => {
+    runKey = null;
+    runLength = 0;
+  };
+
+  for (let i = 0; i < parts.length; i += 2) {
+    const sentence = parts[i] ?? "";
+    const delimiter = parts[i + 1] ?? "";
+    const key = sentence.replace(/\s+/g, " ").trim().toLowerCase();
+    if (!key) {
+      out.push(sentence + delimiter);
+      flushRun();
+      continue;
+    }
+    if (key === runKey) {
+      runLength += 1;
+      if (runLength <= REPEAT_COLLAPSE_KEEP) {
+        out.push(sentence + delimiter);
+      }
+      // Beyond the keep count: drop the repeat entirely.
+      continue;
+    }
+    runKey = key;
+    runLength = 1;
+    out.push(sentence + delimiter);
+  }
+  return out.join("");
+}
 
 interface TranscriptMessage {
   type: "transcript" | "error";
@@ -62,6 +113,10 @@ class VoiceRecorderSession {
   private lastDeliveredFinalAtMs = 0;
   // Fallback timer: force-stop after extended silence when VAD auto-stop is disabled
   private silenceFallbackTimer: NodeJS.Timeout | null = null;
+  // Client-side silence tracking (works without server is_final).
+  private lastSpeechAtMs = 0;
+  // Absolute recording cap.
+  private maxDurationTimer: NodeJS.Timeout | null = null;
 
   // Callbacks to update React state
   private onTranscriptChange: (text: string) => void;
@@ -161,7 +216,17 @@ class VoiceRecorderSession {
       }
       const rms = Math.sqrt(sum / inputData.length);
       // Scale RMS to a more visible range (raw RMS is usually very small)
-      this.onAudioLevel(Math.min(1, rms * 5));
+      const level = Math.min(1, rms * 5);
+      this.onAudioLevel(level);
+
+      // Client-side silence tracking: works without server is_final, so
+      // local/chunked STT servers also auto-stop instead of recording forever.
+      if (!this.isActive) return;
+      if (level >= CLIENT_SILENCE_RMS_THRESHOLD) {
+        this.lastSpeechAtMs = Date.now();
+      } else if (Date.now() - this.lastSpeechAtMs >= CLIENT_SILENCE_AUTO_STOP_MS) {
+        this.forceStop();
+      }
     };
 
     this.sourceNode.connect(this.scriptNode);
@@ -172,6 +237,12 @@ class VoiceRecorderSession {
       () => this.sendAudioBuffer(),
       CHUNK_INTERVAL_MS
     );
+    this.lastSpeechAtMs = Date.now();
+    this.resetMaxDurationTimer();
+    this.maxDurationTimer = setTimeout(() => {
+      // Absolute cap: never record longer than this, whatever the server does.
+      this.forceStop();
+    }, MAX_RECORDING_DURATION_MS);
     this.isActive = true;
   }
 
@@ -179,6 +250,7 @@ class VoiceRecorderSession {
     if (!this.isActive) return this.transcript || null;
 
     this.resetSilenceFallbackTimer();
+    this.resetMaxDurationTimer();
 
     // Stop audio capture
     if (this.sendInterval) {
@@ -226,6 +298,7 @@ class VoiceRecorderSession {
 
   cleanup(): void {
     this.resetSilenceFallbackTimer();
+    this.resetMaxDurationTimer();
     if (this.sendInterval) clearInterval(this.sendInterval);
     if (this.scriptNode) this.scriptNode.disconnect();
     if (this.sourceNode) this.sourceNode.disconnect();
@@ -288,6 +361,26 @@ class VoiceRecorderSession {
     }
   }
 
+  private resetMaxDurationTimer(): void {
+    if (this.maxDurationTimer) {
+      clearTimeout(this.maxDurationTimer);
+      this.maxDurationTimer = null;
+    }
+  }
+
+  /** Set the stored transcript, collapsing hallucinated repeat loops. */
+  private settleTranscript(raw: string): string {
+    this.transcript = collapseRepeatedSentences(raw);
+    return this.transcript;
+  }
+
+  /** Force-stop path shared by client silence detection and max duration. */
+  private forceStop(): void {
+    if (this.isActive && this.onVADStop) {
+      this.onVADStop();
+    }
+  }
+
   private startSilenceFallbackTimer(): void {
     this.resetSilenceFallbackTimer();
     this.silenceFallbackTimer = setTimeout(() => {
@@ -304,21 +397,22 @@ class VoiceRecorderSession {
 
       if (data.type === "transcript") {
         if (data.text) {
-          this.transcript = data.text;
+          const cleaned = this.settleTranscript(data.text);
           // Only push live updates to React while actively recording.
           // After stop(), the final transcript is returned via stopResolver
           // instead — this prevents stale text from reappearing in the
           // input box when the user clears it and starts a new recording.
           if (this.isActive) {
-            this.onTranscriptChange(data.text);
+            this.onTranscriptChange(cleaned);
           }
         }
 
         if (data.is_final && data.text) {
+          const cleanedFinal = this.settleTranscript(data.text);
           // Resolve stop promise if waiting — must run even after stop()
           // so the caller receives the final transcript.
           if (this.stopResolver) {
-            this.stopResolver(data.text);
+            this.stopResolver(cleanedFinal);
             this.stopResolver = null;
           }
 
@@ -329,7 +423,7 @@ class VoiceRecorderSession {
             // VAD detected silence — auto-stop and trigger callback
             const now = Date.now();
             const isLikelyDuplicateFinal =
-              this.lastDeliveredFinalText === data.text &&
+              this.lastDeliveredFinalText === cleanedFinal &&
               now - this.lastDeliveredFinalAtMs <
                 DUPLICATE_FINAL_TRANSCRIPT_WINDOW_MS;
 
@@ -339,9 +433,9 @@ class VoiceRecorderSession {
               !isLikelyDuplicateFinal
             ) {
               this.finalTranscriptDelivered = true;
-              this.lastDeliveredFinalText = data.text;
+              this.lastDeliveredFinalText = cleanedFinal;
               this.lastDeliveredFinalAtMs = now;
-              this.onFinalTranscript(data.text);
+              this.onFinalTranscript(cleanedFinal);
             }
 
             if (this.onVADStop) {

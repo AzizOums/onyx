@@ -301,10 +301,16 @@ const AppInputBar = React.memo(
         if (!text.trim()) {
           return;
         }
+        // A send always ends dictation: chunked/local STT servers never emit
+        // a server-side stop, so without this the mic keeps recording through
+        // the whole generation with no way to stop it.
+        if (isRecording) {
+          void stopRecordingRef.current?.();
+        }
         handleSubmit(text);
         clearChatDraft();
       },
-      [handleSubmit, clearChatDraft]
+      [handleSubmit, clearChatDraft, isRecording]
     );
 
     // Expose reset and focus methods to parent via ref
