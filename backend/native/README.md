@@ -38,16 +38,56 @@ new toolchain.
 ### Order of migration
 
 The MCP server moved first because it reads no database. Everything after it is
-gated on `backend/lumen/db`: 43,000 lines of SQLAlchemy that every workload
-shares. Until that boundary exists in Rust, no other service can move without a
-second definition of the schema, and two definitions that drift are a silent
-production failure.
+gated on `backend/lumen/db`.
 
 1. `lumen_text` — done, opt-in
 2. `lumen-mcp-server` — done, opt-in (`lumen-mcp-server/README.md`)
-3. `sandbox_proxy` — next; a standalone binary, but it reads Postgres
-4. the database layer — the prerequisite for the rest
+3. `sandbox_proxy` — blocked, see below
+4. the database layer — the real prerequisite
 5. `api_server` and the Celery workers — not startable before step 4
+
+### Why `sandbox_proxy` is not next
+
+It reads as the obvious second service: a standalone binary, 4,600 lines. Its
+dependency closure is not.
+
+| What it needs | Size |
+| --- | --- |
+| `lumen/sandbox_proxy` itself | 4,600 lines |
+| `lumen/external_apps` — action matching, credential injection, OAuth refresh | 3,739 lines |
+| A slice of `lumen/db`, including **writes**: notifications and action approvals | — |
+| Multi-tenant Postgres: per-tenant schema translation plus shard routing | — |
+| The credential encryption used for `Sandbox.encrypted_pat` | — |
+| A MITM TLS engine, today `mitmproxy` | — |
+
+So a straight port means porting the database layer first, which is step 4.
+
+There is a second path that skips it: have the proxy ask the API server for what
+it needs, exactly as the MCP server does. Resolving a sandbox by IP, evaluating
+the gate for one request, resolving injection headers and recording an approval
+are four or five endpoints. The proxy would then hold no database credentials
+and no decryption key — which is worth something on its own for a component that
+terminates sandbox TLS.
+
+That path changes the architecture, so it is a decision to take deliberately
+rather than a detail of the port.
+
+### The size of step 4
+
+| | |
+| --- | --- |
+| `lumen/db` | 103 files, 43,438 lines |
+| `models.py` | 7,461 lines, 163 SQLAlchemy models |
+| Alembic revisions | 447 |
+| Engine | per-tenant schema translation and shard routing |
+
+The risk here is not the line count. It is that a Rust schema and the Alembic
+history are two definitions of the same tables, and two definitions drift. The
+`lumen_text` and MCP ports both handle this by generating the Rust side from the
+Python definition and failing a test when the copy goes stale; whatever is built
+here needs an equivalent, or the migration trades a slow backend for silent data
+corruption.
+
 
 ## lumen_text
 
