@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Button } from "@opal/components";
+import { toast } from "@opal/layouts";
 import { InputTypeIn, PasswordInputTypeIn } from "@opal/components";
 import * as Yup from "yup";
 import { FormikField } from "@/refresh-components/form/FormikField";
@@ -13,7 +15,10 @@ import {
   ImageGenFormChildProps,
   ImageGenSubmitPayload,
 } from "@/views/admin/ImageGenerationPage/forms/types";
-import { ImageGenerationCredentials } from "@/views/admin/ImageGenerationPage/svc";
+import {
+  ImageGenerationCredentials,
+  fetchImageGenModels,
+} from "@/views/admin/ImageGenerationPage/svc";
 import { ImageProvider } from "@/views/admin/ImageGenerationPage/constants";
 
 // OpenAI form values - API key plus optional self-hosted overrides
@@ -42,7 +47,37 @@ function OpenAIFormFields(props: ImageGenFormChildProps<OpenAIFormValues>) {
     apiKeyOptions,
     resetApiState,
     imageProvider,
+    formikProps,
   } = props;
+
+  const [modelOptions, setModelOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+  const [isFetchingModels, setIsFetchingModels] = useState(false);
+
+  const handleFetchModels = async () => {
+    const apiBase = formikProps.values.api_base.trim();
+    if (!apiBase) {
+      toast.error(t("form.fetchModels.missingBase"));
+      return;
+    }
+    setIsFetchingModels(true);
+    const { models, error } = await fetchImageGenModels(
+      apiBase,
+      formikProps.values.api_key || undefined
+    );
+    setIsFetchingModels(false);
+    if (error) {
+      toast.error(error);
+      return;
+    }
+    if (models.length === 0) {
+      toast.error(t("form.fetchModels.empty"));
+      return;
+    }
+    setModelOptions(models.map((m) => ({ value: m.name, label: m.name })));
+    toast.success(t("form.fetchModels.success", { count: models.length }));
+  };
 
   return (
     <>
@@ -85,15 +120,39 @@ function OpenAIFormFields(props: ImageGenFormChildProps<OpenAIFormValues>) {
           >
             <FormField.Label>{t("form.modelName.label")}</FormField.Label>
             <FormField.Control>
-              <InputTypeIn
-                {...field}
-                onChange={(e) => {
-                  field.onChange(e);
-                  resetApiState();
-                }}
-                placeholder={imageProvider.model_name}
-                variant={disabled ? "disabled" : undefined}
-              />
+              <div className="flex flex-row items-center gap-2 w-full">
+                <div className="grow min-w-0">
+                  <InputComboBox
+                    value={field.value ?? ""}
+                    onChange={(e) => {
+                      helper.setValue(e.target.value);
+                      resetApiState();
+                    }}
+                    onValueChange={(value) => {
+                      helper.setValue(value);
+                      resetApiState();
+                    }}
+                    onBlur={field.onBlur}
+                    options={modelOptions}
+                    placeholder={
+                      imageProvider.model_name ||
+                      t("form.modelName.customPlaceholder")
+                    }
+                    disabled={disabled}
+                    isError={apiStatus === "error"}
+                  />
+                </div>
+                <Button
+                  prominence="secondary"
+                  size="sm"
+                  disabled={disabled || isFetchingModels}
+                  onClick={() => void handleFetchModels()}
+                >
+                  {isFetchingModels
+                    ? t("form.fetchModels.loading")
+                    : t("form.fetchModels.label")}
+                </Button>
+              </div>
             </FormField.Control>
             <FormField.Message
               messages={{
@@ -182,12 +241,17 @@ function OpenAIFormFields(props: ImageGenFormChildProps<OpenAIFormValues>) {
 
 function getInitialValuesFromCredentials(
   credentials: ImageGenerationCredentials,
-  _imageProvider: ImageProvider
+  _imageProvider: ImageProvider,
+  storedModelName?: string
 ): Partial<OpenAIFormValues> {
   return {
     api_key: credentials.api_key || "",
     api_base: credentials.api_base || "",
-    model_name: "",
+    // Show the stored custom model on edit (empty = catalog model).
+    model_name:
+      storedModelName && storedModelName !== _imageProvider.model_name
+        ? storedModelName
+        : "",
   };
 }
 
@@ -219,8 +283,12 @@ export function OpenAIImageGenForm(props: ImageGenFormBaseProps) {
     () =>
       Yup.object().shape({
         api_key: Yup.string().required(t("form.apiKey.required")),
+        // Custom cards have no catalog model: a model is mandatory.
+        ...(imageProvider.model_name
+          ? {}
+          : { model_name: Yup.string().required(t("form.modelName.required")) }),
       }),
-    [t]
+    [t, imageProvider.model_name]
   );
 
   return (
@@ -234,7 +302,13 @@ export function OpenAIImageGenForm(props: ImageGenFormBaseProps) {
       description={t(imageProvider.descriptionKey)}
       initialValues={initialValues}
       validationSchema={validationSchema}
-      getInitialValuesFromCredentials={getInitialValuesFromCredentials}
+      getInitialValuesFromCredentials={(creds) =>
+        getInitialValuesFromCredentials(
+          creds,
+          imageProvider,
+          existingConfig?.model_name
+        )
+      }
       transformValues={(values) =>
         transformValues(values, imageProvider, existingConfig?.model_name)
       }

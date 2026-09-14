@@ -4477,7 +4477,9 @@
         },
         "modelName": {
           "label": "اسم النموذج",
-          "idle": "تجاوز اختياري، مثل نموذج معرض LocalAI. فارغ = {model}."
+          "idle": "تجاوز اختياري، مثل نموذج معرض LocalAI. فارغ = {model}.",
+          "required": "Model name is required",
+          "customPlaceholder": "Fetch models from the server above, then pick one"
         },
         "projectId": {
           "idle": "مشروع GCP الذي فُعّل فيه Vertex AI. يصادق Onyx بحساب الخدمة المرتبط بالحاوية (GKE Workload Identity).",
@@ -4492,6 +4494,13 @@
         },
         "unknownError": {
           "message": "حدث خطأ غير معروف"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "header": {
@@ -4532,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "أحدث نموذج توليد صور من OpenAI بأعلى دقة التزام بالمطالبات."
+        },
+        "customOpenaiCompatible": {
+          "description": "Connect a self-hosted OpenAI-compatible image server (api_base + model from Fetch)."
         }
       },
       "setDefaultError": {
@@ -7892,6 +7904,12 @@
         },
         "whisper": {
           "subtitle": "نموذج OpenAI للتعرف على الكلام للأغراض العامة."
+        },
+        "customStt": {
+          "subtitle": "Self-hosted OpenAI-compatible speech-to-text server"
+        },
+        "customTts": {
+          "subtitle": "Self-hosted OpenAI-compatible text-to-speech server"
         }
       },
       "setupModal": {
@@ -7957,6 +7975,13 @@
           "label": "الصوت",
           "loadingPlaceholder": "جارٍ تحميل الأصوات...",
           "placeholder": "اختر صوتًا أو أدخل معرّف صوت"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "speechToText": {

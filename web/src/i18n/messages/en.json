@@ -4477,7 +4477,9 @@
         },
         "modelName": {
           "label": "Model Name",
-          "idle": "Optional override, e.g. a LocalAI gallery model. Empty = {model}."
+          "idle": "Optional override, e.g. a LocalAI gallery model. Empty = {model}.",
+          "required": "Model name is required",
+          "customPlaceholder": "Fetch models from the server above, then pick one"
         },
         "projectId": {
           "idle": "The GCP project where Vertex AI is enabled. Onyx authenticates with the pod's bound service account (GKE Workload Identity).",
@@ -4492,6 +4494,13 @@
         },
         "unknownError": {
           "message": "Unknown error occurred"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "header": {
@@ -4532,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "OpenAI's latest Image Generation model with the highest prompt fidelity."
+        },
+        "customOpenaiCompatible": {
+          "description": "Connect a self-hosted OpenAI-compatible image server (api_base + model from Fetch)."
         }
       },
       "setDefaultError": {
@@ -7892,6 +7904,12 @@
         },
         "whisper": {
           "subtitle": "OpenAI's general purpose speech recognition model."
+        },
+        "customStt": {
+          "subtitle": "Self-hosted OpenAI-compatible speech-to-text server"
+        },
+        "customTts": {
+          "subtitle": "Self-hosted OpenAI-compatible text-to-speech server"
         }
       },
       "setupModal": {
@@ -7957,6 +7975,13 @@
           "label": "Voice",
           "loadingPlaceholder": "Loading voices...",
           "placeholder": "Select a voice or enter voice ID"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "speechToText": {

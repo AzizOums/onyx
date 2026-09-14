@@ -4477,7 +4477,9 @@
         },
         "modelName": {
           "label": "Nome do modelo",
-          "idle": "Substituição opcional, p. ex., um modelo de galeria LocalAI. Vazio = {model}."
+          "idle": "Substituição opcional, p. ex., um modelo de galeria LocalAI. Vazio = {model}.",
+          "required": "O nome do modelo é obrigatório",
+          "customPlaceholder": "Busque os modelos do servidor acima e escolha um"
         },
         "projectId": {
           "idle": "O projeto do GCP com o Vertex AI ativado. O Onyx se autentica com a conta de serviço vinculada ao pod (GKE Workload Identity).",
@@ -4492,6 +4494,13 @@
         },
         "unknownError": {
           "message": "Ocorreu um erro desconhecido"
+        },
+        "fetchModels": {
+          "label": "Buscar modelos",
+          "loading": "A buscar modelos…",
+          "missingBase": "Introduz primeiro um URL base da API",
+          "empty": "Nenhum modelo encontrado neste servidor",
+          "success": "{count} modelos encontrados"
         }
       },
       "header": {
@@ -4532,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "O modelo de geração de imagens mais recente da OpenAI, com a maior fidelidade ao prompt."
+        },
+        "customOpenaiCompatible": {
+          "description": "Ligue um servidor de imagens auto-hospedado compatível com OpenAI (api_base + modelo via Fetch)."
         }
       },
       "setDefaultError": {
@@ -7892,6 +7904,12 @@
         },
         "whisper": {
           "subtitle": "O modelo de reconhecimento de fala de uso geral da OpenAI."
+        },
+        "customStt": {
+          "subtitle": "Servidor de voz para texto auto-hospedado compatível com OpenAI"
+        },
+        "customTts": {
+          "subtitle": "Servidor de texto para voz auto-hospedado compatível com OpenAI"
         }
       },
       "setupModal": {
@@ -7957,6 +7975,13 @@
           "label": "Voz",
           "loadingPlaceholder": "Carregando vozes...",
           "placeholder": "Selecione uma voz ou insira o ID da voz"
+        },
+        "fetchModels": {
+          "label": "Buscar modelos",
+          "loading": "A buscar modelos…",
+          "missingBase": "Introduz primeiro um URL base da API",
+          "empty": "Nenhum modelo encontrado neste servidor",
+          "success": "{count} modelos encontrados"
         }
       },
       "speechToText": {

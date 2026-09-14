@@ -124,3 +124,16 @@ class VoiceProviderTestRequest(BaseModel):
         description="Target URI for Azure Speech Services (maps to api_base).",
     )
     custom_config: dict[str, Any] | None = None
+
+
+class AvailableVoiceModelsRequest(BaseModel):
+    """Request model for listing models on an OpenAI-compatible audio server."""
+
+    api_base: str
+    api_key: str | None = None
+
+
+class AvailableVoiceModel(BaseModel):
+    """A single model id from the server's `/models` listing (embeddings excluded)."""
+
+    id: str

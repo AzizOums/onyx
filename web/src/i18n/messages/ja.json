@@ -4477,7 +4477,9 @@
         },
         "modelName": {
           "label": "モデル名",
-          "idle": "オプションの上書き（LocalAIギャラリーモデルなど）。空欄 = {model}。"
+          "idle": "オプションの上書き（LocalAIギャラリーモデルなど）。空欄 = {model}。",
+          "required": "Model name is required",
+          "customPlaceholder": "Fetch models from the server above, then pick one"
         },
         "projectId": {
           "idle": "Vertex AI を有効にした GCP プロジェクトです。Onyx は Pod にバインドされたサービスアカウント (GKE Workload Identity) で認証します。",
@@ -4492,6 +4494,13 @@
         },
         "unknownError": {
           "message": "不明なエラーが発生しました"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "header": {
@@ -4532,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "プロンプト忠実度が最も高い、OpenAI の最新の画像生成モデルです。"
+        },
+        "customOpenaiCompatible": {
+          "description": "Connect a self-hosted OpenAI-compatible image server (api_base + model from Fetch)."
         }
       },
       "setDefaultError": {
@@ -7892,6 +7904,12 @@
         },
         "whisper": {
           "subtitle": "OpenAI の汎用音声認識モデル。"
+        },
+        "customStt": {
+          "subtitle": "Self-hosted OpenAI-compatible speech-to-text server"
+        },
+        "customTts": {
+          "subtitle": "Self-hosted OpenAI-compatible text-to-speech server"
         }
       },
       "setupModal": {
@@ -7957,6 +7975,13 @@
           "label": "ボイス",
           "loadingPlaceholder": "ボイスを読み込んでいます...",
           "placeholder": "ボイスを選択するか、ボイス ID を入力"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "speechToText": {

@@ -4477,7 +4477,9 @@
         },
         "modelName": {
           "label": "Modellname",
-          "idle": "Optionale Überschreibung, z. B. ein LocalAI-Galeriemodell. Leer = {model}."
+          "idle": "Optionale Überschreibung, z. B. ein LocalAI-Galeriemodell. Leer = {model}.",
+          "required": "Modellname ist erforderlich",
+          "customPlaceholder": "Rufe Modelle vom obigen Server ab und wähle eines"
         },
         "projectId": {
           "idle": "Das GCP-Projekt, in dem Vertex AI aktiviert ist. Onyx authentifiziert sich mit dem an den Pod gebundenen Dienstkonto (GKE Workload Identity).",
@@ -4492,6 +4494,13 @@
         },
         "unknownError": {
           "message": "Ein unbekannter Fehler ist aufgetreten"
+        },
+        "fetchModels": {
+          "label": "Modelle abrufen",
+          "loading": "Modelle werden abgerufen…",
+          "missingBase": "Gib zuerst eine API-Basis-URL ein",
+          "empty": "Keine Modelle auf diesem Server gefunden",
+          "success": "{count} Modelle gefunden"
         }
       },
       "header": {
@@ -4532,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "Das neueste Bilderzeugungsmodell von OpenAI mit der höchsten Prompt-Treue."
+        },
+        "customOpenaiCompatible": {
+          "description": "Verbinde einen selbst gehosteten OpenAI-kompatiblen Bildserver (api_base + Modell per Fetch)."
         }
       },
       "setDefaultError": {
@@ -7892,6 +7904,12 @@
         },
         "whisper": {
           "subtitle": "Allzweck-Spracherkennungsmodell von OpenAI."
+        },
+        "customStt": {
+          "subtitle": "Selbst gehosteter OpenAI-kompatibler Speech-to-Text-Server"
+        },
+        "customTts": {
+          "subtitle": "Selbst gehosteter OpenAI-kompatibler Text-to-Speech-Server"
         }
       },
       "setupModal": {
@@ -7957,6 +7975,13 @@
           "label": "Stimme",
           "loadingPlaceholder": "Stimmen werden geladen...",
           "placeholder": "Wählen Sie eine Stimme oder geben Sie eine Stimmen-ID ein"
+        },
+        "fetchModels": {
+          "label": "Modelle abrufen",
+          "loading": "Modelle werden abgerufen…",
+          "missingBase": "Gib zuerst eine API-Basis-URL ein",
+          "empty": "Keine Modelle auf diesem Server gefunden",
+          "success": "{count} Modelle gefunden"
         }
       },
       "speechToText": {

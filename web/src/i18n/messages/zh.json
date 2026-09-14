@@ -4477,7 +4477,9 @@
         },
         "modelName": {
           "label": "模型名称",
-          "idle": "可选覆盖，例如 LocalAI 图库模型。留空 = {model}。"
+          "idle": "可选覆盖，例如 LocalAI 图库模型。留空 = {model}。",
+          "required": "Model name is required",
+          "customPlaceholder": "Fetch models from the server above, then pick one"
         },
         "projectId": {
           "idle": "已启用 Vertex AI 的 GCP 项目。Onyx 使用 pod 绑定的服务账号进行身份验证（GKE Workload Identity）。",
@@ -4492,6 +4494,13 @@
         },
         "unknownError": {
           "message": "发生未知错误"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "header": {
@@ -4532,6 +4541,9 @@
         },
         "openaiGptImage2": {
           "description": "OpenAI 最新的图像生成模型，提示词还原度最高。"
+        },
+        "customOpenaiCompatible": {
+          "description": "Connect a self-hosted OpenAI-compatible image server (api_base + model from Fetch)."
         }
       },
       "setDefaultError": {
@@ -7892,6 +7904,12 @@
         },
         "whisper": {
           "subtitle": "OpenAI 的通用语音识别模型。"
+        },
+        "customStt": {
+          "subtitle": "Self-hosted OpenAI-compatible speech-to-text server"
+        },
+        "customTts": {
+          "subtitle": "Self-hosted OpenAI-compatible text-to-speech server"
         }
       },
       "setupModal": {
@@ -7957,6 +7975,13 @@
           "label": "音色",
           "loadingPlaceholder": "正在加载音色...",
           "placeholder": "选择音色或输入音色 ID"
+        },
+        "fetchModels": {
+          "label": "Fetch models",
+          "loading": "Fetching models…",
+          "missingBase": "Enter an API base URL first",
+          "empty": "No models found on this server",
+          "success": "Found {count} models"
         }
       },
       "speechToText": {
