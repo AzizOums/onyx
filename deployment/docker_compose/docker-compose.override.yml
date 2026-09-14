@@ -1,0 +1,6 @@
+# Local-only override: Docker Desktop has 7.6 GiB allocated, which is too
+# tight for the full stack + a 2g OpenSearch JVM heap. Not committed.
+services:
+  opensearch:
+    environment:
+      OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g"
