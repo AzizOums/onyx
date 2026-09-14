@@ -131,6 +131,35 @@ class AvailableVoiceModelsRequest(BaseModel):
 
     api_base: str
     api_key: str | None = None
+    id: int | None = Field(
+        default=None,
+        description="Existing provider ID to read the stored API key from.",
+    )
+    use_stored_key: bool = Field(
+        default=False,
+        description="If true, use the stored API key instead of `api_key`. "
+        "The form shows a masked key, which is never a usable credential.",
+    )
+
+
+class AvailableVoicesRequest(BaseModel):
+    """Request model for listing voices on a self-hosted TTS server."""
+
+    provider_type: str
+    api_base: str | None = None
+    api_key: str | None = None
+    tts_model: str | None = Field(
+        default=None,
+        description="Voices are per-model on voice-pack servers (e.g. Kokoro).",
+    )
+    id: int | None = Field(
+        default=None,
+        description="Existing provider ID to read the stored API key from.",
+    )
+    use_stored_key: bool = Field(
+        default=False,
+        description="If true, use the stored API key instead of `api_key`.",
+    )
 
 
 class AvailableVoiceModel(BaseModel):

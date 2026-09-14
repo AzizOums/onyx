@@ -119,6 +119,14 @@ class VoiceProviderInterface(ABC):
             List of voice dictionaries with 'id' and 'name' keys
         """
 
+    async def list_voices(self) -> list[dict[str, str]]:
+        """Voices for this provider, asking the server when it can.
+
+        Defaults to the static catalogue; providers backed by a server that
+        names its own voices override this.
+        """
+        return self.get_available_voices()
+
     @abstractmethod
     def get_available_stt_models(self) -> list[dict[str, str]]:
         """

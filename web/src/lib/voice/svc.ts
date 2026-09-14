@@ -59,6 +59,47 @@ export async function fetchVoicesByType(
   return fetch(`/api/admin/voice/voices?provider_type=${providerType}`);
 }
 
+export interface FetchedVoice {
+  id: string;
+  name: string;
+}
+
+/**
+ * Lists the voices a provider offers for a given TTS model. Self-hosted
+ * servers are asked directly (`GET {base}/audio/voices`); an empty list is a
+ * valid answer for models that ship no named voices.
+ */
+export async function fetchAvailableVoices(request: {
+  provider_type: string;
+  api_base?: string;
+  api_key?: string;
+  tts_model?: string;
+  id?: number;
+  use_stored_key?: boolean;
+}): Promise<{ voices: FetchedVoice[]; error?: string }> {
+  try {
+    const response = await fetch("/api/admin/voice/available-voices", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      return {
+        voices: [],
+        error:
+          errorData.detail || errorData.message || "Failed to fetch voices",
+      };
+    }
+    return { voices: await response.json() };
+  } catch (error) {
+    return {
+      voices: [],
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
 export interface FetchedVoiceModel {
   id: string;
 }
@@ -68,15 +109,17 @@ export interface FetchedVoiceModel {
  * Embeddings are excluded server-side; pick an STT/TTS model, then the
  * connection test verifies it transcribes/synthesizes.
  */
-export async function fetchVoiceModels(
-  apiBase: string,
-  apiKey?: string
-): Promise<{ models: FetchedVoiceModel[]; error?: string }> {
+export async function fetchVoiceModels(request: {
+  api_base: string;
+  api_key?: string;
+  id?: number;
+  use_stored_key?: boolean;
+}): Promise<{ models: FetchedVoiceModel[]; error?: string }> {
   try {
     const response = await fetch("/api/admin/voice/available-models", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ api_base: apiBase, api_key: apiKey || null }),
+      body: JSON.stringify(request),
     });
     if (!response.ok) {
       let errorMessage = "Failed to fetch models";
@@ -96,6 +139,19 @@ export async function fetchVoiceModels(
       error: error instanceof Error ? error.message : "Unknown error",
     };
   }
+}
+
+/**
+ * Disconnects one mode from a provider. STT and TTS share a provider row, so
+ * the row survives as long as the other mode is still configured.
+ */
+export async function clearVoiceProviderMode(
+  providerId: number,
+  mode: "stt" | "tts"
+): Promise<Response> {
+  return fetch(`${VOICE_PROVIDERS_URL}/${providerId}/clear/${mode}`, {
+    method: "POST",
+  });
 }
 
 /** Permanently removes a voice provider and its stored credentials. */

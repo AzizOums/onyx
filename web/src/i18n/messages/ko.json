@@ -7481,7 +7481,9 @@
     "voice": {
       "disconnectModal": {
         "body": {
-          "description": "**{label}** 모델은 더 이상 음성 텍스트 변환이나 텍스트 음성 변환에 사용되지 않으며, 기본 모델에서도 해제됩니다. 세션 기록은 유지됩니다."
+          "description": "**{label}** 모델은 더 이상 음성 텍스트 변환이나 텍스트 음성 변환에 사용되지 않으며, 기본 모델에서도 해제됩니다. 세션 기록은 유지됩니다.",
+          "sttDescription": "**{label}** 이(가) 더 이상 음성을 받아쓰지 않습니다. 음성 합성 설정은 그대로 유지됩니다.",
+          "ttsDescription": "**{label}** 이(가) 더 이상 응답을 읽어주지 않습니다. 음성 인식 설정은 그대로 유지됩니다."
         },
         "connectAnother": {
           "description": "음성 기능을 계속 사용하려면 다른 제공자를 연결하세요."
@@ -7494,7 +7496,8 @@
         },
         "header": {
           "description": "이 제공자에 저장된 자격 증명을 제거합니다.",
-          "title": "{label} 연결 해제"
+          "title": "{label} 연결 해제",
+          "modeDescription": "이 기능에 선택한 모델을 제거합니다."
         },
         "submitButton": {
           "label": "연결 해제"
@@ -7536,7 +7539,8 @@
       "setupModal": {
         "apiBase": {
           "label": "API 기본 URL",
-          "description": "셀프 호스팅 서버(LocalAI, Kokoro, faster-whisper 등)용 선택적 OpenAI 호환 기본 URL. 비워 두면 api.openai.com. 컨테이너 내부에서는 `localhost` 대신 `host.docker.internal`을 사용하세요."
+          "description": "셀프 호스팅 서버(LocalAI, Kokoro, faster-whisper 등)용 선택적 OpenAI 호환 기본 URL. 비워 두면 api.openai.com. 컨테이너 내부에서는 `localhost` 대신 `host.docker.internal`을 사용하세요.",
+          "required": "API 기본 URL이 필요합니다"
         },
         "apiKey": {
           "description": "모델을 사용하려면 {provider}의 [API 키]({url})를 붙여넣으세요.",
@@ -7595,14 +7599,22 @@
           "description": "이 음성이 음성 응답에 사용됩니다. 지원되는 언어와 음성의 전체 목록은 [{docsLabel}]({docsUrl})에서 확인하세요.",
           "label": "음성",
           "loadingPlaceholder": "음성을 불러오는 중...",
-          "placeholder": "음성을 선택하거나 음성 ID를 입력하세요"
+          "placeholder": "음성을 선택하거나 음성 ID를 입력하세요",
+          "customDescription": "음성은 서버에서 가져옵니다. 목록에서 선택하거나 모델이 요구하는 화자 이름을 입력하세요.",
+          "customEmptyDescription": "서버가 이 모델의 음성을 제공하지 않습니다. 모델이 요구하는 화자 이름을 입력하세요.",
+          "required": "음성을 선택하거나 입력하세요",
+          "freeTextPlaceholder": "화자 이름, 예: serena"
         },
         "fetchModels": {
           "label": "Fetch models",
           "loading": "Fetching models…",
           "missingBase": "Enter an API base URL first",
           "empty": "No models found on this server",
-          "success": "Found {count} models"
+          "success": "Found {count} models",
+          "selected": "모델 {count}개를 찾았습니다 — {model} 선택됨"
+        },
+        "model": {
+          "required": "서버에서 모델을 선택하세요"
         }
       },
       "speechToText": {

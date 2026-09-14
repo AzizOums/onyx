@@ -168,9 +168,11 @@ function ModelCard({
       <setupModal.Provider>
         <VoiceProviderSetupModal
           providerType={model.providerType}
-          existingProvider={
-            status !== "disconnected" ? (provider ?? null) : null
-          }
+          // Always passed, even when this mode is unconfigured: STT and TTS
+          // share one row, so the credentials and base URL entered for one
+          // mode prefill the other instead of being asked for twice.
+          existingProvider={provider ?? null}
+          isNewForMode={status === "disconnected"}
           mode={mode}
           // Custom servers keep their stored model id ("custom" is a card id, not a model).
           defaultModelId={
@@ -190,6 +192,10 @@ function ModelCard({
             providerLabel: getVoiceProviderDetail(model.providerType).label,
             providerType: model.providerType,
           }}
+          mode={mode}
+          // Custom rows carry STT and TTS side by side, so disconnecting one
+          // mode must leave the other one working.
+          perModeDisconnect={model.providerType === "openai_compatible"}
           hasAlternatives={hasAlternatives}
           onSuccess={() => onMutate()}
         />
@@ -254,6 +260,13 @@ export default function VoicePage() {
 
     // Custom servers have user-picked model ids: selected = default, no id match.
     if (model.providerType === "openai_compatible") {
+      // One row backs both modes, so the shared credentials alone don't make
+      // a mode usable — it needs its own model. Without this, setting up STT
+      // would advertise a TTS that has never been configured.
+      const modelForMode =
+        mode === "stt" ? provider.stt_model : provider.tts_model;
+      if (!modelForMode) return "disconnected";
+
       const isActive =
         mode === "stt" ? provider.is_default_stt : provider.is_default_tts;
       if (isActive) return "selected";
@@ -364,18 +377,18 @@ export default function VoicePage() {
                             !!p.api_key
                         ).length > 0
                       }
-                    onSelect={() => {
-                      const p = providersByType.get(model.providerType);
-                      if (p?.id)
-                        activateVoiceProvider(
-                          p.id,
-                          "tts",
-                          // Custom servers keep their stored model id.
-                          model.providerType === "openai_compatible"
-                            ? undefined
-                            : model.id
-                        ).then(() => mutate());
-                    }}
+                      onSelect={() => {
+                        const p = providersByType.get(model.providerType);
+                        if (p?.id)
+                          activateVoiceProvider(
+                            p.id,
+                            "tts",
+                            // Custom servers keep their stored model id.
+                            model.providerType === "openai_compatible"
+                              ? undefined
+                              : model.id
+                          ).then(() => mutate());
+                      }}
                       onDeselect={() => {
                         const p = providersByType.get(model.providerType);
                         if (p?.id)

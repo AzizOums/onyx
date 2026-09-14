@@ -1,7 +1,7 @@
 "use client";
 
 import { markdown } from "@opal/utils";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Formik, Form, useFormikContext } from "formik";
 import * as Yup from "yup";
@@ -28,7 +28,10 @@ import {
   upsertVoiceProvider,
   fetchVoicesByType,
   fetchVoiceModels,
+  fetchAvailableVoices,
+  clearVoiceProviderMode,
   deleteVoiceProvider,
+  type FetchedVoice,
 } from "@/lib/voice/svc";
 import {
   getVoiceProviderDetail,
@@ -67,12 +70,17 @@ function mergeDiscoveredModels(
 // ---------------------------------------------------------------------------
 
 function VoiceModelFetchButton({
+  field,
+  storedKeyRequest,
   onModels,
 }: {
+  /** Form field the fetched list fills in — the mode's model field. */
+  field: "stt_model" | "tts_model";
+  storedKeyRequest: () => { id?: number; use_stored_key?: boolean } | null;
   onModels: (ids: string[]) => void;
 }) {
   const t = useTranslations("admin.voice");
-  const { values } = useFormikContext<VoiceFormValues>();
+  const { values, setFieldValue } = useFormikContext<VoiceFormValues>();
   const [isFetching, setIsFetching] = useState(false);
 
   const handleFetch = async () => {
@@ -82,10 +90,13 @@ function VoiceModelFetchButton({
       return;
     }
     setIsFetching(true);
-    const { models, error } = await fetchVoiceModels(
-      apiBase,
-      values.api_key || undefined
-    );
+    // The form renders a masked key, never a usable one: ask the server to
+    // read the stored key instead of echoing the mask back as a credential.
+    const stored = storedKeyRequest();
+    const { models, error } = await fetchVoiceModels({
+      api_base: apiBase,
+      ...(stored ?? { api_key: values.api_key || undefined }),
+    });
     setIsFetching(false);
     if (error) {
       toast.error(error);
@@ -96,7 +107,24 @@ function VoiceModelFetchButton({
       return;
     }
     onModels(models.map((m) => m.id));
-    toast.success(t("setupModal.fetchModels.success", { count: models.length }));
+
+    // Land on a real model: the server's own ids are the only ones that
+    // work, so a default left over from the OpenAI catalogue never survives.
+    const current = (values[field] ?? "").trim();
+    const first = models[0]!.id;
+    if (!current || !models.some((m) => m.id === current)) {
+      void setFieldValue(field, first);
+      toast.success(
+        t("setupModal.fetchModels.selected", {
+          count: models.length,
+          model: first,
+        })
+      );
+      return;
+    }
+    toast.success(
+      t("setupModal.fetchModels.success", { count: models.length })
+    );
   };
 
   return (
@@ -116,6 +144,96 @@ function VoiceModelFetchButton({
 }
 
 // ---------------------------------------------------------------------------
+// Keeps the voice picker in step with the chosen TTS model. Self-hosted
+// servers name their own speakers, so the list is read from the server
+// (`GET {api_base}/audio/voices`) rather than from a static catalogue, and
+// the first voice it returns becomes the default. Servers whose model ships
+// no named voices answer with an empty list; the field stays free-typed.
+// ---------------------------------------------------------------------------
+
+const VOICE_REFETCH_DEBOUNCE_MS = 400;
+
+function VoiceOptionsSync({
+  providerType,
+  isSelfHosted,
+  storedKeyRequest,
+  onVoices,
+  onLoadingChange,
+}: {
+  providerType: string;
+  isSelfHosted: boolean;
+  storedKeyRequest: () => { id?: number; use_stored_key?: boolean } | null;
+  onVoices: (voices: FetchedVoice[]) => void;
+  onLoadingChange: (loading: boolean) => void;
+}) {
+  const { values, setFieldValue } = useFormikContext<VoiceFormValues>();
+  const apiBase = (values.api_base ?? "").trim();
+  const ttsModel = (values.tts_model ?? "").trim();
+  // Read non-reactively: the key must not retrigger a fetch per keystroke,
+  // and the current voice is only consulted once a list comes back.
+  const apiKeyRef = useRef(values.api_key);
+  const currentVoiceRef = useRef(values.default_voice);
+  useEffect(() => {
+    apiKeyRef.current = values.api_key;
+    currentVoiceRef.current = values.default_voice;
+  });
+
+  const requestIdRef = useRef(0);
+  // The model the form opened on. Switching away from it invalidates the
+  // stored voice (speakers are per-model); reopening on it must not.
+  const openedWithModelRef = useRef(ttsModel);
+
+  useEffect(() => {
+    const requestId = ++requestIdRef.current;
+
+    const run = async () => {
+      onLoadingChange(true);
+      let voices: FetchedVoice[] = [];
+
+      if (isSelfHosted) {
+        if (apiBase) {
+          const stored = storedKeyRequest();
+          const result = await fetchAvailableVoices({
+            provider_type: providerType,
+            api_base: apiBase,
+            tts_model: ttsModel || undefined,
+            ...(stored ?? { api_key: apiKeyRef.current || undefined }),
+          });
+          voices = result.voices;
+        }
+      } else {
+        const response = await fetchVoicesByType(providerType);
+        voices = response.ok ? await response.json() : [];
+      }
+
+      if (requestId !== requestIdRef.current) return;
+      onVoices(voices);
+      onLoadingChange(false);
+
+      // The first voice the server lists is the default; a stored voice
+      // that the server doesn't know (e.g. an OpenAI name left on a custom
+      // server) is replaced rather than kept and rejected at synthesis.
+      const current = (currentVoiceRef.current ?? "").trim();
+      if (voices.length > 0) {
+        if (!voices.some((v) => v.id === current)) {
+          void setFieldValue("default_voice", voices[0]!.id);
+        }
+      } else if (ttsModel !== openedWithModelRef.current && current) {
+        // A model with no named voices: the speaker carried over from the
+        // previous model no longer means anything, so start from empty.
+        void setFieldValue("default_voice", "");
+      }
+    };
+
+    const timer = setTimeout(() => void run(), VOICE_REFETCH_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [providerType, isSelfHosted, apiBase, ttsModel]);
+
+  return null;
+}
+
+// ---------------------------------------------------------------------------
 // VoiceProviderSetupModal
 // ---------------------------------------------------------------------------
 
@@ -123,6 +241,12 @@ interface VoiceProviderSetupModalProps {
   providerType: string;
   existingProvider: VoiceProviderView | null;
   mode: ProviderMode;
+  /**
+   * True when this mode has no configuration yet, even if the provider row
+   * already exists because the other mode was set up. Drives the header copy
+   * and whether saving claims the default slot for this mode.
+   */
+  isNewForMode: boolean;
   defaultModelId?: string | null;
   onSuccess: () => void;
 }
@@ -131,6 +255,7 @@ export function VoiceProviderSetupModal({
   providerType,
   existingProvider,
   mode,
+  isNewForMode,
   defaultModelId,
   onSuccess,
 }: VoiceProviderSetupModalProps) {
@@ -141,17 +266,33 @@ export function VoiceProviderSetupModal({
   // free-type model combos, and model Fetch as the openai provider type.
   const isOpenAIFamily =
     providerType === "openai" || providerType === "openai_compatible";
+  // A self-hosted server names its own models and voices, so none of the
+  // OpenAI catalogue defaults apply to it.
+  const isSelfHosted = providerType === "openai_compatible";
   const initialTtsModel = defaultModelId
     ? resolveModelId(defaultModelId)
-    : (existingProvider?.tts_model ?? "tts-1");
-
-  const isEditing = !!existingProvider;
+    : (existingProvider?.tts_model ?? (isSelfHosted ? "" : "tts-1"));
 
   // Non-form state: dynamic voice options
   const [voiceOptions, setVoiceOptions] = useState<VoiceOption[]>([]);
-  const [isLoadingVoices, setIsLoadingVoices] = useState(false);
-  const [initialDefaultVoice, setInitialDefaultVoice] = useState(
-    existingProvider?.default_voice ?? ""
+  const [isLoadingVoices, setIsLoadingVoices] = useState(mode === "tts");
+  const [hasLoadedVoices, setHasLoadedVoices] = useState(false);
+
+  const handleVoices = useCallback((voices: FetchedVoice[]) => {
+    setVoiceOptions(
+      voices.map((v) => ({ value: v.id, label: v.name, description: v.id }))
+    );
+    setHasLoadedVoices(true);
+  }, []);
+
+  // The stored key is shown masked, so it is never a usable credential:
+  // discovery calls ask the server to read the saved one instead.
+  const storedKeyRequest = useCallback(
+    () =>
+      existingProvider?.id && existingProvider.api_key
+        ? { id: existingProvider.id, use_stored_key: true }
+        : null,
+    [existingProvider?.id, existingProvider?.api_key]
   );
 
   // Model ids discovered from an OpenAI-compatible audio server
@@ -169,39 +310,32 @@ export function VoiceProviderSetupModal({
     discoveredModels
   );
 
-  // Fetch voices on mount
-  useEffect(() => {
-    setIsLoadingVoices(true);
-    fetchVoicesByType(providerType)
-      .then((res) => res.json())
-      .then((data: Array<{ id: string; name: string }>) => {
-        const options = data.map((v) => ({
-          value: v.id,
-          label: v.name,
-          description: v.id,
-        }));
-        setVoiceOptions(options);
-        setInitialDefaultVoice((prev) => {
-          if (!prev) return options[0]?.value ?? "";
-          return options.some((o) => o.value === prev)
-            ? prev
-            : (options[0]?.value ?? "");
-        });
-      })
-      .catch(() => setVoiceOptions([]))
-      .finally(() => setIsLoadingVoices(false));
-  }, [providerType]);
-
+  const modelRequiredMessage = t("setupModal.model.required");
   const validationSchema = Yup.object().shape({
     api_key: Yup.string().required(t("setupModal.apiKey.required")),
     target_uri:
       providerType === "azure"
         ? Yup.string().required(t("setupModal.targetUri.required"))
         : Yup.string(),
-    stt_model: Yup.string(),
-    tts_model: Yup.string(),
-    api_base: Yup.string(),
-    default_voice: Yup.string(),
+    // A custom server has no usable default model name, so one must be picked
+    // rather than silently saved as an OpenAI id the server will reject.
+    stt_model:
+      isSelfHosted && mode === "stt"
+        ? Yup.string().trim().required(modelRequiredMessage)
+        : Yup.string(),
+    tts_model:
+      isSelfHosted && mode === "tts"
+        ? Yup.string().trim().required(modelRequiredMessage)
+        : Yup.string(),
+    api_base: isSelfHosted
+      ? Yup.string().trim().required(t("setupModal.apiBase.required"))
+      : Yup.string(),
+    // A custom server rejects a voice it doesn't know, and has no sane
+    // fallback, so a speaker must be chosen or typed before saving.
+    default_voice:
+      isSelfHosted && mode === "tts"
+        ? Yup.string().trim().required(t("setupModal.voice.required"))
+        : Yup.string(),
     stt_languages:
       mode === "stt" && detail.sttLanguages
         ? Yup.string().test(
@@ -243,11 +377,12 @@ export function VoiceProviderSetupModal({
     target_uri: existingProvider?.target_uri ?? "",
     // The view maps api_base onto target_uri, so a stored self-hosted base
     // round-trips through it.
-    api_base:
-      isOpenAIFamily ? (existingProvider?.target_uri ?? "") : "",
-    stt_model: existingProvider?.stt_model ?? "whisper-1",
+    api_base: isOpenAIFamily ? (existingProvider?.target_uri ?? "") : "",
+    stt_model: existingProvider?.stt_model ?? (isSelfHosted ? "" : "whisper-1"),
     tts_model: initialTtsModel,
-    default_voice: initialDefaultVoice,
+    // Voices are loaded, never assumed: VoiceOptionsSync fills this with the
+    // first voice the provider actually offers.
+    default_voice: existingProvider?.default_voice ?? "",
     stt_languages: sttLanguagesToInput(
       existingProvider?.custom_config?.stt_languages
     ),
@@ -269,10 +404,7 @@ export function VoiceProviderSetupModal({
             providerType === "azure"
               ? values.target_uri || undefined
               : undefined,
-          api_base:
-            isOpenAIFamily
-              ? values.api_base || undefined
-              : undefined,
+          api_base: isOpenAIFamily ? values.api_base || undefined : undefined,
           use_stored_key: shouldUseStoredKey,
         });
 
@@ -301,6 +433,9 @@ export function VoiceProviderSetupModal({
         }
       }
 
+      // STT and TTS share one provider row, so each modal writes only the
+      // fields it owns. Omitted fields are left untouched by the backend
+      // instead of being overwritten with this form's placeholders.
       const response = await upsertVoiceProvider({
         id: existingProvider?.id,
         name: detail.label,
@@ -309,18 +444,24 @@ export function VoiceProviderSetupModal({
         api_key_changed: apiKeyChanged,
         target_uri:
           providerType === "azure" ? values.target_uri || undefined : undefined,
-        api_base:
-          isOpenAIFamily ? values.api_base || undefined : undefined,
+        api_base: isOpenAIFamily ? values.api_base || undefined : undefined,
         custom_config: customConfig,
-        stt_model: values.stt_model,
-        tts_model: values.tts_model,
-        default_voice: values.default_voice,
-        activate_stt: isEditing
-          ? (existingProvider?.is_default_stt ?? false)
-          : mode === "stt",
-        activate_tts: isEditing
-          ? (existingProvider?.is_default_tts ?? false)
-          : mode === "tts",
+        stt_model:
+          mode === "stt" ? values.stt_model.trim() || undefined : undefined,
+        tts_model:
+          mode === "tts" ? values.tts_model.trim() || undefined : undefined,
+        default_voice:
+          mode === "tts" ? values.default_voice.trim() || undefined : undefined,
+        // Setting up a mode for the first time claims its default slot;
+        // editing an already-configured one leaves the choice alone.
+        activate_stt:
+          mode === "stt"
+            ? isNewForMode || (existingProvider?.is_default_stt ?? false)
+            : (existingProvider?.is_default_stt ?? false),
+        activate_tts:
+          mode === "tts"
+            ? isNewForMode || (existingProvider?.is_default_tts ?? false)
+            : (existingProvider?.is_default_tts ?? false),
       });
 
       if (response.ok) {
@@ -356,11 +497,11 @@ export function VoiceProviderSetupModal({
                 moreIcon1={SvgArrowExchange}
                 moreIcon2={SvgLumenLogo}
                 title={
-                  isEditing
-                    ? t("setupModal.editHeader.title", {
+                  isNewForMode
+                    ? t("setupModal.createHeader.title", {
                         provider: detail.label,
                       })
-                    : t("setupModal.createHeader.title", {
+                    : t("setupModal.editHeader.title", {
                         provider: detail.label,
                       })
                 }
@@ -370,6 +511,15 @@ export function VoiceProviderSetupModal({
                 onClose={onClose}
               />
               <Modal.Body>
+                {mode === "tts" && (
+                  <VoiceOptionsSync
+                    providerType={providerType}
+                    isSelfHosted={isSelfHosted}
+                    storedKeyRequest={storedKeyRequest}
+                    onVoices={handleVoices}
+                    onLoadingChange={setIsLoadingVoices}
+                  />
+                )}
                 <Section gap={4} alignItems="stretch">
                   {providerType === "azure" && (
                     <InputVertical
@@ -438,8 +588,7 @@ export function VoiceProviderSetupModal({
                   )}
 
                   {mode === "stt" &&
-                    ((detail.sttModels?.length ?? 0) > 1 ||
-                      isOpenAIFamily) && (
+                    ((detail.sttModels?.length ?? 0) > 1 || isOpenAIFamily) && (
                       <InputVertical
                         title={t("setupModal.sttModel.label")}
                         subDescription={
@@ -461,6 +610,8 @@ export function VoiceProviderSetupModal({
                               strict={false}
                             />
                             <VoiceModelFetchButton
+                              field="stt_model"
+                              storedKeyRequest={storedKeyRequest}
                               onModels={handleDiscoveredModels}
                             />
                           </>
@@ -506,6 +657,8 @@ export function VoiceProviderSetupModal({
                                 strict={false}
                               />
                               <VoiceModelFetchButton
+                                field="tts_model"
+                                storedKeyRequest={storedKeyRequest}
                                 onModels={handleDiscoveredModels}
                               />
                             </>
@@ -526,27 +679,52 @@ export function VoiceProviderSetupModal({
 
                       <InputVertical
                         title={t("setupModal.voice.label")}
-                        subDescription={markdown(
-                          t("setupModal.voice.description", {
-                            docsLabel:
-                              detail.voiceDocsUrl?.label ?? detail.label,
-                            docsUrl:
-                              detail.voiceDocsUrl?.url ?? detail.docsUrl ?? "",
-                          })
-                        )}
+                        subDescription={
+                          isSelfHosted
+                            ? markdown(
+                                hasLoadedVoices && voiceOptions.length === 0
+                                  ? t("setupModal.voice.customEmptyDescription")
+                                  : t("setupModal.voice.customDescription")
+                              )
+                            : markdown(
+                                t("setupModal.voice.description", {
+                                  docsLabel:
+                                    detail.voiceDocsUrl?.label ?? detail.label,
+                                  docsUrl:
+                                    detail.voiceDocsUrl?.url ??
+                                    detail.docsUrl ??
+                                    "",
+                                })
+                              )
+                        }
                         withLabel="default_voice"
                       >
-                        <InputComboBoxField
-                          name="default_voice"
-                          options={voiceOptions}
-                          placeholder={
-                            isLoadingVoices
-                              ? t("setupModal.voice.loadingPlaceholder")
-                              : t("setupModal.voice.placeholder")
-                          }
-                          disabled={isLoadingVoices}
-                          strict={false}
-                        />
+                        {voiceOptions.length > 0 ? (
+                          <InputComboBoxField
+                            name="default_voice"
+                            options={voiceOptions}
+                            placeholder={
+                              isLoadingVoices
+                                ? t("setupModal.voice.loadingPlaceholder")
+                                : t("setupModal.voice.placeholder")
+                            }
+                            disabled={isLoadingVoices}
+                            strict={false}
+                          />
+                        ) : (
+                          // The combo box commits free text only by picking it
+                          // out of its dropdown, which has nothing to show when
+                          // the server lists no voices. A plain field keeps the
+                          // speaker name typeable.
+                          <InputTypeInField
+                            name="default_voice"
+                            placeholder={
+                              isLoadingVoices
+                                ? t("setupModal.voice.loadingPlaceholder")
+                                : t("setupModal.voice.freeTextPlaceholder")
+                            }
+                          />
+                        )}
                       </InputVertical>
                     </>
                   )}
@@ -561,9 +739,9 @@ export function VoiceProviderSetupModal({
                   disabled={isSubmitting || !isValid || !dirty}
                   icon={isSubmitting ? SvgSimpleLoader : undefined}
                 >
-                  {isEditing
-                    ? t("setupModal.updateButton.label")
-                    : t("setupModal.connectButton.label")}
+                  {isNewForMode
+                    ? t("setupModal.connectButton.label")
+                    : t("setupModal.updateButton.label")}
                 </Button>
               </Modal.Footer>
             </Form>
@@ -584,12 +762,21 @@ interface VoiceDisconnectModalProps {
     providerLabel: string;
     providerType: string;
   };
+  /**
+   * Mode being disconnected. A self-hosted row backs both STT and TTS, so
+   * only that mode's configuration is cleared; the row goes when nothing is
+   * left on it.
+   */
+  mode: ProviderMode;
+  perModeDisconnect: boolean;
   hasAlternatives: boolean;
   onSuccess: () => void;
 }
 
 export function VoiceDisconnectModal({
   disconnectTarget,
+  mode,
+  perModeDisconnect,
   hasAlternatives,
   onSuccess,
 }: VoiceDisconnectModalProps) {
@@ -600,7 +787,9 @@ export function VoiceDisconnectModal({
   async function handleDisconnect() {
     setIsSubmitting(true);
     try {
-      const res = await deleteVoiceProvider(disconnectTarget.providerId);
+      const res = perModeDisconnect
+        ? await clearVoiceProviderMode(disconnectTarget.providerId, mode)
+        : await deleteVoiceProvider(disconnectTarget.providerId);
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(
@@ -631,7 +820,11 @@ export function VoiceDisconnectModal({
       title={t("disconnectModal.header.title", {
         label: disconnectTarget.providerLabel,
       })}
-      description={t("disconnectModal.header.description")}
+      description={
+        perModeDisconnect
+          ? t("disconnectModal.header.modeDescription")
+          : t("disconnectModal.header.description")
+      }
       submit={
         <Button
           variant="danger"
@@ -645,9 +838,16 @@ export function VoiceDisconnectModal({
       <Section alignItems="start" gap={2}>
         <Text color="text-03">
           {markdown(
-            t("disconnectModal.body.description", {
-              label: disconnectTarget.providerLabel,
-            })
+            perModeDisconnect
+              ? t(
+                  mode === "stt"
+                    ? "disconnectModal.body.sttDescription"
+                    : "disconnectModal.body.ttsDescription",
+                  { label: disconnectTarget.providerLabel }
+                )
+              : t("disconnectModal.body.description", {
+                  label: disconnectTarget.providerLabel,
+                })
           )}
         </Text>
         {!hasAlternatives && (

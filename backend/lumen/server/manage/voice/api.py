@@ -9,6 +9,7 @@ from lumen.db.enums import Permission
 from lumen.db.models import LLMProvider as LLMProviderModel
 from lumen.db.models import User, VoiceProvider
 from lumen.db.voice import (
+    clear_voice_provider_mode,
     deactivate_stt_provider,
     deactivate_tts_provider,
     delete_voice_provider,
@@ -25,6 +26,7 @@ from lumen.server.manage.llm.utils import fetch_openai_compatible_model_ids
 from lumen.server.manage.voice.models import (
     AvailableVoiceModel,
     AvailableVoiceModelsRequest,
+    AvailableVoicesRequest,
     VoiceOption,
     VoiceProviderTestRequest,
     VoiceProviderUpdateSuccess,
@@ -160,6 +162,35 @@ def _fetch_provider_for_stored_secret(
     return provider
 
 
+def _resolve_api_key(
+    db_session: Session,
+    *,
+    provider_id: int | None,
+    use_stored_key: bool,
+    api_key: str | None,
+) -> str | None:
+    """Return a usable API key, reading the stored one when asked.
+
+    The admin form renders a masked key, so it must ask for the stored value
+    rather than echo the mask back as a credential.
+    """
+    if not use_stored_key:
+        return api_key
+
+    if provider_id is None:
+        raise LumenError(
+            LumenErrorCode.VALIDATION_ERROR,
+            "Provider id is required to use the stored API key.",
+        )
+    provider = fetch_voice_provider_by_id(db_session, provider_id)
+    if provider is None or not provider.api_key:
+        raise LumenError(
+            LumenErrorCode.VALIDATION_ERROR,
+            "No stored API key found for this provider.",
+        )
+    return provider.api_key.get_value(apply_mask=False)
+
+
 def _provider_to_view(provider: VoiceProvider) -> VoiceProviderView:
     """Convert a VoiceProvider model to a VoiceProviderView."""
     raw_key = provider.api_key.get_value(apply_mask=False) if provider.api_key else None
@@ -263,6 +294,27 @@ async def upsert_voice_provider_endpoint(
     db_session.commit()
 
     return _provider_to_view(provider)
+
+
+@admin_router.post("/providers/{provider_id}/clear/{mode}")
+def clear_voice_provider_mode_endpoint(
+    provider_id: int,
+    mode: str,
+    _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> VoiceProviderUpdateSuccess:
+    """Disconnect one mode (STT or TTS) from a provider.
+
+    STT and TTS share a provider row, so a mode is disconnected by clearing
+    its own model. The row itself goes only when neither mode is left.
+    """
+    if mode not in ("stt", "tts"):
+        raise LumenError(
+            LumenErrorCode.VALIDATION_ERROR, "Mode must be 'stt' or 'tts'."
+        )
+    clear_voice_provider_mode(db_session=db_session, provider_id=provider_id, mode=mode)
+    db_session.commit()
+    return VoiceProviderUpdateSuccess()
 
 
 @admin_router.delete(
@@ -409,7 +461,7 @@ async def test_voice_provider(
 
 
 @admin_router.get("/providers/{provider_id}/voices")
-def get_provider_voices(
+async def get_provider_voices(
     provider_id: int,
     _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
     db_session: Session = Depends(get_session),
@@ -429,7 +481,7 @@ def get_provider_voices(
     except ValueError as exc:
         raise LumenError(LumenErrorCode.VALIDATION_ERROR, str(exc)) from exc
 
-    return [VoiceOption(**voice) for voice in provider.get_available_voices()]
+    return [VoiceOption(**voice) for voice in await provider.list_voices()]
 
 
 @admin_router.get("/voices")
@@ -460,6 +512,7 @@ def get_voices_by_type(
 def list_available_models(
     request: AvailableVoiceModelsRequest,
     _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
 ) -> list[AvailableVoiceModel]:
     """List models on an OpenAI-compatible audio server (`GET {base}/models`).
 
@@ -467,9 +520,51 @@ def list_available_models(
     listing carries no audio-capability signal. Pick an STT/TTS model,
     then use Test to verify it transcribes/synthesizes.
     """
+    api_key = _resolve_api_key(
+        db_session,
+        provider_id=request.id,
+        use_stored_key=request.use_stored_key,
+        api_key=request.api_key,
+    )
     model_ids = fetch_openai_compatible_model_ids(
         api_base=request.api_base,
-        api_key=request.api_key,
+        api_key=api_key,
         source_name="Voice",
     )
     return [AvailableVoiceModel(id=model_id) for model_id in model_ids]
+
+
+@admin_router.post("/available-voices")
+async def list_available_voices(
+    request: AvailableVoicesRequest,
+    _: User = Depends(require_permission(Permission.FULL_ADMIN_PANEL_ACCESS)),
+    db_session: Session = Depends(get_session),
+) -> list[VoiceOption]:
+    """List the voices a provider offers for the given TTS model.
+
+    Self-hosted servers are asked directly; hosted providers answer from
+    their static catalogue. An empty list is a valid answer — a model can
+    ship no named voices — and the form then takes a free-typed speaker.
+    """
+    api_key = _resolve_api_key(
+        db_session,
+        provider_id=request.id,
+        use_stored_key=request.use_stored_key,
+        api_key=request.api_key,
+    )
+    api_base = _validate_voice_api_base(request.provider_type, request.api_base)
+
+    temp_provider = VoiceProvider(
+        name="__temp__",
+        provider_type=request.provider_type,
+        api_base=api_base,
+        tts_model=request.tts_model,
+    )
+    temp_provider.api_key = api_key  # ty: ignore[invalid-assignment]
+
+    try:
+        provider = get_voice_provider(temp_provider)
+    except ValueError as exc:
+        raise LumenError(LumenErrorCode.VALIDATION_ERROR, str(exc)) from exc
+
+    return [VoiceOption(**voice) for voice in await provider.list_voices()]

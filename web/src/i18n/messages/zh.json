@@ -7481,7 +7481,9 @@
     "voice": {
       "disconnectModal": {
         "body": {
-          "description": "**{label}** 模型将不再用于语音转文字或文字转语音，也不再是您的默认模型。会话历史将会保留。"
+          "description": "**{label}** 模型将不再用于语音转文字或文字转语音，也不再是您的默认模型。会话历史将会保留。",
+          "sttDescription": "**{label}** 将不再转写语音。其文本转语音配置保持不变。",
+          "ttsDescription": "**{label}** 将不再朗读回复。其语音转文本配置保持不变。"
         },
         "connectAnother": {
           "description": "连接其他提供方以继续使用语音功能。"
@@ -7494,7 +7496,8 @@
         },
         "header": {
           "description": "这将删除为此提供方存储的凭据。",
-          "title": "断开 {label} 连接"
+          "title": "断开 {label} 连接",
+          "modeDescription": "这将移除为此功能选择的模型。"
         },
         "submitButton": {
           "label": "断开连接"
@@ -7536,7 +7539,8 @@
       "setupModal": {
         "apiBase": {
           "label": "API 基础 URL",
-          "description": "自托管服务器（例如 LocalAI、Kokoro、faster-whisper）的可选 OpenAI 兼容基础 URL。留空 = api.openai.com。在容器内请使用 `host.docker.internal` 而不是 `localhost`。"
+          "description": "自托管服务器（例如 LocalAI、Kokoro、faster-whisper）的可选 OpenAI 兼容基础 URL。留空 = api.openai.com。在容器内请使用 `host.docker.internal` 而不是 `localhost`。",
+          "required": "必须填写 API 基础 URL"
         },
         "apiKey": {
           "description": "粘贴来自 {provider} 的 [API 密钥]({url})，以访问您的模型。",
@@ -7595,14 +7599,22 @@
           "description": "此音色将用于语音回复。请在 [{docsLabel}]({docsUrl}) 查看支持的语言和音色的完整列表。",
           "label": "音色",
           "loadingPlaceholder": "正在加载音色...",
-          "placeholder": "选择音色或输入音色 ID"
+          "placeholder": "选择音色或输入音色 ID",
+          "customDescription": "语音来自你的服务器。请选择一个，或输入模型所需的说话人名称。",
+          "customEmptyDescription": "你的服务器未列出该模型的语音。请输入模型所需的说话人名称。",
+          "required": "请选择或输入一个语音",
+          "freeTextPlaceholder": "说话人名称，例如 serena"
         },
         "fetchModels": {
           "label": "Fetch models",
           "loading": "Fetching models…",
           "missingBase": "Enter an API base URL first",
           "empty": "No models found on this server",
-          "success": "Found {count} models"
+          "success": "Found {count} models",
+          "selected": "找到 {count} 个模型 — 已选择 {model}"
+        },
+        "model": {
+          "required": "请从你的服务器中选择一个模型"
         }
       },
       "speechToText": {

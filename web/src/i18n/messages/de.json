@@ -7481,7 +7481,9 @@
     "voice": {
       "disconnectModal": {
         "body": {
-          "description": "**{label}**-Modelle werden nicht mehr für Sprache-zu-Text oder Text-zu-Sprache verwendet, und der Anbieter ist nicht mehr Ihr Standard. Der Sitzungsverlauf bleibt erhalten."
+          "description": "**{label}**-Modelle werden nicht mehr für Sprache-zu-Text oder Text-zu-Sprache verwendet, und der Anbieter ist nicht mehr Ihr Standard. Der Sitzungsverlauf bleibt erhalten.",
+          "sttDescription": "**{label}** transkribiert keine Sprache mehr. Die Text-zu-Sprache-Einrichtung bleibt unverändert.",
+          "ttsDescription": "**{label}** liest keine Antworten mehr vor. Die Sprache-zu-Text-Einrichtung bleibt unverändert."
         },
         "connectAnother": {
           "description": "Verbinden Sie einen anderen Anbieter, um die Sprachfunktionen weiterhin zu verwenden."
@@ -7494,7 +7496,8 @@
         },
         "header": {
           "description": "Dadurch werden die gespeicherten Anmeldedaten für diesen Anbieter entfernt.",
-          "title": "{label} trennen"
+          "title": "{label} trennen",
+          "modeDescription": "Dies entfernt das für diese Funktion gewählte Modell."
         },
         "submitButton": {
           "label": "Trennen"
@@ -7536,7 +7539,8 @@
       "setupModal": {
         "apiBase": {
           "label": "API-Basis-URL",
-          "description": "Optionale OpenAI-kompatible Basis-URL für einen selbst gehosteten Server (z. B. LocalAI, Kokoro, faster-whisper). Leer = api.openai.com. Aus einem Container heraus `host.docker.internal` statt `localhost` verwenden."
+          "description": "Optionale OpenAI-kompatible Basis-URL für einen selbst gehosteten Server (z. B. LocalAI, Kokoro, faster-whisper). Leer = api.openai.com. Aus einem Container heraus `host.docker.internal` statt `localhost` verwenden.",
+          "required": "API-Basis-URL ist erforderlich"
         },
         "apiKey": {
           "description": "Fügen Sie Ihren [API-Schlüssel]({url}) von {provider} ein, um auf Ihre Modelle zuzugreifen.",
@@ -7595,14 +7599,22 @@
           "description": "Diese Stimme wird für gesprochene Antworten verwendet. Die vollständige Liste der unterstützten Sprachen und Stimmen finden Sie unter [{docsLabel}]({docsUrl}).",
           "label": "Stimme",
           "loadingPlaceholder": "Stimmen werden geladen...",
-          "placeholder": "Wählen Sie eine Stimme oder geben Sie eine Stimmen-ID ein"
+          "placeholder": "Wählen Sie eine Stimme oder geben Sie eine Stimmen-ID ein",
+          "customDescription": "Die Stimmen stammen von Ihrem Server. Wählen Sie eine aus oder geben Sie den Sprechernamen ein, den Ihr Modell erwartet.",
+          "customEmptyDescription": "Ihr Server listet keine Stimmen für dieses Modell auf. Geben Sie den Sprechernamen ein, den Ihr Modell erwartet.",
+          "required": "Wählen oder geben Sie eine Stimme ein",
+          "freeTextPlaceholder": "Sprechername, z. B. serena"
         },
         "fetchModels": {
           "label": "Modelle abrufen",
           "loading": "Modelle werden abgerufen…",
           "missingBase": "Gib zuerst eine API-Basis-URL ein",
           "empty": "Keine Modelle auf diesem Server gefunden",
-          "success": "{count} Modelle gefunden"
+          "success": "{count} Modelle gefunden",
+          "selected": "{count} Modelle gefunden — {model} ausgewählt"
+        },
+        "model": {
+          "required": "Wählen Sie ein Modell von Ihrem Server"
         }
       },
       "speechToText": {

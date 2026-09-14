@@ -7481,7 +7481,9 @@
     "voice": {
       "disconnectModal": {
         "body": {
-          "description": "**{label}** models will no longer be used for speech-to-text or text-to-speech, and it will no longer be your default. Session history will be preserved."
+          "description": "**{label}** models will no longer be used for speech-to-text or text-to-speech, and it will no longer be your default. Session history will be preserved.",
+          "sttDescription": "**{label}** will no longer transcribe speech. Its text-to-speech setup stays as it is.",
+          "ttsDescription": "**{label}** will no longer speak responses. Its speech-to-text setup stays as it is."
         },
         "connectAnother": {
           "description": "Connect another provider to continue using voice features."
@@ -7494,7 +7496,8 @@
         },
         "header": {
           "description": "This will remove the stored credentials for this provider.",
-          "title": "Disconnect {label}"
+          "title": "Disconnect {label}",
+          "modeDescription": "This removes the model chosen for this feature."
         },
         "submitButton": {
           "label": "Disconnect"
@@ -7536,7 +7539,8 @@
       "setupModal": {
         "apiBase": {
           "label": "API Base URL",
-          "description": "Optional OpenAI-compatible base URL for a self-hosted server (e.g. LocalAI, Kokoro, faster-whisper). Empty = api.openai.com. From inside a container, use `host.docker.internal` instead of `localhost`."
+          "description": "Optional OpenAI-compatible base URL for a self-hosted server (e.g. LocalAI, Kokoro, faster-whisper). Empty = api.openai.com. From inside a container, use `host.docker.internal` instead of `localhost`.",
+          "required": "API base URL is required"
         },
         "apiKey": {
           "description": "Paste your [API key]({url}) from {provider} to access your models.",
@@ -7595,14 +7599,22 @@
           "description": "This voice will be used for spoken responses. See full list of supported languages and voices at [{docsLabel}]({docsUrl}).",
           "label": "Voice",
           "loadingPlaceholder": "Loading voices...",
-          "placeholder": "Select a voice or enter voice ID"
+          "placeholder": "Select a voice or enter voice ID",
+          "customDescription": "Voices come from your server. Pick one, or type the speaker name your model expects.",
+          "customEmptyDescription": "Your server lists no voices for this model. Type the speaker name your model expects.",
+          "required": "Pick or type a voice",
+          "freeTextPlaceholder": "Speaker name, e.g. serena"
         },
         "fetchModels": {
           "label": "Fetch models",
           "loading": "Fetching models…",
           "missingBase": "Enter an API base URL first",
           "empty": "No models found on this server",
-          "success": "Found {count} models"
+          "success": "Found {count} models",
+          "selected": "Found {count} models — selected {model}"
+        },
+        "model": {
+          "required": "Pick a model from your server"
         }
       },
       "speechToText": {

@@ -7481,7 +7481,9 @@
     "voice": {
       "disconnectModal": {
         "body": {
-          "description": "Los modelos de **{label}** ya no se usarán para voz a texto ni para texto a voz, y dejará de ser tu proveedor predeterminado. Se conservará el historial de sesiones."
+          "description": "Los modelos de **{label}** ya no se usarán para voz a texto ni para texto a voz, y dejará de ser tu proveedor predeterminado. Se conservará el historial de sesiones.",
+          "sttDescription": "**{label}** ya no transcribirá el habla. Su configuración de texto a voz no cambia.",
+          "ttsDescription": "**{label}** ya no leerá las respuestas. Su configuración de voz a texto no cambia."
         },
         "connectAnother": {
           "description": "Conecta otro proveedor para seguir usando las funciones de voz."
@@ -7494,7 +7496,8 @@
         },
         "header": {
           "description": "Esto eliminará las credenciales guardadas de este proveedor.",
-          "title": "Desconectar {label}"
+          "title": "Desconectar {label}",
+          "modeDescription": "Esto elimina el modelo elegido para esta función."
         },
         "submitButton": {
           "label": "Desconectar"
@@ -7536,7 +7539,8 @@
       "setupModal": {
         "apiBase": {
           "label": "URL base de la API",
-          "description": "URL base opcional compatible con OpenAI para un servidor autoalojado (p. ej., LocalAI, Kokoro, faster-whisper). Vacío = api.openai.com. Desde un contenedor, use `host.docker.internal` en lugar de `localhost`."
+          "description": "URL base opcional compatible con OpenAI para un servidor autoalojado (p. ej., LocalAI, Kokoro, faster-whisper). Vacío = api.openai.com. Desde un contenedor, use `host.docker.internal` en lugar de `localhost`.",
+          "required": "La URL base de la API es obligatoria"
         },
         "apiKey": {
           "description": "Pega tu [clave de API]({url}) de {provider} para acceder a tus modelos.",
@@ -7595,14 +7599,22 @@
           "description": "Esta voz se usará para las respuestas habladas. Consulta la lista completa de idiomas y voces admitidos en [{docsLabel}]({docsUrl}).",
           "label": "Voz",
           "loadingPlaceholder": "Cargando voces...",
-          "placeholder": "Selecciona una voz o introduce un ID de voz"
+          "placeholder": "Selecciona una voz o introduce un ID de voz",
+          "customDescription": "Las voces provienen de tu servidor. Elige una o escribe el nombre del hablante que espera tu modelo.",
+          "customEmptyDescription": "Tu servidor no lista voces para este modelo. Escribe el nombre del hablante que espera tu modelo.",
+          "required": "Elige o escribe una voz",
+          "freeTextPlaceholder": "Nombre del hablante, p. ej. serena"
         },
         "fetchModels": {
           "label": "Obtener modelos",
           "loading": "Obteniendo modelos…",
           "missingBase": "Introduce primero una URL base de API",
           "empty": "No se encontraron modelos en este servidor",
-          "success": "{count} modelos encontrados"
+          "success": "{count} modelos encontrados",
+          "selected": "{count} modelos encontrados — {model} seleccionado"
+        },
+        "model": {
+          "required": "Elige un modelo de tu servidor"
         }
       },
       "speechToText": {

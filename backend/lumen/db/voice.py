@@ -91,9 +91,14 @@ def upsert_voice_provider(
     # wipe keys like speech_region.
     if custom_config is not None:
         provider.custom_config = custom_config
-    provider.stt_model = stt_model
-    provider.tts_model = tts_model
-    provider.default_voice = default_voice
+    # Same "None leaves it alone" rule: the STT and TTS setup modals each own
+    # only their own fields, so neither can wipe the other's model or voice.
+    if stt_model is not None:
+        provider.stt_model = stt_model
+    if tts_model is not None:
+        provider.tts_model = tts_model
+    if default_voice is not None:
+        provider.default_voice = default_voice
 
     # Only update API key if explicitly changed or if provider has no key
     if api_key_changed or provider.api_key is None:
@@ -109,6 +114,42 @@ def upsert_voice_provider(
     if activate_tts:
         set_default_tts_provider(db_session=db_session, provider_id=provider.id)
 
+    db_session.refresh(provider)
+    return provider
+
+
+def clear_voice_provider_mode(
+    *, db_session: Session, provider_id: int, mode: str
+) -> VoiceProvider | None:
+    """Drop one mode's configuration from a provider.
+
+    A self-hosted row backs both STT and TTS, so disconnecting one mode must
+    not take the other down with it. The row is deleted only once neither
+    mode has a model left.
+
+    Returns the surviving provider, or None when the row was deleted.
+    """
+    provider = fetch_voice_provider_by_id(db_session, provider_id)
+    if provider is None:
+        raise LumenError(
+            LumenErrorCode.NOT_FOUND,
+            f"No voice provider with id {provider_id} exists.",
+        )
+
+    if mode == "stt":
+        provider.stt_model = None
+        provider.is_default_stt = False
+    else:
+        provider.tts_model = None
+        provider.default_voice = None
+        provider.is_default_tts = False
+
+    if provider.stt_model is None and provider.tts_model is None:
+        db_session.delete(provider)
+        db_session.flush()
+        return None
+
+    db_session.flush()
     db_session.refresh(provider)
     return provider
 

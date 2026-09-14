@@ -440,6 +440,15 @@ def fetch_openai_compatible_model_ids(
         "X-Title": "Lumen",
     }
     if api_key:
+        # HTTP headers are latin-1 only. A masked key echoed back by a form
+        # would raise UnicodeEncodeError deep inside httpx, so reject it here
+        # with an actionable message.
+        if not api_key.isascii():
+            raise LumenError(
+                LumenErrorCode.VALIDATION_ERROR,
+                f"The {source_name} API key contains non-ASCII characters. "
+                "Re-enter the key instead of the masked placeholder.",
+            )
         headers["Authorization"] = f"Bearer {api_key}"
 
     try:

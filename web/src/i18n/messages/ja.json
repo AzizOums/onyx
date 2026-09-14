@@ -7481,7 +7481,9 @@
     "voice": {
       "disconnectModal": {
         "body": {
-          "description": "**{label}** のモデルは音声テキスト変換やテキスト読み上げに使用されなくなり、デフォルトからも外れます。セッション履歴は保持されます。"
+          "description": "**{label}** のモデルは音声テキスト変換やテキスト読み上げに使用されなくなり、デフォルトからも外れます。セッション履歴は保持されます。",
+          "sttDescription": "**{label}** は音声を文字起こししなくなります。音声合成の設定はそのまま残ります。",
+          "ttsDescription": "**{label}** は応答を読み上げなくなります。音声認識の設定はそのまま残ります。"
         },
         "connectAnother": {
           "description": "音声機能を引き続き使用するには、別のプロバイダーを接続してください。"
@@ -7494,7 +7496,8 @@
         },
         "header": {
           "description": "このプロバイダーに保存された認証情報を削除します。",
-          "title": "{label} の接続を解除"
+          "title": "{label} の接続を解除",
+          "modeDescription": "この機能に選択したモデルを削除します。"
         },
         "submitButton": {
           "label": "接続を解除"
@@ -7536,7 +7539,8 @@
       "setupModal": {
         "apiBase": {
           "label": "APIベースURL",
-          "description": "セルフホストサーバー（LocalAI、Kokoro、faster-whisperなど）用のオプションのOpenAI互換ベースURL。空欄 = api.openai.com。コンテナ内からは `localhost` の代わりに `host.docker.internal` を使用してください。"
+          "description": "セルフホストサーバー（LocalAI、Kokoro、faster-whisperなど）用のオプションのOpenAI互換ベースURL。空欄 = api.openai.com。コンテナ内からは `localhost` の代わりに `host.docker.internal` を使用してください。",
+          "required": "API ベース URL は必須です"
         },
         "apiKey": {
           "description": "モデルにアクセスするには、{provider} の [API キー]({url}) を貼り付けてください。",
@@ -7595,14 +7599,22 @@
           "description": "このボイスが読み上げ応答に使用されます。対応する言語とボイスの一覧は [{docsLabel}]({docsUrl}) を参照してください。",
           "label": "ボイス",
           "loadingPlaceholder": "ボイスを読み込んでいます...",
-          "placeholder": "ボイスを選択するか、ボイス ID を入力"
+          "placeholder": "ボイスを選択するか、ボイス ID を入力",
+          "customDescription": "音声はサーバーから取得されます。一覧から選ぶか、モデルが要求する話者名を入力してください。",
+          "customEmptyDescription": "このモデルに対応する音声がサーバーにありません。モデルが要求する話者名を入力してください。",
+          "required": "音声を選択するか入力してください",
+          "freeTextPlaceholder": "話者名（例: serena）"
         },
         "fetchModels": {
           "label": "Fetch models",
           "loading": "Fetching models…",
           "missingBase": "Enter an API base URL first",
           "empty": "No models found on this server",
-          "success": "Found {count} models"
+          "success": "Found {count} models",
+          "selected": "{count} 件のモデルが見つかりました — {model} を選択しました"
+        },
+        "model": {
+          "required": "サーバーからモデルを選択してください"
         }
       },
       "speechToText": {

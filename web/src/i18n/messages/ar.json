@@ -7481,7 +7481,9 @@
     "voice": {
       "disconnectModal": {
         "body": {
-          "description": "لن تُستخدم نماذج **{label}** بعد الآن لتحويل الكلام إلى نص أو النص إلى كلام، ولن يكون افتراضيك بعد الآن. سيُحتفظ بسجل الجلسات."
+          "description": "لن تُستخدم نماذج **{label}** بعد الآن لتحويل الكلام إلى نص أو النص إلى كلام، ولن يكون افتراضيك بعد الآن. سيُحتفظ بسجل الجلسات.",
+          "sttDescription": "لن يقوم **{label}** بتحويل الكلام إلى نص بعد الآن. يبقى إعداد تحويل النص إلى كلام كما هو.",
+          "ttsDescription": "لن يقرأ **{label}** الردود بعد الآن. يبقى إعداد تحويل الكلام إلى نص كما هو."
         },
         "connectAnother": {
           "description": "اربط موفرًا آخر لمواصلة استخدام ميزات الصوت."
@@ -7494,7 +7496,8 @@
         },
         "header": {
           "description": "سيزيل هذا بيانات الاعتماد المخزنة لهذا الموفر.",
-          "title": "قطع الاتصال بـ {label}"
+          "title": "قطع الاتصال بـ {label}",
+          "modeDescription": "يؤدي هذا إلى إزالة النموذج المختار لهذه الميزة."
         },
         "submitButton": {
           "label": "قطع الاتصال"
@@ -7536,7 +7539,8 @@
       "setupModal": {
         "apiBase": {
           "label": "عنوان API الأساسي",
-          "description": "عنوان أساسي اختياري متوافق مع OpenAI لخادم مستضاف ذاتيًا (مثل LocalAI أو Kokoro أو faster-whisper). فارغ = api.openai.com. من داخل حاوية، استخدم `host.docker.internal` بدلًا من `localhost`."
+          "description": "عنوان أساسي اختياري متوافق مع OpenAI لخادم مستضاف ذاتيًا (مثل LocalAI أو Kokoro أو faster-whisper). فارغ = api.openai.com. من داخل حاوية، استخدم `host.docker.internal` بدلًا من `localhost`.",
+          "required": "عنوان URL الأساسي لواجهة برمجة التطبيقات مطلوب"
         },
         "apiKey": {
           "description": "الصق [مفتاح API]({url}) من {provider} للوصول إلى نماذجك.",
@@ -7595,14 +7599,22 @@
           "description": "سيُستخدم هذا الصوت للردود المنطوقة. راجع القائمة الكاملة للغات والأصوات المدعومة في [{docsLabel}]({docsUrl}).",
           "label": "الصوت",
           "loadingPlaceholder": "جارٍ تحميل الأصوات...",
-          "placeholder": "اختر صوتًا أو أدخل معرّف صوت"
+          "placeholder": "اختر صوتًا أو أدخل معرّف صوت",
+          "customDescription": "تأتي الأصوات من خادمك. اختر صوتًا أو اكتب اسم المتحدث الذي يتوقعه نموذجك.",
+          "customEmptyDescription": "لا يعرض خادمك أي أصوات لهذا النموذج. اكتب اسم المتحدث الذي يتوقعه نموذجك.",
+          "required": "اختر صوتًا أو اكتبه",
+          "freeTextPlaceholder": "اسم المتحدث، مثل serena"
         },
         "fetchModels": {
           "label": "Fetch models",
           "loading": "Fetching models…",
           "missingBase": "Enter an API base URL first",
           "empty": "No models found on this server",
-          "success": "Found {count} models"
+          "success": "Found {count} models",
+          "selected": "تم العثور على {count} نموذجًا — تم اختيار {model}"
+        },
+        "model": {
+          "required": "اختر نموذجًا من خادمك"
         }
       },
       "speechToText": {

@@ -56,6 +56,7 @@ def get_voice_provider(provider: VoiceProvider) -> VoiceProviderInterface:
             stt_model=stt_model,
             tts_model=tts_model,
             default_voice=default_voice,
+            self_hosted=True,
         )
 
     elif provider_type == "azure":

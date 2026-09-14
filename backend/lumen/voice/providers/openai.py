@@ -53,6 +53,18 @@ class OpenAIRealtimeMessageType(StrEnum):
     ITEM_CREATED = "conversation.item.created"
 
 
+def normalize_openai_api_root(api_base: str | None) -> str:
+    """Server root for an OpenAI-compatible base URL, with no trailing `/v1`.
+
+    Admins paste either form (`http://host:8002` or `http://host:8002/v1`);
+    callers that build `/v1/...` paths themselves need the bare root.
+    """
+    root = (api_base or DEFAULT_OPENAI_API_BASE).strip().rstrip("/")
+    if root.endswith("/v1"):
+        root = root[: -len("/v1")]
+    return root
+
+
 def _http_to_ws_url(http_url: str) -> str:
     """Convert http(s) URL to ws(s) URL for WebSocket connections."""
     if http_url.startswith("https://"):
@@ -81,7 +93,7 @@ class OpenAIStreamingTranscriber(StreamingTranscriberProtocol):
         )
         self.api_key = api_key
         self.model = model
-        self.api_base = api_base or DEFAULT_OPENAI_API_BASE
+        self.api_base = normalize_openai_api_root(api_base)
         self._ws: aiohttp.ClientWebSocketResponse | None = None
         self._session: aiohttp.ClientSession | None = None
         self._transcript_queue: asyncio.Queue[TranscriptResult | None] = asyncio.Queue()
@@ -100,7 +112,7 @@ class OpenAIStreamingTranscriber(StreamingTranscriberProtocol):
         # `?model=` must be the realtime session model — a transcription
         # model here yields `invalid_model`. The Beta `?intent=transcription`
         # form now returns `beta_api_shape_disabled`.
-        ws_base = _http_to_ws_url(self.api_base.rstrip("/"))
+        ws_base = _http_to_ws_url(self.api_base)
         url = f"{ws_base}/v1/realtime?model={OPENAI_REALTIME_SESSION_MODEL}"
         headers = {"Authorization": f"Bearer {self.api_key}"}
 
@@ -371,7 +383,7 @@ class OpenAIStreamingSynthesizer(StreamingSynthesizerProtocol):
         self.voice = voice
         self.model = model
         self.speed = max(0.25, min(4.0, speed))
-        self.api_base = api_base or DEFAULT_OPENAI_API_BASE
+        self.api_base = normalize_openai_api_root(api_base)
         self._session: aiohttp.ClientSession | None = None
         self._audio_queue: asyncio.Queue[bytes | None] = asyncio.Queue()
         self._text_queue: asyncio.Queue[str | None] = asyncio.Queue()
@@ -407,7 +419,7 @@ class OpenAIStreamingSynthesizer(StreamingSynthesizerProtocol):
         if not self._session or self._closed:
             return
 
-        url = f"{self.api_base.rstrip('/')}/v1/audio/speech"
+        url = f"{self.api_base}/v1/audio/speech"
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
@@ -510,12 +522,16 @@ class OpenAIVoiceProvider(VoiceProviderInterface):
         stt_model: str | None = None,
         tts_model: str | None = None,
         default_voice: str | None = None,
+        self_hosted: bool = False,
     ):
         self.api_key = api_key
         self.api_base = api_base
-        self.stt_model = stt_model or "whisper-1"
-        self.tts_model = tts_model or "tts-1"
-        self.default_voice = default_voice or "alloy"
+        # A self-hosted server names its own models and voices, so the OpenAI
+        # catalogue defaults must not leak into it.
+        self.self_hosted = self_hosted
+        self.stt_model = stt_model or (None if self_hosted else "whisper-1")
+        self.tts_model = tts_model or (None if self_hosted else "tts-1")
+        self.default_voice = default_voice or (None if self_hosted else "alloy")
 
         self._client: "AsyncOpenAI | None" = None
 
@@ -523,9 +539,15 @@ class OpenAIVoiceProvider(VoiceProviderInterface):
         if self._client is None:
             from openai import AsyncOpenAI
 
+            # The SDK appends `/audio/speech` to base_url, so the base must
+            # carry the `/v1` suffix whichever form the admin pasted.
             self._client = AsyncOpenAI(
                 api_key=self.api_key,
-                base_url=self.api_base,
+                base_url=(
+                    f"{normalize_openai_api_root(self.api_base)}/v1"
+                    if self.api_base
+                    else None
+                ),
             )
         return self._client
 
@@ -543,13 +565,14 @@ class OpenAIVoiceProvider(VoiceProviderInterface):
         audio_file = io.BytesIO(audio_data)
         audio_file.name = f"audio.{audio_format}"
 
+        stt_model = self.stt_model or "whisper-1"
         with traced_llm_call(
             flow=LLMFlow.STT,
-            model=self.stt_model,
+            model=stt_model,
             provider="openai",
         ):
             response = await client.audio.transcriptions.create(
-                model=self.stt_model,
+                model=stt_model,
                 file=audio_file,
             )
 
@@ -577,15 +600,25 @@ class OpenAIVoiceProvider(VoiceProviderInterface):
         # Use with_streaming_response for proper async streaming
         # Using 8192 byte chunks for better streaming performance
         # (larger chunks = fewer round-trips, more complete MP3 frames)
+        tts_model = self.tts_model or "tts-1"
+        # A self-hosted server has its own speaker names, so there is no safe
+        # default to fall back on — say so rather than send an OpenAI name it
+        # will reject.
+        selected_voice = voice or self.default_voice
+        if not selected_voice:
+            raise ValueError(
+                "No voice configured for this provider. Set a voice that "
+                f"the model '{tts_model}' offers."
+            )
         with traced_llm_call(
             flow=LLMFlow.TTS,
-            model=self.tts_model,
+            model=tts_model,
             provider="openai",
             input_messages=[{"role": "user", "content": text}],
         ):
             async with client.audio.speech.with_streaming_response.create(
-                model=self.tts_model,
-                voice=voice or self.default_voice,
+                model=tts_model,
+                voice=selected_voice,
                 input=text,
                 speed=speed,
                 response_format="mp3",
@@ -606,8 +639,73 @@ class OpenAIVoiceProvider(VoiceProviderInterface):
             raise RuntimeError("OpenAI API key does not have sufficient permissions.")
 
     def get_available_voices(self) -> list[dict[str, str]]:
-        """Get available OpenAI TTS voices."""
+        """Get available OpenAI TTS voices.
+
+        A self-hosted server ships its own speakers, so it gets no static
+        list — `list_voices` asks the server instead.
+        """
+        if self.self_hosted:
+            return []
         return OPENAI_VOICES.copy()
+
+    async def list_voices(self) -> list[dict[str, str]]:
+        """Voices for the configured TTS model.
+
+        Self-hosted servers expose `GET /v1/audio/voices?model=...` (the
+        voice-pack convention used by Kokoro and friends). Models that ship
+        no voice packs answer with an empty list, and models the server
+        doesn't know answer with an error — both mean "let the admin type
+        the speaker name", so neither is fatal.
+        """
+        if not self.self_hosted:
+            return self.get_available_voices()
+
+        root = normalize_openai_api_root(self.api_base)
+        url = f"{root}/v1/audio/voices"
+        params = {"model": self.tts_model} if self.tts_model else {}
+        headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
+
+        from lumen.utils.logger import setup_logger
+
+        logger = setup_logger()
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                    url,
+                    params=params,
+                    headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=15),
+                ) as response:
+                    if response.status != 200:
+                        logger.info(
+                            "Voice server returned %s for %s; no voice list.",
+                            response.status,
+                            url,
+                        )
+                        return []
+                    payload = await response.json()
+        except Exception as e:
+            logger.info("Could not list voices at %s: %s", url, e)
+            return []
+
+        entries = payload.get("data") if isinstance(payload, dict) else payload
+        if not isinstance(entries, list):
+            return []
+
+        voices: list[dict[str, str]] = []
+        for entry in entries:
+            if isinstance(entry, str):
+                voices.append({"id": entry, "name": entry})
+            elif isinstance(entry, dict):
+                voice_id = entry.get("id") or entry.get("voice") or entry.get("name")
+                if voice_id:
+                    voices.append(
+                        {
+                            "id": str(voice_id),
+                            "name": str(entry.get("name") or voice_id),
+                        }
+                    )
+        return voices
 
     def get_available_stt_models(self) -> list[dict[str, str]]:
         """Get available OpenAI STT models."""
@@ -619,8 +717,10 @@ class OpenAIVoiceProvider(VoiceProviderInterface):
 
     def supports_streaming_stt(self) -> bool:
         # Streaming WS is locked to OPENAI_REALTIME_STT_MODEL; stt_model
-        # only governs the chunked HTTP path.
-        return True
+        # only governs the chunked HTTP path. Self-hosted servers implement
+        # the REST audio routes but not the Realtime WS, so attempting it
+        # only costs a rejected handshake before the chunked fallback.
+        return not self.self_hosted
 
     def supports_streaming_tts(self) -> bool:
         """OpenAI supports real-time streaming TTS via Realtime API."""
@@ -647,9 +747,17 @@ class OpenAIVoiceProvider(VoiceProviderInterface):
         """Create a streaming TTS session using HTTP streaming API."""
         if not self.api_key:
             raise ValueError("API key required for streaming TTS")
+        selected_voice = voice or self.default_voice
+        if not selected_voice:
+            if self.self_hosted:
+                raise ValueError(
+                    "No voice configured for this provider. Set a voice that "
+                    "your server offers for the selected model."
+                )
+            selected_voice = "alloy"
         synthesizer = OpenAIStreamingSynthesizer(
             api_key=self.api_key,
-            voice=voice or self.default_voice or "alloy",
+            voice=selected_voice,
             model=self.tts_model or "tts-1",
             speed=speed,
             api_base=self.api_base,
