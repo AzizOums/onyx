@@ -12,7 +12,8 @@ flag or a Helm value that still points at Python.
 | `lumen-mcp-server` | Built, tested, parity measured | Off (`mcpServer.runtime: python`) |
 | `lumen-db` row structs | Generated, drift test verified | Not wired to anything |
 | `lumen-db` connection layer | Tested against a real PostgreSQL 16 | Not wired to anything |
-| `sandbox_proxy` | Not started | — |
+| `sandbox_proxy` CA bootstrap | Ported, interop with Python proven | Not wired to anything |
+| `sandbox_proxy` everything else | Not started | — |
 | `api_server`, Celery workers | Not started | — |
 
 ## Verified, and how
@@ -26,6 +27,7 @@ These were run, not assumed.
 | The generated row structs match the models | Drift injected into the generated file, test observed failing, then restored |
 | Tenant scoping isolates schemas | 5 integration tests against a live PostgreSQL 16.13, including cross-tenant reuse |
 | A sharded deployment is refused, not misrouted | Unit test asserts `Database::connect` errors |
+| The Rust proxy loads a CA the Python proxy wrote | Interop check, 12 certificate fields identical both ways |
 
 ## Not verified — and what breaks
 
@@ -109,6 +111,28 @@ to the default.
 the intended behaviour: the Python router fails closed because guessing
 "default" for an already-migrated tenant sends its writes to the database it
 moved off. Approximating it would be worse than refusing.
+
+### The sandbox proxy is a CA bootstrap and nothing else yet
+
+What exists: CA generation, validation, the file-backed store, and the atomic
+materialization the proxy reads. What does not: the MITM engine, identity
+resolution, credential injection, and the gate.
+
+**Breaks as:** nothing. No binary runs it and no deployment references it.
+
+The part worth knowing is that the CA it produces is interchangeable with the
+Python one — proven by generating with each and loading with the other, then
+comparing subject, issuer, self-signedness, basic constraints and criticality,
+path length, every key-usage bit, and the subject key identifier. That is the
+property a cutover depends on: a proxy that regenerated instead of loading would
+orphan every sandbox trust store at once.
+
+Still unverifiable here, and it is the larger half:
+
+- **Docker identity resolution** needs a Docker daemon.
+- **Kubernetes identity resolution** needs a cluster and its informer API.
+- **The MITM engine** has no Rust equivalent of mitmproxy; it is a rewrite, and
+  a security-critical one.
 
 ## The one thing that nearly went wrong
 

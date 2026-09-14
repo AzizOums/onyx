@@ -1,0 +1,24 @@
+[package]
+name = "lumen-sandbox-proxy"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Egress proxy for Lumen sandboxes"
+
+[dependencies]
+thiserror.workspace = true
+tracing.workspace = true
+rcgen = { version = "0.14", default-features = false, features = ["pem", "ring"] }
+# ring signs RSA but cannot generate it, so the key comes from the `rsa` crate
+# and rcgen only does the signing.
+rsa = "0.9"
+rand = "0.8"
+x509-parser = "0.18"
+# rcgen and x509-parser both speak `time`, so this crate does too rather than
+# converting between two clock libraries at every boundary.
+time = "0.3"
+
+[dev-dependencies]
+tempfile = "3"
+x509-parser = "0.18"

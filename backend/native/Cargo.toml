@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["lumen_text", "lumen-mcp-server", "lumen-db"]
+members = ["lumen_text", "lumen-mcp-server", "lumen-db", "lumen-sandbox-proxy"]
 
 [workspace.package]
 edition = "2021"
