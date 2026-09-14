@@ -18,6 +18,10 @@ variable "CLI_REPOSITORY" {
   default = "lumendotapp/lumen-cli"
 }
 
+variable "MCP_SERVER_REPOSITORY" {
+  default = "lumendotapp/lumen-mcp-server"
+}
+
 variable "DEVCONTAINER_REPOSITORY" {
   default = "lumendotapp/lumen-devcontainer"
 }
@@ -100,6 +104,26 @@ target "cli" {
   }
 
   tags      = ["${CLI_REPOSITORY}:${TAG}"]
+}
+
+# The Rust MCP server. Not in the default group: the Python MCP server still
+# ships inside the backend image, and this one is opt-in until a deployment has
+# accepted the parity evidence (backend/native/lumen-mcp-server/README.md).
+target "mcp-server" {
+  context    = "backend/native"
+  dockerfile = "lumen-mcp-server/Dockerfile"
+
+  cache-from = [
+    "type=registry,ref=${MCP_SERVER_REPOSITORY}:latest",
+    "type=registry,ref=${MCP_SERVER_REPOSITORY}:edge",
+  ]
+  cache-to   = ["type=inline"]
+
+  args = {
+    BASE_IMAGE_REGISTRY = "${BASE_IMAGE_REGISTRY}"
+  }
+
+  tags      = ["${MCP_SERVER_REPOSITORY}:${TAG}"]
 }
 
 target "devcontainer" {

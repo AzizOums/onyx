@@ -1091,8 +1091,16 @@ mcpServer:
   extraEnv: []
   enabled: false  # Disabled by default
   replicaCount: 1
+  # Which implementation to run: "python" (inside the backend image) or "rust"
+  # (its own image). Default stays python until a deployment has accepted the
+  # parity evidence in backend/native/lumen-mcp-server/README.md.
+  runtime: python
   image:
     repository: lumendotapp/lumen-backend
+    tag: ""  # Overrides the image tag whose default is the chart appVersion.
+  # Used when runtime is "rust".
+  rustImage:
+    repository: lumendotapp/lumen-mcp-server
     tag: ""  # Overrides the image tag whose default is the chart appVersion.
   # CORS origins for MCP clients (comma-separated)
   # Example: "https://claude.ai,https://app.cursor.sh"

@@ -55,9 +55,14 @@ spec:
         - name: mcp-server
           securityContext:
             {{- toYaml .Values.mcpServer.securityContext | nindent 12 }}
+          {{- if eq .Values.mcpServer.runtime "rust" }}
+          image: "{{ .Values.mcpServer.rustImage.repository }}:{{ .Values.mcpServer.rustImage.tag | default .Values.global.version }}"
+          imagePullPolicy: {{ .Values.global.pullPolicy }}
+          {{- else }}
           image: "{{ .Values.mcpServer.image.repository }}:{{ .Values.mcpServer.image.tag | default .Values.global.version }}"
           imagePullPolicy: {{ .Values.global.pullPolicy }}
           command: [{{ include "lumen.customCACerts.commandPrefix" . }}"python", "lumen/mcp_server_main.py"]
+          {{- end }}
           ports:
             - name: mcp-server-port
               containerPort: {{ .Values.mcpServer.containerPorts.server }}
@@ -104,17 +109,35 @@ spec:
               value: "http://{{ include "lumen.resourceName" (list . "api-service") }}:{{ .Values.api.service.servicePort }}"
             {{- include "lumen.envSecrets" . | nindent 12 }}
             {{- include "lumen.metricsAuthEnv" . | nindent 12 }}
+            {{- if eq .Values.mcpServer.runtime "rust" }}
+            {{- with include "lumen.customCACerts.modelServerEnv" . }}
+            {{- . | nindent 12 }}
+            {{- end }}
+            {{- else }}
             {{- with include "lumen.customCACerts.env" . }}
             {{- . | nindent 12 }}
+            {{- end }}
             {{- end }}
             {{- with .Values.mcpServer.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+          {{- if eq .Values.mcpServer.runtime "rust" }}
+          {{- with include "lumen.modelServer.volumeMountsWithCA" (dict "ctx" . "volumeMounts" .Values.mcpServer.volumeMounts) }}
+          {{- . | nindent 10 }}
+          {{- end }}
+          {{- else }}
           {{- with include "lumen.volumeMountsWithCA" (dict "ctx" . "volumeMounts" .Values.mcpServer.volumeMounts) }}
           {{- . | nindent 10 }}
           {{- end }}
+          {{- end }}
+      {{- if eq .Values.mcpServer.runtime "rust" }}
+      {{- with include "lumen.modelServer.volumesWithCA" (dict "ctx" . "volumes" .Values.mcpServer.volumes) }}
+      {{- . | nindent 6 }}
+      {{- end }}
+      {{- else }}
       {{- with include "lumen.volumesWithCA" (dict "ctx" . "volumes" .Values.mcpServer.volumes) }}
       {{- . | nindent 6 }}
+      {{- end }}
       {{- end }}
 {{- end }}
 
