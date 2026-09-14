@@ -48,6 +48,7 @@
 | `inference_model_server` | `lumendotapp/lumen-model-server` | ✅ `backend/Dockerfile.model_server` | Embeddings query + rerank |
 | `indexing_model_server` | idem | ✅ | Embeddings d'indexation |
 | `lumen-sandbox` (Craft) | `lumendotapp/sandbox` | ✅ `backend/lumen/server/features/build/sandbox/image/Dockerfile` | Sandboxes agents (OpenCode) |
+| `mcp-server` (Rust) | `lumendotapp/lumen-mcp-server` | ✅ `backend/native/lumen-mcp-server/Dockerfile` | Serveur MCP — remplace la version Python. Opt-in : `mcpServer.runtime: rust` |
 | `relational_db` | `postgres:15.2-alpine` | tiers | Données relationnelles |
 | `opensearch` | `opensearchproject/opensearch:3.6` | tiers | Index keyword + vectoriel |
 | `cache` | `redis:7.4-alpine` | tiers | Broker Celery + cache |
@@ -344,6 +345,9 @@ backend/          API FastAPI (lumen/), workers Celery, migrations alembic/
   lumen/server/user_group/     API gestion des groupes (portée EE→CE)
   lumen/server/enterprise_settings/  API settings/branding (portée EE→CE)
   lumen/db/user_group_crud.py  couche DB groupes (portée EE→CE)
+  native/         Code Rust du backend (workspace cargo)
+    lumen_text/           module natif d'extraction de texte (optionnel)
+    lumen-mcp-server/     serveur MCP en Rust (optionnel, voir son README)
 web/              Frontend Next.js (src/), tests e2e (tests/e2e/)
 deployment/       docker_compose/ (compose + templates) et helm/ (chart K8s)
 cli/              lumen-cli (installer / gestion du cycle de vie)

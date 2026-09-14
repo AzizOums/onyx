@@ -1,0 +1,155 @@
+# lumen-mcp-server
+
+The Lumen MCP server in Rust. A port of `backend/lumen/mcp_server/` (Python,
+FastMCP), meant as a drop-in replacement for it.
+
+The Python server still ships and is still the default. This one moves when a
+deployment has accepted the parity evidence below.
+
+## Why this service moved first
+
+It reads no database. It verifies bearer tokens by calling the Lumen API's `/me`
+and forwards every tool and resource call to that same API with the caller's own
+token. That makes it the only backend service with a boundary clean enough to
+rewrite on its own — everything else shares the SQLAlchemy models in
+`backend/lumen/db`.
+
+## What it serves
+
+| MCP surface | Upstream call |
+| --- | --- |
+| tool `search_indexed_documents` | `POST /search`, plus `/persona` or `/manage/indexed-sources` |
+| tool `search_web` | `POST /web-search/search-lite` |
+| tool `open_urls` | `POST /web-search/open-urls` |
+| resource `resource://indexed_sources` | `GET /manage/indexed-sources` |
+| resource `resource://document_sets` | `GET /manage/document-set` |
+| resource `resource://agents` | `GET /persona` |
+| auth on every request | `GET /me` |
+
+Plus a public `GET /health` and `GET /metrics`, as in the Python app.
+
+## Build and run
+
+```bash
+cargo build --release --manifest-path backend/native/Cargo.toml -p lumen-mcp-server
+
+MCP_SERVER_ENABLED=true \
+API_SERVER_URL_OVERRIDE_FOR_HTTP_REQUESTS=http://localhost:8080 \
+backend/native/target/release/lumen-mcp-server
+```
+
+## Configuration
+
+Every variable below is read exactly as `backend/lumen/configs/app_configs.py`
+reads it, so the two servers answer to the same environment.
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `MCP_SERVER_ENABLED` | `false` | The process logs and exits when this is not `true` |
+| `MCP_SERVER_HOST` | `0.0.0.0` | Bind address |
+| `MCP_SERVER_PORT` | `8090` | Bind port |
+| `MCP_SERVER_CORS_ORIGINS` | empty | Comma-separated; empty leaves CORS off |
+| `MCP_SERVER_API_REQUEST_TIMEOUT_SECONDS` | `300` | Absent, empty, unparseable or non-positive all fall back to 300 |
+| `API_SERVER_URL_OVERRIDE_FOR_HTTP_REQUESTS` | unset | Full API base URL; wins over protocol/host |
+| `API_SERVER_PROTOCOL` / `API_SERVER_HOST` | `http` / `127.0.0.1` | Used when there is no override |
+| `API_PREFIX` | empty | Appended to the API base URL |
+| `DEV_MODE` | `false` | Forces `http://127.0.0.1:8080`, ahead of the override |
+
+Two variables are specific to this implementation:
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `MCP_SERVER_ALLOWED_HOSTS` | unset | Comma-separated hosts for rmcp's DNS-rebinding check. Unset disables it, which is what the Python server does. |
+| `LUMEN_CUSTOM_CA_CERTS_DIR` | unset | Directory of extra CA roots to trust, added to the public ones. The image is distroless and cannot run `update-ca-certificates`, so it follows the same contract as the model server. |
+
+`LUMEN_MCP_LOG` (or `RUST_LOG`) sets the log filter; `LOG_JSON=true` switches to
+JSON lines.
+
+## Tests
+
+```bash
+# Rust: unit, tool/resource behaviour against a mock API, and the MCP protocol
+cargo test --manifest-path backend/native/Cargo.toml -p lumen-mcp-server
+
+# Python: the exported contracts must match their definitions
+uv run pytest backend/tests/unit/lumen/mcp_server
+```
+
+## Parity
+
+`scripts/parity_check.py` runs both servers against one mock Lumen API and
+compares every answer, plus the upstream calls each case triggers — a matching
+answer reached by a different route still fails.
+
+```bash
+cargo build --release --manifest-path backend/native/Cargo.toml
+uv run python backend/native/lumen-mcp-server/scripts/parity_check.py
+```
+
+Current result: **24 cases, 23 identical, 1 accepted divergence, 0 unexpected.**
+
+### The accepted divergence
+
+When the agent lookup fails, the Python tool interpolates the raw httpx error:
+
+```
+Failed to look up agents: Client error '403 Forbidden' for url
+'http://lumen-api-service:8080/persona' ...
+```
+
+That puts an internal address into a message the MCP client shows its user. The
+Rust server reports the API's own detail instead (`Failed to look up agents:
+<detail>`). Deliberate: it drops nothing the caller needs. The harness prints it
+with this reasoning on every run rather than hiding it.
+
+### Two things kept on purpose
+
+Byte-level parity needed both of these, and neither is obvious from the Python
+source:
+
+1. **Resource bodies keep `json.dumps` spacing.** Python writes `", "` and
+   `": "`; `serde_json` writes neither. Clients receive this text verbatim, so a
+   custom formatter reproduces it.
+2. **Tool schemas are exported, not written.** FastMCP derives them through
+   Pydantic, which emits `anyOf` for optionals and `additionalProperties: false`.
+   A hand-written schema does not match, and clients read the schema to decide
+   how to call a tool.
+
+Both the schemas and the `DocumentSource` list live in `data/`, generated by
+`scripts/export_contracts.py`. `backend/tests/unit/lumen/mcp_server/test_exported_contracts.py`
+fails when either drifts, so a new connector or a changed tool signature cannot
+quietly desynchronise the two servers.
+
+## Deploying
+
+The chart runs the Python server unless told otherwise:
+
+```yaml
+mcpServer:
+  enabled: true
+  runtime: rust          # default: python
+  rustImage:
+    repository: lumendotapp/lumen-mcp-server
+```
+
+Rolling back is the same value set to `python`. Nothing else changes: the port,
+the health path, the metric names and the environment are all the same.
+
+Build the image with:
+
+```bash
+docker buildx bake mcp-server
+```
+
+### Before switching a real deployment
+
+- [ ] `helm template` the chart with `runtime: rust` and read the rendered
+      deployment. The chart is linted in CI but has not been rendered against
+      a real values file here.
+- [ ] Build the image. It has never been built: this environment has no Docker
+      daemon.
+- [ ] If the deployment sets `customCACerts`, confirm the server logs
+      `Trusting custom CA roots` at startup and can reach the API.
+- [ ] Watch `lumen_mcp_server_auth_total{result="error"}` after the switch. A
+      rise there means the server cannot reach the API, which looks the same to
+      a client as a rejected token.

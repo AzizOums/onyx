@@ -1,7 +1,21 @@
-# Native modules
+# Native code
 
-Rust modules that replace Python hot paths. Each one is optional: when it is not
-built, or its flag is off, the Python code runs unchanged.
+The repository's Rust backend code, as a cargo workspace.
+
+| Crate | What it is | Status |
+| --- | --- | --- |
+| `lumen_text` | A Python extension module replacing the HTML-to-text and text-cleanup hot path | Optional; off unless `LUMEN_NATIVE_TEXT=true` |
+| `lumen-mcp-server` | The MCP server, a standalone binary replacing `backend/lumen/mcp_server/` | Built and tested; the chart still runs the Python server by default |
+
+Both are additive: with neither built, the Python code runs unchanged.
+
+```bash
+cargo build --release --manifest-path backend/native/Cargo.toml
+cargo test --manifest-path backend/native/Cargo.toml
+```
+
+`cargo test` needs `--no-default-features` for `lumen_text`, so that its test
+binary can link against libpython.
 
 ## Language policy
 
@@ -18,8 +32,22 @@ Next.js and React.
 `model_server` is the one backend component that stays on Python: it runs torch
 and the HuggingFace stack, which have no Rust equivalent.
 
-Rust is already in the tree (`desktop/src-tauri`), so the native modules add no
+Rust is already in the tree (`desktop/src-tauri`), so the native code adds no
 new toolchain.
+
+### Order of migration
+
+The MCP server moved first because it reads no database. Everything after it is
+gated on `backend/lumen/db`: 43,000 lines of SQLAlchemy that every workload
+shares. Until that boundary exists in Rust, no other service can move without a
+second definition of the schema, and two definitions that drift are a silent
+production failure.
+
+1. `lumen_text` — done, opt-in
+2. `lumen-mcp-server` — done, opt-in (`lumen-mcp-server/README.md`)
+3. `sandbox_proxy` — next; a standalone binary, but it reads Postgres
+4. the database layer — the prerequisite for the rest
+5. `api_server` and the Celery workers — not startable before step 4
 
 ## lumen_text
 
