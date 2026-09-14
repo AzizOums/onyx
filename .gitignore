@@ -69,5 +69,5 @@ plans
 .claude/worktrees/
 !.claude/settings.json
 
-# Rust native module build artifacts
-backend/native/*/target/
+# Rust build artifacts (cargo workspace at backend/native)
+backend/native/target/

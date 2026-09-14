@@ -1,0 +1,30 @@
+[package]
+name = "lumen-mcp-server"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Lumen MCP server: HTTP transport with bearer auth delegated to the Lumen API"
+
+[[bin]]
+name = "lumen-mcp-server"
+path = "src/main.rs"
+
+[lib]
+name = "lumen_mcp_server"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow.workspace = true
+axum.workspace = true
+chrono.workspace = true
+prometheus.workspace = true
+reqwest.workspace = true
+rmcp.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tower-http.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true

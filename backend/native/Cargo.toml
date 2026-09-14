@@ -1,0 +1,40 @@
+[workspace]
+resolver = "2"
+members = ["lumen_text", "lumen-mcp-server"]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+publish = false
+
+# Shared pins so the two crates never disagree on a common dependency.
+[workspace.dependencies]
+anyhow = "1.0"
+axum = "0.8"
+chrono = { version = "0.4", default-features = false, features = ["serde", "std", "clock"] }
+prometheus = { version = "0.14", default-features = false }
+regex = "1.13"
+reqwest = { version = "0.13", default-features = false, features = [
+    "json",
+    "rustls",
+    # Honours the cluster's custom CA bundle, which the Helm chart mounts.
+    "rustls-native-certs",
+    "http2",
+] }
+rmcp = { version = "3.3", default-features = false, features = [
+    "server",
+    "macros",
+    "transport-streamable-http-server",
+] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2.0"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "sync", "time"] }
+tower-http = { version = "0.7", features = ["cors"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

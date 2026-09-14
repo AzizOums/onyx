@@ -7,7 +7,8 @@
 # it every caller uses the Python implementation.
 set -euo pipefail
 
-CRATE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/lumen_text" && pwd)"
+NATIVE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CRATE_DIR="$NATIVE_DIR/lumen_text"
 PYTHON="${PYTHON:-python3}"
 
 if ! command -v cargo >/dev/null 2>&1; then
@@ -24,7 +25,7 @@ case "$(uname -s)" in
 esac
 
 SITE_PACKAGES="$("$PYTHON" -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')"
-install -m 644 "$CRATE_DIR/target/release/$BUILT" "$SITE_PACKAGES/lumen_text_native.so"
+install -m 644 "$NATIVE_DIR/target/release/$BUILT" "$SITE_PACKAGES/lumen_text_native.so"
 
 echo "Installed to $SITE_PACKAGES/lumen_text_native.so"
 "$PYTHON" -c 'import lumen_text_native; print("import ok:", lumen_text_native.__version__)'
