@@ -575,6 +575,16 @@ export default function useChatController({
       // chat session, it is unexpected for that model to be used when they
       // return to this session the next day.
       let finalLLM = modelOverride || llmManager.currentLlm;
+      // Hand the sent-with model to the manager before navigation lands on
+      // the (possibly brand-new) session: without this, the cross-session
+      // reset drops the manual selection and the pill flickers to the
+      // default model for the whole generation.
+      llmManager.noteModelHandoff(currChatSessionId, {
+        name: finalLLM.name || "",
+        provider: finalLLM.provider || "",
+        modelName: finalLLM.modelName || "",
+        modelConfigurationId: finalLLM.modelConfigurationId,
+      });
       updateLlmOverrideForChatSession(
         currChatSessionId,
         structureValue(
