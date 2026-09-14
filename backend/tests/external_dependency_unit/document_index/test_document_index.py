@@ -10,19 +10,19 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.configs.constants import PUBLIC_DOC_PAT
-from onyx.context.search.models import IndexFilters, InferenceChunk
-from onyx.db.enums import EmbeddingPrecision
-from onyx.document_index.interfaces_new import DocumentIndex as DocumentIndexNew
-from onyx.document_index.interfaces_new import (
+from lumen.configs.constants import PUBLIC_DOC_PAT
+from lumen.context.search.models import IndexFilters, InferenceChunk
+from lumen.db.enums import EmbeddingPrecision
+from lumen.document_index.interfaces_new import DocumentIndex as DocumentIndexNew
+from lumen.document_index.interfaces_new import (
     DocumentSectionRequest,
     MetadataUpdateRequest,
     TenantState,
 )
-from onyx.document_index.opensearch.opensearch_document_index import (
+from lumen.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
-from onyx.indexing.models import DocMetadataAwareIndexChunk
+from lumen.indexing.models import DocMetadataAwareIndexChunk
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.document_index.conftest import (
     EMBEDDING_DIM,

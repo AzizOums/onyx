@@ -1,10 +1,10 @@
 # Mobile App Standards (React Native + Expo)
 
-Source of truth for AI agents working in `mobile/` (the Onyx React Native + Expo app).
+Source of truth for AI agents working in `mobile/` (the Lumen React Native + Expo app).
 It **complements but does not inherit** `web/AGENTS.md`: the mobile app has no DOM, uses
 NativeWind (not web Tailwind), expo-router, and RN primitives — so web rules about HTML/CSS,
 `useSWR`, Opal components, etc. do **not** apply here. Only the cross-platform design-token
-vocabulary is shared, via `@onyx-ai/shared`.
+vocabulary is shared, via `@lumen-ai/shared`.
 
 ## Building UI — reuse before you build
 
@@ -25,7 +25,7 @@ document any deliberate divergence.
 **pixels equal to the class number**: `px-24` = 24px, `gap-8` = 8px, `h-12` = 12px. This comes
 from the shared design tokens (`web/lib/shared/tokens/size.json` `spacing-block-*`, defined in
 **rem**) converted in `style-dictionary.config.mjs` (`toPx` = `rem × 16`) and emitted as the
-NativeWind `spacing` scale (`@onyx-ai/shared/nativewind-theme`). RN can't use `rem`/`var()` for
+NativeWind `spacing` scale (`@lumen-ai/shared/nativewind-theme`). RN can't use `rem`/`var()` for
 dimensions, so dimensions are baked to px.
 
 Web is different: web uses **Tailwind's default step scale**, where `p-6` = step 6 = `1.5rem`
@@ -55,9 +55,9 @@ Web is different: web uses **Tailwind's default step scale**, where `p-6` = step
   but prefer `@/components/ui/text-input` for fields.
 - Icons are default-exported from `@/icons/*`, rendered via `@/components/ui/icon` `Icon`
   (`<Icon as={SvgFoo} size={…} className="text-text-…" />`).
-- Colors: use Onyx semantic classes (`bg-background-*`, `text-text-*`, `border-border-*`). They
+- Colors: use Lumen semantic classes (`bg-background-*`, `text-text-*`, `border-border-*`). They
   resolve at runtime through the `vars()` provider in `app/_layout.tsx` (light/dark from
-  `@onyx-ai/shared/native`). **No `dark:` modifier; no raw Tailwind colors.**
+  `@lumen-ai/shared/native`). **No `dark:` modifier; no raw Tailwind colors.**
 
 ## HTTP, data, navigation
 
@@ -88,15 +88,15 @@ Web is different: web uses **Tailwind's default step scale**, where `p-6` = step
   → reanimated) crashes under jest ("Worklets not initialized"). Import leaf components directly
   (e.g. `@/components/sidebar/SidebarTab`) to keep a component unit-testable.
 
-## Shared package (`@onyx-ai/shared`)
+## Shared package (`@lumen-ai/shared`)
 
-- Holds cross-platform **design tokens** + neutral **contracts/types/utils**. `@onyx-ai/shared/native`
+- Holds cross-platform **design tokens** + neutral **contracts/types/utils**. `@lumen-ai/shared/native`
   is **RN-only** (NativeWind theme/vars/typography); cross-platform types go in `/contracts`, never `/native`.
 - Grow it **extract-on-proven-reuse**, not upfront. The mobile **chat** layer is written natively in
   `mobile/src/chat/` (NOT shared) by decision — see `docs/mobile-chat/05-pr-roadmap.md` (PR 2 Decision).
 - Editing the shared package requires rebuilding its `dist` (`bun run build` in `web/lib/shared`); the
   mobile `file:` dep consumes `dist`. Web jest resolves it from `src` via a `moduleNameMapper`.
 - Mobile's `preinstall` hook builds `web/lib/shared`'s `dist` (a git-ignored artifact) **before** bun
-  links the `file:` dep, so a fresh `bun install` can't hit an unresolved `@onyx-ai/shared/dist`. It
+  links the `file:` dep, so a fresh `bun install` can't hit an unresolved `@lumen-ai/shared/dist`. It
   must be `preinstall`, not `postinstall`: bun's link farm only includes `dist` if it exists at link
   time. Active token/source edits still hot-rebuild via `bun run dev` in `web/lib/shared`.

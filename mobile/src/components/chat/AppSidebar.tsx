@@ -2,7 +2,7 @@ import { router, useGlobalSearchParams, useSegments } from "expo-router";
 
 import { Icon } from "@/components/ui/icon";
 import { SidebarLayouts, SidebarTab, useSidebar } from "@/components/sidebar";
-import SvgOnyxLogo from "@/icons/onyx-logo";
+import SvgLumenLogo from "@/icons/lumen-logo";
 import SvgPlus from "@/icons/plus";
 import { useLogout } from "@/api/auth/useLogout";
 import { useChatSessions } from "@/api/chat/sessions";
@@ -59,7 +59,7 @@ export function AppSidebar() {
     <SidebarLayouts.Root foldable>
       <SidebarLayouts.Header
         logo={() => (
-          <Icon as={SvgOnyxLogo} size={24} className="px-1 text-text-05" />
+          <Icon as={SvgLumenLogo} size={24} className="px-1 text-text-05" />
         )}
       />
 

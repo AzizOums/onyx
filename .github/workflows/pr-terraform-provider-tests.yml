@@ -1,4 +1,4 @@
-# Runs the Terraform provider acceptance suite against a real Onyx stack.
+# Runs the Terraform provider acceptance suite against a real Lumen stack.
 #
 # The provider's unit tests run in pr-golang-tests.yml, which discovers every
 # go.mod and runs `go test -race ./...`. That lane leaves TF_ACC unset, so the
@@ -15,7 +15,7 @@
 # Two auth legs run in parallel. `bootstrap` lets the harness register an admin
 # and mint its own key. `api-key` mints a key first with the documented
 # examples/bootstrap/mint_api_key.sh and passes it in, which covers the
-# ONYX_TF_ACC_API_KEY path a user actually takes.
+# LUMEN_TF_ACC_API_KEY path a user actually takes.
 #
 # PRs only trigger the suite for provider and compose changes: it is a heavy
 # lane and the provider changes far less often than the routes it calls. The
@@ -80,15 +80,15 @@ jobs:
         with:
           filters: |
             provider:
-              - 'terraform-provider-onyx/**'
+              - 'terraform-provider-lumen/**'
               # The suite drives live API routes end to end, so server-side
               # changes must run it: a tool-API masking change once slipped
               # through while only the provider directory was filtered.
-              - 'backend/onyx/server/**'
-              - 'backend/ee/onyx/server/**'
+              - 'backend/lumen/server/**'
+              - 'backend/ee/lumen/server/**'
               # The masking contract the provider mirrors lives here.
-              - 'backend/onyx/utils/encryption.py'
-              - 'backend/onyx/configs/constants.py'
+              - 'backend/lumen/utils/encryption.py'
+              - 'backend/lumen/configs/constants.py'
               - 'backend/Dockerfile'
               - 'deployment/docker_compose/docker-compose.yml'
               - 'deployment/docker_compose/docker-compose.dev.yml'
@@ -113,7 +113,7 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # ratchet:actions/setup-go@v5 # zizmor: ignore[cache-poisoning]
         with:
           go-version: ${{ env.GO_VERSION }}
-          cache-dependency-path: terraform-provider-onyx/go.sum
+          cache-dependency-path: terraform-provider-lumen/go.sum
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # ratchet:hashicorp/setup-terraform@v4.0.1
@@ -124,11 +124,11 @@ jobs:
           terraform_wrapper: false
 
       - name: Regenerate docs
-        working-directory: terraform-provider-onyx
+        working-directory: terraform-provider-lumen
         run: go generate .
 
       - name: Fail on uncommitted docs changes
-        working-directory: terraform-provider-onyx
+        working-directory: terraform-provider-lumen
         # `git status --porcelain`, not `git diff`: a new resource's page is
         # generated untracked, and git diff does not see untracked files, so the
         # likeliest drift of all would pass silently.
@@ -137,7 +137,7 @@ jobs:
           if [ -n "${drift}" ]; then
             echo "${drift}"
             git diff -- docs/ || true
-            echo "::error::docs/ is out of date -- run 'go generate .' in terraform-provider-onyx/ and commit the result"
+            echo "::error::docs/ is out of date -- run 'go generate .' in terraform-provider-lumen/ and commit the result"
             exit 1
           fi
 
@@ -226,7 +226,7 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # ratchet:actions/setup-go@v5 # zizmor: ignore[cache-poisoning]
         with:
           go-version: ${{ env.GO_VERSION }}
-          cache-dependency-path: terraform-provider-onyx/go.sum
+          cache-dependency-path: terraform-provider-lumen/go.sum
 
       - name: Log in to ECR pull-through cache
         uses: ./.github/actions/login-ecr-pullthrough-cache
@@ -243,7 +243,7 @@ jobs:
           set -eo pipefail
           docker pull "${ECR_CACHE}:tf-provider-backend-${RUN_ID}"
           docker tag "${ECR_CACHE}:tf-provider-backend-${RUN_ID}" \
-            "onyxdotapp/onyx-backend:latest"
+            "lumendotapp/lumen-backend:latest"
 
           # Every other image already resolves through the pull-through cache:
           # compose writes them as ${BASE_IMAGE_REGISTRY:-docker.io}/... and the
@@ -251,7 +251,7 @@ jobs:
           # their default carries no registry, so they would come straight from
           # Docker Hub, anonymously and rate-limited, and they are the largest
           # images in the stack.
-          echo "ONYX_MODEL_SERVER_IMAGE=${BASE_IMAGE_REGISTRY}/onyxdotapp/onyx-model-server:${IMAGE_TAG}" \
+          echo "LUMEN_MODEL_SERVER_IMAGE=${BASE_IMAGE_REGISTRY}/lumendotapp/lumen-model-server:${IMAGE_TAG}" \
             >> "$GITHUB_ENV"
 
       # LICENSE_ENFORCEMENT_ENABLED already defaults to false; it is set here so
@@ -317,14 +317,14 @@ jobs:
           exit 1
 
       - name: Run acceptance tests (${{ matrix.auth }})
-        working-directory: terraform-provider-onyx
+        working-directory: terraform-provider-lumen
         # Deliberately above the -timeout below: go test's own timeout dumps
         # every goroutine, while a step timeout kills the job with no diagnosis.
         timeout-minutes: 35
         env:
           AUTH_MODE: ${{ matrix.auth }}
           TF_ACC: "1"
-          ONYX_TF_ACC_SERVER_URL: http://localhost:8080
+          LUMEN_TF_ACC_SERVER_URL: http://localhost:8080
           # mint_api_key.sh requires these rather than defaulting them, so that
           # it cannot quietly create a known-password admin on a real
           # deployment. Here they match the harness's own defaults, against a
@@ -336,10 +336,10 @@ jobs:
           # Mint the key in this step so the material never lands in the job
           # environment or a step output.
           if [ "${AUTH_MODE}" = "api-key" ]; then
-            key=$(ONYX_SERVER_URL="${ONYX_TF_ACC_SERVER_URL}" \
-              ONYX_ADMIN_EMAIL="${ACC_ADMIN_EMAIL}" \
-              ONYX_ADMIN_PASSWORD="${ACC_ADMIN_PASSWORD}" \
-              ONYX_API_KEY_NAME=terraform-provider-ci \
+            key=$(LUMEN_SERVER_URL="${LUMEN_TF_ACC_SERVER_URL}" \
+              LUMEN_ADMIN_EMAIL="${ACC_ADMIN_EMAIL}" \
+              LUMEN_ADMIN_PASSWORD="${ACC_ADMIN_PASSWORD}" \
+              LUMEN_API_KEY_NAME=terraform-provider-ci \
               ./examples/bootstrap/mint_api_key.sh)
             # An empty key would send the harness down its own bootstrap path,
             # so this leg would pass while testing the other one.
@@ -348,7 +348,7 @@ jobs:
               exit 1
             fi
             echo "::add-mask::${key}"
-            export ONYX_TF_ACC_API_KEY="${key}"
+            export LUMEN_TF_ACC_API_KEY="${key}"
           fi
           go test ./internal/provider/... -count=1 -timeout 30m
 

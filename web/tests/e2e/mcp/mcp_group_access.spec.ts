@@ -1,6 +1,6 @@
 import { test, expect } from "@tests/e2e/fixtures/eeFeatures";
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import { AdminMcpServersPage } from "@tests/e2e/pages/AdminMcpServersPage";
 
 /**
@@ -65,7 +65,7 @@ test.describe("MCP server group access control", () => {
   test.afterAll(async ({ browser }) => {
     const page = await browser.newPage();
     await loginAs(page, "admin");
-    const client = new OnyxApiClient(page.request);
+    const client = new LumenApiClient(page.request);
     for (const id of createdServerIds) {
       await client.deleteMcpServer(id);
     }

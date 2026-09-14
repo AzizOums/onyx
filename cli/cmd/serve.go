@@ -20,10 +20,10 @@ import (
 	"charm.land/wish/v2/ratelimiter"
 	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/tui"
+	"github.com/lumen-dot-app/lumen/cli/internal/api"
+	"github.com/lumen-dot-app/lumen/cli/internal/config"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/tui"
 	"github.com/spf13/cobra"
 	"golang.org/x/time/rate"
 )
@@ -53,7 +53,7 @@ func validateAPIKey(serverURL string, apiKey string) error {
 		return fmt.Errorf("PAT is too long (max %d characters)", tui.MaxAPIKeyLength)
 	}
 
-	cfg := config.OnyxCliConfig{
+	cfg := config.LumenCliConfig{
 		ServerURL: serverURL,
 		APIKey:    trimmedKey,
 	}
@@ -82,27 +82,27 @@ func newServeCmd() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "serve",
-		Short: "Serve the Onyx TUI over SSH",
-		Long: `Start an SSH server that presents the interactive Onyx chat TUI to
+		Short: "Serve the Lumen TUI over SSH",
+		Long: `Start an SSH server that presents the interactive Lumen chat TUI to
 connecting clients. Each SSH session gets its own independent TUI instance.
 
-Clients are prompted for their Onyx personal access token (PAT) on connect.
-The PAT can also be provided via the ONYX_PAT environment variable to skip the prompt:
+Clients are prompted for their Lumen personal access token (PAT) on connect.
+The PAT can also be provided via the LUMEN_PAT environment variable to skip the prompt:
 
-  ssh -o SendEnv=ONYX_PAT host -p port
+  ssh -o SendEnv=LUMEN_PAT host -p port
 
 The server URL is taken from the server operator's config. The server
 auto-generates an Ed25519 host key on first run if the key file does not
-already exist. The host key path can also be set via the ONYX_SSH_HOST_KEY
+already exist. The host key path can also be set via the LUMEN_SSH_HOST_KEY
 environment variable (the --host-key flag takes precedence).`,
-		Example: `  onyx-cli serve --port 2222
+		Example: `  lumen-cli serve --port 2222
   ssh localhost -p 2222
-  onyx-cli serve --host 0.0.0.0 --port 2222
-  onyx-cli serve --idle-timeout 30m --max-session-timeout 2h`,
+  lumen-cli serve --host 0.0.0.0 --port 2222
+  lumen-cli serve --idle-timeout 30m --max-session-timeout 2h`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			serverCfg := config.Load()
 			if serverCfg.ServerURL == "" {
-				return exitcodes.New(exitcodes.NotConfigured, "server URL is not configured\n  Run: onyx-cli chat to complete first-time setup")
+				return exitcodes.New(exitcodes.NotConfigured, "server URL is not configured\n  Run: lumen-cli chat to complete first-time setup")
 			}
 			if !cmd.Flags().Changed("host-key") {
 				if v := os.Getenv(config.EnvSSHHostKey); v != "" {
@@ -132,14 +132,14 @@ environment variable (the --host-key flag takes precedence).`,
 
 				if apiKey != "" {
 					if err := validateAPIKey(serverCfg.ServerURL, apiKey); err != nil {
-						envErr = fmt.Sprintf("PAT from ONYX_PAT environment variable is invalid: %s", err.Error())
+						envErr = fmt.Sprintf("PAT from LUMEN_PAT environment variable is invalid: %s", err.Error())
 						apiKey = ""
 					}
 				}
 
 				if apiKey != "" {
 					// Env key is valid — go straight to the TUI.
-					cfg := config.OnyxCliConfig{
+					cfg := config.LumenCliConfig{
 						ServerURL:      serverCfg.ServerURL,
 						APIKey:         apiKey,
 						DefaultAgentID: serverCfg.DefaultAgentID,
@@ -177,7 +177,7 @@ environment variable (the --host-key flag takes precedence).`,
 			done := make(chan os.Signal, 1)
 			signal.Notify(done, os.Interrupt, syscall.SIGTERM)
 
-			log.Info("Starting Onyx SSH server", "addr", addr)
+			log.Info("Starting Lumen SSH server", "addr", addr)
 			log.Info("Connect with", "cmd", fmt.Sprintf("ssh %s -p %d", host, port))
 
 			errCh := make(chan error, 1)

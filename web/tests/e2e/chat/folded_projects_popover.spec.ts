@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { loginAsWorkerUser } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import { AppSidebarPage } from "@tests/e2e/pages/AppSidebarPage";
 
 const ALPHA_PROJECT = "E2E Popover Alpha";
@@ -18,7 +18,7 @@ test.describe("Folded sidebar Projects popover", () => {
     await page.context().clearCookies();
     await loginAsWorkerUser(page, testInfo.workerIndex);
 
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     const alphaId = await apiClient.createProject(ALPHA_PROJECT);
     const betaId = await apiClient.createProject(BETA_PROJECT);
     projectIds = [alphaId, betaId];
@@ -41,7 +41,7 @@ test.describe("Folded sidebar Projects popover", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     for (const chatId of chatIds) {
       await apiClient.deleteChatSession(chatId);
     }

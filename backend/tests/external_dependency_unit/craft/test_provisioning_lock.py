@@ -17,14 +17,14 @@ from uuid import UUID, uuid4
 import pytest
 from kubernetes.client.rest import ApiException
 
-from onyx.cache import factory
-from onyx.cache.interface import CacheBackendType
-from onyx.db.enums import SandboxStatus
-from onyx.server.features.build.sandbox.kubernetes import kubernetes_sandbox_manager
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from lumen.cache import factory
+from lumen.cache.interface import CacheBackendType
+from lumen.db.enums import SandboxStatus
+from lumen.server.features.build.sandbox.kubernetes import kubernetes_sandbox_manager
+from lumen.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
-from onyx.server.features.build.sandbox.models import (
+from lumen.server.features.build.sandbox.models import (
     SandboxInfo,
     SandboxProvisionContentionError,
 )
@@ -144,7 +144,7 @@ def lock_env(
     preconditions (URL/proxy host) satisfied."""
     monkeypatch.setattr(factory, "CACHE_BACKEND", CacheBackendType.REDIS)
     monkeypatch.setattr(
-        kubernetes_sandbox_manager, "ONYX_SERVER_URL", "http://api-server"
+        kubernetes_sandbox_manager, "LUMEN_SERVER_URL", "http://api-server"
     )
     monkeypatch.setattr(
         kubernetes_sandbox_manager, "SANDBOX_PROXY_HOST", "sandbox-proxy"
@@ -159,7 +159,7 @@ def _provision(
         sandbox_id=sandbox_id,
         user_id=uuid4(),
         tenant_id=POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE,
-        onyx_pat="test-pat",
+        lumen_pat="test-pat",
         provisioning_attempt_number=1,
     )
 

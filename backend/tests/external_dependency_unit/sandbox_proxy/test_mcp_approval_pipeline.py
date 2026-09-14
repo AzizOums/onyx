@@ -16,7 +16,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     ApprovalDecidedVia,
     ApprovalDecision,
     EndpointPolicy,
@@ -25,18 +25,18 @@ from onyx.db.enums import (
     MCPAuthenticationType,
     MCPTransport,
 )
-from onyx.db.gated_app import (
+from lumen.db.gated_app import (
     get_action_policies,
     get_gated_app_id,
     get_or_create_gated_app_id,
     replace_action_policies__no_commit,
 )
-from onyx.db.mcp import (
+from lumen.db.mcp import (
     create_mcp_server__no_commit,
     update_mcp_server__no_commit,
 )
-from onyx.db.models import BuildSession, GatedApp, MCPServer
-from onyx.server.features.build.db import action_approval
+from lumen.db.models import BuildSession, GatedApp, MCPServer
+from lumen.server.features.build.db import action_approval
 from tests.external_dependency_unit.conftest import create_test_user
 
 CraftServerFactory = Callable[..., MCPServer]

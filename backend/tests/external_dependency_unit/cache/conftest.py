@@ -10,10 +10,10 @@ from collections.abc import Generator
 
 import pytest
 
-from onyx.cache.interface import CacheBackend
-from onyx.cache.postgres_backend import PostgresCacheBackend
-from onyx.cache.redis_backend import RedisCacheBackend
-from onyx.db.engine.sql_engine import SqlEngine
+from lumen.cache.interface import CacheBackend
+from lumen.cache.postgres_backend import PostgresCacheBackend
+from lumen.cache.redis_backend import RedisCacheBackend
+from lumen.db.engine.sql_engine import SqlEngine
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 
@@ -41,7 +41,7 @@ def pg_cache() -> PostgresCacheBackend:
 
 @pytest.fixture
 def redis_cache() -> RedisCacheBackend:
-    from onyx.redis.redis_pool import redis_pool
+    from lumen.redis.redis_pool import redis_pool
 
     return RedisCacheBackend(
         redis_pool.get_client(POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE)

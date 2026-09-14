@@ -7,14 +7,14 @@ from __future__ import annotations
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.feature_flags.interface import NoOpFeatureFlagProvider
-from onyx.server.features.build import utils as build_utils
-from onyx.server.features.build.api import require_onyx_craft_enabled
-from onyx.server.features.build.utils import is_craft_enabled_for_user
-from onyx.server.manage.models import UserCraftAccessUpdateRequest
-from onyx.server.manage.users import set_user_craft_access
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.feature_flags.interface import NoOpFeatureFlagProvider
+from lumen.server.features.build import utils as build_utils
+from lumen.server.features.build.api import require_lumen_craft_enabled
+from lumen.server.features.build.utils import is_craft_enabled_for_user
+from lumen.server.manage.models import UserCraftAccessUpdateRequest
+from lumen.server.manage.users import set_user_craft_access
 from tests.external_dependency_unit.craft.db_helpers import make_user
 
 
@@ -56,9 +56,9 @@ def test_admin_batch_disable_and_reset_to_default(
     assert target_b.craft_enabled is False
     assert is_craft_enabled_for_user(target_a) is False
     # The /build router dependency now rejects the user.
-    with pytest.raises(OnyxError) as exc_info:
-        require_onyx_craft_enabled(user=target_a)
-    assert exc_info.value.error_code == OnyxErrorCode.INSUFFICIENT_PERMISSIONS
+    with pytest.raises(LumenError) as exc_info:
+        require_lumen_craft_enabled(user=target_a)
+    assert exc_info.value.error_code == LumenErrorCode.INSUFFICIENT_PERMISSIONS
     assert exc_info.value.status_code == 403
     # The admin's own access is unaffected.
     assert is_craft_enabled_for_user(admin) is True
@@ -76,7 +76,7 @@ def test_admin_batch_disable_and_reset_to_default(
     assert target_a.craft_enabled is None
     assert target_b.craft_enabled is None
     assert is_craft_enabled_for_user(target_a) is True
-    assert require_onyx_craft_enabled(user=target_a) is target_a
+    assert require_lumen_craft_enabled(user=target_a) is target_a
 
 
 def test_unknown_user_rejects_whole_batch(
@@ -86,7 +86,7 @@ def test_unknown_user_rejects_whole_batch(
     admin = make_user(db_session, is_admin=True, email_prefix="craft_admin")
     target = make_user(db_session, standard_account=True, email_prefix="craft_known")
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         set_user_craft_access(
             craft_access_update_request=UserCraftAccessUpdateRequest(
                 user_emails=[target.email, "craft_missing_user@example.com"],
@@ -95,7 +95,7 @@ def test_unknown_user_rejects_whole_batch(
             current_user=admin,
             db_session=db_session,
         )
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == LumenErrorCode.NOT_FOUND
 
     # The valid user in the batch was not modified.
     db_session.refresh(target)

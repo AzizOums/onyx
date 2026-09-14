@@ -6,40 +6,40 @@ from unittest.mock import MagicMock, patch
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.context.search.models import (
+from lumen.context.search.models import (
     SavedSearchSettings,
     SearchSettingsCreationRequest,
 )
-from onyx.db.enums import ConnectorCredentialPairStatus, EmbeddingPrecision
-from onyx.db.llm import (
+from lumen.db.enums import ConnectorCredentialPairStatus, EmbeddingPrecision
+from lumen.db.llm import (
     fetch_default_contextual_rag_model,
     update_default_contextual_model,
     upsert_llm_provider,
 )
-from onyx.db.models import IndexAttempt, IndexModelStatus, SearchSettings
-from onyx.db.search_settings import (
+from lumen.db.models import IndexAttempt, IndexModelStatus, SearchSettings
+from lumen.db.search_settings import (
     create_search_settings,
     get_current_search_settings,
     get_secondary_search_settings,
     update_search_settings,
     update_search_settings_status,
 )
-from onyx.db.swap_index import check_and_perform_index_swap
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.indexing.indexing_pipeline import (
+from lumen.db.swap_index import check_and_perform_index_swap
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.indexing.indexing_pipeline import (
     IndexingPipelineResult,
     run_indexing_pipeline,
 )
-from onyx.server.manage.llm.models import (
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )
-from onyx.server.manage.search_settings import (
+from lumen.server.manage.search_settings import (
     set_new_search_settings,
     update_saved_search_settings,
 )
-from onyx.utils.audit import AuditAction, AuditOutcome
+from lumen.utils.audit import AuditAction, AuditOutcome
 from shared_configs.configs import PRESERVED_SEARCH_FIELDS
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
@@ -194,7 +194,7 @@ def test_contextual_model_update_rejects_future_settings(
     )
 
     try:
-        with pytest.raises(OnyxError) as exc:
+        with pytest.raises(LumenError) as exc:
             update_saved_search_settings(
                 search_settings=SavedSearchSettings.from_db_model(current).model_copy(
                     update={"contextual_rag_model_configuration_id": 1}
@@ -203,7 +203,7 @@ def test_contextual_model_update_rejects_future_settings(
                 db_session=db_session,
             )
 
-        assert exc.value.error_code == OnyxErrorCode.CONFLICT
+        assert exc.value.error_code == LumenErrorCode.CONFLICT
     finally:
         update_search_settings_status(
             search_settings=future,
@@ -212,7 +212,7 @@ def test_contextual_model_update_rejects_future_settings(
         )
 
 
-@patch("onyx.server.manage.search_settings._active_port_settings")
+@patch("lumen.server.manage.search_settings._active_port_settings")
 def test_contextual_model_update_rejects_instant_backfill(
     mock_active_port_settings: MagicMock,
     baseline_search_settings: None,  # noqa: ARG001
@@ -221,7 +221,7 @@ def test_contextual_model_update_rejects_instant_backfill(
     current = get_current_search_settings(db_session)
     mock_active_port_settings.return_value = current
 
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(LumenError) as exc:
         update_saved_search_settings(
             search_settings=SavedSearchSettings.from_db_model(current).model_copy(
                 update={"contextual_rag_model_configuration_id": 1}
@@ -230,7 +230,7 @@ def test_contextual_model_update_rejects_instant_backfill(
             db_session=db_session,
         )
 
-    assert exc.value.error_code == OnyxErrorCode.CONFLICT
+    assert exc.value.error_code == LumenErrorCode.CONFLICT
 
 
 def test_contextual_model_update_rejects_other_changes(
@@ -249,14 +249,14 @@ def test_contextual_model_update_rejects_other_changes(
 
     with (
         patch(
-            "onyx.server.manage.search_settings.get_secondary_search_settings",
+            "lumen.server.manage.search_settings.get_secondary_search_settings",
             return_value=None,
         ),
         patch(
-            "onyx.server.manage.search_settings._active_port_settings",
+            "lumen.server.manage.search_settings._active_port_settings",
             return_value=None,
         ),
-        pytest.raises(OnyxError) as exc,
+        pytest.raises(LumenError) as exc,
     ):
         update_saved_search_settings(
             search_settings=requested,
@@ -264,7 +264,7 @@ def test_contextual_model_update_rejects_other_changes(
             db_session=db_session,
         )
 
-    assert exc.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc.value.error_code == LumenErrorCode.INVALID_INPUT
     assert "Only the Contextual Retrieval model" in exc.value.detail
 
 
@@ -279,14 +279,14 @@ def test_contextual_model_update_rejects_unknown_model(
 
     with (
         patch(
-            "onyx.server.manage.search_settings.get_secondary_search_settings",
+            "lumen.server.manage.search_settings.get_secondary_search_settings",
             return_value=None,
         ),
         patch(
-            "onyx.server.manage.search_settings._active_port_settings",
+            "lumen.server.manage.search_settings._active_port_settings",
             return_value=None,
         ),
-        pytest.raises(OnyxError) as exc,
+        pytest.raises(LumenError) as exc,
     ):
         update_saved_search_settings(
             search_settings=SavedSearchSettings.from_db_model(current).model_copy(
@@ -300,12 +300,12 @@ def test_contextual_model_update_rejects_unknown_model(
             db_session=db_session,
         )
 
-    assert exc.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc.value.error_code == LumenErrorCode.INVALID_INPUT
     assert str(unknown_model_configuration_id) in exc.value.detail
 
 
-@patch("onyx.server.manage.search_settings.get_all_document_indices")
-@patch("onyx.server.manage.search_settings.get_default_document_index")
+@patch("lumen.server.manage.search_settings.get_all_document_indices")
+@patch("lumen.server.manage.search_settings.get_default_document_index")
 def test_port_seed_excludes_invalid_cc_pair(
     mock_get_default_doc_index: MagicMock,  # noqa: ARG001
     mock_get_all_doc_indices: MagicMock,
@@ -363,14 +363,14 @@ def test_port_seed_excludes_invalid_cc_pair(
 
 # port-flow swap gate: no cc_pair requires porting in this test, so it swaps now
 @patch(
-    "onyx.db.swap_index.fetch_indexable_standard_connector_credential_pair_ids",
+    "lumen.db.swap_index.fetch_indexable_standard_connector_credential_pair_ids",
     new=lambda *_a, **_k: [],
 )
-@patch("onyx.db.swap_index.get_all_document_indices")
-@patch("onyx.server.manage.search_settings.get_all_document_indices")
-@patch("onyx.server.manage.search_settings.get_default_document_index")
-@patch("onyx.indexing.indexing_pipeline.get_contextual_rag_llm_for_search_settings")
-@patch("onyx.indexing.indexing_pipeline.index_doc_batch_with_handler")
+@patch("lumen.db.swap_index.get_all_document_indices")
+@patch("lumen.server.manage.search_settings.get_all_document_indices")
+@patch("lumen.server.manage.search_settings.get_default_document_index")
+@patch("lumen.indexing.indexing_pipeline.get_contextual_rag_llm_for_search_settings")
+@patch("lumen.indexing.indexing_pipeline.index_doc_batch_with_handler")
 def test_indexing_pipeline_uses_contextual_rag_settings_from_create(
     mock_index_handler: MagicMock,
     mock_get_llm: MagicMock,
@@ -421,14 +421,14 @@ def test_indexing_pipeline_uses_contextual_rag_settings_from_create(
 
 # port-flow swap gate: no cc_pair requires porting in this test, so it swaps now
 @patch(
-    "onyx.db.swap_index.fetch_indexable_standard_connector_credential_pair_ids",
+    "lumen.db.swap_index.fetch_indexable_standard_connector_credential_pair_ids",
     new=lambda *_a, **_k: [],
 )
-@patch("onyx.db.swap_index.get_all_document_indices")
-@patch("onyx.server.manage.search_settings.get_all_document_indices")
-@patch("onyx.server.manage.search_settings.get_default_document_index")
-@patch("onyx.indexing.indexing_pipeline.get_contextual_rag_llm_for_search_settings")
-@patch("onyx.indexing.indexing_pipeline.index_doc_batch_with_handler")
+@patch("lumen.db.swap_index.get_all_document_indices")
+@patch("lumen.server.manage.search_settings.get_all_document_indices")
+@patch("lumen.server.manage.search_settings.get_default_document_index")
+@patch("lumen.indexing.indexing_pipeline.get_contextual_rag_llm_for_search_settings")
+@patch("lumen.indexing.indexing_pipeline.index_doc_batch_with_handler")
 def test_indexing_pipeline_uses_updated_contextual_rag_settings(
     mock_index_handler: MagicMock,
     mock_get_llm: MagicMock,
@@ -478,7 +478,7 @@ def test_indexing_pipeline_uses_updated_contextual_rag_settings(
     # Update the PRESENT model configuration
     current_settings = get_current_search_settings(db_session)
     with patch(
-        "onyx.server.manage.search_settings.emit_audit_event"
+        "lumen.server.manage.search_settings.emit_audit_event"
     ) as mock_emit_audit_event:
         response = update_saved_search_settings(
             search_settings=SavedSearchSettings.from_db_model(
@@ -518,10 +518,10 @@ def test_indexing_pipeline_uses_updated_contextual_rag_settings(
     assert called_settings.contextual_rag_model_configuration_id == updated_mc_id
 
 
-@patch("onyx.server.manage.search_settings.get_all_document_indices")
-@patch("onyx.server.manage.search_settings.get_default_document_index")
-@patch("onyx.indexing.indexing_pipeline.get_contextual_rag_llm_for_search_settings")
-@patch("onyx.indexing.indexing_pipeline.index_doc_batch_with_handler")
+@patch("lumen.server.manage.search_settings.get_all_document_indices")
+@patch("lumen.server.manage.search_settings.get_default_document_index")
+@patch("lumen.indexing.indexing_pipeline.get_contextual_rag_llm_for_search_settings")
+@patch("lumen.indexing.indexing_pipeline.index_doc_batch_with_handler")
 def test_indexing_pipeline_skips_llm_when_contextual_rag_disabled(
     mock_index_handler: MagicMock,
     mock_get_llm: MagicMock,

@@ -1,5 +1,5 @@
 import type { RichStr } from "@opal/types";
-import { OnyxLoader, Text } from "@opal/components";
+import { LumenLoader, Text } from "@opal/components";
 
 // ---------------------------------------------------------------------------
 // PageLoader
@@ -11,14 +11,14 @@ interface PageLoaderProps {
 }
 
 /**
- * Full-page loading state: the animated Onyx mark with a label, centered in
+ * Full-page loading state: the animated Lumen mark with a label, centered in
  * the available space. Use for page/route-level loading. For an inline or
- * section-level loader without a label, use `OnyxLoader` directly.
+ * section-level loader without a label, use `LumenLoader` directly.
  */
 function PageLoader({ text = "Loading …" }: PageLoaderProps) {
   return (
     <div className="flex h-full min-h-[60vh] w-full flex-col items-center justify-center gap-3 p-5">
-      <OnyxLoader />
+      <LumenLoader />
       <Text font="main-ui-muted" color="text-03">
         {text}
       </Text>

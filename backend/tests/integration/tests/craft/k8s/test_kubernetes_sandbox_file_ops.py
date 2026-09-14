@@ -9,12 +9,12 @@ import httpx
 import pytest
 from kubernetes import client
 
-from onyx.server.features.build.configs import (
+from lumen.server.features.build.configs import (
     SANDBOX_BACKEND,
     SANDBOX_NAMESPACE,
     SandboxBackend,
 )
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from lumen.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
 from tests.integration.common_utils.constants import API_SERVER_URL

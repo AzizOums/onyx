@@ -11,10 +11,10 @@ from uuid import UUID, uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import ANONYMOUS_USER_UUID
-from onyx.db.enums import PersonaSharePermission
-from onyx.db.models import Persona, Persona__Tool, Tool, User
-from onyx.db.persona import get_tool_ids_on_editable_personas, mark_persona_as_deleted
+from lumen.configs.constants import ANONYMOUS_USER_UUID
+from lumen.db.enums import PersonaSharePermission
+from lumen.db.models import Persona, Persona__Tool, Tool, User
+from lumen.db.persona import get_tool_ids_on_editable_personas, mark_persona_as_deleted
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.external_dependency_unit.db.agent_sharing_helpers import (
     create_test_persona,

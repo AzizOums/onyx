@@ -1,6 +1,6 @@
-# Onyx Dev Container
+# Lumen Dev Container
 
-A containerized development environment for working on Onyx.
+A containerized development environment for working on Lumen.
 
 ## What's included
 
@@ -45,7 +45,7 @@ ods dev rebuild
 
 ## Image
 
-The devcontainer uses a prebuilt image published to `onyxdotapp/onyx-devcontainer`.
+The devcontainer uses a prebuilt image published to `lumendotapp/lumen-devcontainer`.
 The tag is pinned in `devcontainer.json` — no local build is required.
 
 To build the image locally (e.g. while iterating on the Dockerfile):
@@ -96,11 +96,11 @@ When enabled, it only allows outbound traffic to:
 - Sentry
 - VS Code update servers
 
-To enable it, set `ONYX_DEVCONTAINER_FIREWALL=1` in your host environment before
+To enable it, set `LUMEN_DEVCONTAINER_FIREWALL=1` in your host environment before
 starting the container (e.g. via `ods dev up`):
 
 ```bash
-export ONYX_DEVCONTAINER_FIREWALL=1
+export LUMEN_DEVCONTAINER_FIREWALL=1
 ods dev up
 ```
 

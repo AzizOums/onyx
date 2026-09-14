@@ -5,9 +5,9 @@ from __future__ import annotations
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.models import User
-from onyx.skills.rendering import build_available_sources_section
+from lumen.configs.constants import DocumentSource
+from lumen.db.models import User
+from lumen.skills.rendering import build_available_sources_section
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair
 
 

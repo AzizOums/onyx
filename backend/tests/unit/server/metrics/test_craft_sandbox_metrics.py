@@ -10,7 +10,7 @@ from unittest.mock import patch
 import pytest
 from prometheus_client import REGISTRY
 
-from onyx.server.metrics.craft_sandbox import (
+from lumen.server.metrics.craft_sandbox import (
     OUTCOME_LABEL_NAME,
     PHASE_LABEL_NAME,
     SandboxProvisionPhase,
@@ -23,9 +23,9 @@ from onyx.server.metrics.craft_sandbox import (
     track_sandbox_provision_in_progress,
 )
 
-_READY = "onyx_craft_sandbox_ready_duration_seconds"
-_PHASE = "onyx_craft_sandbox_provision_phase_duration_seconds"
-_IN_PROGRESS = "onyx_craft_sandbox_provisions_in_progress"
+_READY = "lumen_craft_sandbox_ready_duration_seconds"
+_PHASE = "lumen_craft_sandbox_provision_phase_duration_seconds"
+_IN_PROGRESS = "lumen_craft_sandbox_provisions_in_progress"
 
 
 def _sample(name: str, labels: dict[str, str] | None = None) -> float:

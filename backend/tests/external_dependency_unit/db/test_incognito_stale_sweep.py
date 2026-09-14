@@ -13,13 +13,13 @@ from uuid import UUID, uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import IncognitoRecordMode, UserFileStatus
-from onyx.db.incognito import (
+from lumen.db.enums import IncognitoRecordMode, UserFileStatus
+from lumen.db.incognito import (
     INCOGNITO_FILE_ORPHAN_AGE,
     stale_incognito_session_ids,
     stale_unadopted_upload_ids,
 )
-from onyx.db.models import ChatSession, User, UserFile
+from lumen.db.models import ChatSession, User, UserFile
 from tests.external_dependency_unit.conftest import create_test_user, delete_test_user
 
 PAST_THE_WINDOW = INCOGNITO_FILE_ORPHAN_AGE + timedelta(hours=1)

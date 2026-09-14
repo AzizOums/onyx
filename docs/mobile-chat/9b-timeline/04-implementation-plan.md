@@ -22,7 +22,7 @@ seam is a **zero-refactor drop-in point** for the tool renderers the owner will 
   and `.context/pr9b-deepread/*.md`, extracted verbatim from `web/src/app/app/message/messageComponents/**`
   (`packetProcessor.ts`, `transformers.ts`, `interfaces.ts`, `renderMessageComponent.tsx`, the `timeline/hooks/*`,
   `timeline/primitives/*`, `timeline/headers/*`, `ReasoningRenderer.tsx`). Reasoning packets already stream from
-  `backend/onyx/chat/llm_step.py`.
+  `backend/lumen/chat/llm_step.py`.
 - **`section_end` synthesis is the correctness core.** A step is marked complete almost entirely by
   **client-synthesized** `section_end` — on a new `turn_index` (closes all prior groups) and on `stop` (closes all
   open groups). The backend seldom sends it. Port `injectSectionEnd`/`handleTurnTransition`/`handleStopPacket`

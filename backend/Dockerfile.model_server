@@ -14,7 +14,7 @@ ARG PYTHON_RUNTIME_IMAGE=${BASE_IMAGE_REGISTRY}/library/python:3.13-slim@sha256:
 # which both the default slim image and the DHI "-dev" variant provide.
 FROM ${PYTHON_BUILDER_IMAGE} AS builder
 
-ENV ONYX_RUNNING_IN_DOCKER="true" \
+ENV LUMEN_RUNNING_IN_DOCKER="true" \
     HF_HOME=/app/.cache/huggingface \
     VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH" \
@@ -30,15 +30,15 @@ RUN uv venv /app/.venv --python 3.13
 
 # Pre-create the runtime writable dirs here (the DHI runtime has no shell
 # to mkdir). Left empty in this stage; the model download happens downstream.
-RUN mkdir -p /app/.cache/huggingface /var/log/onyx
+RUN mkdir -p /app/.cache/huggingface /var/log/lumen
 
-# Recreate the `onyx` user (UID 1001) from the previous image so deployments that
-# pin `-u onyx` / `user: onyx` keep resolving and their 1001-owned volumes stay
+# Recreate the `lumen` user (UID 1001) from the previous image so deployments that
+# pin `-u lumen` / `user: lumen` keep resolving and their 1001-owned volumes stay
 # writable. The DHI "-dev" image ships a shell but not the `shadow` tools
 # (groupadd/useradd), so write the passwd/group entries directly; they're copied
 # into the runtime stage below.
-RUN printf 'onyx:x:1001:\n' >> /etc/group && \
-    printf 'onyx:x:1001:1001::/home/onyx:/usr/sbin/nologin\n' >> /etc/passwd
+RUN printf 'lumen:x:1001:\n' >> /etc/group && \
+    printf 'lumen:x:1001:1001::/home/lumen:/usr/sbin/nologin\n' >> /etc/passwd
 
 COPY ./requirements/model_server.txt /tmp/requirements.txt
 
@@ -60,69 +60,69 @@ FROM builder AS embedding-models
 RUN python -c "from sentence_transformers import SentenceTransformer; \
 SentenceTransformer(model_name_or_path='nomic-ai/nomic-embed-text-v1', trust_remote_code=False);"
 
-# Runtime stage. We run as the `onyx` user (UID 1001, carried over from the previous
+# Runtime stage. We run as the `lumen` user (UID 1001, carried over from the previous
 # image; see USER below) and chown everything the runtime writes to it. The DHI runtime
 # variant is near-distroless: no shell or package manager, so keep this stage free of
 # RUN instructions.
 FROM ${PYTHON_RUNTIME_IMAGE} AS final
 
-LABEL com.danswer.maintainer="founders@onyx.app"
-LABEL com.danswer.description="This image is for the Onyx model server which runs all of the \
-AI models for Onyx. This container and all the code is MIT Licensed and free for all to use. \
-You can find it at https://hub.docker.com/r/onyx/onyx-model-server. For more details, \
-visit https://github.com/onyx-dot-app/onyx."
+LABEL com.danswer.maintainer="founders@lumen.app"
+LABEL com.danswer.description="This image is for the Lumen model server which runs all of the \
+AI models for Lumen. This container and all the code is MIT Licensed and free for all to use. \
+You can find it at https://hub.docker.com/r/lumen/lumen-model-server. For more details, \
+visit https://github.com/lumen-dot-app/lumen."
 
 WORKDIR /app
 
-ENV ONYX_RUNNING_IN_DOCKER="true" \
+ENV LUMEN_RUNNING_IN_DOCKER="true" \
     HF_HOME=/app/.cache/huggingface \
     HOME=/app/.cache/huggingface \
     PYTHONPATH=/app \
     VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH"
 
-# Bring the `onyx` user (1001) into the runtime stage. The -dev builder's
+# Bring the `lumen` user (1001) into the runtime stage. The -dev builder's
 # passwd/group are a superset of the runtime's, so copying them preserves the
-# base's own entries while adding `onyx`, letting `USER onyx` and any runtime
-# `-u onyx` override resolve the name.
+# base's own entries while adding `lumen`, letting `USER lumen` and any runtime
+# `-u lumen` override resolve the name.
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 
 # Installed dependencies (the venv) plus the writable runtime dirs, owned by the
-# onyx UID (1001) so the process can write the HF cache and logs. When users mount
+# lumen UID (1001) so the process can write the HF cache and logs. When users mount
 # named volumes over these paths, the volume seeds with the same ownership.
 COPY --from=builder --chown=1001:1001 /app/.venv /app/.venv
 COPY --from=builder --chown=1001:1001 /app/.cache/huggingface /app/.cache/huggingface
-COPY --from=builder --chown=1001:1001 /var/log/onyx /var/log/onyx
+COPY --from=builder --chown=1001:1001 /var/log/lumen /var/log/lumen
 
 # In case the user has volumes mounted to /app/.cache/huggingface that they've downloaded while
-# running Onyx, move the current contents of the cache folder to a temporary location to ensure
+# running Lumen, move the current contents of the cache folder to a temporary location to ensure
 # it's preserved in order to combine with the user's cache contents
 COPY --chown=1001:1001 --from=embedding-models /app/.cache/huggingface /app/.cache/temp_huggingface
 
 # Utils used by model server
-COPY --chown=1001:1001 ./onyx/utils/logger.py /app/onyx/utils/logger.py
-COPY --chown=1001:1001 ./onyx/utils/platform_utils.py /app/onyx/utils/platform_utils.py
-COPY --chown=1001:1001 ./onyx/utils/middleware.py /app/onyx/utils/middleware.py
-COPY --chown=1001:1001 ./onyx/utils/tenant.py /app/onyx/utils/tenant.py
+COPY --chown=1001:1001 ./lumen/utils/logger.py /app/lumen/utils/logger.py
+COPY --chown=1001:1001 ./lumen/utils/platform_utils.py /app/lumen/utils/platform_utils.py
+COPY --chown=1001:1001 ./lumen/utils/middleware.py /app/lumen/utils/middleware.py
+COPY --chown=1001:1001 ./lumen/utils/tenant.py /app/lumen/utils/tenant.py
 
 # Sentry configuration (used when SENTRY_DSN is set)
-COPY --chown=1001:1001 ./onyx/configs/__init__.py /app/onyx/configs/__init__.py
-COPY --chown=1001:1001 ./onyx/configs/sentry.py /app/onyx/configs/sentry.py
+COPY --chown=1001:1001 ./lumen/configs/__init__.py /app/lumen/configs/__init__.py
+COPY --chown=1001:1001 ./lumen/configs/sentry.py /app/lumen/configs/sentry.py
 
 # Place to fetch version information
-COPY --chown=1001:1001 ./onyx/__init__.py /app/onyx/__init__.py
+COPY --chown=1001:1001 ./lumen/__init__.py /app/lumen/__init__.py
 
-# Shared between Onyx Backend and Model Server
+# Shared between Lumen Backend and Model Server
 COPY --chown=1001:1001 ./shared_configs /app/shared_configs
 
 # Model Server main code
 COPY --chown=1001:1001 ./model_server /app/model_server
 
-# Default ONYX_VERSION, typically overriden during builds by GitHub Actions.
-ARG ONYX_VERSION=0.0.0-dev
-ENV ONYX_VERSION=${ONYX_VERSION}
+# Default LUMEN_VERSION, typically overriden during builds by GitHub Actions.
+ARG LUMEN_VERSION=0.0.0-dev
+ENV LUMEN_VERSION=${LUMEN_VERSION}
 
-USER onyx
+USER lumen
 
 CMD ["python", "-m", "model_server"]

@@ -64,7 +64,7 @@ class Citation(TypedDict, total=False):
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Submit questions to Onyx chat with internal search forced and write "
+            "Submit questions to Lumen chat with internal search forced and write "
             "answers to a JSONL file."
         )
     )
@@ -84,14 +84,14 @@ def parse_args() -> argparse.Namespace:
         "--api-key",
         type=str,
         required=True,
-        help="API key used to authenticate against Onyx.",
+        help="API key used to authenticate against Lumen.",
     )
     parser.add_argument(
         "--api-base",
         type=str,
         default=DEFAULT_API_BASE,
         help=(
-            "Frontend base URL for Onyx. If `/api` is omitted, it will be added "
+            "Frontend base URL for Lumen. If `/api` is omitted, it will be added "
             f"automatically. Default: {DEFAULT_API_BASE}"
         ),
     )

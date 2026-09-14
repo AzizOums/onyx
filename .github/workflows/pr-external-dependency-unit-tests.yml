@@ -126,11 +126,11 @@ jobs:
           # pod-spec tests need to render the chart (charts/*.tgz is gitignored).
           i=0
           awk '$1 == "repository:" && $2 ~ /^https/ {print $2}' \
-              deployment/helm/charts/onyx/Chart.lock | sort -u |
+              deployment/helm/charts/lumen/Chart.lock | sort -u |
             while read -r repo; do
               helm repo add "dep-$((i+=1))" "$repo"
             done
-          helm dependency build deployment/helm/charts/onyx
+          helm dependency build deployment/helm/charts/lumen
 
       - name: Log in to ECR pull-through cache
         uses: ./.github/actions/login-ecr-pullthrough-cache

@@ -3,9 +3,9 @@ from typing import Any
 
 import httpx
 
-from onyx.configs.constants import DEFAULT_CC_PAIR_ID
-from onyx.db.enums import ConnectorCredentialPairStatus, SwitchoverType
-from onyx.db.port_attempt import ReindexErrorRow, ReindexProgressCounts
+from lumen.configs.constants import DEFAULT_CC_PAIR_ID
+from lumen.db.enums import ConnectorCredentialPairStatus, SwitchoverType
+from lumen.db.port_attempt import ReindexErrorRow, ReindexProgressCounts
 from tests.integration.common_utils.constants import API_SERVER_URL, MAX_DELAY
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.cc_pair import CCPairManager

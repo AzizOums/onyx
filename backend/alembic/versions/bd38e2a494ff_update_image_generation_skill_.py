@@ -20,8 +20,8 @@ _BUILT_IN_SKILL_ID = "image-generation"
 _OLD_DESCRIPTION = "Generate images using nano banana."
 
 _NEW_DESCRIPTION = (
-    "Generate or edit images with onyx-cli using the image generation provider "
-    "configured in Onyx."
+    "Generate or edit images with lumen-cli using the image generation provider "
+    "configured in Lumen."
 )
 
 _skill_table = sa.table(

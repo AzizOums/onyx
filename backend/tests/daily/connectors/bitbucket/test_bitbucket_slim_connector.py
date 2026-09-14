@@ -3,9 +3,9 @@ import time
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.bitbucket.connector import BitbucketConnector
-from onyx.connectors.models import HierarchyNode
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.bitbucket.connector import BitbucketConnector
+from lumen.connectors.models import HierarchyNode
 from tests.daily.connectors.utils import load_all_from_connector
 from tests.utils.secret_names import TestSecret
 

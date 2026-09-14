@@ -14,34 +14,34 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing import run_docfetching
-from onyx.configs.constants import DocumentSource
-from onyx.connectors import factory
-from onyx.connectors.capabilities import CredentialCapability
-from onyx.connectors.capability_checks import recorder
-from onyx.connectors.capability_checks.models import (
+from lumen.background.indexing import run_docfetching
+from lumen.configs.constants import DocumentSource
+from lumen.connectors import factory
+from lumen.connectors.capabilities import CredentialCapability
+from lumen.connectors.capability_checks import recorder
+from lumen.connectors.capability_checks.models import (
     CapabilityCheckResult,
     CapabilityCheckStatus,
     CapabilityVerdict,
     CredentialCapabilityReport,
 )
-from onyx.connectors.exceptions import (
+from lumen.connectors.exceptions import (
     ConnectorValidationError,
     UnexpectedValidationError,
 )
-from onyx.connectors.factory import validate_ccpair_for_user
-from onyx.connectors.interfaces import BaseConnector
-from onyx.db.credential_capability import (
+from lumen.connectors.factory import validate_ccpair_for_user
+from lumen.connectors.interfaces import BaseConnector
+from lumen.db.credential_capability import (
     get_capability_report_row,
     upsert_completed_capability_report,
 )
-from onyx.db.enums import (
+from lumen.db.enums import (
     AccessType,
     CapabilityCheckTrigger,
     CapabilityReportRunStatus,
     IndexingStatus,
 )
-from onyx.db.models import ConnectorCredentialPair, IndexAttempt
+from lumen.db.models import ConnectorCredentialPair, IndexAttempt
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
     make_cc_pair,

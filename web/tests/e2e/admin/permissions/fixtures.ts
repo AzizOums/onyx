@@ -1,6 +1,6 @@
 import { test as base, expect, type Page } from "@playwright/test";
 import { loginAs, apiLogin } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 
 const TEST_PASSWORD = "PermGating123!";
 
@@ -20,19 +20,19 @@ async function softCleanup(fn: () => Promise<unknown>): Promise<void> {
 }
 
 export const test = base.extend<{
-  adminClient: OnyxApiClient;
+  adminClient: LumenApiClient;
   testUserContext: TestUserContext;
 }>({
   adminClient: async ({ page }, use) => {
     await page.context().clearCookies();
     await loginAs(page, "admin");
-    await use(new OnyxApiClient(page.request));
+    await use(new LumenApiClient(page.request));
   },
 
   testUserContext: async ({ page }, use) => {
     await page.context().clearCookies();
     await loginAs(page, "admin");
-    const adminClient = new OnyxApiClient(page.request);
+    const adminClient = new LumenApiClient(page.request);
 
     const email = `e2e-perm-gating-${uniqueId("user")}@example.com`;
     const groupName = `e2e-perm-gating-${uniqueId("group")}`;
@@ -48,7 +48,7 @@ export const test = base.extend<{
     } finally {
       await page.context().clearCookies();
       await loginAs(page, "admin");
-      const cleanup = new OnyxApiClient(page.request);
+      const cleanup = new LumenApiClient(page.request);
 
       if (groupId !== undefined) {
         await softCleanup(() => cleanup.deleteUserGroup(groupId!));

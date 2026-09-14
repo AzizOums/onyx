@@ -14,7 +14,7 @@ from mcp.client.streamable_http import streamablehttp_client
 from mcp.types import CallToolResult, TextContent
 from pydantic import AnyUrl
 
-from onyx.db.enums import AccessType, Permission
+from lumen.db.enums import AccessType, Permission
 from tests.integration.common_utils.constants import MCP_SERVER_URL
 from tests.integration.common_utils.managers.api_key import APIKeyManager
 from tests.integration.common_utils.managers.cc_pair import CCPairManager

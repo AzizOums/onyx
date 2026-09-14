@@ -307,7 +307,7 @@ test.describe("Web Search Provider Disconnect", () => {
       });
     });
 
-    test("should not show disconnect for Onyx Web Crawler (built-in)", async ({
+    test("should not show disconnect for Lumen Web Crawler (built-in)", async ({
       page,
     }) => {
       await mockWebSearchApis(page, [], []);
@@ -315,11 +315,11 @@ test.describe("Web Search Provider Disconnect", () => {
       await page.goto(WEB_SEARCH_URL);
       await page.waitForSelector("text=Web Crawler", { timeout: 20000 });
 
-      const onyxCard = findProviderCard(page, "Onyx Web Crawler");
-      await onyxCard.waitFor({ state: "visible", timeout: 10000 });
+      const lumenCard = findProviderCard(page, "Lumen Web Crawler");
+      await lumenCard.waitFor({ state: "visible", timeout: 10000 });
 
-      const disconnectButton = onyxCard.getByRole("button", {
-        name: "Disconnect Onyx Web Crawler",
+      const disconnectButton = lumenCard.getByRole("button", {
+        name: "Disconnect Lumen Web Crawler",
       });
       await expect(disconnectButton).not.toBeVisible();
     });

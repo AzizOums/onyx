@@ -27,23 +27,23 @@ from pydantic import BaseModel
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.beat_schedule import BEAT_EXPIRES_DEFAULT
-from onyx.background.celery.tasks.docprocessing.utils import should_index
-from onyx.background.celery.tasks.port import tasks as port_task
-from onyx.background.celery.tasks.port.tasks import run_check_for_port, run_port_attempt
-from onyx.background.celery.tasks.shared.tasks import (
+from lumen.background.celery.tasks.beat_schedule import BEAT_EXPIRES_DEFAULT
+from lumen.background.celery.tasks.docprocessing.utils import should_index
+from lumen.background.celery.tasks.port import tasks as port_task
+from lumen.background.celery.tasks.port.tasks import run_check_for_port, run_port_attempt
+from lumen.background.celery.tasks.shared.tasks import (
     _clear_port_orphan_candidate_for_live_doc,
 )
-from onyx.configs.app_configs import (
+from lumen.configs.app_configs import (
     INDEX_BATCH_SIZE,
     MAX_CONCURRENT_PORT_ATTEMPTS,
     MAX_CONSECUTIVE_PORT_FAILURES_BEFORE_PAUSE,
 )
-from onyx.configs.constants import OnyxCeleryQueues, OnyxCeleryTask
-from onyx.context.search.models import SavedSearchSettings
-from onyx.db import port_attempt as port_attempt_db
-from onyx.db.connector_credential_pair import get_last_successful_attempt_poll_range_end
-from onyx.db.document import (
+from lumen.configs.constants import LumenCeleryQueues, LumenCeleryTask
+from lumen.context.search.models import SavedSearchSettings
+from lumen.db import port_attempt as port_attempt_db
+from lumen.db.connector_credential_pair import get_last_successful_attempt_poll_range_end
+from lumen.db.document import (
     document_has_indexable_cc_pair,
     filter_existing_cc_pair_document_ids,
     get_document_ids_for_cc_pair_batch,
@@ -52,21 +52,21 @@ from onyx.db.document import (
     mark_document_as_synced,
     mark_document_synced_secondary_pending,
 )
-from onyx.db.enums import (
+from lumen.db.enums import (
     ConnectorCredentialPairStatus,
     EmbeddingPrecision,
     IndexingStatus,
     IndexModelStatus,
     PortAttemptStatus,
 )
-from onyx.db.index_attempt import (
+from lumen.db.index_attempt import (
     count_unique_active_cc_pairs_with_successful_index_attempts,
     count_unique_cc_pairs_with_successful_index_attempts,
     create_synthetic_seed_attempt,
     get_latest_successful_index_attempt_for_cc_pair_id,
     mock_successful_index_attempt,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     ConnectorCredentialPair,
     DocumentByConnectorCredentialPair,
     IndexAttempt,
@@ -74,8 +74,8 @@ from onyx.db.models import (
     PortOrphanCandidate,
     SearchSettings,
 )
-from onyx.db.models import Document as DbDocument
-from onyx.db.port_attempt import (
+from lumen.db.models import Document as DbDocument
+from lumen.db.port_attempt import (
     cancel_active_port_attempts,
     commit_port_cursor,
     count_consecutive_failed_port_attempts_no_progress,
@@ -91,7 +91,7 @@ from onyx.db.port_attempt import (
     request_port_cancel,
     resume_paused_port_attempt,
 )
-from onyx.db.port_orphan_candidate import (
+from lumen.db.port_orphan_candidate import (
     cleanup_stale_port_orphan_candidates,
     clear_port_orphan_candidates,
     delete_port_orphan_candidates_by_id,
@@ -99,12 +99,12 @@ from onyx.db.port_orphan_candidate import (
     port_target_settings_id,
     record_port_orphan_candidates,
 )
-from onyx.db.search_settings import create_search_settings, get_current_search_settings
-from onyx.db.swap_index import _port_swap_ready
-from onyx.document_index.opensearch import port_copy
-from onyx.document_index.opensearch.port_copy import copy_present_chunks_to_future
-from onyx.indexing.port_reembed import ReembedStrategy
-from onyx.kg.models import KGStage
+from lumen.db.search_settings import create_search_settings, get_current_search_settings
+from lumen.db.swap_index import _port_swap_ready
+from lumen.document_index.opensearch import port_copy
+from lumen.document_index.opensearch.port_copy import copy_present_chunks_to_future
+from lumen.indexing.port_reembed import ReembedStrategy
+from lumen.kg.models import KGStage
 from shared_configs.contextvars import get_current_tenant_id
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
@@ -977,12 +977,12 @@ def test_check_for_port_creates_and_enqueues(
     assert attempts[0].status == PortAttemptStatus.NOT_STARTED
     celery_app.send_task.assert_called_once()
     call = celery_app.send_task.call_args
-    assert call.args[0] == OnyxCeleryTask.RUN_PORT_ATTEMPT
+    assert call.args[0] == LumenCeleryTask.RUN_PORT_ATTEMPT
     assert call.kwargs["kwargs"] == {
         "port_attempt_id": attempts[0].id,
         "tenant_id": get_current_tenant_id(),
     }
-    assert call.kwargs["queue"] == OnyxCeleryQueues.PORT
+    assert call.kwargs["queue"] == LumenCeleryQueues.PORT
     assert call.kwargs["expires"] == BEAT_EXPIRES_DEFAULT
 
 
@@ -1654,13 +1654,13 @@ def test_port_target_settings_id() -> None:
 def test_delete_port_written_chunks_query() -> None:
     """Filters written_by_port + doc-ids; adds the tenant term only in multitenant mode
     (single-tenant has no tenant_id field, so it would match zero docs)."""
-    from onyx.document_index.interfaces_new import TenantState
-    from onyx.document_index.opensearch.schema import (
+    from lumen.document_index.interfaces_new import TenantState
+    from lumen.document_index.opensearch.schema import (
         DOCUMENT_ID_FIELD_NAME,
         TENANT_ID_FIELD_NAME,
         WRITTEN_BY_PORT_FIELD_NAME,
     )
-    from onyx.document_index.opensearch.search import DocumentQuery
+    from lumen.document_index.opensearch.search import DocumentQuery
 
     mt = TenantState(tenant_id="tenant-1", multitenant=True)
     filters = DocumentQuery.delete_port_written_chunks_query(["a", "b"], mt)["query"][
@@ -1874,7 +1874,7 @@ def test_run_port_attempt_failed_sweep_marks_failed(
         db_session.commit()
 
 
-@patch("onyx.background.celery.tasks.shared.tasks.port_target_settings_id")
+@patch("lumen.background.celery.tasks.shared.tasks.port_target_settings_id")
 def test_clear_for_live_doc_clears_live_but_keeps_removed(
     mock_target: MagicMock,
     db_session: Session,
@@ -2115,7 +2115,7 @@ def test_resume_paused_port_attempt_from_cursor_and_streak_reset(
     _paused_unit(db_session, cc_pair.id, future_id, "doc-5")
 
     with patch(
-        "onyx.db.port_orphan_candidate.port_target_settings_id", lambda *_: future_id
+        "lumen.db.port_orphan_candidate.port_target_settings_id", lambda *_: future_id
     ):
         resumed = resume_paused_port_attempt(
             db_session,
@@ -2153,7 +2153,7 @@ def test_resume_refuses_when_not_current_target(
     _paused_unit(db_session, cc_pair.id, future_id, "doc-2")
 
     with patch(
-        "onyx.db.port_orphan_candidate.port_target_settings_id",
+        "lumen.db.port_orphan_candidate.port_target_settings_id",
         lambda *_: future_id + 9999,
     ):
         assert (
@@ -2206,7 +2206,7 @@ def test_resume_twice_only_mints_one_attempt(
     _paused_unit(db_session, cc_pair.id, future_id, "doc-3")
 
     with patch(
-        "onyx.db.port_orphan_candidate.port_target_settings_id", lambda *_: future_id
+        "lumen.db.port_orphan_candidate.port_target_settings_id", lambda *_: future_id
     ):
         first = resume_paused_port_attempt(
             db_session,
@@ -2264,7 +2264,7 @@ def test_resume_paused_port_unit_dispatches_and_reports_resumed(
 
     celery_app = MagicMock()
     with patch(
-        "onyx.db.port_orphan_candidate.port_target_settings_id", lambda *_: future_id
+        "lumen.db.port_orphan_candidate.port_target_settings_id", lambda *_: future_id
     ):
         result = port_task.resume_paused_port_unit(
             celery_app, get_current_tenant_id(), cc_pair.id, None, future_id
@@ -2291,7 +2291,7 @@ def test_resume_paused_port_unit_reports_dispatch_failure(
     celery_app = MagicMock()
     celery_app.send_task.side_effect = RuntimeError("broker down")
     with patch(
-        "onyx.db.port_orphan_candidate.port_target_settings_id", lambda *_: future_id
+        "lumen.db.port_orphan_candidate.port_target_settings_id", lambda *_: future_id
     ):
         result = port_task.resume_paused_port_unit(
             celery_app, get_current_tenant_id(), cc_pair.id, None, future_id
@@ -2315,7 +2315,7 @@ def test_resume_paused_port_unit_not_paused(
 
     celery_app = MagicMock()
     with patch(
-        "onyx.db.port_orphan_candidate.port_target_settings_id", lambda *_: future_id
+        "lumen.db.port_orphan_candidate.port_target_settings_id", lambda *_: future_id
     ):
         result = port_task.resume_paused_port_unit(
             celery_app, get_current_tenant_id(), cc_pair.id, None, future_id

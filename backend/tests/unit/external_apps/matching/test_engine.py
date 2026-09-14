@@ -6,16 +6,16 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from onyx.db.enums import EndpointPolicy, ExternalAppType, GatedAppKind
-from onyx.db.models import ExternalApp
-from onyx.external_apps.matching.engine import (
+from lumen.db.enums import EndpointPolicy, ExternalAppType, GatedAppKind
+from lumen.db.models import ExternalApp
+from lumen.external_apps.matching.engine import (
     WHOLE_DOMAIN_ACTION_TYPE,
     AllMatchedActions,
     GatedTarget,
     MatchedAction,
     apply_credential_gate,
 )
-from onyx.external_apps.matching.request import ProxiedRequest
+from lumen.external_apps.matching.request import ProxiedRequest
 
 
 def test_rejects_empty_actions() -> None:

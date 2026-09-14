@@ -25,22 +25,22 @@ from unittest.mock import patch
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db import swap_index
-from onyx.db.document import mark_document_synced_secondary_pending
-from onyx.db.enums import (
+from lumen.configs.constants import DocumentSource
+from lumen.db import swap_index
+from lumen.db.document import mark_document_synced_secondary_pending
+from lumen.db.enums import (
     ConnectorCredentialPairStatus,
     PortAttemptStatus,
     SwitchoverType,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     ConnectorCredentialPair,
     DocumentByConnectorCredentialPair,
     PortAttempt,
     SearchSettings,
 )
-from onyx.db.models import Document as DbDocument
-from onyx.db.port_attempt import (
+from lumen.db.models import Document as DbDocument
+from lumen.db.port_attempt import (
     cancel_active_port_attempts,
     create_port_attempt,
     get_active_port_attempt,
@@ -51,12 +51,12 @@ from onyx.db.port_attempt import (
     pause_port_attempt,
     request_port_cancel,
 )
-from onyx.db.swap_index import (
+from lumen.db.swap_index import (
     _port_swap_ready,
     _required_cc_pairs_for_switchover,
     check_and_perform_index_swap,
 )
-from onyx.kg.models import KGStage
+from lumen.kg.models import KGStage
 from tests.external_dependency_unit.conftest import create_test_user, delete_test_user
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,

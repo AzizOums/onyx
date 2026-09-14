@@ -23,13 +23,13 @@ from urllib.parse import urlparse
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import FileOrigin
-from onyx.file_store.azure_blob_file_store import AzureBlobBackedFileStore
-from onyx.utils.logger import setup_logger
+from lumen.configs.constants import FileOrigin
+from lumen.file_store.azure_blob_file_store import AzureBlobBackedFileStore
+from lumen.utils.logger import setup_logger
 
 logger = setup_logger()
 
-TEST_CONTAINER_NAME = "onyx-file-store-tests"
+TEST_CONTAINER_NAME = "lumen-file-store-tests"
 
 # Azurite's well-known development-storage account.
 AZURITE_ACCOUNT_NAME = "devstoreaccount1"
@@ -321,7 +321,7 @@ class TestAzureBlobBackedFileStore:
         """A missing container must raise and keep the DB record, not discard it."""
         from azure.core.exceptions import ResourceNotFoundError
 
-        container_name = f"onyx-fs-test-{uuid.uuid4().hex[:12]}"
+        container_name = f"lumen-fs-test-{uuid.uuid4().hex[:12]}"
         store = AzureBlobBackedFileStore(
             container_name=container_name,
             azure_prefix=f"test-files-{uuid.uuid4()}",
@@ -361,7 +361,7 @@ class TestAzureBlobBackedFileStore:
         object_key = file_store._get_object_key(file_id)
 
         with patch(
-            "onyx.file_store.azure_blob_file_store.upsert_filerecord",
+            "lumen.file_store.azure_blob_file_store.upsert_filerecord",
             side_effect=RuntimeError("simulated DB failure"),
         ):
             with pytest.raises(RuntimeError, match="simulated DB failure"):
@@ -393,7 +393,7 @@ class TestAzureBlobBackedFileStore:
         )
 
         with patch(
-            "onyx.file_store.azure_blob_file_store.upsert_filerecord",
+            "lumen.file_store.azure_blob_file_store.upsert_filerecord",
             side_effect=RuntimeError("simulated DB failure"),
         ):
             with pytest.raises(RuntimeError, match="simulated DB failure"):

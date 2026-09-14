@@ -37,32 +37,32 @@ from uuid import uuid4
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing.run_docfetching import cache_and_upsert_hierarchy_nodes
-from onyx.configs.app_configs import INDEX_BATCH_SIZE
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.connector_runner import ConnectorRunner
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
-from onyx.connectors.google_drive.models import (
+from lumen.background.indexing.run_docfetching import cache_and_upsert_hierarchy_nodes
+from lumen.configs.app_configs import INDEX_BATCH_SIZE
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.connector_runner import ConnectorRunner
+from lumen.connectors.google_drive.connector import GoogleDriveConnector
+from lumen.connectors.google_drive.models import (
     DriveRetrievalStage,
     GoogleDriveCheckpoint,
     GoogleDriveFileType,
     RetrievedDriveFile,
 )
-from onyx.connectors.interfaces import (
+from lumen.connectors.interfaces import (
     CheckpointedConnector,
     CheckpointOutput,
     SecondsSinceUnixEpoch,
 )
-from onyx.connectors.models import HierarchyNode as PydanticHierarchyNode
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType, ConnectorCredentialPairStatus, HierarchyNodeType
-from onyx.db.hierarchy import (
+from lumen.connectors.models import HierarchyNode as PydanticHierarchyNode
+from lumen.connectors.models import InputType
+from lumen.db.enums import AccessType, ConnectorCredentialPairStatus, HierarchyNodeType
+from lumen.db.hierarchy import (
     ensure_source_node_exists,
     get_hierarchy_node_by_raw_id,
     get_source_hierarchy_node,
 )
-from onyx.db.models import Connector, ConnectorCredentialPair, Credential, HierarchyNode
-from onyx.utils.threadpool_concurrency import ThreadSafeDict, ThreadSafeSet
+from lumen.db.models import Connector, ConnectorCredentialPair, Credential, HierarchyNode
+from lumen.utils.threadpool_concurrency import ThreadSafeDict, ThreadSafeSet
 
 SOURCE = DocumentSource.GOOGLE_DRIVE
 ADMIN_EMAIL = "admin@example.com"
@@ -342,7 +342,7 @@ def test_off_by_one_batch_split_misparents_child(db_session: Session) -> None:
 
         with (
             patch(
-                "onyx.connectors.google_drive.connector.get_drive_service",
+                "lumen.connectors.google_drive.connector.get_drive_service",
                 return_value=Mock(name="drive_service"),
             ),
             patch.object(
@@ -474,7 +474,7 @@ def test_cross_yield_walk_heals_misparented_child_via_stub(
 
         with (
             patch(
-                "onyx.connectors.google_drive.connector.get_drive_service",
+                "lumen.connectors.google_drive.connector.get_drive_service",
                 return_value=Mock(name="drive_service"),
             ),
             patch.object(

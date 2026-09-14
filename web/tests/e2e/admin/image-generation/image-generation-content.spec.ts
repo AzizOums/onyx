@@ -1,7 +1,7 @@
 import { test, expect, Page, Locator } from "@playwright/test";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 
 const IMAGE_GENERATION_URL = `http://localhost:3000${ADMIN_ROUTES.IMAGE_GENERATION.path}`;
 
@@ -87,7 +87,7 @@ test.describe("Image Generation Provider Configuration", () => {
 
     test.afterEach(async ({ page }) => {
       // Clean up the image generation config created during the test
-      const apiClient = new OnyxApiClient(page.request);
+      const apiClient = new LumenApiClient(page.request);
       try {
         await apiClient.deleteImageGenerationConfig("openai_gpt_image_1");
         console.log("[image-gen-test] Cleaned up GPT Image 1 config");

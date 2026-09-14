@@ -3,15 +3,15 @@ import uuid
 
 import httpx
 
-from onyx.background.celery.tasks.docprocessing.utils import (
+from lumen.background.celery.tasks.docprocessing.utils import (
     NUM_REPEAT_ERRORS_BEFORE_REPEATED_ERROR_STATE,
 )
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.mock_connector.connector import MockConnectorCheckpoint
-from onyx.connectors.models import InputType
-from onyx.db.connector_credential_pair import get_connector_credential_pair_from_id
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import IndexingStatus
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.mock_connector.connector import MockConnectorCheckpoint
+from lumen.connectors.models import InputType
+from lumen.db.connector_credential_pair import get_connector_credential_pair_from_id
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import IndexingStatus
 from tests.integration.common_utils.constants import (
     MOCK_CONNECTOR_SERVER_HOST,
     MOCK_CONNECTOR_SERVER_PORT,

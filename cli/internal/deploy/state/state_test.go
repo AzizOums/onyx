@@ -27,7 +27,7 @@ func TestSaveLoadRoundTrip(t *testing.T) {
 		IncludeCraft: true,
 		InstalledAt:  time.Now().UTC().Truncate(time.Second),
 	}
-	if err := in.RecordFile(root, "deployment/docker-compose.yml", []byte("name: onyx\n")); err != nil {
+	if err := in.RecordFile(root, "deployment/docker-compose.yml", []byte("name: lumen\n")); err != nil {
 		t.Fatalf("RecordFile: %v", err)
 	}
 	if err := in.Save(root); err != nil {
@@ -45,7 +45,7 @@ func TestSaveLoadRoundTrip(t *testing.T) {
 		t.Errorf("round trip mismatch: %+v", out)
 	}
 	entry, ok := out.Files["deployment/docker-compose.yml"]
-	if !ok || entry.SHA256 != HashBytes([]byte("name: onyx\n")) {
+	if !ok || entry.SHA256 != HashBytes([]byte("name: lumen\n")) {
 		t.Errorf("file entry not preserved: %+v", out.Files)
 	}
 }
@@ -66,7 +66,7 @@ func TestLoadNewerSchemaFails(t *testing.T) {
 		t.Fatalf("write: %v", err)
 	}
 	_, err := Load(root)
-	if err == nil || !strings.Contains(err.Error(), "newer onyx-cli") {
+	if err == nil || !strings.Contains(err.Error(), "newer lumen-cli") {
 		t.Fatalf("expected newer-schema error, got %v", err)
 	}
 }
@@ -104,11 +104,11 @@ func TestPristineRoundTripAndForget(t *testing.T) {
 	root := t.TempDir()
 	m := &Manifest{}
 	content := []byte("services: {}\n")
-	if err := m.RecordFile(root, "deployment/docker-compose.onyx-lite.yml", content); err != nil {
+	if err := m.RecordFile(root, "deployment/docker-compose.lumen-lite.yml", content); err != nil {
 		t.Fatalf("RecordFile: %v", err)
 	}
 
-	got, err := Pristine(root, "deployment/docker-compose.onyx-lite.yml")
+	got, err := Pristine(root, "deployment/docker-compose.lumen-lite.yml")
 	if err != nil {
 		t.Fatalf("Pristine: %v", err)
 	}
@@ -116,13 +116,13 @@ func TestPristineRoundTripAndForget(t *testing.T) {
 		t.Errorf("pristine content mismatch: %q", got)
 	}
 
-	if err := m.ForgetFile(root, "deployment/docker-compose.onyx-lite.yml"); err != nil {
+	if err := m.ForgetFile(root, "deployment/docker-compose.lumen-lite.yml"); err != nil {
 		t.Fatalf("ForgetFile: %v", err)
 	}
-	if _, ok := m.Files["deployment/docker-compose.onyx-lite.yml"]; ok {
+	if _, ok := m.Files["deployment/docker-compose.lumen-lite.yml"]; ok {
 		t.Error("entry still in manifest after ForgetFile")
 	}
-	got, err = Pristine(root, "deployment/docker-compose.onyx-lite.yml")
+	got, err = Pristine(root, "deployment/docker-compose.lumen-lite.yml")
 	if err != nil {
 		t.Fatalf("Pristine after forget: %v", err)
 	}
@@ -135,7 +135,7 @@ func TestUserEdited(t *testing.T) {
 	root := t.TempDir()
 	m := &Manifest{}
 	destRel := "deployment/docker-compose.yml"
-	content := []byte("name: onyx\n")
+	content := []byte("name: lumen\n")
 
 	if err := os.MkdirAll(filepath.Join(root, "deployment"), 0755); err != nil {
 		t.Fatalf("mkdir: %v", err)
@@ -156,7 +156,7 @@ func TestUserEdited(t *testing.T) {
 		t.Error("unmodified file reported as edited")
 	}
 
-	if err := os.WriteFile(onDisk, []byte("name: onyx\n# hand edit\n"), 0644); err != nil {
+	if err := os.WriteFile(onDisk, []byte("name: lumen\n# hand edit\n"), 0644); err != nil {
 		t.Fatalf("edit: %v", err)
 	}
 	edited, err = m.UserEdited(root, destRel)

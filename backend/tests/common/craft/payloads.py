@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from onyx.db.enums import EndpointPolicy
-from onyx.external_apps.matching.engine import MatchedAction
-from onyx.server.features.build.sandbox.models import CraftLLMProviderConfig
+from lumen.db.enums import EndpointPolicy
+from lumen.external_apps.matching.engine import MatchedAction
+from lumen.server.features.build.sandbox.models import CraftLLMProviderConfig
 
 
 def default_llm_config(

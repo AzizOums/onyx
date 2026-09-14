@@ -121,8 +121,8 @@ export {
 export {
   IconLoader,
   type IconLoaderProps,
-  OnyxLoader,
-  type OnyxLoaderProps,
+  LumenLoader,
+  type LumenLoaderProps,
   type LoaderColor,
 } from "@opal/components/loader/components";
 

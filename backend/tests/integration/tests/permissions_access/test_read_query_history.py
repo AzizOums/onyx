@@ -1,7 +1,7 @@
 """Integration tests for READ_QUERY_HISTORY permission gate (Enterprise).
 
 Covers the query-history admin endpoints in
-``backend/ee/onyx/server/query_history/api.py`` (router has no prefix).
+``backend/ee/lumen/server/query_history/api.py`` (router has no prefix).
 
 ``chat-session*`` backs the table and its detail drawer, ``query-history/*`` the
 CSV export. Bogus ids are fine — the gate runs first.
@@ -12,7 +12,7 @@ from typing import Any
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.test_models import DATestAPIKey, DATestUser
 from tests.integration.tests.permissions._access_matrix import (
     USER_KINDS,

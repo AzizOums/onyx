@@ -21,16 +21,16 @@ from uuid import uuid4
 import pytest
 from sqlalchemy import select, update
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import AccessType
-from onyx.db.models import (
+from lumen.configs.constants import DocumentSource
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import AccessType
+from lumen.db.models import (
     ConnectorCredentialPair,
     Document,
     DocumentByConnectorCredentialPair,
     User__UserGroup,
 )
-from onyx.db.permissions import recompute_user_permissions__no_commit
+from lumen.db.permissions import recompute_user_permissions__no_commit
 from tests.integration.common_utils.constants import ADMIN_USER_NAME
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.connector import ConnectorManager
@@ -57,7 +57,7 @@ pytestmark = pytest.mark.skipif(
 )
 
 _DOC_SET_PATH = "/manage/admin/document-set"
-_INGESTION_PATH = "/onyx-api/ingestion"
+_INGESTION_PATH = "/lumen-api/ingestion"
 # GATE 1 has its own wording, so asserting on this pins the denial to the scope check
 _CC_PAIR_SCOPE_DETAIL = "Connection not found for current user's permissions"
 

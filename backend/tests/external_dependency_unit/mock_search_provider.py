@@ -7,9 +7,9 @@ from unittest.mock import patch
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from onyx.db.models import InternetSearchProvider
-from onyx.db.web_search import fetch_web_search_provider_by_name
-from onyx.tools.tool_implementations.web_search.models import (
+from lumen.db.models import InternetSearchProvider
+from lumen.db.web_search import fetch_web_search_provider_by_name
+from lumen.tools.tool_implementations.web_search.models import (
     WebSearchProvider,
     WebSearchResult,
 )
@@ -90,7 +90,7 @@ def use_mock_web_provider(
 
     # override the build function
     with patch(
-        "onyx.tools.tool_implementations.web_search.web_search_tool.build_search_provider_from_config",
+        "lumen.tools.tool_implementations.web_search.web_search_tool.build_search_provider_from_config",
         return_value=web_provider,
     ):
         yield web_provider

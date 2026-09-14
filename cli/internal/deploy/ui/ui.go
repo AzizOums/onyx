@@ -22,7 +22,7 @@ import (
 	"github.com/charmbracelet/x/ansi"
 	"golang.org/x/term"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
 )
 
 // The two colors that carry weight rather than meaning — the accent and the
@@ -56,7 +56,7 @@ var (
 
 // BackgroundEnv forces which background the colors are picked for ("light"
 // or "dark"), for terminals that don't answer the query or answer it wrongly.
-const BackgroundEnv = "ONYX_TERM_BACKGROUND"
+const BackgroundEnv = "LUMEN_TERM_BACKGROUND"
 
 var detectOnce sync.Once
 

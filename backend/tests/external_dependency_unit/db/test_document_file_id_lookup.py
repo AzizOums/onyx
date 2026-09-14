@@ -18,12 +18,12 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.context.search.models import InferenceChunk, InferenceSection
-from onyx.context.search.utils import populate_file_ids_on_sections
-from onyx.db.document import get_document_id_to_file_id_map
-from onyx.db.models import Document as DBDocument
-from onyx.kg.models import KGStage
+from lumen.configs.constants import DocumentSource
+from lumen.context.search.models import InferenceChunk, InferenceSection
+from lumen.context.search.utils import populate_file_ids_on_sections
+from lumen.db.document import get_document_id_to_file_id_map
+from lumen.db.models import Document as DBDocument
+from lumen.kg.models import KGStage
 
 
 @pytest.fixture

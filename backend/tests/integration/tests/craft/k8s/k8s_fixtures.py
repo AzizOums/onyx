@@ -20,21 +20,21 @@ if TYPE_CHECKING:
 
     from tests.integration.common_utils.test_models import DATestUser
 
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from onyx.db.models import (
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from lumen.db.models import (
     ConnectorCredentialPair,
     Credential,
     Sandbox,
     User,
     User__UserGroup,
 )
-from onyx.server.features.build.configs import SANDBOX_NAMESPACE, SANDBOX_PROXY_PORT
-from onyx.server.features.build.db.user_library import delete_user_file, list_user_files
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from lumen.server.features.build.configs import SANDBOX_NAMESPACE, SANDBOX_PROXY_PORT
+from lumen.server.features.build.db.user_library import delete_user_file, list_user_files
+from lumen.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
-from onyx.server.features.build.sandbox.session_workspace import SESSIONS_ROOT
-from onyx.utils.logger import setup_logger
+from lumen.server.features.build.sandbox.session_workspace import SESSIONS_ROOT
+from lumen.utils.logger import setup_logger
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 from tests.integration.common_utils.managers.build_session import BuildSessionManager
@@ -95,10 +95,10 @@ def _is_k8s_craft_request(request: pytest.FixtureRequest) -> bool:
 
 
 def _sandbox_push_private_key() -> str:
-    configured = os.environ.get("ONYX_SANDBOX_PUSH_PRIVATE_KEY")
+    configured = os.environ.get("LUMEN_SANDBOX_PUSH_PRIVATE_KEY")
     if not configured:
         pytest.fail(
-            "ONYX_SANDBOX_PUSH_PRIVATE_KEY must be set for the k8s Craft suite. "
+            "LUMEN_SANDBOX_PUSH_PRIVATE_KEY must be set for the k8s Craft suite. "
             "API-provisioned pods verify pushes against the deployed server's key, "
             "so a generated fallback would silently mismatch (false-pass negative "
             "skip tests, hard-fail positive push tests). CI provides this from the "
@@ -116,12 +116,12 @@ def _sandbox_push_key(
         yield
         return
 
-    from onyx.server.features.build import configs as build_configs
-    from onyx.server.features.build.sandbox.kubernetes import sidecar_client
+    from lumen.server.features.build import configs as build_configs
+    from lumen.server.features.build.sandbox.kubernetes import sidecar_client
 
     push_key = _sandbox_push_private_key()
     mp = pytest.MonkeyPatch()
-    mp.setenv("ONYX_SANDBOX_PUSH_PRIVATE_KEY", push_key)
+    mp.setenv("LUMEN_SANDBOX_PUSH_PRIVATE_KEY", push_key)
     mp.setattr(build_configs, "SANDBOX_PUSH_PRIVATE_KEY", push_key)
     mp.setattr(sidecar_client, "SANDBOX_PUSH_PRIVATE_KEY", push_key)
     mp.setattr(sidecar_client, "_push_private_key", None)
@@ -495,7 +495,7 @@ def _pool_pod(
     k8s_client: "k8s_client_module.CoreV1Api",
 ) -> Generator[_PoolPod, None, None]:
     """Module-scoped sandbox pod shared by all ``running_sandbox()`` calls."""
-    from onyx.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
+    from lumen.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
 
     if SANDBOX_BACKEND != SandboxBackend.KUBERNETES:
         pytest.skip(
@@ -535,7 +535,7 @@ def running_sandbox(
     clean slate. Extra user-owned pods come from
     ``SandboxHandle.provision_api_user``.
     """
-    from onyx.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
+    from lumen.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
 
     if SANDBOX_BACKEND != SandboxBackend.KUBERNETES:
         pytest.skip(
@@ -610,7 +610,7 @@ def running_sandbox(
 def k8s_client() -> "k8s_client_module.CoreV1Api":
     from kubernetes import client as k8s_client_module
 
-    from onyx.server.features.build.sandbox.kubernetes.k8s_client import (
+    from lumen.server.features.build.sandbox.kubernetes.k8s_client import (
         load_kube_config,
     )
 
@@ -794,7 +794,7 @@ def wait_for_proxy_redeploy(
     """Wait until the sandbox-proxy Deployment reports a ready replica."""
     from kubernetes import client as k8s_client_module
 
-    from onyx.server.features.build.configs import SANDBOX_PROXY_NAMESPACE
+    from lumen.server.features.build.configs import SANDBOX_PROXY_NAMESPACE
 
     proxy_component_label = "app.kubernetes.io/component=sandbox-proxy"
     apps_v1 = k8s_client_module.AppsV1Api()

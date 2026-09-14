@@ -1,6 +1,6 @@
 "use client";
 
-import { MinimalOnyxDocument, OnyxDocument } from "@/lib/search/interfaces";
+import { MinimalLumenDocument, LumenDocument } from "@/lib/search/interfaces";
 import ChatDocumentDisplay from "@/sections/document-sidebar/ChatDocumentDisplay";
 import { removeDuplicateDocs } from "@/lib/documentUtils";
 import { Dispatch, SetStateAction, useMemo, memo } from "react";
@@ -14,12 +14,12 @@ import Text from "@/refresh-components/texts/Text";
 import { Button, Divider } from "@opal/components";
 import { SvgSearchMenu, SvgX } from "@opal/icons";
 
-// Build an OnyxDocument from basic file info
-const buildOnyxDocumentFromFile = (
+// Build an LumenDocument from basic file info
+const buildLumenDocumentFromFile = (
   id: string,
   name?: string | null,
   appendProjectPrefix?: boolean
-): OnyxDocument => {
+): LumenDocument => {
   const document_id = appendProjectPrefix ? `project_file__${id}` : id;
   return {
     document_id,
@@ -83,9 +83,9 @@ function ChatDocumentDisplayWrapper({
 
 interface DocumentsSidebarProps {
   closeSidebar: () => void;
-  selectedDocuments: OnyxDocument[] | null;
+  selectedDocuments: LumenDocument[] | null;
   modal: boolean;
-  setPresentingDocument: Dispatch<SetStateAction<MinimalOnyxDocument | null>>;
+  setPresentingDocument: Dispatch<SetStateAction<MinimalLumenDocument | null>>;
 }
 
 const DocumentsSidebar = memo(
@@ -164,7 +164,7 @@ const DocumentsSidebar = memo(
 
     return (
       <div
-        id="onyx-chat-sidebar"
+        id="lumen-chat-sidebar"
         className="bg-background-tint-01 overflow-y-scroll h-full w-full border-s"
       >
         <div className="flex flex-col px-3 gap-6">
@@ -219,7 +219,7 @@ const DocumentsSidebar = memo(
                     key={file.id}
                     setPresentingDocument={setPresentingDocument}
                     modal={modal}
-                    document={buildOnyxDocumentFromFile(
+                    document={buildLumenDocumentFromFile(
                       file.id,
                       file.name,
                       false

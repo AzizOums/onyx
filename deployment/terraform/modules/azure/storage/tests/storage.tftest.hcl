@@ -4,8 +4,8 @@
 mock_provider "azurerm" {}
 
 variables {
-  storage_account_name = "onyxfilestoreprod"
-  resource_group_name  = "onyx-rg"
+  storage_account_name = "lumenfilestoreprod"
+  resource_group_name  = "lumen-rg"
   location             = "eastus"
 }
 
@@ -14,7 +14,7 @@ run "defaults_are_private_and_keyless" {
 
   assert {
     condition     = azurerm_storage_account.this.shared_access_key_enabled == false
-    error_message = "Onyx authenticates with workload identity, so shared keys should be off by default."
+    error_message = "Lumen authenticates with workload identity, so shared keys should be off by default."
   }
 
   assert {
@@ -51,7 +51,7 @@ run "an_allowlist_flips_the_account_to_deny_first" {
   command = plan
 
   variables {
-    allowed_subnet_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Network/virtualNetworks/onyx-vnet/subnets/onyx-aks"]
+    allowed_subnet_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Network/virtualNetworks/lumen-vnet/subnets/lumen-aks"]
   }
 
   assert {
@@ -176,7 +176,7 @@ run "accepts_a_bypass_of_none_on_its_own" {
 
   variables {
     network_rules_bypass = ["None"]
-    allowed_subnet_ids   = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Network/virtualNetworks/onyx-vnet/subnets/onyx-aks"]
+    allowed_subnet_ids   = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Network/virtualNetworks/lumen-vnet/subnets/lumen-aks"]
   }
 
   assert {
@@ -189,7 +189,7 @@ run "rejects_consecutive_hyphens_in_the_container_name" {
   command = plan
 
   variables {
-    container_name = "onyx--file-store"
+    container_name = "lumen--file-store"
   }
 
   expect_failures = [var.container_name]
@@ -209,7 +209,7 @@ run "rejects_a_container_name_ending_in_a_hyphen" {
   command = plan
 
   variables {
-    container_name = "onyx-file-store-"
+    container_name = "lumen-file-store-"
   }
 
   expect_failures = [var.container_name]
@@ -229,7 +229,7 @@ run "rejects_a_name_azure_would_reject" {
   command = plan
 
   variables {
-    storage_account_name = "Onyx-File-Store"
+    storage_account_name = "Lumen-File-Store"
   }
 
   expect_failures = [var.storage_account_name]
@@ -239,7 +239,7 @@ run "rejects_a_name_that_is_too_long" {
   command = plan
 
   variables {
-    storage_account_name = "onyxfilestoreproductioneastus"
+    storage_account_name = "lumenfilestoreproductioneastus"
   }
 
   expect_failures = [var.storage_account_name]

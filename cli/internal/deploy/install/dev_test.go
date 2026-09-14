@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/state"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/state"
 )
 
 // --dev writes the dev overlay next to the mode's own files and stacks it
@@ -59,7 +59,7 @@ func TestInstallDevOverlayStacksLast(t *testing.T) {
 		t.Fatal("compose up never ran")
 	}
 	base := strings.Index(up, "-f docker-compose.yml")
-	lite := strings.Index(up, "-f docker-compose.onyx-lite.yml")
+	lite := strings.Index(up, "-f docker-compose.lumen-lite.yml")
 	dev := strings.Index(up, "-f docker-compose.dev.yml")
 	if base < 0 || lite < 0 || dev < 0 || base >= lite || lite >= dev {
 		t.Errorf("dev overlay must come last in the -f list: %s", up)
@@ -116,7 +116,7 @@ func TestDevOverlayStaysOnRerunAndIsAutoDetected(t *testing.T) {
 
 	statusRunner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		if strings.Contains(argv(c), "ps -a") {
-			return dockercmd.Result{Stdout: "onyx-api_server-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 2 hours (healthy)\t0.0.0.0:8080->8080/tcp\tapi_server\n"}, nil
+			return dockercmd.Result{Stdout: "lumen-api_server-1\tlumendotapp/lumen-backend:v4.2.0\tUp 2 hours (healthy)\t0.0.0.0:8080->8080/tcp\tapi_server\n"}, nil
 		}
 		return healthyDockerHandler(c)
 	}}

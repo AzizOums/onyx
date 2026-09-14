@@ -1,4 +1,4 @@
-"""Onyx-managed (cloud) built-in external apps: registry invariants + cloud guards.
+"""Lumen-managed (cloud) built-in external apps: registry invariants + cloud guards.
 
 Covers the cloud lockdown in ``external_apps_api`` (admins may only set
 policies on built-in apps; never create, edit credentials/config, or delete
@@ -18,29 +18,29 @@ import pytest
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-import onyx.server.features.build.external_apps.api as api
-from onyx.db.enums import ExternalAppType, GatedAppKind
-from onyx.db.external_app import (
+import lumen.server.features.build.external_apps.api as api
+from lumen.db.enums import ExternalAppType, GatedAppKind
+from lumen.db.external_app import (
     associate_built_in_skill__no_commit,
     create_external_app,
     get_built_in_external_app,
 )
-from onyx.db.gated_app import get_action_policies
-from onyx.db.models import ExternalApp, Skill, User
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.external_apps.providers.registry import (
+from lumen.db.gated_app import get_action_policies
+from lumen.db.models import ExternalApp, Skill, User
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.external_apps.providers.registry import (
     PROVIDERS,
-    fetch_onyx_managed_built_in_apps,
+    fetch_lumen_managed_built_in_apps,
 )
-from onyx.server.features.build.external_apps.models import (
+from lumen.server.features.build.external_apps.models import (
     CreateBuiltInExternalAppRequest,
     UpdateExternalAppRequest,
 )
-from onyx.skills.built_in import EXTERNAL_APP_BUILT_IN_SKILL_IDS
+from lumen.skills.built_in import EXTERNAL_APP_BUILT_IN_SKILL_IDS
 
 _BUILT_IN_SLUGS = list(EXTERNAL_APP_BUILT_IN_SKILL_IDS.values())
-_MANAGED_APP_TYPES = [d.app_type for d in fetch_onyx_managed_built_in_apps()]
+_MANAGED_APP_TYPES = [d.app_type for d in fetch_lumen_managed_built_in_apps()]
 _GMAIL_CREDS = {"client_id": "cid", "client_secret": "sec"}
 _GMAIL_PATTERNS = ["https://gmail\\.googleapis\\.com/gmail/.*"]
 
@@ -110,9 +110,9 @@ def _create_request(
 # ---------------------------------------------------------------------------
 
 
-def test_all_built_ins_are_onyx_managed() -> None:
+def test_all_built_ins_are_lumen_managed() -> None:
     """Every built-in skill id has a registered provider, and all are currently
-    Onyx-managed. When a future built-in opts out (not an ``OnyxManagedExtApp``,
+    Lumen-managed. When a future built-in opts out (not an ``LumenManagedExtApp``,
     e.g. admins supply their own OAuth app), update this deliberately."""
     built_in = set(EXTERNAL_APP_BUILT_IN_SKILL_IDS)
     assert set(PROVIDERS) == built_in  # provider registry ↔ built-in skill ids
@@ -132,13 +132,13 @@ def test_cloud_blocks_built_in_create(
     monkeypatch.setattr(api, "MULTI_TENANT", True)
     monkeypatch.setattr(api, "push_skill_to_affected_sandboxes", _noop)
 
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(LumenError) as exc:
         api.create_built_in_external_app(
             request=_create_request(),
             _=test_user,
             db_session=db_session,
         )
-    assert exc.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc.value.error_code == LumenErrorCode.INVALID_INPUT
     assert get_built_in_external_app(db_session, ExternalAppType.GMAIL) is None
 
 
@@ -147,7 +147,7 @@ def test_cloud_patch_updates_policies_and_protects_creds_and_config(
     test_user: User,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Managed app configuration is Onyx-owned and omitted from the response."""
+    """Managed app configuration is Lumen-owned and omitted from the response."""
     _seed_built_in(db_session, ExternalAppType.GMAIL, _GMAIL_CREDS)
     gmail = get_built_in_external_app(db_session, ExternalAppType.GMAIL)
     assert gmail is not None
@@ -192,13 +192,13 @@ def test_cloud_blocks_built_in_delete(
 
     monkeypatch.setattr(api, "MULTI_TENANT", True)
 
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(LumenError) as exc:
         api.delete_external_app_admin(
             external_app_id=app_id,
             _=test_user,
             db_session=db_session,
         )
-    assert exc.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc.value.error_code == LumenErrorCode.INVALID_INPUT
     assert get_built_in_external_app(db_session, ExternalAppType.GMAIL) is not None
 
 

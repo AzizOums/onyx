@@ -8,10 +8,10 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.models import Credential, User
-from onyx.server.documents.credential import create_credential_from_model
-from onyx.server.documents.models import CredentialBase
+from lumen.configs.constants import DocumentSource
+from lumen.db.models import Credential, User
+from lumen.server.documents.credential import create_credential_from_model
+from lumen.server.documents.models import CredentialBase
 from tests.external_dependency_unit.conftest import create_test_user, delete_test_user
 
 

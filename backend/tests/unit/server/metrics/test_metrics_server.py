@@ -9,13 +9,13 @@ from wsgiref.simple_server import WSGIServer
 
 import pytest
 
-from onyx.server.metrics.metrics_server import _DEFAULT_PORTS, start_metrics_server
+from lumen.server.metrics.metrics_server import _DEFAULT_PORTS, start_metrics_server
 
 
 @pytest.fixture(autouse=True)
 def reset_server_state() -> Iterator[None]:
     """Reset the global server state between tests."""
-    import onyx.server.metrics.metrics_server as mod
+    import lumen.server.metrics.metrics_server as mod
 
     def _teardown() -> None:
         if mod._httpd is not None:
@@ -53,33 +53,33 @@ def _scrape(host: str, port: int) -> int:
 
 
 class TestStartMetricsServer:
-    @patch("onyx.server.metrics.metrics_server._start_wsgi_server")
+    @patch("lumen.server.metrics.metrics_server._start_wsgi_server")
     def test_uses_default_port_for_known_worker(self, mock_start: MagicMock) -> None:
         port = start_metrics_server("monitoring")
         assert port == _DEFAULT_PORTS["monitoring"]
         mock_start.assert_called_once_with("::", _DEFAULT_PORTS["monitoring"])
 
-    @patch("onyx.server.metrics.metrics_server._start_wsgi_server")
+    @patch("lumen.server.metrics.metrics_server._start_wsgi_server")
     @patch.dict("os.environ", {"PROMETHEUS_METRICS_PORT": "9999"})
     def test_env_var_overrides_default(self, mock_start: MagicMock) -> None:
         port = start_metrics_server("monitoring")
         assert port == 9999
         mock_start.assert_called_once_with("::", 9999)
 
-    @patch("onyx.server.metrics.metrics_server._start_wsgi_server")
+    @patch("lumen.server.metrics.metrics_server._start_wsgi_server")
     @patch.dict("os.environ", {"PROMETHEUS_METRICS_ENABLED": "false"})
     def test_disabled_via_env_var(self, mock_start: MagicMock) -> None:
         port = start_metrics_server("monitoring")
         assert port is None
         mock_start.assert_not_called()
 
-    @patch("onyx.server.metrics.metrics_server._start_wsgi_server")
+    @patch("lumen.server.metrics.metrics_server._start_wsgi_server")
     def test_unknown_worker_type_no_env_var(self, mock_start: MagicMock) -> None:
         port = start_metrics_server("unknown_worker")
         assert port is None
         mock_start.assert_not_called()
 
-    @patch("onyx.server.metrics.metrics_server._start_wsgi_server")
+    @patch("lumen.server.metrics.metrics_server._start_wsgi_server")
     def test_idempotent(self, mock_start: MagicMock) -> None:
         port1 = start_metrics_server("monitoring")
         port2 = start_metrics_server("monitoring")
@@ -87,7 +87,7 @@ class TestStartMetricsServer:
         assert port2 is None
         mock_start.assert_called_once()
 
-    @patch("onyx.server.metrics.metrics_server._start_wsgi_server")
+    @patch("lumen.server.metrics.metrics_server._start_wsgi_server")
     def test_handles_os_error(self, mock_start: MagicMock) -> None:
         mock_start.side_effect = OSError("Address already in use")
         port = start_metrics_server("monitoring")
@@ -95,7 +95,7 @@ class TestStartMetricsServer:
         # Both wildcards are attempted before giving up.
         assert mock_start.call_count == 2
 
-    @patch("onyx.server.metrics.metrics_server._start_wsgi_server")
+    @patch("lumen.server.metrics.metrics_server._start_wsgi_server")
     @patch.dict("os.environ", {"PROMETHEUS_METRICS_PORT": "not_a_number"})
     def test_invalid_port_env_var_returns_none(self, mock_start: MagicMock) -> None:
         port = start_metrics_server("monitoring")
@@ -104,7 +104,7 @@ class TestStartMetricsServer:
 
 
 class TestBindAddressSelection:
-    @patch("onyx.server.metrics.metrics_server._start_wsgi_server")
+    @patch("lumen.server.metrics.metrics_server._start_wsgi_server")
     def test_falls_back_to_ipv4_when_ipv6_unavailable(
         self, mock_start: MagicMock
     ) -> None:
@@ -121,7 +121,7 @@ class TestBindAddressSelection:
         assert port == _DEFAULT_PORTS["monitoring"]
         assert [call.args[0] for call in mock_start.call_args_list] == ["::", "0.0.0.0"]
 
-    @patch("onyx.server.metrics.metrics_server._start_wsgi_server")
+    @patch("lumen.server.metrics.metrics_server._start_wsgi_server")
     def test_unexpected_error_does_not_stop_the_worker(
         self, mock_start: MagicMock
     ) -> None:
@@ -131,13 +131,13 @@ class TestBindAddressSelection:
 
     def test_empty_getaddrinfo_surfaces_as_os_error(self) -> None:
         """A non-OSError here would bypass the fallback and reach the worker."""
-        import onyx.server.metrics.metrics_server as mod
+        import lumen.server.metrics.metrics_server as mod
 
         with patch.object(socket, "getaddrinfo", return_value=[]):
             with pytest.raises(OSError):
                 mod._start_wsgi_server("::", 9099)
 
-    @patch("onyx.server.metrics.metrics_server._start_wsgi_server")
+    @patch("lumen.server.metrics.metrics_server._start_wsgi_server")
     @patch.dict("os.environ", {"PROMETHEUS_METRICS_BIND_ADDR": "127.0.0.1"})
     def test_explicit_bind_addr_is_pinned(self, mock_start: MagicMock) -> None:
         """An explicit bind address is honored verbatim, with no fallback."""
@@ -158,7 +158,7 @@ class TestDualStackListener:
         socket so this holds on hosts whose sysctl already defaults to 0 and
         would otherwise mask both mistakes.
         """
-        import onyx.server.metrics.metrics_server as mod
+        import lumen.server.metrics.metrics_server as mod
 
         parent = MagicMock()
         server = object.__new__(mod._DualStackWSGIServer)
@@ -183,7 +183,7 @@ class TestDualStackListener:
         cluster while being unroutable for every scraper, so the bind proceeds
         and the reduced reachability is warned about instead.
         """
-        import onyx.server.metrics.metrics_server as mod
+        import lumen.server.metrics.metrics_server as mod
 
         server = object.__new__(mod._DualStackWSGIServer)
         server.address_family = socket.AF_INET6
@@ -200,7 +200,7 @@ class TestDualStackListener:
 
     def test_server_bind_leaves_ipv4_socket_alone(self) -> None:
         """An AF_INET listener has no IPV6_V6ONLY option to set."""
-        import onyx.server.metrics.metrics_server as mod
+        import lumen.server.metrics.metrics_server as mod
 
         server = object.__new__(mod._DualStackWSGIServer)
         server.address_family = socket.AF_INET
@@ -215,7 +215,7 @@ class TestDualStackListener:
         not _ipv6_loopback_available(), reason="IPv6 loopback unavailable"
     )
     def test_serves_both_ipv4_and_ipv6_scrapers(self) -> None:
-        import onyx.server.metrics.metrics_server as mod
+        import lumen.server.metrics.metrics_server as mod
 
         port = _free_port()
         with patch.dict("os.environ", {"PROMETHEUS_METRICS_PORT": str(port)}):
@@ -241,7 +241,7 @@ class TestDualStackListener:
         rather than a live scope id; passing the tuple through is what lets a
         scoped address like fe80::1%eth0 bind at all.
         """
-        import onyx.server.metrics.metrics_server as mod
+        import lumen.server.metrics.metrics_server as mod
 
         captured: list[tuple[object, ...]] = []
         real_init = mod._DualStackWSGIServer.__init__
@@ -267,7 +267,7 @@ class TestDualStackListener:
 
     def test_pinned_ipv4_bind_stays_ipv4(self) -> None:
         """A pinned IPv4 address is respected rather than upgraded to IPv6."""
-        import onyx.server.metrics.metrics_server as mod
+        import lumen.server.metrics.metrics_server as mod
 
         port = _free_port()
         env = {

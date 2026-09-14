@@ -4,14 +4,14 @@ from typing import Any
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.exceptions import ConnectorValidationError, CredentialExpiredError
-from onyx.connectors.models import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.exceptions import ConnectorValidationError, CredentialExpiredError
+from lumen.connectors.models import (
     ConnectorMissingCredentialError,
     Document,
     HierarchyNode,
 )
-from onyx.connectors.outline.connector import OutlineConnector
+from lumen.connectors.outline.connector import OutlineConnector
 
 
 class TestOutlineConnector:

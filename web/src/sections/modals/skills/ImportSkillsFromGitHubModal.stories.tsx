@@ -24,7 +24,7 @@ const preview = {
       path: "skills/pptx",
       name: "pptx",
       description: "Create and edit presentation files.",
-      unavailable_reason: "A built-in Onyx skill already uses this name.",
+      unavailable_reason: "A built-in Lumen skill already uses this name.",
     },
   ],
 };

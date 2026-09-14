@@ -50,7 +50,7 @@ const tc = createTableColumns<UserRow>();
 export default function CraftPage() {
   const t = useTranslations("admin.craft");
   const settings = useSettings();
-  const craftAvailable = settings?.onyx_craft_available === true;
+  const craftAvailable = settings?.lumen_craft_available === true;
   const defaultEnabled = settings?.craft_default_enabled !== false;
 
   const { users, isLoading, error, refresh } = useAdminUsers();
@@ -154,7 +154,7 @@ export default function CraftPage() {
   );
 
   // useSettings returns a default object while loading (and on error), which
-  // lacks onyx_craft_available — don't misreport Craft as unavailable.
+  // lacks lumen_craft_available — don't misreport Craft as unavailable.
   if (settings.isLoading || settings.error) {
     return (
       <SettingsLayouts.Root>

@@ -10,8 +10,8 @@ from uuid import UUID
 
 from sqlalchemy import select
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import User, User__UserGroup
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.models import User, User__UserGroup
 
 
 def effective_permissions(user_id: str | UUID) -> set[str]:

@@ -9,8 +9,8 @@ and are not exposed via API endpoints, so they must be tested directly.
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import AccountType
-from onyx.db.users import (
+from lumen.db.enums import AccountType
+from lumen.db.users import (
     add_slack_user_if_not_exists,
     batch_add_ext_perm_user_if_not_exists,
 )

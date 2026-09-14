@@ -12,10 +12,10 @@ import sys
 
 from sqlalchemy import text
 
-from onyx.db.engine.shard_registry import get_engine_for_shard, get_shard_specs
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_shared_schema
-from onyx.db.engine.tenant_utils import validate_tenant_id
-from onyx.db.tenant_shard import clear_tenant_placement
+from lumen.db.engine.shard_registry import get_engine_for_shard, get_shard_specs
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_shared_schema
+from lumen.db.engine.tenant_utils import validate_tenant_id
+from lumen.db.tenant_shard import clear_tenant_placement
 
 
 def drop_data_plane_schema(tenant_id: str) -> dict[str, str]:

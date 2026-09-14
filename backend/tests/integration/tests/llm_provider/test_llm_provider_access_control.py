@@ -4,15 +4,15 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.llm import (
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.llm import (
     can_user_access_llm_provider,
     fetch_user_group_ids,
     update_default_provider,
     upsert_llm_provider,
 )
-from onyx.db.models import LLMProvider as LLMProviderModel
-from onyx.db.models import (
+from lumen.db.models import LLMProvider as LLMProviderModel
+from lumen.db.models import (
     LLMProvider__Persona,
     LLMProvider__UserGroup,
     ModelConfiguration,
@@ -21,9 +21,9 @@ from onyx.db.models import (
     User__UserGroup,
     UserGroup,
 )
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.factory import get_llm_for_persona
-from onyx.server.manage.llm.models import (
+from lumen.llm.constants import LlmProviderNames
+from lumen.llm.factory import get_llm_for_persona
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )

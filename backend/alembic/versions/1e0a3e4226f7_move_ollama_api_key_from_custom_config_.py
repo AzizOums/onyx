@@ -8,7 +8,7 @@ Moves the optional Ollama Cloud bearer token out of the plaintext
 ``custom_config`` JSONB and into the encrypted ``api_key`` column, matching how
 every other provider stores its credential.
 
-Encryption goes through ``onyx.utils.encryption`` (as revisions ``0a98909f2757``
+Encryption goes through ``lumen.utils.encryption`` (as revisions ``0a98909f2757``
 and ``3c9a65f1207f`` do) rather than a local reimplementation: that helper
 dispatches on EE-vs-MIT, so the value we write is exactly what the running app
 reads back. Reimplementing AES here would ignore that gate and corrupt values on
@@ -29,8 +29,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from onyx.utils.encryption import decrypt_bytes_to_string
-from onyx.utils.encryption import encrypt_string_to_bytes
+from lumen.utils.encryption import decrypt_bytes_to_string
+from lumen.utils.encryption import encrypt_string_to_bytes
 
 # revision identifiers, used by Alembic.
 revision = "1e0a3e4226f7"

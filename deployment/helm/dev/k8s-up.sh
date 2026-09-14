@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# k8s-up.sh — bring up an Onyx dev cluster on the local machine.
+# k8s-up.sh — bring up an Lumen dev cluster on the local machine.
 #
 # Idempotent. See docs/craft/dev/local-kubernetes.md for the full workflow.
 #
@@ -9,24 +9,24 @@
 #   deployment/helm/dev/k8s-up.sh --opensearch-password 'YourStrongPwHere'
 #
 # Flags:
-#   --cluster-name <name>          kind cluster name (default: onyx-dev)
-#   --namespace <ns>               k8s namespace (default: onyx)
+#   --cluster-name <name>          kind cluster name (default: lumen-dev)
+#   --namespace <ns>               k8s namespace (default: lumen)
 #   --opensearch-password <pw>     admin password on first install
 #                                  (default: generated, printed at the end)
 #   --skip-cluster-create          skip kind create (use an existing cluster)
-#   --skip-helm                    only create the cluster, don't install Onyx
+#   --skip-helm                    only create the cluster, don't install Lumen
 
 set -euo pipefail
 
-CLUSTER_NAME="onyx-dev"
-NAMESPACE="onyx"
+CLUSTER_NAME="lumen-dev"
+NAMESPACE="lumen"
 OPENSEARCH_PASSWORD=""
 SKIP_CLUSTER_CREATE=0
 SKIP_HELM=0
 KIND_NODE_IMAGE="${KIND_NODE_IMAGE:-kindest/node:v1.33.1}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CHART_DIR="$(cd "$SCRIPT_DIR/../charts/onyx" && pwd)"
+CHART_DIR="$(cd "$SCRIPT_DIR/../charts/lumen" && pwd)"
 VALUES_OVERLAY="$CHART_DIR/values-localdev.yaml"
 
 require() {
@@ -74,7 +74,7 @@ fi
 kubectl config use-context "kind-$CLUSTER_NAME" >/dev/null
 
 # Refuse to operate unless the current context is exactly the expected kind
-# cluster: the 'onyx' namespace exists in prod EKS too, and other kind clusters
+# cluster: the 'lumen' namespace exists in prod EKS too, and other kind clusters
 # may also be present.
 EXPECTED_CTX="kind-$CLUSTER_NAME"
 CURRENT_CTX="$(kubectl config current-context)"
@@ -93,22 +93,22 @@ fi
 
 kubectl get namespace "$NAMESPACE" >/dev/null 2>&1 \
   || kubectl create namespace "$NAMESPACE"
-# The chart also templates the onyx-sandboxes namespace (see
+# The chart also templates the lumen-sandboxes namespace (see
 # templates/sandbox-namespace.yaml). We pre-create it here so local setup can
 # label nodes before helm install runs, but we must stamp Helm ownership
 # metadata or `helm install` refuses to adopt the namespace.
-kubectl get namespace onyx-sandboxes >/dev/null 2>&1 \
-  || kubectl create namespace onyx-sandboxes
-kubectl label   namespace onyx-sandboxes app.kubernetes.io/managed-by=Helm --overwrite >/dev/null
-kubectl annotate namespace onyx-sandboxes meta.helm.sh/release-name=onyx --overwrite >/dev/null
-kubectl annotate namespace onyx-sandboxes meta.helm.sh/release-namespace="$NAMESPACE" --overwrite >/dev/null
-kubectl label node --all onyx.app/workload=sandbox --overwrite >/dev/null 2>&1
+kubectl get namespace lumen-sandboxes >/dev/null 2>&1 \
+  || kubectl create namespace lumen-sandboxes
+kubectl label   namespace lumen-sandboxes app.kubernetes.io/managed-by=Helm --overwrite >/dev/null
+kubectl annotate namespace lumen-sandboxes meta.helm.sh/release-name=lumen --overwrite >/dev/null
+kubectl annotate namespace lumen-sandboxes meta.helm.sh/release-namespace="$NAMESPACE" --overwrite >/dev/null
+kubectl label node --all lumen.app/workload=sandbox --overwrite >/dev/null 2>&1
 
 # Use an isolated helm repo config: helm matches chart deps by repo NAME, so a
 # stale dev-global repo with a colliding name (we've seen this with
 # 'code-interpreter') can shadow ours and break the install.
 echo "preparing isolated helm repo config ..."
-HELM_DEV_HOME="$(mktemp -d -t onyx-dev-helm-XXXXXX)"
+HELM_DEV_HOME="$(mktemp -d -t lumen-dev-helm-XXXXXX)"
 export HELM_REPOSITORY_CONFIG="$HELM_DEV_HOME/repositories.yaml"
 export HELM_REPOSITORY_CACHE="$HELM_DEV_HOME/cache"
 mkdir -p "$HELM_REPOSITORY_CACHE"
@@ -116,12 +116,12 @@ trap 'rm -rf "$HELM_DEV_HOME"' EXIT
 
 # Repo names must match the dep names in Chart.yaml.
 helm repo add cloudnative-pg  https://cloudnative-pg.github.io/charts          >/dev/null
-helm repo add vespa           https://onyx-dot-app.github.io/vespa-helm-charts >/dev/null
+helm repo add vespa           https://lumen-dot-app.github.io/vespa-helm-charts >/dev/null
 helm repo add opensearch      https://opensearch-project.github.io/helm-charts >/dev/null
 helm repo add ingress-nginx   https://kubernetes.github.io/ingress-nginx       >/dev/null
 helm repo add redis-ot        https://ot-container-kit.github.io/helm-charts   >/dev/null
 helm repo add minio           https://charts.min.io/                           >/dev/null
-helm repo add code-interpreter https://onyx-dot-app.github.io/python-sandbox/  >/dev/null
+helm repo add code-interpreter https://lumen-dot-app.github.io/python-sandbox/  >/dev/null
 helm repo update >/dev/null
 
 echo "updating chart dependencies ..."
@@ -129,18 +129,18 @@ helm dependency update "$CHART_DIR" >/dev/null
 
 # Generate a password on first install only; upgrades reuse the existing Secret.
 PW_FLAG=()
-if ! kubectl -n "$NAMESPACE" get secret onyx-opensearch >/dev/null 2>&1; then
+if ! kubectl -n "$NAMESPACE" get secret lumen-opensearch >/dev/null 2>&1; then
   if [[ -z "$OPENSEARCH_PASSWORD" ]]; then
     # Prefix 'Aa1!' satisfies OpenSearch's complexity rule (upper/lower/digit/symbol).
     OPENSEARCH_PASSWORD="Aa1!$(openssl rand -hex 12)"
     echo "generated opensearch admin password: $OPENSEARCH_PASSWORD"
-    echo "(stored in k8s Secret onyx-opensearch — retrieve with:"
-    echo "  kubectl -n $NAMESPACE get secret onyx-opensearch -o jsonpath='{.data.opensearch_admin_password}' | base64 -d)"
+    echo "(stored in k8s Secret lumen-opensearch — retrieve with:"
+    echo "  kubectl -n $NAMESPACE get secret lumen-opensearch -o jsonpath='{.data.opensearch_admin_password}' | base64 -d)"
   fi
   PW_FLAG=(--set "auth.opensearch.values.opensearch_admin_password=$OPENSEARCH_PASSWORD")
 fi
 
-echo "helm upgrade --install onyx ..."
+echo "helm upgrade --install lumen ..."
 # ${PW_FLAG[@]+"${PW_FLAG[@]}"} expands to nothing when empty; bare
 # "${PW_FLAG[@]}" errors under `set -u` on subsequent runs.
 #
@@ -151,7 +151,7 @@ echo "helm upgrade --install onyx ..."
 # transparently to keep the OOB experience one-shot.
 HELM_ATTEMPTS=3
 for attempt in $(seq 1 "$HELM_ATTEMPTS"); do
-  if helm upgrade --install onyx "$CHART_DIR" \
+  if helm upgrade --install lumen "$CHART_DIR" \
       -n "$NAMESPACE" \
       -f "$VALUES_OVERLAY" \
       ${PW_FLAG[@]+"${PW_FLAG[@]}"}; then
@@ -219,11 +219,11 @@ next steps:
 
   3. for features that depend on api_server-source pod identity (e.g.
      NetworkPolicies, in-pod auth via injected env), intercept instead:
-       telepresence intercept onyx-api-server \\
+       telepresence intercept lumen-api-server \\
          --namespace $NAMESPACE \\
          --port 8080:8080
 
-  4. open vscode and run the "Run All Onyx Services" launch profile.
+  4. open vscode and run the "Run All Lumen Services" launch profile.
      Before first run, copy .vscode/.env.k8s.template to .vscode/.env.k8s
      and fill in the <REPLACE THIS> values.
 

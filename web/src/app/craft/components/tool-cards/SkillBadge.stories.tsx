@@ -23,7 +23,7 @@ export const Variants: Story = {
     <div className="flex flex-col gap-2 items-start">
       <SkillBadge name="code-review" />
       <SkillBadge name="security-review" />
-      <SkillBadge name="onyx-cli" />
+      <SkillBadge name="lumen-cli" />
       <SkillBadge name="pdf" />
       <SkillBadge name="playwright" />
     </div>

@@ -24,8 +24,8 @@ INDEXING_REQUEST_ID_CONTEXTVAR: contextvars.ContextVar[str | None] = (
 )
 
 # set by every route in the API server
-ONYX_REQUEST_ID_CONTEXTVAR: contextvars.ContextVar[str | None] = contextvars.ContextVar(
-    "onyx_request_id", default=None
+LUMEN_REQUEST_ID_CONTEXTVAR: contextvars.ContextVar[str | None] = contextvars.ContextVar(
+    "lumen_request_id", default=None
 )
 
 # Used to store cc pair id and index attempt id in multithreaded environments
@@ -44,7 +44,7 @@ CURRENT_USER_ID_CONTEXTVAR: contextvars.ContextVar[str | None] = contextvars.Con
 )
 
 # IncognitoRecordMode value of the streaming turn's session, None outside
-# incognito. A plain string keeps this layer free of onyx imports.
+# incognito. A plain string keeps this layer free of lumen imports.
 CURRENT_INCOGNITO_RECORD_MODE_CONTEXTVAR: contextvars.ContextVar[str | None] = (
     contextvars.ContextVar("current_incognito_record_mode", default=None)
 )

@@ -21,8 +21,8 @@ import httpx
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.cache.interface import CacheLockAcquisitionError
-from onyx.db.enums import (
+from lumen.cache.interface import CacheLockAcquisitionError
+from lumen.db.enums import (
     EndpointPolicy,
     GatedAppKind,
     MCPAuthenticationPerformer,
@@ -30,26 +30,26 @@ from onyx.db.enums import (
     MCPOAuthProviderMode,
     MCPTransport,
 )
-from onyx.db.mcp import (
+from lumen.db.mcp import (
     create_connection_config,
     create_mcp_server__no_commit,
     get_connection_config_by_id,
     update_mcp_server__no_commit,
 )
-from onyx.db.models import MCPServer, OAuthAccount, User
-from onyx.external_apps.matching.engine import (
+from lumen.db.models import MCPServer, OAuthAccount, User
+from lumen.external_apps.matching.engine import (
     AllMatchedActions,
     GatedTarget,
     MatchedAction,
 )
-from onyx.sandbox_proxy.credential_injection import (
+from lumen.sandbox_proxy.credential_injection import (
     CredentialUnavailableError,
     InjectionContext,
 )
-from onyx.sandbox_proxy.identity import ResolvedSandbox
-from onyx.sandbox_proxy.resolvers.mcp_server import MCPServerResolver
-from onyx.server.features.mcp.credentials import extract_connection_data
-from onyx.server.features.mcp.models import MCPConnectionData, MCPOAuthKeys
+from lumen.sandbox_proxy.identity import ResolvedSandbox
+from lumen.sandbox_proxy.resolvers.mcp_server import MCPServerResolver
+from lumen.server.features.mcp.credentials import extract_connection_data
+from lumen.server.features.mcp.models import MCPConnectionData, MCPOAuthKeys
 from shared_configs.contextvars import POSTGRES_DEFAULT_SCHEMA
 from tests.external_dependency_unit.conftest import create_test_user
 
@@ -563,7 +563,7 @@ def test_valid_oauth_token_injected_without_refresh(
         raise AssertionError("refresh must not run for an unexpired token")
 
     monkeypatch.setattr(
-        "onyx.sandbox_proxy.resolvers.mcp_server.refresh_mcp_oauth_token_if_expired",
+        "lumen.sandbox_proxy.resolvers.mcp_server.refresh_mcp_oauth_token_if_expired",
         _fail_refresh,
     )
 
@@ -592,7 +592,7 @@ def _mock_token_endpoint(
         )
 
     monkeypatch.setattr(
-        "onyx.server.features.mcp.oauth.mcp_ssrf_httpx_client_factory", _factory
+        "lumen.server.features.mcp.oauth.mcp_ssrf_httpx_client_factory", _factory
     )
 
 
@@ -717,7 +717,7 @@ def test_refresh_lock_contention_yields_retry_detail(
     def _contended(*_args: Any, **_kwargs: Any) -> Any:
         raise CacheLockAcquisitionError("held by another refresher")
 
-    monkeypatch.setattr("onyx.server.features.mcp.oauth.cache_shared_lock", _contended)
+    monkeypatch.setattr("lumen.server.features.mcp.oauth.cache_shared_lock", _contended)
 
     with pytest.raises(CredentialUnavailableError) as exc_info:
         MCPServerResolver().resolve(_request(_server_host(server)), _ctx(user))

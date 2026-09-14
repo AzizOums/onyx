@@ -1,7 +1,7 @@
 import type { Browser, Page } from "@playwright/test";
 import { Permission } from "@/lib/types";
 import { loginAs } from "./auth";
-import { OnyxApiClient } from "./onyxApiClient";
+import { LumenApiClient } from "./lumenApiClient";
 import {
   WORKER_USER_POOL_SIZE,
   workerUserCredentials,
@@ -44,7 +44,7 @@ export async function grantWorkerPermissions(
 ): Promise<number | undefined> {
   await page.context().clearCookies();
   await loginAs(page, "admin");
-  const adminClient = new OnyxApiClient(page.request);
+  const adminClient = new LumenApiClient(page.request);
 
   const registryRes = await page.request.get(
     "/api/manage/admin/permissions/registry"
@@ -85,7 +85,7 @@ export async function cleanupPermissionGroup(
     storageState: "admin_auth.json",
   });
   const page = await context.newPage();
-  const client = new OnyxApiClient(page.request);
+  const client = new LumenApiClient(page.request);
   await client
     .deleteUserGroup(groupId)
     .catch((e: unknown) => console.warn("permission group cleanup:", e));

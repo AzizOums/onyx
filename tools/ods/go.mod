@@ -1,4 +1,4 @@
-module github.com/onyx-dot-app/onyx/tools/ods
+module github.com/lumen-dot-app/lumen/tools/ods
 
 go 1.26.4
 

@@ -11,15 +11,15 @@ from datetime import datetime, timedelta, timezone
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.capabilities import CredentialCapability
-from onyx.connectors.capability_checks.models import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.capabilities import CredentialCapability
+from lumen.connectors.capability_checks.models import (
     CapabilityCheckResult,
     CapabilityCheckStatus,
     CapabilityVerdict,
     CredentialCapabilityReport,
 )
-from onyx.db.credential_capability import (
+from lumen.db.credential_capability import (
     get_capability_report_row,
     get_capability_report_rows_for_source,
     get_sources_with_running_capability_runs,
@@ -29,8 +29,8 @@ from onyx.db.credential_capability import (
     upsert_completed_capability_report,
     upsert_completed_capability_report_unless_granular,
 )
-from onyx.db.enums import CapabilityCheckTrigger, CapabilityReportRunStatus
-from onyx.db.models import Credential
+from lumen.db.enums import CapabilityCheckTrigger, CapabilityReportRunStatus
+from lumen.db.models import Credential
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair
 
 

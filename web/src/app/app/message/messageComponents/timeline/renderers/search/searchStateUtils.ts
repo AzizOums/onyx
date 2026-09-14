@@ -7,7 +7,7 @@ import {
   SearchToolDocumentsDelta,
   SectionEnd,
 } from "@/app/app/services/streamingModels";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { LumenDocument } from "@/lib/search/interfaces";
 import { getSourceDisplayName, isValidSource } from "@/lib/sources";
 import { ValidSources } from "@/lib/types";
 
@@ -37,7 +37,7 @@ export interface TimeFilter {
 
 export interface SearchState {
   queries: string[];
-  results: OnyxDocument[];
+  results: LumenDocument[];
   sourceFilters: string[];
   timeFilter: TimeFilter | null;
   isSearching: boolean;

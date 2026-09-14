@@ -47,7 +47,6 @@ export function useAdminNavLabels(): Record<AdminNavItemId, string> {
       queryHistory: t("adminNav.items.queryHistory.label"),
       tracing: t("adminNav.items.tracing.label"),
       exportLogs: t("adminNav.items.exportLogs.label"),
-      upgradePlan: t("adminNav.items.upgradePlan.label"),
     }),
     [t]
   );

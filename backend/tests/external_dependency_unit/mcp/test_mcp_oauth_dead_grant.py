@@ -12,27 +12,27 @@ from uuid import uuid4
 import httpx
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     MCPAuthenticationPerformer,
     MCPAuthenticationType,
     MCPTransport,
 )
-from onyx.db.mcp import (
+from lumen.db.mcp import (
     create_mcp_server__no_commit,
     get_user_connection_config,
     update_mcp_server__no_commit,
     upsert_user_connection_config,
 )
-from onyx.db.models import MCPServer, User
-from onyx.server.features.build.sandbox.util.mcp_config import (
+from lumen.db.models import MCPServer, User
+from lumen.server.features.build.sandbox.util.mcp_config import (
     resolve_craft_mcp_servers,
 )
-from onyx.server.features.mcp.credentials import (
+from lumen.server.features.mcp.credentials import (
     extract_connection_data,
     user_can_authenticate,
 )
-from onyx.server.features.mcp.models import MCPConnectionData
-from onyx.server.features.mcp.oauth import (
+from lumen.server.features.mcp.models import MCPConnectionData
+from lumen.server.features.mcp.oauth import (
     make_oauth_provider,
 )
 from tests.external_dependency_unit.conftest import create_test_user

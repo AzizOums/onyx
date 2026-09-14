@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
 	"github.com/spf13/cobra"
 )
 
@@ -10,12 +10,12 @@ import (
 func newDeployCmd(ios *iostreams.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "deploy",
-		Short: "Install and manage a self-hosted Onyx deployment",
-		Long: `Install and manage a self-hosted Onyx deployment (docker compose).
+		Short: "Install and manage a self-hosted Lumen deployment",
+		Long: `Install and manage a self-hosted Lumen deployment (docker compose).
 
-New installs live in ~/.config/onyx by default; deployments created by the
-legacy install.sh in ./onyx_data are detected and managed in place. Pass
---dir (or set ONYX_DEPLOYMENT_DIR) to target a specific location.`,
+New installs live in ~/.config/lumen by default; deployments created by the
+legacy install.sh in ./lumen_data are detected and managed in place. Pass
+--dir (or set LUMEN_DEPLOYMENT_DIR) to target a specific location.`,
 	}
 
 	cmd.AddCommand(newDeployInstallCmd(ios))

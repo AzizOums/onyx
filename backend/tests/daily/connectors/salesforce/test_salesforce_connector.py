@@ -6,10 +6,10 @@ from typing import Any, cast
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import Document, HierarchyNode
-from onyx.connectors.salesforce.connector import SalesforceConnector
-from onyx.connectors.salesforce.utils import ACCOUNT_OBJECT_TYPE
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import Document, HierarchyNode
+from lumen.connectors.salesforce.connector import SalesforceConnector
+from lumen.connectors.salesforce.utils import ACCOUNT_OBJECT_TYPE
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(

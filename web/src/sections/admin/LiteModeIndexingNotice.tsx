@@ -3,9 +3,7 @@ import { IllustrationContent } from "@opal/layouts";
 import { Section } from "@/layouts/general-layouts";
 import SvgUnPlugged from "@opal/illustrations/un-plugged";
 import { markdown } from "@opal/utils";
-import { DOCS_BASE_URL } from "@/lib/constants";
-
-const DEPLOYMENT_DOCS_URL = `${DOCS_BASE_URL}/deployment/getting_started/quickstart`;
+import { docsHref } from "@/lib/docs";
 
 /**
  * Replaces connector/indexing admin pages in Lite mode (no vector DB), where
@@ -13,6 +11,7 @@ const DEPLOYMENT_DOCS_URL = `${DOCS_BASE_URL}/deployment/getting_started/quickst
  */
 export default function LiteModeIndexingNotice() {
   const t = useTranslations("admin.shared");
+  const docsUrl = docsHref("/deployment/getting_started/quickstart");
 
   return (
     <Section padding={8}>
@@ -20,7 +19,9 @@ export default function LiteModeIndexingNotice() {
         illustration={SvgUnPlugged}
         title={t("liteModeNotice.title")}
         description={markdown(
-          t("liteModeNotice.description", { docsUrl: DEPLOYMENT_DOCS_URL })
+          docsUrl
+            ? t("liteModeNotice.description", { docsUrl })
+            : t("liteModeNotice.descriptionNoDocs")
         )}
       />
     </Section>

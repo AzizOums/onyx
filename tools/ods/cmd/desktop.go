@@ -13,7 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/paths"
 )
 
 type desktopPackageJSON struct {

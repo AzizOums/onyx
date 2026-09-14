@@ -10,14 +10,14 @@ from collections.abc import Generator
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.llm import (
+from lumen.db.llm import (
     fetch_embedding_provider,
     remove_embedding_provider,
     upsert_cloud_embedding_provider,
 )
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.manage.embedding.models import CloudEmbeddingProviderCreationRequest
-from onyx.utils.encryption import mask_string
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.manage.embedding.models import CloudEmbeddingProviderCreationRequest
+from lumen.utils.encryption import mask_string
 from shared_configs.enums import EmbeddingProvider
 
 _REAL_KEY = "sk-test-embedding-key-not-a-real-secret"
@@ -82,7 +82,7 @@ def test_a_real_key_still_replaces_the_stored_one(db_session: Session) -> None:
 
 
 def test_a_masked_key_with_nothing_to_restore_is_rejected(db_session: Session) -> None:
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         upsert_cloud_embedding_provider(
             db_session,
             CloudEmbeddingProviderCreationRequest(

@@ -9,13 +9,13 @@ from collections.abc import Generator
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.tracing import (
+from lumen.db.tracing import (
     delete_tracing_provider,
     fetch_tracing_provider,
     upsert_tracing_provider,
 )
-from onyx.tracing import provider_config
-from onyx.tracing.provider_config import resolve_effective_tracing_config
+from lumen.tracing import provider_config
+from lumen.tracing.provider_config import resolve_effective_tracing_config
 from shared_configs.enums import TracingProviderType
 
 

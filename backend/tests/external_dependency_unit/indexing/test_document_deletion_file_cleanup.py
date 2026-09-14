@@ -16,15 +16,15 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.shared.tasks import document_by_cc_pair_cleanup_task
-from onyx.connectors.models import Document, IndexAttemptMetadata
-from onyx.db.document import (
+from lumen.background.celery.tasks.shared.tasks import document_by_cc_pair_cleanup_task
+from lumen.connectors.models import Document, IndexAttemptMetadata
+from lumen.db.document import (
     delete_all_documents_for_connector_credential_pair,
     upsert_document_by_connector_credential_pair,
 )
-from onyx.db.models import ConnectorCredentialPair
-from onyx.indexing.indexing_pipeline import index_doc_batch_prepare
-from onyx.server.onyx_api.ingestion import delete_ingestion_doc
+from lumen.db.models import ConnectorCredentialPair
+from lumen.indexing.indexing_pipeline import index_doc_batch_prepare
+from lumen.server.lumen_api.ingestion import delete_ingestion_doc
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.external_dependency_unit.indexing_helpers import (
@@ -184,7 +184,7 @@ class TestDeleteIngestionDoc:
         # Patch out Vespa — we're testing the file cleanup, not the document
         # index integration.
         with patch(
-            "onyx.server.onyx_api.ingestion.get_all_document_indices",
+            "lumen.server.lumen_api.ingestion.get_all_document_indices",
             return_value=[],
         ):
             delete_ingestion_doc(
@@ -219,7 +219,7 @@ class TestDocumentByCcPairCleanupTask:
         # Patch out Vespa interaction — no chunks were ever written, and we're
         # not testing the document index here.
         with patch(
-            "onyx.background.celery.tasks.shared.tasks.get_all_document_indices",
+            "lumen.background.celery.tasks.shared.tasks.get_all_document_indices",
             return_value=[],
         ):
             result = document_by_cc_pair_cleanup_task.apply(
@@ -260,7 +260,7 @@ class TestDocumentByCcPairCleanupTask:
         db_session.commit()
 
         with patch(
-            "onyx.background.celery.tasks.shared.tasks.get_all_document_indices",
+            "lumen.background.celery.tasks.shared.tasks.get_all_document_indices",
             return_value=[],
         ):
             result = document_by_cc_pair_cleanup_task.apply(

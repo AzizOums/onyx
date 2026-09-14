@@ -43,7 +43,7 @@ variable "high_availability_enabled" {
   default     = false
 }
 
-# Onyx runs on NoCluster because the two sharded policies fail in different ways.
+# Lumen runs on NoCluster because the two sharded policies fail in different ways.
 # EnterpriseCluster presents one endpoint but still shards, so Celery's first
 # publish trips CROSSSLOT: kombu batches a queue and its priority variants into
 # one MULTI. A caller can work around that with a kombu `global_keyprefix`
@@ -53,7 +53,7 @@ variable "high_availability_enabled" {
 # caps the cache at 25GB and cannot scale up without a policy change.
 variable "clustering_policy" {
   type        = string
-  description = "NoCluster does not shard, which is what Onyx needs. EnterpriseCluster presents one endpoint but still shards. OSSCluster shards and requires a cluster-aware client."
+  description = "NoCluster does not shard, which is what Lumen needs. EnterpriseCluster presents one endpoint but still shards. OSSCluster shards and requires a cluster-aware client."
   default     = "NoCluster"
 
   validation {
@@ -66,7 +66,7 @@ variable "clustering_policy" {
 # than volatile-lru.
 variable "eviction_policy" {
   type        = string
-  description = "What the cache does at its memory limit. Onyx uses Redis as a Celery broker, where an eviction silently drops a queued task, so watch the eviction alert if you move off the default."
+  description = "What the cache does at its memory limit. Lumen uses Redis as a Celery broker, where an eviction silently drops a queued task, so watch the eviction alert if you move off the default."
   default     = "VolatileLRU"
 
   validation {

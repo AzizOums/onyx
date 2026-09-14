@@ -35,7 +35,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/gittest"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/gittest"
 )
 
 func TestComputeCloudTag_postCutCommitBumpsPastNewestBranch(t *testing.T) {

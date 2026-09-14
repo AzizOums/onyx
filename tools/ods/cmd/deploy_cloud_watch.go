@@ -12,7 +12,7 @@ import (
 const (
 	// Mirrors the CLOUD_DEPLOYMENT_REPO repo variable that deployment.yml's
 	// dispatch-cloud-deployment job sends the new-cloud-image dispatch to.
-	cloudDeploymentRepo = "onyx-dot-app/onyx-infra"
+	cloudDeploymentRepo = "lumen-dot-app/lumen-infra"
 	// The workflow in cloudDeploymentRepo that opens the version bump PR.
 	bumpWorkflowFile = "bump-cloud-version.yml"
 	// The bump workflow opens its PR from the branch bump-version/<tag>.
@@ -38,11 +38,11 @@ func watchCloudRelease(tag string) error {
 	// A cloud tag is unique per push and never reused, so any run on this
 	// branch is the right one. A prior-run-id floor above 0 would also break
 	// re-attaching to runs that started before newer releases.
-	run, err := waitForNewRun(onyxRepo, deploymentWorkflowFile, "push", tag, 0)
+	run, err := waitForNewRun(lumenRepo, deploymentWorkflowFile, "push", tag, 0)
 	if err != nil {
 		return fmt.Errorf(
 			"could not find the deployment run for %s (see https://github.com/%s/actions/workflows/%s): %w",
-			tag, onyxRepo, deploymentWorkflowFile, err)
+			tag, lumenRepo, deploymentWorkflowFile, err)
 	}
 	log.Infof("Deployment run: %s", run.URL)
 	fmt.Println(run.URL)
@@ -50,7 +50,7 @@ func watchCloudRelease(tag string) error {
 	// A failed or timed-out run does not always mean no PR: the dispatch job
 	// can succeed while an unrelated job fails. Whether that job succeeded
 	// decides if a PR is worth waiting for.
-	if buildErr := waitForRunCompletion(onyxRepo, run.DatabaseID, buildPollTimeout, "build"); buildErr != nil {
+	if buildErr := waitForRunCompletion(lumenRepo, run.DatabaseID, buildPollTimeout, "build"); buildErr != nil {
 		log.Warnf("Deployment run did not succeed: %v", buildErr)
 		dispatched, err := dispatchJobSucceeded(run.DatabaseID)
 		if err != nil {
@@ -120,7 +120,7 @@ func waitForBumpPR(tag string) (*pullRequest, error) {
 func dispatchJobSucceeded(runID int64) (bool, error) {
 	cmd := exec.Command(
 		"gh", "run", "view", fmt.Sprintf("%d", runID),
-		"-R", onyxRepo,
+		"-R", lumenRepo,
 		"--json", "jobs",
 	)
 	output, err := cmd.Output()

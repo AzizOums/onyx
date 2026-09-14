@@ -9,11 +9,11 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import BuildSessionStatus, SandboxStatus, SessionOrigin
-from onyx.db.models import BuildSession, Skill, User
-from onyx.server.features.build.db.build_session import session_runtime_stale
-from onyx.server.features.build.sandbox.models import FatalWriteError
-from onyx.skills.push import compute_skill_runtime_hash, push_skills_for_users
+from lumen.db.enums import BuildSessionStatus, SandboxStatus, SessionOrigin
+from lumen.db.models import BuildSession, Skill, User
+from lumen.server.features.build.db.build_session import session_runtime_stale
+from lumen.server.features.build.sandbox.models import FatalWriteError
+from lumen.skills.push import compute_skill_runtime_hash, push_skills_for_users
 from tests.common.craft.stubs import StubSandboxManager
 from tests.external_dependency_unit.craft.db_helpers import make_sandbox, make_user
 
@@ -62,7 +62,7 @@ def test_one_failing_sandbox_does_not_abort_push_to_others(
     )
 
     monkeypatch.setattr(
-        "onyx.skills.push.get_sandbox_manager",
+        "lumen.skills.push.get_sandbox_manager",
         lambda: stub,
     )
 
@@ -152,9 +152,9 @@ def test_connectable_app_change_pushes_and_hashes_self_heal(
 
     stub = StubSandboxManager()
     stub.write_files_to_sandbox_silent = True
-    monkeypatch.setattr("onyx.skills.push.get_sandbox_manager", lambda: stub)
+    monkeypatch.setattr("lumen.skills.push.get_sandbox_manager", lambda: stub)
     monkeypatch.setattr(
-        "onyx.skills.push.build_user_skills_payload",
+        "lumen.skills.push.build_user_skills_payload",
         lambda user, session: (
             connectable_apps_sections[user.id],
             files_for(user, session),

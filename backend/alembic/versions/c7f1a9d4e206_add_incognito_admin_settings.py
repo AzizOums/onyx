@@ -9,8 +9,8 @@ Create Date: 2026-08-12 09:40:00.000000
 import sqlalchemy as sa
 from alembic import op
 
-from onyx.db.enums import IncognitoRecordMode
-from onyx.server.security.models import IncognitoAvailability
+from lumen.db.enums import IncognitoRecordMode
+from lumen.server.security.models import IncognitoAvailability
 
 # revision identifiers, used by Alembic.
 revision = "c7f1a9d4e206"

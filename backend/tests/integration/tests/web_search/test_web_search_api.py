@@ -8,9 +8,9 @@ from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser
 
 
-class TestOnyxWebCrawler:
+class TestLumenWebCrawler:
     """
-    Integration tests for the Onyx web crawler functionality.
+    Integration tests for the Lumen web crawler functionality.
 
     These tests verify that the built-in crawler can fetch and parse
     content from public websites correctly.
@@ -27,7 +27,7 @@ class TestOnyxWebCrawler:
         assert response.status_code == 200, response.text
         data = response.json()
 
-        assert data["provider_type"] == WebContentProviderType.ONYX_WEB_CRAWLER.value
+        assert data["provider_type"] == WebContentProviderType.LUMEN_WEB_CRAWLER.value
         assert len(data["results"]) == 1
 
         result = data["results"][0]
@@ -56,7 +56,7 @@ class TestOnyxWebCrawler:
         assert response.status_code == 200, response.text
         data = response.json()
 
-        assert data["provider_type"] == WebContentProviderType.ONYX_WEB_CRAWLER.value
+        assert data["provider_type"] == WebContentProviderType.LUMEN_WEB_CRAWLER.value
         assert len(data["results"]) == 2
 
         for result in data["results"]:
@@ -72,7 +72,7 @@ class TestOnyxWebCrawler:
         assert response.status_code == 200, response.text
         data = response.json()
 
-        assert data["provider_type"] == WebContentProviderType.ONYX_WEB_CRAWLER.value
+        assert data["provider_type"] == WebContentProviderType.LUMEN_WEB_CRAWLER.value
 
         # The API filters out docs with no title/content, so unreachable domains return no results
         assert data["results"] == []
@@ -94,7 +94,7 @@ class TestOnyxWebCrawler:
         assert response.status_code == 200, response.text
         data = response.json()
 
-        assert data["provider_type"] == WebContentProviderType.ONYX_WEB_CRAWLER.value
+        assert data["provider_type"] == WebContentProviderType.LUMEN_WEB_CRAWLER.value
         assert len(data["results"]) == 1
 
         result = data["results"][0]
@@ -304,7 +304,7 @@ def test_web_search_endpoints_with_exa(
     assert open_response.status_code == 200, open_response.text
     open_data = open_response.json()
 
-    assert open_data["provider_type"] == WebContentProviderType.ONYX_WEB_CRAWLER.value
+    assert open_data["provider_type"] == WebContentProviderType.LUMEN_WEB_CRAWLER.value
     assert len(open_data["results"]) == len(urls)
     assert all("content" in result for result in open_data["results"])
 
@@ -319,7 +319,7 @@ def test_web_search_endpoints_with_exa(
     assert combined_data["search_provider_type"] == WebSearchProviderType.EXA.value
     assert (
         combined_data["content_provider_type"]
-        == WebContentProviderType.ONYX_WEB_CRAWLER.value
+        == WebContentProviderType.LUMEN_WEB_CRAWLER.value
     )
     assert combined_data["search_results"]
 

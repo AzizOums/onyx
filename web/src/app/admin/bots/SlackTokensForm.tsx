@@ -8,6 +8,7 @@ import { createSlackBot, updateSlackBot } from "./new/lib";
 import { Button, Divider } from "@opal/components";
 import { useEffect } from "react";
 import { DOCS_ADMINS_PATH } from "@/lib/constants";
+import { docsChunk } from "@/lib/docs";
 import { toast } from "@opal/layouts";
 
 export const SlackTokensForm = ({
@@ -100,15 +101,9 @@ export const SlackTokensForm = ({
             <div className="mt-4">
               <Divider />
               {t.rich("tokensForm.docsPrompt.text", {
-                link: (chunks) => (
-                  <a
-                    className="text-blue-500 hover:underline"
-                    href={`${DOCS_ADMINS_PATH}/getting_started/slack_bot_setup`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {chunks}
-                  </a>
+                link: docsChunk(
+                  "/admins/getting_started/slack_bot_setup",
+                  "text-blue-500 hover:underline"
                 ),
               })}
             </div>

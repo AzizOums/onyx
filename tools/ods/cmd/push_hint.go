@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/git"
 )
 
 // pushWithHookHint runs a branch push. If the hooks are enabled and the push is

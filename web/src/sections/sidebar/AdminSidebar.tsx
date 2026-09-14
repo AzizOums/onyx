@@ -17,10 +17,8 @@ import { useUser } from "@/providers/UserProvider";
 import { Divider, InputTypeIn, SidebarTab } from "@opal/components";
 import { SvgSearch, SvgX } from "@opal/icons";
 import { NEXT_PUBLIC_CLOUD_ENABLED } from "@/lib/constants";
-import { Tier } from "@/lib/settings/types";
 import useFilter from "@/hooks/useFilter";
 import AccountPopover from "@/sections/sidebar/AccountPopover";
-import { markdown } from "@opal/utils";
 import {
   buildItems,
   groupBySection,
@@ -61,7 +59,7 @@ export default function AdminSidebar() {
     queryHistoryEnabled:
       settings?.query_history_type !== "disabled" &&
       !settings?.hide_query_history_from_admin_panel,
-    craftAvailable: settings?.onyx_craft_available ?? false,
+    craftAvailable: settings?.lumen_craft_available ?? false,
   };
 
   const allItems = buildItems(adminCapabilities, flags, settings);
@@ -90,10 +88,7 @@ export default function AdminSidebar() {
 
   const { query, setQuery, filtered } = useFilter(allItems, itemExtractor);
 
-  const enabled = filtered.filter((item) => !item.disabled);
-  const disabled = filtered.filter((item) => item.disabled);
-  const enabledGroups = groupBySection(enabled);
-  const disabledGroups = groupBySection(disabled);
+  const enabledGroups = groupBySection(filtered);
 
   return (
     <SidebarLayouts.Root>
@@ -146,38 +141,6 @@ export default function AdminSidebar() {
           </React.Fragment>
         ))}
 
-        {disabledGroups.length > 0 && (
-          <>
-            <Divider paddingPerpendicular={0} />
-            {/* Empty div here just to add spacing (via the `gap` property on `SidebarLayouts.Body`) */}
-            <div />
-          </>
-        )}
-        {disabledGroups.map((group, groupIndex) => (
-          <React.Fragment key={`disabled-${groupIndex}`}>
-            <SidebarLayouts.Section
-              title={
-                group.sectionId ? sectionLabels[group.sectionId] : undefined
-              }
-              disabled
-            >
-              {group.items.map(({ link, icon, nameId, requiredTier }) => (
-                <SidebarTab
-                  key={link}
-                  disabled
-                  icon={icon}
-                  tooltip={markdown(
-                    requiredTier === Tier.ENTERPRISE
-                      ? t("adminSidebar.enterpriseOnly.tooltip")
-                      : t("adminSidebar.businessOrEnterpriseOnly.tooltip")
-                  )}
-                >
-                  {navLabels[nameId]}
-                </SidebarTab>
-              ))}
-            </SidebarLayouts.Section>
-          </React.Fragment>
-        ))}
       </SidebarLayouts.Body>
 
       <SidebarLayouts.Footer>

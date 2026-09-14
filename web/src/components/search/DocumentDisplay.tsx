@@ -2,7 +2,7 @@
 
 import { JSX } from "react";
 import { useTranslations } from "next-intl";
-import { MinimalOnyxDocument, OnyxDocument } from "@/lib/search/interfaces";
+import { MinimalLumenDocument, LumenDocument } from "@/lib/search/interfaces";
 import { SourceIcon } from "../SourceIcon";
 import { WebResultIcon } from "../WebResultIcon";
 import Text from "@/refresh-components/texts/Text";
@@ -124,8 +124,8 @@ export const buildDocumentSummaryDisplay = (
 };
 
 interface CompactDocumentCardProps {
-  document: OnyxDocument;
-  updatePresentingDocument: (document: MinimalOnyxDocument) => void;
+  document: LumenDocument;
+  updatePresentingDocument: (document: MinimalLumenDocument) => void;
 }
 
 export function CompactDocumentCard({

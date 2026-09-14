@@ -10,7 +10,7 @@ jest.mock("@/state/session", () => ({
     selector({ serverUrl: "https://example.test" }),
 }));
 
-const STORAGE_KEY = "onyx.chat.source_preferences.https://example.test";
+const STORAGE_KEY = "lumen.chat.source_preferences.https://example.test";
 
 function saved(): Record<string, boolean> | undefined {
   const raw = appStorage.getString(STORAGE_KEY);
@@ -113,7 +113,7 @@ describe("useSourceSelection", () => {
 
     expect(appStorage.getString(STORAGE_KEY)).toBeTruthy();
     expect(
-      appStorage.getString("onyx.chat.source_preferences.https://other.test"),
+      appStorage.getString("lumen.chat.source_preferences.https://other.test"),
     ).toBeUndefined();
   });
 

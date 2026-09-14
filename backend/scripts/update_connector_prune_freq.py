@@ -22,13 +22,13 @@ from sqlalchemy import update  # noqa: E402
 from sqlalchemy.engine import CursorResult  # noqa: E402
 from sqlalchemy.exc import ProgrammingError  # noqa: E402
 
-from onyx.db.engine.sql_engine import (  # noqa: E402
+from lumen.db.engine.sql_engine import (  # noqa: E402
     SqlEngine,
     get_session_with_tenant,
 )
-from onyx.db.engine.tenant_utils import get_all_tenant_ids  # noqa: E402
-from onyx.db.models import Connector  # noqa: E402
-from onyx.utils.variable_functionality import global_version  # noqa: E402
+from lumen.db.engine.tenant_utils import get_all_tenant_ids  # noqa: E402
+from lumen.db.models import Connector  # noqa: E402
+from lumen.utils.variable_functionality import global_version  # noqa: E402
 
 _SECONDS_PER_DAY = 86400
 

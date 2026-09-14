@@ -2,8 +2,8 @@ name: Preview Deployment
 
 # Per-commit full-stack previews on the self-hosted preview server: the
 # Next.js frontend and the FastAPI backend running together at
-# <sha>-onyx.<the server's preview domain>. Which server that is lives
-# entirely in vars.PREVIEW_URL, managed in onyx-infra
+# <sha>-lumen.<the server's preview domain>. Which server that is lives
+# entirely in vars.PREVIEW_URL, managed in lumen-infra
 # (internal-tools/terraform/github-org) — nothing here names a host, so
 # pointing this at a different deployment is a variable change, not a PR.
 #
@@ -93,11 +93,11 @@ jobs:
         run: uv tool install local-preview==0.9.0
 
       # Must match the frontend build in the server's own manifest for this
-      # repo (manifests/onyx.toml in the terraform workspace) step for step —
+      # repo (manifests/lumen.toml in the terraform workspace) step for step —
       # an upload replaces what the server would have built, so a divergence
       # here is a preview that doesn't match what a rebuild would produce.
       #
-      # @onyx-ai/opal depends on @onyx-ai/shared, so shared builds first.
+      # @lumen-ai/opal depends on @lumen-ai/shared, so shared builds first.
       - name: Build the frontend
         working-directory: ./web
         run: |
@@ -125,7 +125,7 @@ jobs:
           # Without pipefail the tee below would mask a failed upload.
           set -o pipefail
           preview upload frontend upload "$GITHUB_SHA" \
-            --repo onyx --server "$PREVIEW_URL" --oidc --deploy | tee out.txt
+            --repo lumen --server "$PREVIEW_URL" --oidc --deploy | tee out.txt
           URL=$(sed -n 's/^ready: //p' out.txt)
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 

@@ -22,7 +22,7 @@ Source of truth: wiki `Engineering Projects/Group-Based Permissions System V2/so
 | How should this run treat §8's design? | **Adopt the wiki §8 model as-is** (chosen approach is locked — no approach generation). The 2026-06-23 46-agent adversarial review already settled the design; §8 was rewritten to the FINAL model on 2026-06-24. |
 | Scope | All of §8 (§8.1–§8.5): the `is_manager` flag + migration, the scoped-permission bundle, live scope resolution, two-gate enforcement, filter re-keying, PAT intersection, and the Group-Manager assignment UI. |
 
-## Current status & reuse (from codebase scan — `OnyxFolder/onyx`, branch `new-permission-system`)
+## Current status & reuse (from codebase scan — `LumenFolder/lumen`, branch `new-permission-system`)
 
 ### §8 is entirely greenfield — every artifact ABSENT
 
@@ -34,10 +34,10 @@ Source of truth: wiki `Engineering Projects/Group-Based Permissions System V2/so
 | `get_scoped_groups()` resolver | ABSENT | no match |
 | `assert_group_set_within_scope` / `can_act_on_resource` write-side gate | ABSENT | no match |
 | `make_group_manager` / `revoke_group_manager` | ABSENT | no match |
-| `has_permission_or_scope` route-gate variant | ABSENT | only plain `has_permission` — `backend/onyx/auth/permissions.py:252` |
+| `has_permission_or_scope` route-gate variant | ABSENT | only plain `has_permission` — `backend/lumen/auth/permissions.py:252` |
 | `is_manager` boolean inside `effective_permissions` | ABSENT | `effective_permissions` is `Mapped[list[str]]` tokens only — `models.py:375` |
 | Group-Manager assignment UI (web) | ABSENT | no manager UI under `web/src/app/(ee/)admin/groups*` |
-| PAT scope-intersection w/ manager scope | ABSENT | `backend/onyx/db/pat.py` scopes are flat permission tokens |
+| PAT scope-intersection w/ manager scope | ABSENT | `backend/lumen/db/pat.py` scopes are flat permission tokens |
 
 > **⚠ Status (updated):** at research time §8 was entirely unbuilt and the wiki's *"Implemented as revision
 > `4fa09af6ca14`"* was wrong. Since then **PR0+PR1 shipped** (migration `c71a18ea7d07`); scoped enforcement
@@ -47,17 +47,17 @@ Source of truth: wiki `Engineering Projects/Group-Based Permissions System V2/so
 
 | Building block | Path |
 |---|---|
-| `AccountType` enum (STANDARD/BOT/EXT_PERM_USER/SERVICE_ACCOUNT/ANONYMOUS) | `backend/onyx/db/enums.py:7-28` |
-| `account_type` column on `User` | `backend/onyx/db/models.py:324-329` |
-| `Permission` enum (token set) | `backend/onyx/db/enums.py:490-549` |
-| `PermissionGrant` model (`(group_id, permission)` unique) | `backend/onyx/db/models.py:4371-4391` |
-| `require_permission(...)` FastAPI dep | `backend/onyx/auth/permissions.py:257-289` |
-| `has_permission(...)` (non-FastAPI) | `backend/onyx/auth/permissions.py:252` |
-| `resolve_effective_permissions()` + `IMPLIED_PERMISSIONS` | `backend/onyx/auth/permissions.py:214-231`, `:32-71` |
-| `get_effective_permissions()` (reads `User.effective_permissions`) | `backend/onyx/auth/permissions.py:234-249` |
+| `AccountType` enum (STANDARD/BOT/EXT_PERM_USER/SERVICE_ACCOUNT/ANONYMOUS) | `backend/lumen/db/enums.py:7-28` |
+| `account_type` column on `User` | `backend/lumen/db/models.py:324-329` |
+| `Permission` enum (token set) | `backend/lumen/db/enums.py:490-549` |
+| `PermissionGrant` model (`(group_id, permission)` unique) | `backend/lumen/db/models.py:4371-4391` |
+| `require_permission(...)` FastAPI dep | `backend/lumen/auth/permissions.py:257-289` |
+| `has_permission(...)` (non-FastAPI) | `backend/lumen/auth/permissions.py:252` |
+| `resolve_effective_permissions()` + `IMPLIED_PERMISSIONS` | `backend/lumen/auth/permissions.py:214-231`, `:32-71` |
+| `get_effective_permissions()` (reads `User.effective_permissions`) | `backend/lumen/auth/permissions.py:234-249` |
 | 6× `_add_user_filters` (token-based, **no** `role`/`is_curator`) | `connector_credential_pair.py:50`, `persona.py:77`, `document_set.py:41`, `credentials.py:41`, `feedback.py:46`, EE `token_limit.py` |
-| `User__UserGroup` membership model (where `is_manager` lands) | `backend/onyx/db/models.py:~4361` |
-| PAT model | `backend/onyx/db/pat.py` |
+| `User__UserGroup` membership model (where `is_manager` lands) | `backend/lumen/db/models.py:~4361` |
+| PAT model | `backend/lumen/db/pat.py` |
 
 ### Residual tombstones (kept by design; §8 reuses / must not break)
 

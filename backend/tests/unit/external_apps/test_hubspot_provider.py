@@ -12,12 +12,12 @@ from urllib.parse import parse_qs, urlparse
 
 import pytest
 
-from onyx.db.enums import ExternalAppType
-from onyx.db.models import User
-from onyx.external_apps.providers.base import OAuthFlowSpec
-from onyx.external_apps.providers.hubspot import HubspotProvider
-from onyx.external_apps.providers.registry import PROVIDERS
-from onyx.server.features.build.external_apps import oauth as oauth_route
+from lumen.db.enums import ExternalAppType
+from lumen.db.models import User
+from lumen.external_apps.providers.base import OAuthFlowSpec
+from lumen.external_apps.providers.hubspot import HubspotProvider
+from lumen.external_apps.providers.registry import PROVIDERS
+from lumen.server.features.build.external_apps import oauth as oauth_route
 
 
 def _provider() -> HubspotProvider:

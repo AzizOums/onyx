@@ -4,12 +4,12 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 import pytest
 
-from onyx.configs.constants import BlobType
-from onyx.connectors.blob.connector import BlobStorageConnector
-from onyx.connectors.cross_connector_utils.tabular_section_utils import is_tabular_file
-from onyx.connectors.models import Document, HierarchyNode, TabularSection, TextSection
-from onyx.file_processing.extract_file_text import get_file_ext
-from onyx.file_processing.file_types import OnyxFileExtensions
+from lumen.configs.constants import BlobType
+from lumen.connectors.blob.connector import BlobStorageConnector
+from lumen.connectors.cross_connector_utils.tabular_section_utils import is_tabular_file
+from lumen.connectors.models import Document, HierarchyNode, TabularSection, TextSection
+from lumen.file_processing.extract_file_text import get_file_ext
+from lumen.file_processing.file_types import LumenFileExtensions
 from tests.daily.connectors.utils import set_test_staging_callback
 from tests.utils.secret_names import TestSecret
 
@@ -96,11 +96,11 @@ def blob_connector(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 @pytest.mark.parametrize(
-    "blob_connector", [(BlobType.S3, "onyx-connector-tests")], indirect=True
+    "blob_connector", [(BlobType.S3, "lumen-connector-tests")], indirect=True
 )
 def test_blob_s3_connector(
     mock_get_api_key: MagicMock,  # noqa: ARG001
@@ -137,14 +137,14 @@ def test_blob_s3_connector(
 
         assert isinstance(section, TextSection)
         file_extension = get_file_ext(doc.semantic_identifier)
-        if file_extension in OnyxFileExtensions.TEXT_AND_DOCUMENT_EXTENSIONS:
+        if file_extension in LumenFileExtensions.TEXT_AND_DOCUMENT_EXTENSIONS:
             assert len(section.text) > 0
         else:
             assert len(section.text) == 0
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 @pytest.mark.parametrize(
@@ -198,7 +198,7 @@ def test_blob_s3_cross_region_and_citation_link(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 @pytest.mark.parametrize(
@@ -222,12 +222,12 @@ def test_blob_r2_connector(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 @pytest.mark.parametrize(
     "blob_connector",
-    [(BlobType.R2, "onyx-daily-connector-tests", {"european_residency": True})],
+    [(BlobType.R2, "lumen-daily-connector-tests", {"european_residency": True})],
     indirect=True,
 )
 def test_blob_r2_eu_residency_connector(
@@ -248,11 +248,11 @@ def test_blob_r2_eu_residency_connector(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 @pytest.mark.parametrize(
-    "blob_connector", [(BlobType.GOOGLE_CLOUD_STORAGE, "onyx-test-1")], indirect=True
+    "blob_connector", [(BlobType.GOOGLE_CLOUD_STORAGE, "lumen-test-1")], indirect=True
 )
 def test_blob_gcs_connector(
     mock_get_api_key: MagicMock,  # noqa: ARG001

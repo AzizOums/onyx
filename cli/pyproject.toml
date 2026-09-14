@@ -3,13 +3,13 @@ requires = ["hatchling==1.29.0", "go-bin~=1.26.5", "manygo==0.2.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "onyx-cli"
+name = "lumen-cli"
 readme = "README.md"
-description = "Terminal interface for chatting with your Onyx agent"
-authors = [{ name = "Onyx AI", email = "founders@onyx.app" }]
+description = "Terminal interface for chatting with your Lumen agent"
+authors = [{ name = "Lumen AI", email = "founders@lumen.app" }]
 requires-python = ">=3.9"
 keywords = [
-  "onyx", "cli", "chat", "ai", "enterprise-search",
+  "lumen", "cli", "chat", "ai", "enterprise-search",
 ]
 classifiers = [
     "Programming Language :: Go",
@@ -21,7 +21,7 @@ classifiers = [
 dynamic = ["version"]
 
 [project.urls]
-Repository = "https://github.com/onyx-dot-app/onyx"
+Repository = "https://github.com/lumen-dot-app/lumen"
 
 [tool.hatch.build]
 include = ["go.mod", "go.sum", "main.go", "**/*.go", "**/*.py", "README.md"]
@@ -32,7 +32,7 @@ path = "internal/_version.py"
 
 [tool.hatch.build.targets.wheel.hooks.custom]
 path = "hatch_build.py"
-binary_name = "onyx-cli"
+binary_name = "lumen-cli"
 tag_prefix = "cli"
 
 [tool.uv]

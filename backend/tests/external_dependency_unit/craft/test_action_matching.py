@@ -26,21 +26,21 @@ import pytest
 from mitmproxy import http
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import EndpointPolicy, ExternalAppType, GatedAppKind
-from onyx.db.gated_app import get_or_create_gated_app_id
-from onyx.db.models import ExternalApp, GatedActionPolicy, User
-from onyx.external_apps.credentials import app_is_available
-from onyx.external_apps.matching import engine as matching_engine
-from onyx.external_apps.matching.engine import (
+from lumen.db.enums import EndpointPolicy, ExternalAppType, GatedAppKind
+from lumen.db.gated_app import get_or_create_gated_app_id
+from lumen.db.models import ExternalApp, GatedActionPolicy, User
+from lumen.external_apps.credentials import app_is_available
+from lumen.external_apps.matching import engine as matching_engine
+from lumen.external_apps.matching.engine import (
     WHOLE_DOMAIN_ACTION_TYPE,
     AllMatchedActions,
     GatedTarget,
     MatchedAction,
     recognize_actions,
 )
-from onyx.external_apps.matching.request import ProxiedRequest
-from onyx.sandbox_proxy import request_evaluator as request_evaluator_mod
-from onyx.sandbox_proxy.request_evaluator import ExternalAppRequestEvaluator
+from lumen.external_apps.matching.request import ProxiedRequest
+from lumen.sandbox_proxy import request_evaluator as request_evaluator_mod
+from lumen.sandbox_proxy.request_evaluator import ExternalAppRequestEvaluator
 from tests.external_dependency_unit.craft.db_helpers import (
     make_external_app,
     make_skill,

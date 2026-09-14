@@ -24,11 +24,11 @@ test.describe("FLOSS build — real LLM chat via Ollama", () => {
 
     // Send a real message — answered by Ollama (llama3.1:8b) locally.
     // Local 8B models can take >60s on first load, so no fixed short waits.
-    await page.locator("#onyx-chat-input-textbox").fill("Reply with exactly: FLOSS-OK");
-    await page.locator("#onyx-chat-input-send-button").click();
+    await page.locator("#lumen-chat-input-textbox").fill("Reply with exactly: FLOSS-OK");
+    await page.locator("#lumen-chat-input-send-button").click();
 
     const assistantAnswer = page
-      .locator('[data-testid="onyx-ai-message"]')
+      .locator('[data-testid="lumen-ai-message"]')
       .last();
     await expect(assistantAnswer).toBeVisible({ timeout: 150_000 });
     await expect(assistantAnswer).toContainText("FLOSS-OK", {

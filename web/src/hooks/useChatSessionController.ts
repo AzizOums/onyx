@@ -23,7 +23,7 @@ import {
   shouldSubmitOnLoad,
 } from "@/app/app/services/searchParams";
 
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { LumenDocument } from "@/lib/search/interfaces";
 import {
   useChatSessionStore,
   useCurrentMessageHistory,
@@ -47,7 +47,7 @@ interface UseChatSessionControllerProps {
   firstMessage?: string;
 
   // UI state setters
-  setSelectedDocuments: (documents: OnyxDocument[]) => void;
+  setSelectedDocuments: (documents: LumenDocument[]) => void;
   setCurrentMessageFiles: (
     files: ProjectFile[] | ((prev: ProjectFile[]) => ProjectFile[])
   ) => void;

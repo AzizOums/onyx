@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
-	"github.com/onyx-dot-app/onyx/cli/internal/testutil"
+	"github.com/lumen-dot-app/lumen/cli/internal/api"
+	"github.com/lumen-dot-app/lumen/cli/internal/models"
+	"github.com/lumen-dot-app/lumen/cli/internal/testutil"
 )
 
 func TestGenerateImage_Success(t *testing.T) {
@@ -71,9 +71,9 @@ func TestGenerateImage_InBandErrorEnvelope(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for in-band error envelope")
 	}
-	var apiErr *api.OnyxAPIError
+	var apiErr *api.LumenAPIError
 	if !errors.As(err, &apiErr) {
-		t.Fatalf("want *OnyxAPIError, got %T: %v", err, err)
+		t.Fatalf("want *LumenAPIError, got %T: %v", err, err)
 	}
 	if apiErr.StatusCode != 502 {
 		t.Errorf("status = %d, want 502", apiErr.StatusCode)
@@ -92,9 +92,9 @@ func TestGenerateImage_InBandNotFoundEnvelope(t *testing.T) {
 
 	client := testutil.NewClient(srv.URL)
 	_, err := client.GenerateImage(t.Context(), models.ImageGenerationRequest{Prompt: "a cat"})
-	var apiErr *api.OnyxAPIError
+	var apiErr *api.LumenAPIError
 	if !errors.As(err, &apiErr) {
-		t.Fatalf("want *OnyxAPIError, got %T: %v", err, err)
+		t.Fatalf("want *LumenAPIError, got %T: %v", err, err)
 	}
 	if apiErr.StatusCode != 404 {
 		t.Errorf("status = %d, want 404", apiErr.StatusCode)
@@ -110,9 +110,9 @@ func TestGenerateImage_InBandTimeoutEnvelope(t *testing.T) {
 
 	client := testutil.NewClient(srv.URL)
 	_, err := client.GenerateImage(t.Context(), models.ImageGenerationRequest{Prompt: "a cat"})
-	var apiErr *api.OnyxAPIError
+	var apiErr *api.LumenAPIError
 	if !errors.As(err, &apiErr) {
-		t.Fatalf("want *OnyxAPIError, got %T: %v", err, err)
+		t.Fatalf("want *LumenAPIError, got %T: %v", err, err)
 	}
 	if apiErr.StatusCode != 504 {
 		t.Errorf("status = %d, want 504", apiErr.StatusCode)
@@ -128,9 +128,9 @@ func TestGenerateImage_EmptyBodyIsError(t *testing.T) {
 
 	client := testutil.NewClient(srv.URL)
 	_, err := client.GenerateImage(t.Context(), models.ImageGenerationRequest{Prompt: "a cat"})
-	var apiErr *api.OnyxAPIError
+	var apiErr *api.LumenAPIError
 	if !errors.As(err, &apiErr) {
-		t.Fatalf("want *OnyxAPIError for empty body, got %T: %v", err, err)
+		t.Fatalf("want *LumenAPIError for empty body, got %T: %v", err, err)
 	}
 	if apiErr.StatusCode != 502 {
 		t.Errorf("status = %d, want 502", apiErr.StatusCode)
@@ -174,9 +174,9 @@ func TestGenerateImage_404(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for 404")
 	}
-	var apiErr *api.OnyxAPIError
+	var apiErr *api.LumenAPIError
 	if !errors.As(err, &apiErr) {
-		t.Fatalf("want *OnyxAPIError, got %T: %v", err, err)
+		t.Fatalf("want *LumenAPIError, got %T: %v", err, err)
 	}
 	if apiErr.StatusCode != 404 {
 		t.Errorf("status = %d, want 404", apiErr.StatusCode)

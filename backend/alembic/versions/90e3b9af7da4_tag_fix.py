@@ -16,10 +16,10 @@ from typing import Generator
 from alembic import op
 import sqlalchemy as sa
 
-from onyx.document_index.vespa_constants import DOCUMENT_ID_ENDPOINT
-from onyx.db.search_settings import SearchSettings
+from lumen.document_index.vespa_constants import DOCUMENT_ID_ENDPOINT
+from lumen.db.search_settings import SearchSettings
 from shared_configs.configs import MULTI_TENANT
-from onyx.document_index.vespa.shared_utils.utils import get_vespa_http_client
+from lumen.document_index.vespa.shared_utils.utils import get_vespa_http_client
 
 logger = logging.getLogger("alembic.runtime.migration")
 

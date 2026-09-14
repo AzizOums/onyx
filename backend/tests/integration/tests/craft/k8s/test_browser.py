@@ -13,7 +13,7 @@ from __future__ import annotations
 import pytest
 from kubernetes import client
 
-from onyx.server.features.build.configs import (
+from lumen.server.features.build.configs import (
     SANDBOX_BACKEND,
     SANDBOX_NAMESPACE,
     SandboxBackend,

@@ -5,19 +5,19 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from onyx.chat.chat_utils import create_chat_session_from_request
-from onyx.chat.models import AnswerStreamPart
-from onyx.chat.process_message import handle_stream_message_objects
-from onyx.configs.constants import DocumentSource
-from onyx.context.search.models import SearchDoc
-from onyx.db.models import ChatSession, User
-from onyx.llm.override_models import LLMOverride
-from onyx.server.query_and_chat.models import (
+from lumen.chat.chat_utils import create_chat_session_from_request
+from lumen.chat.models import AnswerStreamPart
+from lumen.chat.process_message import handle_stream_message_objects
+from lumen.configs.constants import DocumentSource
+from lumen.context.search.models import SearchDoc
+from lumen.db.models import ChatSession, User
+from lumen.llm.override_models import LLMOverride
+from lumen.server.query_and_chat.models import (
     ChatSessionCreationRequest,
     SendMessageRequest,
 )
-from onyx.server.query_and_chat.placement import Placement
-from onyx.server.query_and_chat.streaming_models import (
+from lumen.server.query_and_chat.placement import Placement
+from lumen.server.query_and_chat.streaming_models import (
     AgentResponseDelta,
     Packet,
     ReasoningDelta,

@@ -7,7 +7,7 @@ import {
   toggleToolDisabled,
   getSourceToggle,
 } from "@tests/e2e/utils/tools";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import { sendMessage } from "@tests/e2e/utils/chatActions";
 
 const LOCAL_STORAGE_KEY = "selectedInternalSearchSources";
@@ -25,7 +25,7 @@ test.describe("ToolsPopover Tool Toggles", () => {
     await page.goto("http://localhost:3000/app");
     await page.waitForLoadState("networkidle");
 
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
 
     // Create a file connector so internal search tool is available
     ccPairId = await apiClient.createFileConnector(
@@ -86,7 +86,7 @@ test.describe("ToolsPopover Tool Toggles", () => {
     await page.goto("http://localhost:3000/app");
     await page.waitForLoadState("networkidle");
 
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
 
     if (ccPairId !== null) {
       try {

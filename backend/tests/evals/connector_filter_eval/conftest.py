@@ -4,17 +4,17 @@ from pathlib import Path
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import LLMModelFlowType
-from onyx.db.llm import (
+from lumen.db.enums import LLMModelFlowType
+from lumen.db.llm import (
     fetch_existing_llm_providers,
     fetch_llm_provider_view,
     update_default_provider,
     upsert_llm_provider,
 )
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.factory import get_default_llm, llm_from_provider
-from onyx.llm.interfaces import LLM
-from onyx.server.manage.llm.models import (
+from lumen.llm.constants import LlmProviderNames
+from lumen.llm.factory import get_default_llm, llm_from_provider
+from lumen.llm.interfaces import LLM
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )

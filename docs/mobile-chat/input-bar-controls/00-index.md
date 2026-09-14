@@ -2,7 +2,7 @@
 
 > Status: active · Task: input-bar-controls · Approach: B — Web-Parity-First
 
-Port web's chat input-bar toolbar controls to the Onyx React Native mobile composer at **Tier-2
+Port web's chat input-bar toolbar controls to the Lumen React Native mobile composer at **Tier-2
 (Standard)** scope: a **deep-research toggle** and an **anchored ActionsPopover** (force-a-tool +
 enable/disable tools + a source-selection sub-view). Out of scope: MCP servers/tools, OAuth re-auth,
 the admin "More Actions" link, the action search box.

@@ -14,8 +14,8 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import AccountType
-from onyx.db.models import User
+from lumen.db.enums import AccountType
+from lumen.db.models import User
 from tests.external_dependency_unit.conftest import create_test_user, delete_test_user
 
 

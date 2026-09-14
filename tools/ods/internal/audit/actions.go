@@ -42,8 +42,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/version"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/paths"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/version"
 )
 
 const (

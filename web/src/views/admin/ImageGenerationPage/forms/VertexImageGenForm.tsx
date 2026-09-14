@@ -22,7 +22,7 @@ import { useSettings } from "@/lib/settings/hooks";
 const VERTEXAI_PROVIDER_NAME = "vertex_ai";
 const VERTEXAI_DEFAULT_LOCATION = "global";
 
-// Kept in sync with backend onyx.llm.well_known_providers.constants
+// Kept in sync with backend lumen.llm.well_known_providers.constants
 const AUTH_METHOD_SERVICE_ACCOUNT = "service_account_json";
 const AUTH_METHOD_WORKLOAD_IDENTITY = "workload_identity";
 

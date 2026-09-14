@@ -6,7 +6,7 @@ import SkillCard, {
 import type { CustomSkill } from "@/lib/skills/types";
 
 jest.mock("@/lib/settings/hooks", () => ({
-  useSettings: () => ({ appName: "Onyx" }),
+  useSettings: () => ({ appName: "Lumen" }),
 }));
 
 function builtIn(

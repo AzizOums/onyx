@@ -1,8 +1,8 @@
 import os
 from uuid import uuid4
 
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.manage.llm.models import (
+from lumen.llm.constants import LlmProviderNames
+from lumen.server.manage.llm.models import (
     DefaultModel,
     LLMProviderUpsertRequest,
     LLMProviderView,

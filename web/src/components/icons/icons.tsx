@@ -157,7 +157,7 @@ export const MacIcon = ({
     </svg>
   );
 };
-export const OnyxLogoTypeIcon = ({
+export const LumenLogoTypeIcon = ({
   size = 16,
   className = defaultTailwindCSS,
 }: IconProps) => {

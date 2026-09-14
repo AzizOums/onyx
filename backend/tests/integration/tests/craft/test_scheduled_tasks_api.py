@@ -11,14 +11,14 @@ import httpx
 import pytest
 from sqlalchemy import select
 
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from onyx.db.enums import (
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from lumen.db.enums import (
     ScheduledTaskRunStatus,
     ScheduledTaskStatus,
     ScheduledTaskTriggerSource,
 )
-from onyx.db.mcp import create_mcp_server__no_commit, update_mcp_server__no_commit
-from onyx.db.models import ScheduledTask, ScheduledTaskRun
+from lumen.db.mcp import create_mcp_server__no_commit, update_mcp_server__no_commit
+from lumen.db.models import ScheduledTask, ScheduledTaskRun
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 from tests.integration.common_utils.constants import API_SERVER_URL

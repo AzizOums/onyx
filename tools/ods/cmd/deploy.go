@@ -10,7 +10,7 @@ func NewDeployCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "deploy",
 		Short: "Trigger deployments",
-		Long:  "Trigger deployments to Onyx-managed environments.",
+		Long:  "Trigger deployments to Lumen-managed environments.",
 	}
 
 	cmd.AddCommand(NewDeployCloudCommand())

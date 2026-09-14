@@ -3,7 +3,7 @@
 import { adminSearch } from "@/lib/searchFilters/svc";
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { LumenDocument } from "@/lib/search/interfaces";
 import { buildDocumentSummaryDisplay } from "@/components/search/DocumentDisplay";
 import { Checkbox } from "@opal/components";
 import { updateHiddenStatus } from "../lib";
@@ -26,7 +26,7 @@ const DocumentDisplay = ({
   document,
   refresh,
 }: {
-  document: OnyxDocument;
+  document: LumenDocument;
   refresh: () => void;
 }) => {
   const t = useTranslations("admin.documents");
@@ -128,7 +128,7 @@ export function Explorer({
 
   const [query, setQuery] = useState(initialSearchValue || "");
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
-  const [results, setResults] = useState<OnyxDocument[]>([]);
+  const [results, setResults] = useState<LumenDocument[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const filterManager = useSearchFilters();

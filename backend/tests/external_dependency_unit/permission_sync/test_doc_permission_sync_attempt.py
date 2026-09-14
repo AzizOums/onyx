@@ -8,11 +8,11 @@ including creation, status updates, progress tracking, and querying.
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.enums import (
+from lumen.configs.constants import DocumentSource
+from lumen.db.enums import (
     PermissionSyncStatus,
 )
-from onyx.db.permission_sync_attempt import (
+from lumen.db.permission_sync_attempt import (
     complete_doc_permission_sync_attempt,
     create_doc_permission_sync_attempt,
     get_doc_permission_sync_attempt,

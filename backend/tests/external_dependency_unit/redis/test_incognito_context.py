@@ -13,8 +13,8 @@ from uuid import UUID, uuid4
 
 import pytest
 
-from onyx.cache.interface import CacheBackendType
-from onyx.chat.incognito_context import (
+from lumen.cache.interface import CacheBackendType
+from lumen.chat.incognito_context import (
     INCOGNITO_CONTEXT_TTL_SECONDS,
     IncognitoContext,
     _context_key,
@@ -23,10 +23,10 @@ from onyx.chat.incognito_context import (
     save_incognito_context,
     teardown_incognito_session,
 )
-from onyx.chat.models import ChatLoadedFile, ChatMessageSimple, ToolCallSimple
-from onyx.configs.constants import MessageType
-from onyx.file_store.models import ChatFileType
-from onyx.redis.redis_pool import get_raw_redis_client, get_redis_client
+from lumen.chat.models import ChatLoadedFile, ChatMessageSimple, ToolCallSimple
+from lumen.configs.constants import MessageType
+from lumen.file_store.models import ChatFileType
+from lumen.redis.redis_pool import get_raw_redis_client, get_redis_client
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 
 
@@ -223,7 +223,7 @@ def test_byte_cap_drops_oldest_but_keeps_an_oversized_singleton() -> None:
 def test_availability_follows_the_cache_backend() -> None:
     """USAGE_ONLY content must never reach Postgres, so the Postgres cache
     backend (Lite) means the feature is absent."""
-    with patch("onyx.chat.incognito_context.app_configs") as mock_configs:
+    with patch("lumen.chat.incognito_context.app_configs") as mock_configs:
         mock_configs.CACHE_BACKEND = CacheBackendType.REDIS
         assert incognito_context_available()
         mock_configs.CACHE_BACKEND = CacheBackendType.POSTGRES

@@ -7,14 +7,14 @@ craft-down:
 	deployment/helm/dev/craft-down.sh
 
 craft-sandbox-image:
-	docker build -t onyxdotapp/sandbox:dev backend/onyx/server/features/build/sandbox/image
-	kind load docker-image onyxdotapp/sandbox:dev --name onyx-dev
+	docker build -t lumendotapp/sandbox:dev backend/lumen/server/features/build/sandbox/image
+	kind load docker-image lumendotapp/sandbox:dev --name lumen-dev
 
 # Rebuild the image the in-cluster sandbox-proxy/api-server run, then restart them.
 craft-backend-image:
-	docker build -t onyxdotapp/onyx-backend:dev backend/
-	kind load docker-image onyxdotapp/onyx-backend:dev --name onyx-dev
-	kubectl rollout restart deploy/onyx-sandbox-proxy deploy/onyx-api-server -n onyx
+	docker build -t lumendotapp/lumen-backend:dev backend/
+	kind load docker-image lumendotapp/lumen-backend:dev --name lumen-dev
+	kubectl rollout restart deploy/lumen-sandbox-proxy deploy/lumen-api-server -n lumen
 
 # Refresh everything: backend + sandbox images, PodTemplate, proxy/api restart.
 craft-refresh-images:

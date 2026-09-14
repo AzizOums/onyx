@@ -1,0 +1,19 @@
+"""Total ordering over the `Tier` enum.
+
+Lives in CE so any module can compare tiers without depending on EE code.
+"""
+
+from lumen.server.settings.models import Tier
+
+TIER_RANK: dict[Tier, int] = {
+    Tier.COMMUNITY: 0,
+    Tier.BUSINESS: 1,
+    Tier.ENTERPRISE: 2,
+}
+
+
+def tier_at_least(_current: Tier, _required: Tier) -> bool:
+    """Always true: this build has no paid tiers, so every feature it ships is
+    available to every workspace. The `Tier` enum and `TIER_RANK` stay because
+    the settings API still reports a tier."""
+    return True

@@ -7,8 +7,8 @@ from uuid import UUID, uuid4
 import httpx
 from pydantic import BaseModel
 
-from onyx.db.enums import SkillSharePermission
-from onyx.server.features.skill.models import (
+from lumen.db.enums import SkillSharePermission
+from lumen.server.features.skill.models import (
     SkillCreateRequest,
     SkillEditableDetailResponse,
     SkillGroupShareRequest,

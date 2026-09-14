@@ -5,14 +5,14 @@ voice providers), decrypts the stored key, and replaces it with the new key
 when it matches the old one.
 
 Usage (docker):
-    docker exec -it onyx-api_server-1 \
+    docker exec -it lumen-api_server-1 \
         python -m scripts.rotate_llm_provider_keys \
             --provider openai \
             --old-key "sk-old..." \
             --new-key "sk-new..."
 
     # Or target both providers at once:
-    docker exec -it onyx-api_server-1 \
+    docker exec -it lumen-api_server-1 \
         python -m scripts.rotate_llm_provider_keys \
             --provider openai --provider anthropic \
             --old-key "sk-old..." \
@@ -40,17 +40,17 @@ sys.path.append(parent_dir)
 
 from sqlalchemy import select  # noqa: E402
 
-from onyx.db.engine.sql_engine import (  # noqa: E402
+from lumen.db.engine.sql_engine import (  # noqa: E402
     SqlEngine,
     get_session_with_tenant,
 )
-from onyx.db.engine.tenant_utils import get_all_tenant_ids  # noqa: E402
-from onyx.db.models import (  # noqa: E402
+from lumen.db.engine.tenant_utils import get_all_tenant_ids  # noqa: E402
+from lumen.db.models import (  # noqa: E402
     CloudEmbeddingProvider,
     LLMProvider,
     VoiceProvider,
 )
-from onyx.utils.variable_functionality import (  # noqa: E402
+from lumen.utils.variable_functionality import (  # noqa: E402
     set_is_ee_based_on_env_variable,
 )
 

@@ -10,9 +10,9 @@ from sqlalchemy import DateTime, Enum, String, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 from sqlalchemy.sql import func
 
-from onyx.configs.constants import FileOrigin
-from onyx.file_store.file_store import S3BackedFileStore, get_default_file_store
-from onyx.file_store.gcs_file_store import GCSBackedFileStore
+from lumen.configs.constants import FileOrigin
+from lumen.file_store.file_store import S3BackedFileStore, get_default_file_store
+from lumen.file_store.gcs_file_store import GCSBackedFileStore
 
 
 class DBBaseTest(DeclarativeBase):
@@ -72,7 +72,7 @@ class TestExternalStorageFileStore:
 
     def test_get_default_file_store_s3(self) -> None:
         """Test that S3 file store is returned when backend is s3"""
-        with patch("onyx.configs.app_configs.FILE_STORE_BACKEND", "s3"):
+        with patch("lumen.configs.app_configs.FILE_STORE_BACKEND", "s3"):
             file_store = get_default_file_store()
             assert isinstance(file_store, S3BackedFileStore)
 
@@ -125,7 +125,7 @@ class TestExternalStorageFileStore:
     def test_s3_bucket_name_configuration(self) -> None:
         """Test S3 bucket name configuration"""
         with patch(
-            "onyx.file_store.file_store.S3_FILE_STORE_BUCKET_NAME", "my-test-bucket"
+            "lumen.file_store.file_store.S3_FILE_STORE_BUCKET_NAME", "my-test-bucket"
         ):
             file_store = S3BackedFileStore(bucket_name="my-test-bucket")
             bucket_name: str = file_store._get_bucket_name()
@@ -134,22 +134,22 @@ class TestExternalStorageFileStore:
     def test_s3_key_generation_default_prefix(self) -> None:
         """Test S3 key generation with default prefix"""
         with (
-            patch("onyx.file_store.file_store.S3_FILE_STORE_PREFIX", "onyx-files"),
+            patch("lumen.file_store.file_store.S3_FILE_STORE_PREFIX", "lumen-files"),
             patch(
-                "onyx.file_store.file_store.get_current_tenant_id",
+                "lumen.file_store.file_store.get_current_tenant_id",
                 return_value="test-tenant",
             ),
         ):
             file_store = S3BackedFileStore(bucket_name="test-bucket")
             s3_key: str = file_store._get_s3_key("test-file.txt")
-            assert s3_key == "onyx-files/test-tenant/test-file.txt"
+            assert s3_key == "lumen-files/test-tenant/test-file.txt"
 
     def test_s3_key_generation_custom_prefix(self) -> None:
         """Test S3 key generation with custom prefix"""
         with (
-            patch("onyx.file_store.file_store.S3_FILE_STORE_PREFIX", "custom-prefix"),
+            patch("lumen.file_store.file_store.S3_FILE_STORE_PREFIX", "custom-prefix"),
             patch(
-                "onyx.file_store.file_store.get_current_tenant_id",
+                "lumen.file_store.file_store.get_current_tenant_id",
                 return_value="test-tenant",
             ),
         ):
@@ -161,32 +161,32 @@ class TestExternalStorageFileStore:
 
     def test_s3_key_generation_with_different_tenant_ids(self) -> None:
         """Test S3 key generation with different tenant IDs"""
-        with patch("onyx.file_store.file_store.S3_FILE_STORE_PREFIX", "onyx-files"):
+        with patch("lumen.file_store.file_store.S3_FILE_STORE_PREFIX", "lumen-files"):
             file_store = S3BackedFileStore(bucket_name="test-bucket")
 
             # Test with tenant ID "tenant-1"
             with patch(
-                "onyx.file_store.file_store.get_current_tenant_id",
+                "lumen.file_store.file_store.get_current_tenant_id",
                 return_value="tenant-1",
             ):
                 s3_key = file_store._get_s3_key("document.pdf")
-                assert s3_key == "onyx-files/tenant-1/document.pdf"
+                assert s3_key == "lumen-files/tenant-1/document.pdf"
 
             # Test with tenant ID "tenant-2"
             with patch(
-                "onyx.file_store.file_store.get_current_tenant_id",
+                "lumen.file_store.file_store.get_current_tenant_id",
                 return_value="tenant-2",
             ):
                 s3_key = file_store._get_s3_key("document.pdf")
-                assert s3_key == "onyx-files/tenant-2/document.pdf"
+                assert s3_key == "lumen-files/tenant-2/document.pdf"
 
             # Test with default tenant (public)
             with patch(
-                "onyx.file_store.file_store.get_current_tenant_id",
+                "lumen.file_store.file_store.get_current_tenant_id",
                 return_value="public",
             ):
                 s3_key = file_store._get_s3_key("document.pdf")
-                assert s3_key == "onyx-files/public/document.pdf"
+                assert s3_key == "lumen-files/public/document.pdf"
 
     @patch("boto3.client")
     def test_s3_save_file_mock(
@@ -207,14 +207,14 @@ class TestExternalStorageFileStore:
 
         with (
             patch(
-                "onyx.file_store.file_store.S3_FILE_STORE_BUCKET_NAME", "test-bucket"
+                "lumen.file_store.file_store.S3_FILE_STORE_BUCKET_NAME", "test-bucket"
             ),
-            patch("onyx.file_store.file_store.S3_FILE_STORE_PREFIX", "onyx-files"),
-            patch("onyx.file_store.file_store.S3_AWS_ACCESS_KEY_ID", "test-key"),
-            patch("onyx.file_store.file_store.S3_AWS_SECRET_ACCESS_KEY", "test-secret"),
+            patch("lumen.file_store.file_store.S3_FILE_STORE_PREFIX", "lumen-files"),
+            patch("lumen.file_store.file_store.S3_AWS_ACCESS_KEY_ID", "test-key"),
+            patch("lumen.file_store.file_store.S3_AWS_SECRET_ACCESS_KEY", "test-secret"),
         ):
             # Mock the database operation to avoid SQLAlchemy issues
-            with patch("onyx.db.file_record.upsert_filerecord") as mock_upsert:
+            with patch("lumen.db.file_record.upsert_filerecord") as mock_upsert:
                 mock_upsert.return_value = Mock()
 
                 file_store = S3BackedFileStore(bucket_name="test-bucket")
@@ -233,7 +233,7 @@ class TestExternalStorageFileStore:
                 mock_s3_client.put_object.assert_called_once()
                 call_args = mock_s3_client.put_object.call_args
                 assert call_args[1]["Bucket"] == "test-bucket"
-                assert call_args[1]["Key"] == "onyx-files/public/test-file.txt"
+                assert call_args[1]["Key"] == "lumen-files/public/test-file.txt"
                 assert call_args[1]["ContentType"] == "text/plain"
 
     def test_minio_client_initialization(self) -> None:
@@ -312,15 +312,15 @@ class TestFileStoreInterface:
 
     def test_file_store_s3_when_configured(self) -> None:
         """Test that S3 file store is returned when configured"""
-        with patch("onyx.configs.app_configs.FILE_STORE_BACKEND", "s3"):
+        with patch("lumen.configs.app_configs.FILE_STORE_BACKEND", "s3"):
             file_store = get_default_file_store()
             assert isinstance(file_store, S3BackedFileStore)
 
     def test_file_store_postgres_when_configured(self) -> None:
         """Test that Postgres file store is returned when configured"""
-        from onyx.file_store.postgres_file_store import PostgresBackedFileStore
+        from lumen.file_store.postgres_file_store import PostgresBackedFileStore
 
-        with patch("onyx.configs.app_configs.FILE_STORE_BACKEND", "postgres"):
+        with patch("lumen.configs.app_configs.FILE_STORE_BACKEND", "postgres"):
             file_store = get_default_file_store()
             assert isinstance(file_store, PostgresBackedFileStore)
 
@@ -332,9 +332,9 @@ class TestFileStoreInterface:
     def test_file_store_gcs_when_configured(self) -> None:
         """Test that GCS file store is returned when configured"""
         with (
-            patch("onyx.configs.app_configs.FILE_STORE_BACKEND", "gcs"),
+            patch("lumen.configs.app_configs.FILE_STORE_BACKEND", "gcs"),
             patch(
-                "onyx.configs.app_configs.GCS_FILE_STORE_BUCKET_NAME",
+                "lumen.configs.app_configs.GCS_FILE_STORE_BUCKET_NAME",
                 "test-gcs-bucket",
             ),
         ):
@@ -420,17 +420,17 @@ class TestGCSFileStore:
     def test_gcs_object_key_generation(self) -> None:
         """Test GCS object key generation reuses S3 key utilities"""
         with patch(
-            "onyx.file_store.gcs_file_store.get_current_tenant_id",
+            "lumen.file_store.gcs_file_store.get_current_tenant_id",
             return_value="test-tenant",
         ):
             file_store = GCSBackedFileStore(bucket_name="test-bucket")
             key: str = file_store._get_object_key("test-file.txt")
-            assert key == "onyx-files/test-tenant/test-file.txt"
+            assert key == "lumen-files/test-tenant/test-file.txt"
 
     def test_gcs_object_key_generation_custom_prefix(self) -> None:
         """Test GCS object key generation with custom prefix"""
         with patch(
-            "onyx.file_store.gcs_file_store.get_current_tenant_id",
+            "lumen.file_store.gcs_file_store.get_current_tenant_id",
             return_value="test-tenant",
         ):
             file_store = GCSBackedFileStore(
@@ -455,7 +455,7 @@ class TestGCSFileStore:
         mock_db_session.commit = Mock()
         mock_db_session.rollback = Mock()
 
-        with patch("onyx.db.file_record.upsert_filerecord") as mock_upsert:
+        with patch("lumen.db.file_record.upsert_filerecord") as mock_upsert:
             mock_upsert.return_value = Mock()
 
             file_store = GCSBackedFileStore(bucket_name="test-gcs-bucket")
@@ -477,16 +477,16 @@ class TestGCSFileStore:
 
     def test_gcs_bucket_name_required(self) -> None:
         """Test that get_gcs_file_store raises when no bucket name is configured"""
-        from onyx.file_store.file_store import get_gcs_file_store
+        from lumen.file_store.file_store import get_gcs_file_store
 
-        with patch("onyx.configs.app_configs.GCS_FILE_STORE_BUCKET_NAME", ""):
+        with patch("lumen.configs.app_configs.GCS_FILE_STORE_BUCKET_NAME", ""):
             with pytest.raises(RuntimeError, match="GCS_FILE_STORE_BUCKET_NAME"):
                 get_gcs_file_store()
 
     def test_gcs_read_file_mock(self, sample_content: bytes) -> None:
         """Test GCS read_file returns BytesIO with blob content"""
         mock_record = Mock(
-            bucket_name="test-bucket", object_key="onyx-files/public/test-file.txt"
+            bucket_name="test-bucket", object_key="lumen-files/public/test-file.txt"
         )
         mock_blob = Mock()
         mock_blob.download_as_bytes.return_value = sample_content
@@ -499,11 +499,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "onyx.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "lumen.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "onyx.file_store.gcs_file_store.get_filerecord_by_file_id",
+                "lumen.file_store.gcs_file_store.get_filerecord_by_file_id",
                 return_value=mock_record,
             ) as mock_get_record,
         ):
@@ -518,14 +518,14 @@ class TestGCSFileStore:
                 file_id="test-file.txt", db_session=mock_db_session
             )
             mock_client.bucket.assert_called_once_with("test-bucket")
-            mock_bucket.blob.assert_called_once_with("onyx-files/public/test-file.txt")
+            mock_bucket.blob.assert_called_once_with("lumen-files/public/test-file.txt")
             mock_blob.download_as_bytes.assert_called_once()
             assert result.read() == sample_content
 
     def test_gcs_read_file_with_tempfile(self, sample_content: bytes) -> None:
         """Test GCS read_file with use_tempfile=True downloads to a temp file"""
         mock_record = Mock(
-            bucket_name="test-bucket", object_key="onyx-files/public/test-file.txt"
+            bucket_name="test-bucket", object_key="lumen-files/public/test-file.txt"
         )
         mock_blob = Mock()
 
@@ -542,11 +542,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "onyx.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "lumen.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "onyx.file_store.gcs_file_store.get_filerecord_by_file_id",
+                "lumen.file_store.gcs_file_store.get_filerecord_by_file_id",
                 return_value=mock_record,
             ),
         ):
@@ -566,7 +566,7 @@ class TestGCSFileStore:
     def test_gcs_delete_file_mock(self) -> None:
         """Test GCS delete_file removes blob and DB record"""
         mock_record = Mock(
-            bucket_name="test-bucket", object_key="onyx-files/public/test-file.txt"
+            bucket_name="test-bucket", object_key="lumen-files/public/test-file.txt"
         )
         mock_blob = Mock()
         mock_bucket = Mock()
@@ -578,15 +578,15 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "onyx.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "lumen.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "onyx.file_store.gcs_file_store.get_filerecord_by_file_id_optional",
+                "lumen.file_store.gcs_file_store.get_filerecord_by_file_id_optional",
                 return_value=mock_record,
             ),
             patch(
-                "onyx.file_store.gcs_file_store.delete_filerecord_by_file_id"
+                "lumen.file_store.gcs_file_store.delete_filerecord_by_file_id"
             ) as mock_delete_record,
         ):
             file_store = GCSBackedFileStore(bucket_name="test-bucket")
@@ -605,7 +605,7 @@ class TestGCSFileStore:
         from google.api_core.exceptions import NotFound
 
         mock_record = Mock(
-            bucket_name="test-bucket", object_key="onyx-files/public/missing.txt"
+            bucket_name="test-bucket", object_key="lumen-files/public/missing.txt"
         )
         mock_blob = Mock()
         mock_blob.delete.side_effect = NotFound("blob not found")
@@ -618,15 +618,15 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "onyx.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "lumen.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "onyx.file_store.gcs_file_store.get_filerecord_by_file_id_optional",
+                "lumen.file_store.gcs_file_store.get_filerecord_by_file_id_optional",
                 return_value=mock_record,
             ),
             patch(
-                "onyx.file_store.gcs_file_store.delete_filerecord_by_file_id"
+                "lumen.file_store.gcs_file_store.delete_filerecord_by_file_id"
             ) as mock_delete_record,
         ):
             file_store = GCSBackedFileStore(bucket_name="test-bucket")
@@ -645,11 +645,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "onyx.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "lumen.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "onyx.file_store.gcs_file_store.get_filerecord_by_file_id_optional",
+                "lumen.file_store.gcs_file_store.get_filerecord_by_file_id_optional",
                 return_value=None,
             ),
         ):
@@ -668,11 +668,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "onyx.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "lumen.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "onyx.file_store.gcs_file_store.get_filerecord_by_file_id_optional",
+                "lumen.file_store.gcs_file_store.get_filerecord_by_file_id_optional",
                 return_value=None,
             ),
         ):
@@ -690,7 +690,7 @@ class TestGCSFileStore:
         """change_file_id repoints the record at the same blob — no copy/delete."""
         mock_record = Mock(
             bucket_name="test-bucket",
-            object_key="onyx-files/public/old-id",
+            object_key="lumen-files/public/old-id",
             display_name="Old File",
             file_origin=FileOrigin.OTHER,
             file_type="text/plain",
@@ -702,19 +702,19 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "onyx.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "lumen.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "onyx.file_store.gcs_file_store.get_filerecord_by_file_id",
+                "lumen.file_store.gcs_file_store.get_filerecord_by_file_id",
                 return_value=mock_record,
             ),
-            patch("onyx.file_store.gcs_file_store.upsert_filerecord") as mock_upsert,
+            patch("lumen.file_store.gcs_file_store.upsert_filerecord") as mock_upsert,
             patch(
-                "onyx.file_store.gcs_file_store.delete_filerecord_by_file_id"
+                "lumen.file_store.gcs_file_store.delete_filerecord_by_file_id"
             ) as mock_delete_record,
             patch(
-                "onyx.file_store.gcs_file_store.get_current_tenant_id",
+                "lumen.file_store.gcs_file_store.get_current_tenant_id",
                 return_value="public",
             ),
         ):
@@ -732,7 +732,7 @@ class TestGCSFileStore:
             assert mock_upsert.call_args.kwargs["file_id"] == "new-id"
             assert mock_upsert.call_args.kwargs["bucket_name"] == "test-bucket"
             assert (
-                mock_upsert.call_args.kwargs["object_key"] == "onyx-files/public/old-id"
+                mock_upsert.call_args.kwargs["object_key"] == "lumen-files/public/old-id"
             )
             mock_delete_record.assert_called_once_with(
                 file_id="old-id", db_session=mock_db_session
@@ -744,7 +744,7 @@ class TestGCSFileStore:
     def test_gcs_get_file_size_mock(self) -> None:
         """Test GCS get_file_size returns the blob size"""
         mock_record = Mock(
-            bucket_name="test-bucket", object_key="onyx-files/public/test-file.txt"
+            bucket_name="test-bucket", object_key="lumen-files/public/test-file.txt"
         )
         mock_blob = Mock()
         mock_blob.size = 1234
@@ -757,11 +757,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "onyx.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "lumen.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "onyx.file_store.gcs_file_store.get_filerecord_by_file_id",
+                "lumen.file_store.gcs_file_store.get_filerecord_by_file_id",
                 return_value=mock_record,
             ),
         ):
@@ -781,11 +781,11 @@ class TestGCSFileStore:
 
         with (
             patch(
-                "onyx.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
+                "lumen.file_store.gcs_file_store.get_session_with_current_tenant_if_none",
                 return_value=nullcontext(mock_db_session),
             ),
             patch(
-                "onyx.file_store.gcs_file_store.get_filerecord_by_file_id",
+                "lumen.file_store.gcs_file_store.get_filerecord_by_file_id",
                 side_effect=RuntimeError("record missing"),
             ),
         ):

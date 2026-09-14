@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
 )
 
 // Prompter asks questions on ios.Out and reads answers from ios.In. When

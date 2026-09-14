@@ -16,14 +16,14 @@ from uuid import UUID, uuid4
 
 import pytest
 
-from onyx.configs.constants import FileOrigin
-from onyx.connectors.models import InputType
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import AccessType, ChatSessionSharedStatus
-from onyx.db.models import ChatSession, Document, ToolCall
-from onyx.file_store.file_store import get_default_file_store
-from onyx.file_store.models import FileDescriptor
-from onyx.server.documents.models import DocumentSource
+from lumen.configs.constants import FileOrigin
+from lumen.connectors.models import InputType
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import AccessType, ChatSessionSharedStatus
+from lumen.db.models import ChatSession, Document, ToolCall
+from lumen.file_store.file_store import get_default_file_store
+from lumen.file_store.models import FileDescriptor
+from lumen.server.documents.models import DocumentSource
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.api_key import APIKeyManager

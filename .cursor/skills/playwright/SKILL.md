@@ -1,13 +1,13 @@
 ---
 name: playwright-e2e-tests
-description: Write and maintain Playwright end-to-end tests for the Onyx application. Use when creating new E2E tests, debugging test failures, adding test coverage, or when the user mentions Playwright, E2E tests, or browser testing.
+description: Write and maintain Playwright end-to-end tests for the Lumen application. Use when creating new E2E tests, debugging test failures, adding test coverage, or when the user mentions Playwright, E2E tests, or browser testing.
 ---
 
 # Playwright E2E Tests
 
 **Spec-authoring rules live in `web/tests/e2e/README.md`** — the Page Object Model, locator
 priority, and auto-retrying matchers. Read it before adding or changing a spec. This skill covers
-the surrounding workflow: layout, environment, running tests, auth, and Onyx-specific utilities.
+the surrounding workflow: layout, environment, running tests, auth, and Lumen-specific utilities.
 
 ## Project Layout
 
@@ -24,7 +24,7 @@ Always use absolute imports with the `@tests/e2e/` prefix — never relative pat
 
 ```typescript
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import { TEST_ADMIN_CREDENTIALS } from "@tests/e2e/constants";
 ```
 
@@ -127,11 +127,11 @@ If the test requires admin privileges *and* modifies visible state, use `"admin2
 
 `loginAsRandomUser` exists for the rare case where the test requires a brand-new user (e.g. onboarding flows). Avoid it elsewhere — it produces non-deterministic usernames that complicate screenshots.
 
-**API resource setup** — only when tests need to create backend resources (image gen configs, web search providers, MCP servers). Use `beforeAll`/`afterAll` with `OnyxApiClient` to create and clean up. See `chat/default_assistant.spec.ts` or `mcp/mcp_oauth_flow.spec.ts` for examples. This is uncommon (~4 of 37 test files).
+**API resource setup** — only when tests need to create backend resources (image gen configs, web search providers, MCP servers). Use `beforeAll`/`afterAll` with `LumenApiClient` to create and clean up. See `chat/default_assistant.spec.ts` or `mcp/mcp_oauth_flow.spec.ts` for examples. This is uncommon (~4 of 37 test files).
 
 ## Key Utilities
 
-### `OnyxApiClient` (`@tests/e2e/utils/onyxApiClient`)
+### `LumenApiClient` (`@tests/e2e/utils/lumenApiClient`)
 
 Backend API client for test setup/teardown. Key methods:
 
@@ -146,7 +146,7 @@ Backend API client for test setup/teardown. Key methods:
 
 - `sendMessage(page, message)` — sends a message and waits for AI response
 - `startNewChat(page)` — clicks new-chat button and waits for intro
-- `verifyDefaultAssistantIsChosen(page)` — checks Onyx logo is visible
+- `verifyDefaultAssistantIsChosen(page)` — checks Lumen logo is visible
 - `verifyAssistantIsChosen(page, name)` — checks assistant name display
 - `switchModel(page, modelName)` — switches LLM model via popover
 
@@ -205,7 +205,7 @@ await page.waitForResponse(resp => resp.url().includes("/api/chat") && resp.stat
 ## Best Practices
 
 1. **Descriptive test names** — clearly state expected behavior: `"should display greeting message when opening new chat"`
-2. **API-first setup** — use `OnyxApiClient` for backend state; reserve UI interactions for the behavior under test
+2. **API-first setup** — use `LumenApiClient` for backend state; reserve UI interactions for the behavior under test
 3. **User isolation** — tests that modify visible app state (sidebar, chat history) should run as the worker-specific user via `loginAsWorkerUser(page, testInfo.workerIndex)` (not admin) and clean up resources in `afterAll`. Each parallel worker gets its own user, preventing cross-contamination. Reserve `loginAsRandomUser` for flows that require a brand-new user (e.g. onboarding)
 4. **DRY helpers** — extract reusable logic into `utils/` with JSDoc comments
 5. **No hardcoded waits** — use the auto-retrying matchers (`web/tests/e2e/README.md`), `waitFor`, or `waitForLoadState`; never `waitForTimeout`

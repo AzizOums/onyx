@@ -24,38 +24,38 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.access.models import DocumentAccess
-from onyx.configs.constants import DocumentSource
-from onyx.db.document import (
+from lumen.access.models import DocumentAccess
+from lumen.configs.constants import DocumentSource
+from lumen.db.document import (
     count_secondary_only_sync_pending_documents,
     document_has_indexable_cc_pair,
     mark_document_as_synced,
     mark_document_synced_secondary_pending,
 )
-from onyx.db.enums import ConnectorCredentialPairStatus, EmbeddingPrecision
-from onyx.db.models import (
+from lumen.db.enums import ConnectorCredentialPairStatus, EmbeddingPrecision
+from lumen.db.models import (
     ConnectorCredentialPair,
     DocumentByConnectorCredentialPair,
     SearchSettings,
 )
-from onyx.db.models import Document as DbDocument
-from onyx.db.port_attempt import (
+from lumen.db.models import Document as DbDocument
+from lumen.db.port_attempt import (
     any_future_port_in_progress,
     create_port_attempt,
     mark_port_in_progress,
 )
-from onyx.document_index.interfaces_new import (
+from lumen.document_index.interfaces_new import (
     MetadataUpdateRequest,
     SecondaryIndexDocumentMissingError,
     TenantState,
 )
-from onyx.document_index.opensearch.client import OpenSearchIndexClient
-from onyx.document_index.opensearch.opensearch_document_index import (
+from lumen.document_index.opensearch.client import OpenSearchIndexClient
+from lumen.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
     OpenSearchIndexPair,
     generate_opensearch_filtered_access_control_list,
 )
-from onyx.document_index.opensearch.schema import (
+from lumen.document_index.opensearch.schema import (
     DocumentChunk,
     DocumentSchema,
     get_opensearch_doc_chunk_id,

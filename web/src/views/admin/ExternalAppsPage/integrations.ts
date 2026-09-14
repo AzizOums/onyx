@@ -15,7 +15,7 @@ import { ConfiguredIntegration } from "@/views/admin/ExternalAppsPage/interfaces
 /** Translated fact and warning copy, supplied by the rendering component
  * because this module cannot call translation hooks. */
 export interface IntegrationLabels {
-  providedByOnyx: string;
+  providedByLumen: string;
   noCredentials: string;
   orgCredentialsSet: string;
   perUserCredentials: string;
@@ -46,7 +46,7 @@ function externalAppFacts(
   labels: IntegrationLabels
 ): string[] {
   const facts: string[] = [];
-  if (app.is_onyx_managed) facts.push(labels.providedByOnyx);
+  if (app.is_lumen_managed) facts.push(labels.providedByLumen);
   if (app.app_type === "CUSTOM") {
     facts.push(labels.upstreamPatternCount(app.upstream_url_patterns.length));
     facts.push(customCredentialFact(app, labels));
@@ -103,8 +103,8 @@ export function externalAppToIntegration(
       : descriptor
         ? () => onEdit(descriptor)
         : null,
-    // Onyx-managed built-ins are provisioned by Onyx.
-    remove: app.is_onyx_managed
+    // Lumen-managed built-ins are provisioned by Lumen.
+    remove: app.is_lumen_managed
       ? null
       : {
           retainedCustomSkillCount: app.associated_skills.length,

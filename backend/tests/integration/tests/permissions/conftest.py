@@ -23,9 +23,9 @@ from typing import NamedTuple
 
 import pytest
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.pat import create_pat
-from onyx.db.users import (
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.pat import create_pat
+from lumen.db.users import (
     add_slack_user_if_not_exists,
     batch_add_ext_perm_user_if_not_exists,
 )

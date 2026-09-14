@@ -24,7 +24,7 @@ func testClient(apiHandler, rawHandler http.Handler) (*Client, func()) {
 
 func TestLatestAppTagHappyPath(t *testing.T) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/repos/onyx-dot-app/onyx/releases/latest", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/repos/lumen-dot-app/lumen/releases/latest", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`{"tag_name": "v4.4.6"}`))
 	})
 	c, done := testClient(mux, http.NotFoundHandler())
@@ -44,10 +44,10 @@ func TestLatestAppTagHappyPath(t *testing.T) {
 // the client must fall back to scanning the release list for an app tag.
 func TestLatestAppTagSkipsToolReleases(t *testing.T) {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/repos/onyx-dot-app/onyx/releases/latest", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/repos/lumen-dot-app/lumen/releases/latest", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`{"tag_name": "cli/v1.2.3"}`))
 	})
-	mux.HandleFunc("/repos/onyx-dot-app/onyx/releases", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/repos/lumen-dot-app/lumen/releases", func(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(`[
 			{"tag_name": "cli/v1.2.3", "draft": false, "prerelease": false},
 			{"tag_name": "v4.5.0-beta.1", "draft": false, "prerelease": true},
@@ -91,7 +91,7 @@ func TestFetchFileSuccessAndPath(t *testing.T) {
 	if string(data) != "IMAGE_TAG=latest\n" {
 		t.Fatalf("got %q", data)
 	}
-	want := "/onyx-dot-app/onyx/v4.4.6/deployment/docker_compose/env.template"
+	want := "/lumen-dot-app/lumen/v4.4.6/deployment/docker_compose/env.template"
 	if gotPath != want {
 		t.Fatalf("fetched %s, want %s", gotPath, want)
 	}

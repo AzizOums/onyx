@@ -3,7 +3,7 @@
 Complements ``test_file_connector_permissions.py`` (which exercises the
 file-connector flow in depth) by asserting the breadth of general
 connector management endpoints in
-``backend/onyx/server/documents/connector.py`` (router prefix ``/manage``).
+``backend/lumen/server/documents/connector.py`` (router prefix ``/manage``).
 """
 
 import os
@@ -11,7 +11,7 @@ from typing import Any
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.test_models import DATestAPIKey, DATestUser
 from tests.integration.tests.permissions._access_matrix import (
     USER_KINDS,

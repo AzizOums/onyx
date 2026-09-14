@@ -8,9 +8,9 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.llm import remove_llm_provider, upsert_llm_provider
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.manage.llm.models import (
+from lumen.db.llm import remove_llm_provider, upsert_llm_provider
+from lumen.llm.constants import LlmProviderNames
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     LLMProviderView,
     ModelConfigurationUpsertRequest,

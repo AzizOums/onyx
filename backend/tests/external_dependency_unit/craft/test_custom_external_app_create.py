@@ -6,30 +6,30 @@ import pytest
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ExternalAppType, SkillSharePermission
-from onyx.db.external_app import (
+from lumen.db.enums import ExternalAppType, SkillSharePermission
+from lumen.db.external_app import (
     associate_built_in_skill__no_commit,
     create_external_app,
     upsert_external_app_user_credential,
 )
-from onyx.db.models import ExternalApp, ExternalApp__Skill, Skill, User
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.external_apps.credentials import resolve_injection_headers
-from onyx.sandbox_proxy.request_evaluator import resolve_app_for_url
-from onyx.server.features.build.external_apps.api import (
+from lumen.db.models import ExternalApp, ExternalApp__Skill, Skill, User
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.external_apps.credentials import resolve_injection_headers
+from lumen.sandbox_proxy.request_evaluator import resolve_app_for_url
+from lumen.server.features.build.external_apps.api import (
     create_built_in_external_app,
     create_custom_external_app,
     update_external_app_admin,
 )
-from onyx.server.features.build.external_apps.models import (
+from lumen.server.features.build.external_apps.models import (
     CreateBuiltInExternalAppRequest,
     CreateCustomExternalAppRequest,
     ExternalAppAdminResponse,
     UpdateExternalAppRequest,
 )
-from onyx.skills.built_in import EXTERNAL_APP_BUILT_IN_SKILL_IDS
-from onyx.utils.encryption import is_masked_credential
+from lumen.skills.built_in import EXTERNAL_APP_BUILT_IN_SKILL_IDS
+from lumen.utils.encryption import is_masked_credential
 
 _AUTH_TEMPLATE = {"Authorization": "Bearer {api_key}"}
 _UPSTREAM = ["https://api.example.com/*"]
@@ -198,7 +198,7 @@ def test_create_rejects_wildcard_host_without_persisting_resources(
     app_ids_before = set(db_session.scalars(select(ExternalApp.id)))
     skill_ids_before = _skill_ids(db_session)
 
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(LumenError) as exc:
         create_custom_external_app(
             request=CreateCustomExternalAppRequest(
                 name="Wildcard Host",
@@ -210,7 +210,7 @@ def test_create_rejects_wildcard_host_without_persisting_resources(
             db_session=db_session,
         )
 
-    assert exc.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc.value.error_code == LumenErrorCode.INVALID_INPUT
     assert set(db_session.scalars(select(ExternalApp.id))) == app_ids_before
     assert _skill_ids(db_session) == skill_ids_before
 
@@ -336,14 +336,14 @@ def test_create_rejects_invalid_gateway_configuration(
 ) -> None:
     app_ids_before = set(db_session.scalars(select(ExternalApp.id)))
 
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(LumenError) as exc:
         create_custom_external_app(
             request=create_request,
             _=test_user,
             db_session=db_session,
         )
 
-    assert exc.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc.value.error_code == LumenErrorCode.INVALID_INPUT
     assert expected_detail in exc.value.detail
     assert set(db_session.scalars(select(ExternalApp.id))) == app_ids_before
 
@@ -352,7 +352,7 @@ def test_built_in_endpoint_rejects_custom_app_type(
     db_session: Session,
     test_user: User,
 ) -> None:
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(LumenError) as exc:
         create_built_in_external_app(
             request=CreateBuiltInExternalAppRequest(
                 name="Nope",
@@ -365,4 +365,4 @@ def test_built_in_endpoint_rejects_custom_app_type(
             db_session=db_session,
         )
 
-    assert exc.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc.value.error_code == LumenErrorCode.INVALID_INPUT

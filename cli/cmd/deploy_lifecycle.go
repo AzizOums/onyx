@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/install"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/install"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
 	"github.com/spf13/cobra"
 )
 
@@ -14,9 +14,9 @@ func newDeployStopCmdWithDeps(ios *iostreams.IOStreams, deps *install.Deps) *cob
 	opts := install.Options{}
 	cmd := &cobra.Command{
 		Use:   "stop",
-		Short: "Stop (pause) the Onyx containers",
-		Long: `Stop the Onyx containers without removing them or their data.
-Start them again with: onyx-cli deploy install`,
+		Short: "Stop (pause) the Lumen containers",
+		Long: `Stop the Lumen containers without removing them or their data.
+Start them again with: lumen-cli deploy install`,
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			d := install.NewDeps(ios, fullVersion())
@@ -27,7 +27,7 @@ Start them again with: onyx-cli deploy install`,
 		},
 	}
 	cmd.Flags().StringVar(&opts.Dir, "dir", "", "Deployment directory (default: auto-detected)")
-	cmd.Flags().StringVar(&opts.Project, "project", "", `Docker compose project name (default: recorded in the manifest, else "onyx")`)
+	cmd.Flags().StringVar(&opts.Project, "project", "", `Docker compose project name (default: recorded in the manifest, else "lumen")`)
 	return cmd
 }
 
@@ -58,7 +58,7 @@ up.`,
 		},
 	}
 	cmd.Flags().StringVar(&opts.Dir, "dir", "", "Deployment directory (default: auto-detected)")
-	cmd.Flags().StringVar(&opts.Project, "project", "", `Docker compose project name (default: recorded in the manifest, else "onyx")`)
+	cmd.Flags().StringVar(&opts.Project, "project", "", `Docker compose project name (default: recorded in the manifest, else "lumen")`)
 	cmd.Flags().BoolVar(&jsonOut, "json", false, "Output machine-readable JSON")
 	return cmd
 }
@@ -76,8 +76,8 @@ func newDeployLogsCmdWithDeps(ios *iostreams.IOStreams, deps *install.Deps) *cob
 		Long: `Show the logs of a deployment's services, with no need to find the
 deployment directory or remember which compose overlays it uses.
 
-Name the services to narrow the output ("onyx-cli deploy logs api_server"),
-which is what "onyx-cli deploy status" suggests for a service in trouble.`,
+Name the services to narrow the output ("lumen-cli deploy logs api_server"),
+which is what "lumen-cli deploy status" suggests for a service in trouble.`,
 		Args: cobra.ArbitraryArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			d := install.NewDeps(ios, fullVersion())
@@ -89,7 +89,7 @@ which is what "onyx-cli deploy status" suggests for a service in trouble.`,
 		},
 	}
 	cmd.Flags().StringVar(&opts.Dir, "dir", "", "Deployment directory (default: auto-detected)")
-	cmd.Flags().StringVar(&opts.Project, "project", "", `Docker compose project name (default: recorded in the manifest, else "onyx")`)
+	cmd.Flags().StringVar(&opts.Project, "project", "", `Docker compose project name (default: recorded in the manifest, else "lumen")`)
 	cmd.Flags().BoolVarP(&logOpts.Follow, "follow", "f", false, "Keep printing new log lines")
 	cmd.Flags().StringVar(&logOpts.Tail, "tail", "200", `Lines to show from the end of each log ("all" for everything)`)
 	cmd.Flags().StringVar(&logOpts.Since, "since", "", "Only logs since this point (e.g. 10m, 2h, or a timestamp)")
@@ -104,8 +104,8 @@ func newDeployUninstallCmdWithDeps(ios *iostreams.IOStreams, deps *install.Deps)
 	opts := install.Options{}
 	cmd := &cobra.Command{
 		Use:   "uninstall",
-		Short: "Permanently delete the Onyx deployment and all its data",
-		Long: `Remove the Onyx containers, volumes, and the deployment directory.
+		Short: "Permanently delete the Lumen deployment and all its data",
+		Long: `Remove the Lumen containers, volumes, and the deployment directory.
 
 This permanently deletes all user data and documents. Interactive runs must
 type DELETE to confirm; non-interactive runs require --force.`,
@@ -119,7 +119,7 @@ type DELETE to confirm; non-interactive runs require --force.`,
 		},
 	}
 	cmd.Flags().StringVar(&opts.Dir, "dir", "", "Deployment directory (default: auto-detected)")
-	cmd.Flags().StringVar(&opts.Project, "project", "", `Docker compose project name (default: recorded in the manifest, else "onyx")`)
+	cmd.Flags().StringVar(&opts.Project, "project", "", `Docker compose project name (default: recorded in the manifest, else "lumen")`)
 	cmd.Flags().BoolVar(&opts.Force, "force", false, "Skip the confirmation (for scripted teardown)")
 	return cmd
 }

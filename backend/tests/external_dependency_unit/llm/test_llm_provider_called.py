@@ -8,23 +8,23 @@ import pytest
 from fastapi_users.password import PasswordHelper
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import AccountType
-from onyx.db.llm import (
+from lumen.db.enums import AccountType
+from lumen.db.llm import (
     fetch_existing_llm_provider,
     remove_llm_provider,
     update_default_provider,
     upsert_llm_provider,
 )
-from onyx.db.models import User
-from onyx.db.users import assign_user_to_default_groups__no_commit
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.override_models import LLMOverride
-from onyx.server.manage.llm.models import (
+from lumen.db.models import User
+from lumen.db.users import assign_user_to_default_groups__no_commit
+from lumen.llm.constants import LlmProviderNames
+from lumen.llm.override_models import LLMOverride
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )
-from onyx.server.query_and_chat.chat_backend import create_new_chat_session
-from onyx.server.query_and_chat.models import (
+from lumen.server.query_and_chat.chat_backend import create_new_chat_session
+from lumen.server.query_and_chat.models import (
     ChatSessionCreationRequest,
     MessageResponseIDInfo,
 )
@@ -111,11 +111,11 @@ def use_mock_llm() -> Generator[
 
     with (
         patch(
-            "onyx.llm.factory.get_default_llm",
+            "lumen.llm.factory.get_default_llm",
             side_effect=mock_get_default_llm,
         ),
         patch(
-            "onyx.llm.factory.get_llm",
+            "lumen.llm.factory.get_llm",
             side_effect=mock_get_llm,
         ),
     ):

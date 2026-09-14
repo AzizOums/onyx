@@ -11,9 +11,9 @@ from collections.abc import Generator
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.connector_credential_pair import get_last_successful_attempt_poll_range_end
-from onyx.db.enums import IndexingStatus
-from onyx.db.index_attempt import (
+from lumen.db.connector_credential_pair import get_last_successful_attempt_poll_range_end
+from lumen.db.enums import IndexingStatus
+from lumen.db.index_attempt import (
     cancel_indexing_attempts_for_ccpair,
     count_index_attempts_for_cc_pair,
     count_unique_active_cc_pairs_with_successful_index_attempts,
@@ -31,10 +31,10 @@ from onyx.db.index_attempt import (
     get_recent_attempts_for_cc_pair,
     get_recent_completed_attempts_for_cc_pair,
 )
-from onyx.db.indexing_coordination import IndexingCoordination
-from onyx.db.models import ConnectorCredentialPair, IndexAttempt, TargetedReindexJob
-from onyx.db.search_settings import get_current_search_settings
-from onyx.server.documents.models import ConnectorCredentialPairIdentifier
+from lumen.db.indexing_coordination import IndexingCoordination
+from lumen.db.models import ConnectorCredentialPair, IndexAttempt, TargetedReindexJob
+from lumen.db.search_settings import get_current_search_settings
+from lumen.server.documents.models import ConnectorCredentialPairIdentifier
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
     make_cc_pair,

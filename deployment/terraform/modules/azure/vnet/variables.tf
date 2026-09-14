@@ -1,7 +1,7 @@
 variable "name" {
   type        = string
   description = "Name prefix for the virtual network and its resources"
-  default     = "onyx"
+  default     = "lumen"
 }
 
 variable "resource_group_name" {

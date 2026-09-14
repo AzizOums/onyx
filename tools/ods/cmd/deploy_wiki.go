@@ -6,13 +6,13 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/config"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/config"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/git"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/prompt"
 )
 
 const (
-	wikiBuildRepo       = "onyx-dot-app/agent-wiki"
+	wikiBuildRepo       = "lumen-dot-app/agent-wiki"
 	wikiBuildWorkflow   = "nightly-build.yml"
 	wikiBuildPollLimit  = 30 * time.Minute
 	wikiDeployPollLimit = 20 * time.Minute
@@ -34,12 +34,12 @@ func NewDeployWikiCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "wiki",
-		Short: "Build a fresh nightly image and deploy it to dev-wiki.onyx.app",
+		Short: "Build a fresh nightly image and deploy it to dev-wiki.lumen.app",
 		Long: `Build a fresh nightly image of agent-wiki and deploy it to dev-wiki.
 
 This command will:
-  1. Dispatch the nightly-build.yml workflow in onyx-dot-app/agent-wiki
-     (builds and pushes onyxdotapp/agent-wiki-{backend,frontend}:nightly-latest-YYYYMMDD)
+  1. Dispatch the nightly-build.yml workflow in lumen-dot-app/agent-wiki
+     (builds and pushes lumendotapp/agent-wiki-{backend,frontend}:nightly-latest-YYYYMMDD)
   2. Wait for the build workflow to finish
   3. Dispatch the configured deploy workflow with version_tag=nightly-latest-YYYYMMDD
      (today's UTC date)
@@ -50,7 +50,7 @@ by your gh credentials and GitHub's repo/workflow permissions. A kickoff
 Slack message will appear in #monitor-deployments.
 
 On first run, you'll be prompted for the deploy target repo and workflow
-filename, saved to the ods config file (~/.config/onyx-dev/config.json on
+filename, saved to the ods config file (~/.config/lumen-dev/config.json on
 Linux/macOS) and reused on subsequent runs. The target repo is shared across
 all deploy subcommands; the workflow filename is per-subcommand. Pass
 --target-repo or --target-workflow to override the saved values.
@@ -96,9 +96,9 @@ func deployWiki(opts *DeployWikiOptions) {
 	if !opts.Yes {
 		var msg string
 		if opts.NoBuild {
-			msg = "About to deploy " + versionTag + " to dev-wiki.onyx.app (no rebuild). Continue? (Y/n): "
+			msg = "About to deploy " + versionTag + " to dev-wiki.lumen.app (no rebuild). Continue? (Y/n): "
 		} else {
-			msg = "About to build a fresh agent-wiki image and deploy it to dev-wiki.onyx.app. Continue? (Y/n): "
+			msg = "About to build a fresh agent-wiki image and deploy it to dev-wiki.lumen.app. Continue? (Y/n): "
 		}
 		if !prompt.Confirm(msg) {
 			log.Info("Exiting...")

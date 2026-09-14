@@ -16,13 +16,13 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.connectors.models import IndexAttemptMetadata
-from onyx.context.search.models import SavedSearchSettings
-from onyx.db.enums import EmbeddingPrecision, SwitchoverType
-from onyx.db.models import ConnectorCredentialPair, IndexModelStatus
-from onyx.db.search_settings import create_search_settings
-from onyx.db.swap_index import check_and_perform_index_swap
-from onyx.indexing.indexing_pipeline import index_doc_batch_prepare
+from lumen.connectors.models import IndexAttemptMetadata
+from lumen.context.search.models import SavedSearchSettings
+from lumen.db.enums import EmbeddingPrecision, SwitchoverType
+from lumen.db.models import ConnectorCredentialPair, IndexModelStatus
+from lumen.db.search_settings import create_search_settings
+from lumen.db.swap_index import check_and_perform_index_swap
+from lumen.indexing.indexing_pipeline import index_doc_batch_prepare
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
     get_doc_row,
@@ -136,7 +136,7 @@ class TestInstantIndexSwap:
         # Vespa is patched out — we're testing the postgres + file_store
         # side effects, not the document-index integration.
         with patch(
-            "onyx.db.swap_index.get_all_document_indices",
+            "lumen.db.swap_index.get_all_document_indices",
             return_value=[],
         ):
             old_settings = check_and_perform_index_swap(db_session)
@@ -180,7 +180,7 @@ class TestInstantIndexSwap:
         )
 
         with patch(
-            "onyx.db.swap_index.get_all_document_indices",
+            "lumen.db.swap_index.get_all_document_indices",
             return_value=[],
         ):
             old_settings = check_and_perform_index_swap(db_session)

@@ -1,7 +1,7 @@
 package tui
 
 import (
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/lumen-dot-app/lumen/cli/internal/models"
 )
 
 // InitDoneMsg signals that async initialization is complete.

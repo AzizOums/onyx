@@ -1,9 +1,9 @@
 @reference "#reference.css";
 
 /* ---------------------------------------------------------------------------
-   OnyxLoader animation
+   LumenLoader animation
 
-   The Onyx mark rotates a full turn while crossfading between the octagon
+   The Lumen mark rotates a full turn while crossfading between the octagon
    outline and the diamond logo, then briefly holds before looping. Timing:
      0ms to 900ms: rotate 0deg to 180deg (ease in), outline to logo
      900ms to 1800ms: rotate 180deg to 360deg (ease out), logo to outline

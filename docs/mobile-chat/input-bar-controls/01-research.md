@@ -5,7 +5,7 @@
 ## Requirement
 
 Port web's chat input-bar toolbar controls — the **ActionsPopover** (tools/actions menu) and the
-**deep-research toggle** — into the Onyx React Native mobile composer, at **Tier 2 (Standard)** scope.
+**deep-research toggle** — into the Lumen React Native mobile composer, at **Tier 2 (Standard)** scope.
 
 ## Clarifications
 
@@ -21,17 +21,17 @@ switches, OAuth re-authentication, the admin "More Actions" link, and the action
 
 - **The tool + source catalog already rides the wire — no new API needed.** `GET /persona`
   serves `MinimalPersonaSnapshot`, which already carries `tools: list[ToolSnapshot]`
-  (`backend/onyx/server/features/persona/models.py:202`) **and**
+  (`backend/lumen/server/features/persona/models.py:202`) **and**
   `knowledge_sources: list[DocumentSource]` (`:212`). Mobile's `useAgents()`
   (`mobile/src/api/chat/agents.ts`) already hits this endpoint; `MinimalAgent`
   (`mobile/src/chat/agents.ts:15`) is just a hand-picked subset that omits those two fields.
   → **Widen the type; zero new network calls.**
 - **Backend already accepts all four send fields.** `SendMessageRequest`
-  (`backend/onyx/server/query_and_chat/models.py`) has `allowed_tool_ids` (`:110`),
+  (`backend/lumen/server/query_and_chat/models.py`) has `allowed_tool_ids` (`:110`),
   `forced_tool_id` (`:111`), `internal_search_filters` (`:115`, a `BaseFilters`), and
   `deep_research` (`:117`). No backend change required (additive optional fields only).
 - **`deep_research_enabled` admin flag exists.** `Settings.deep_research_enabled: bool | None`
-  (`backend/onyx/server/settings/models.py:50`). Surfaced through `GET /settings`; mobile's
+  (`backend/lumen/server/settings/models.py:50`). Surfaced through `GET /settings`; mobile's
   `useWorkspaceSettings()` (`mobile/src/api/settings.ts`) just doesn't type it yet.
 
 **Mobile — current state:**
@@ -121,10 +121,10 @@ new lightweight connectors query. Flagged for the design phase.
   [SteffeyDev/react-native-popover-view](https://github.com/SteffeyDev/react-native-popover-view)
 - **Headless-core is the 2026 recommendation.** Best-in-class popovers expose an unstyled/"headless"
   API — logic (open/close, position, focus) separate from look — so a design system fully owns
-  styling. This maps directly to Onyx's token-based primitives. —
+  styling. This maps directly to Lumen's token-based primitives. —
   [Base UI Popover](https://base-ui.com/react/components/popover),
   [react-native-popper](https://github.com/intergalacticspacehighway/react-native-popper)
-- **The keyboard constraint is decisive here.** The Onyx composer is docked at the very bottom,
+- **The keyboard constraint is decisive here.** The Lumen composer is docked at the very bottom,
   above an open keyboard. An *upward* anchored popover from a bottom trigger is precisely the
   off-screen / keyboard-collision failure mode the guidance warns about, and mobile **already chose**
   a bottom sheet over web's hover popover once (`FilePickerSheet`). This is the central tension the
@@ -171,7 +171,7 @@ tab-reading) into ordered *pill specs* the composer maps over — no `InputBar` 
 (c) All four fields flow through **one `sendConfig` object** on `submit()`. Ports the two genuinely
 missing primitives (`Switch`, `SelectButton`); conservatively extracts **only** the small
 backend-wire-coupled `tools` unit (the `ToolSnapshot` type + `in_code_tool_id` constants + pure
-`hasSearchToolsAvailable`/`computeAllowedToolIds`) to `@onyx-ai/shared/contracts`, explicitly **not**
+`hasSearchToolsAvailable`/`computeAllowedToolIds`) to `@lumen-ai/shared/contracts`, explicitly **not**
 the icon map, MCP/OAuth types, or the registry. **Size: ~1,150-1,300 LOC, 3 PRs.** Sources start
 without the web auto-sync coupling; per-agent persistence is a documented upgrade seam.
 

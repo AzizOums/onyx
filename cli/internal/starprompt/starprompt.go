@@ -13,11 +13,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
+	"github.com/lumen-dot-app/lumen/cli/internal/config"
 	"golang.org/x/term"
 )
 
-const repo = "onyx-dot-app/onyx"
+const repo = "lumen-dot-app/lumen"
 
 func statePath() string {
 	return filepath.Join(config.ConfigDir(), ".star-prompted")
@@ -57,7 +57,7 @@ func MaybePrompt() {
 	// Mark before asking so Ctrl+C won't cause a re-prompt.
 	markPrompted()
 
-	fmt.Print("Enjoying Onyx? Star the repo on GitHub? [Y/n] ")
+	fmt.Print("Enjoying Lumen? Star the repo on GitHub? [Y/n] ")
 	reader := bufio.NewReader(os.Stdin)
 	answer, _ := reader.ReadString('\n')
 	answer = strings.TrimSpace(strings.ToLower(answer))

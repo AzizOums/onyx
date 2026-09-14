@@ -14,9 +14,9 @@ from uuid import UUID, uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ApprovalDecision, EndpointPolicy
-from onyx.db.models import ActionApproval, BuildSession
-from onyx.server.features.build.db.action_approval import (
+from lumen.db.enums import ApprovalDecision, EndpointPolicy
+from lumen.db.models import ActionApproval, BuildSession
+from lumen.server.features.build.db.action_approval import (
     get_action_approval,
     get_action_approval_for_user,
     insert_action_approval,

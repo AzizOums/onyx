@@ -10,15 +10,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
-	"github.com/onyx-dot-app/onyx/cli/internal/overflow"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/models"
+	"github.com/lumen-dot-app/lumen/cli/internal/overflow"
 	"github.com/spf13/cobra"
 )
 
-// searchOutputResult is the per-document JSON shape `onyx-cli search` prints
-// (without --raw). One `content` field per result, no Onyx-internal jargon.
+// searchOutputResult is the per-document JSON shape `lumen-cli search` prints
+// (without --raw). One `content` field per result, no Lumen-internal jargon.
 type searchOutputResult struct {
 	Title      string  `json:"title"`
 	URL        *string `json:"url"`
@@ -27,7 +27,7 @@ type searchOutputResult struct {
 	UpdatedAt  *string `json:"updated_at"`
 }
 
-// searchOutput is the top-level wrapper for single-query `onyx-cli search`
+// searchOutput is the top-level wrapper for single-query `lumen-cli search`
 // default stdout, and the per-query payload inside multi-query output.
 type searchOutput struct {
 	Results    []searchOutputResult `json:"results"`
@@ -140,7 +140,7 @@ func writeJSONReduced[T any](
 		return nil
 	}
 
-	fullPath, err := overflow.SaveFull("onyx-search-*.json", string(data))
+	fullPath, err := overflow.SaveFull("lumen-search-*.json", string(data))
 	if err != nil {
 		// Without the temp copy, dropped results would be unrecoverable —
 		// emit the full response instead (valid JSON beats the byte bound).
@@ -404,11 +404,11 @@ func newSearchCmd(ios *iostreams.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "search <query> [<query>...]",
 		Short: "Search company knowledge and return ranked documents",
-		Long: `Search the Onyx knowledge base and return ranked, cited documents.
+		Long: `Search the Lumen knowledge base and return ranked, cited documents.
 
 Results are retrieved using the full search pipeline: LLM query expansion,
 hybrid retrieval, document selection, and context expansion — the same
-search quality as the Onyx chat interface.
+search quality as the Lumen chat interface.
 
 Multiple queries (up to 3 per invocation) run concurrently, so batching
 independent queries is much faster than separate sequential calls. Flags
@@ -431,13 +431,13 @@ for one query, "searches" for several). With multiple queries, per-query
 result counts are capped uniformly until the combined output fits, so small
 result sets pass through whole.`,
 		Args: cobra.ArbitraryArgs,
-		Example: `  onyx-cli search "What is our deployment process?"
-  onyx-cli search "Q3 roadmap" "hiring plan" "incident postmortem template"
-  onyx-cli search --source slack "auth migration status"
-  onyx-cli search --days 30 "recent production incidents"
-  onyx-cli search --agent-id 5 "engineering roadmap"
-  onyx-cli search --raw "API documentation" | jq '.results[].title'
-  onyx-cli search --no-query-expansion "exact error message text"`,
+		Example: `  lumen-cli search "What is our deployment process?"
+  lumen-cli search "Q3 roadmap" "hiring plan" "incident postmortem template"
+  lumen-cli search --source slack "auth migration status"
+  lumen-cli search --days 30 "recent production incidents"
+  lumen-cli search --agent-id 5 "engineering roadmap"
+  lumen-cli search --raw "API documentation" | jq '.results[].title'
+  lumen-cli search --no-query-expansion "exact error message text"`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, client, err := requireClient()
 			if err != nil {
@@ -446,7 +446,7 @@ result sets pass through whole.`,
 
 			if len(args) == 0 {
 				return exitcodes.New(exitcodes.BadRequest,
-					"no query provided\n  Usage: onyx-cli search \"your query\" [\"another query\" ...]")
+					"no query provided\n  Usage: lumen-cli search \"your query\" [\"another query\" ...]")
 			}
 			if len(args) > maxSearchQueries {
 				return exitcodes.New(exitcodes.BadRequest, fmt.Sprintf(

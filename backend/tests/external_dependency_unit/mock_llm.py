@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 from pydantic import BaseModel
 
-from onyx.llm.interfaces import (
+from lumen.llm.interfaces import (
     LLM,
     LanguageModelInput,
     LLMConfig,
@@ -19,7 +19,7 @@ from onyx.llm.interfaces import (
     ReasoningEffort,
     ToolChoice,
 )
-from onyx.llm.model_response import (
+from lumen.llm.model_response import (
     ChatCompletionDeltaToolCall,
     Delta,
     FunctionCall,
@@ -400,5 +400,5 @@ class SyncStreamController(Generic[T]):
 def use_mock_llm() -> Generator[MockLLMController, None, None]:
     mock_llm = MockLLM()
 
-    with patch("onyx.chat.process_message.get_llm_for_persona", return_value=mock_llm):
+    with patch("lumen.chat.process_message.get_llm_for_persona", return_value=mock_llm):
         yield mock_llm

@@ -8,8 +8,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/terraform"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/paths"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/terraform"
 )
 
 // NewLintCommand creates the lint command group.
@@ -30,7 +30,7 @@ func newLintTerraformCommand() *cobra.Command {
 		Long: `Check published Terraform modules for values that must stay internal.
 
 The modules under deployment/terraform are published, but they stay in sync
-with the infrastructure Onyx runs. That makes it easy to carry an internal
+with the infrastructure Lumen runs. That makes it easy to carry an internal
 value across by accident -- an office IP in a variable default is the case
 this check was written for.
 

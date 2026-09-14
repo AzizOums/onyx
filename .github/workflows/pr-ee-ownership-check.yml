@@ -41,7 +41,7 @@ jobs:
           # one of these logins passes without proof of who drove the agent.
           IGNORED_AUTHORS: |
             dependabot[bot]
-            onyx-cherry-pick[bot]
+            lumen-cherry-pick[bot]
             claude[bot]
             cursoragent
             Copilot

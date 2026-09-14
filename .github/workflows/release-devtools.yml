@@ -41,7 +41,7 @@ jobs:
       - name: Upload built wheels
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: onyx-devtools-wheels
+          name: lumen-devtools-wheels
           path: tools/ods/dist/*.whl
           if-no-files-found: error
           retention-days: 7
@@ -88,7 +88,7 @@ jobs:
           git config user.name "${APP_SLUG}[bot]"
           git config user.email "${bot_user_id}+${APP_SLUG}[bot]@users.noreply.github.com"
 
-      - name: Open onyx-devtools version upgrade PR
+      - name: Open lumen-devtools version upgrade PR
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           TAG_NAME: ${{ github.ref_name }}
@@ -101,18 +101,18 @@ jobs:
           fi
 
           sed -i -E \
-            "s|(onyx-devtools==)[0-9]+\.[0-9]+\.[0-9]+|\1${new_version}|" \
+            "s|(lumen-devtools==)[0-9]+\.[0-9]+\.[0-9]+|\1${new_version}|" \
             "${PYPROJECT_FILE}"
 
           if git diff --quiet -- "${PYPROJECT_FILE}"; then
-            echo "onyx-devtools already pinned to ${new_version}. Nothing to do."
+            echo "lumen-devtools already pinned to ${new_version}. Nothing to do."
             exit 0
           fi
 
           # Regenerate the lockfile so pyproject.toml and uv.lock stay consistent.
           # Retry to tolerate PyPI index propagation lag right after publish.
           for attempt in 1 2 3 4 5; do
-            if uv lock --refresh-package onyx-devtools; then
+            if uv lock --refresh-package lumen-devtools; then
               break
             fi
             if [ "${attempt}" = 5 ]; then
@@ -124,7 +124,7 @@ jobs:
           done
 
           # Re-export the pinned dev requirements consumed by the Python CI
-          # workflows so they don't install a stale onyx-devtools version.
+          # workflows so they don't install a stale lumen-devtools version.
           uv export --no-emit-project --no-default-groups --group dev \
             -o "${DEV_REQUIREMENTS_FILE}"
 
@@ -138,11 +138,11 @@ jobs:
 
           git switch -c "${branch}"
           git add "${PYPROJECT_FILE}" uv.lock "${DEV_REQUIREMENTS_FILE}"
-          git commit -m "chore(dev): upgrade onyx-devtools to ${new_version}"
+          git commit -m "chore(dev): upgrade lumen-devtools to ${new_version}"
           git push --force origin "${branch}"
 
           body="$(cat <<EOF
-          Automated upgrade of \`onyx-devtools\` to \`${new_version}\`, published by [this release run](${RUN_URL}).
+          Automated upgrade of \`lumen-devtools\` to \`${new_version}\`, published by [this release run](${RUN_URL}).
 
           Regenerated \`uv.lock\` and \`backend/requirements/dev.txt\` to match the new pin.
 
@@ -153,7 +153,7 @@ jobs:
           gh pr create \
             --base main \
             --head "${branch}" \
-            --title "chore(dev): upgrade onyx-devtools to ${new_version}" \
+            --title "chore(dev): upgrade lumen-devtools to ${new_version}" \
             --body "${body}"
 
   notify-slack-on-failure:

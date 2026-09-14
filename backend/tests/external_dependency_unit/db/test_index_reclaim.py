@@ -25,24 +25,24 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-import onyx.server.manage.search_settings as search_settings_api
-from onyx.context.search.models import (
+import lumen.server.manage.search_settings as search_settings_api
+from lumen.context.search.models import (
     SavedSearchSettings,
     SearchSettingsCreationRequest,
 )
-from onyx.db.connector_credential_pair import (
+from lumen.db.connector_credential_pair import (
     compute_wont_port_cc_pair_ids,
     mark_cc_pairs_deleting_if_still_wont_port__no_commit,
 )
-from onyx.db.enums import (
+from lumen.db.enums import (
     ConnectorCredentialPairStatus,
     EmbeddingPrecision,
     IndexModelStatus,
     IndexReclaimStatus,
     SwitchoverType,
 )
-from onyx.db.models import ConnectorCredentialPair, SearchSettings
-from onyx.db.search_settings import (
+from lumen.db.models import ConnectorCredentialPair, SearchSettings
+from lumen.db.search_settings import (
     advance_to_soaking__no_commit,
     clear_reclaim_intent__no_commit,
     create_search_settings,
@@ -51,9 +51,9 @@ from onyx.db.search_settings import (
     get_current_search_settings,
     set_reclaim_intent_on_current__no_commit,
 )
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.natural_language_processing.search_nlp_models import clean_model_name
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.natural_language_processing.search_nlp_models import clean_model_name
 from shared_configs.configs import ALT_INDEX_SUFFIX
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
@@ -432,9 +432,9 @@ def test_guard_conflicts_while_index_unreclaimed(
     name = f"test_collide_{uuid4().hex[:8]}"
     ss = _make_settings(db_session, reclaim_status, index_name=name)
     try:
-        with pytest.raises(OnyxError) as exc:
+        with pytest.raises(LumenError) as exc:
             search_settings_api._guard_index_name_reuse(db_session, name)
-        assert exc.value.error_code == OnyxErrorCode.CONFLICT
+        assert exc.value.error_code == LumenErrorCode.CONFLICT
         assert "earlier re-index" in exc.value.detail
         db_session.refresh(ss)
         assert ss.reclaim_status == IndexReclaimStatus.DELETING  # pulled into reclaim
@@ -482,9 +482,9 @@ def test_resolve_consent_nothing_wont_port_reclaims_only() -> None:
 def test_resolve_consent_no_acknowledgment_is_rejected() -> None:
     """Proceeding without consent would reclaim the old index anyway, so those connectors
     would lose their data unannounced."""
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(LumenError) as exc:
         search_settings_api._resolve_consented_deletions(None, [1, 2])
-    assert exc.value.error_code == OnyxErrorCode.CONFLICT
+    assert exc.value.error_code == LumenErrorCode.CONFLICT
 
 
 def test_reindex_replaces_consent_set_left_by_a_superseded_reindex(
@@ -526,9 +526,9 @@ def test_resolve_consent_acknowledged_covers_returns_set() -> None:
 def test_resolve_consent_rejects_unacknowledged_deletion() -> None:
     """A connector that became paused/invalid after the page loaded is in the server set
     but not acknowledged — deleting it would violate consent, so reject."""
-    with pytest.raises(OnyxError) as exc:
+    with pytest.raises(LumenError) as exc:
         search_settings_api._resolve_consented_deletions([1], [1, 2])
-    assert exc.value.error_code == OnyxErrorCode.CONFLICT
+    assert exc.value.error_code == LumenErrorCode.CONFLICT
 
 
 def test_set_reclaim_intent_marks_present_pending(

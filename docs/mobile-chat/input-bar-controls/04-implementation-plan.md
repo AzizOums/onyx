@@ -17,13 +17,13 @@ box.
 ## Important Notes
 
 - **No backend work, no migration.** All four send fields already exist on `SendMessageRequest`
-  (`backend/onyx/server/query_and_chat/models.py:110,111,115,117`). Per-agent `disabled_tool_ids`
-  already has a table (`assistant__user_specific_config`, `backend/onyx/db/models.py:4058`) and
+  (`backend/lumen/server/query_and_chat/models.py:110,111,115,117`). Per-agent `disabled_tool_ids`
+  already has a table (`assistant__user_specific_config`, `backend/lumen/db/models.py:4058`) and
   endpoints `GET /user/assistant/preferences` + `PATCH /user/assistant/{id}/preferences`
-  (`backend/onyx/server/manage/users.py:1283,1300`, both `BASIC_ACCESS`).
+  (`backend/lumen/server/manage/users.py:1283,1300`, both `BASIC_ACCESS`).
 - **The tool + source catalog is already on the wire.** `GET /persona` serves
   `MinimalPersonaSnapshot` with `tools: list[ToolSnapshot]` + `knowledge_sources:
-  list[DocumentSource]` (`backend/onyx/server/features/persona/models.py:202,212`). Mobile's
+  list[DocumentSource]` (`backend/lumen/server/features/persona/models.py:202,212`). Mobile's
   `useAgents()` already calls it; `MinimalAgent` (`mobile/src/chat/agents.ts:15`) just omits the two
   fields. → widen the type, **no new fetch for tools**.
 - **`deep_research` is hardcoded `false`** today (`mobile/src/hooks/useChatController.ts:296`);
@@ -114,7 +114,7 @@ Ordered so each group is a coherent, independently-mergeable change (Phase 5 bun
 
 ## Tests
 
-**Primary type: External-Dependency Unit / jest unit** (mobile uses `jest-expo`; no Onyx-container
+**Primary type: External-Dependency Unit / jest unit** (mobile uses `jest-expo`; no Lumen-container
 E2E for mobile). Concentrate on the pure logic and the two loop-prone reducers — the anchored-popover
 rendering is verified on-device, not in jest.
 

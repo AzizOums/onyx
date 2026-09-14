@@ -4,11 +4,11 @@
 mock_provider "azurerm" {}
 
 variables {
-  name                = "onyx-postgres-prod"
-  resource_group_name = "onyx-rg"
+  name                = "lumen-postgres-prod"
+  resource_group_name = "lumen-rg"
   location            = "eastus"
-  delegated_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Network/virtualNetworks/onyx-vnet/subnets/onyx-postgres"
-  virtual_network_id  = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Network/virtualNetworks/onyx-vnet"
+  delegated_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Network/virtualNetworks/lumen-vnet/subnets/lumen-postgres"
+  virtual_network_id  = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Network/virtualNetworks/lumen-vnet"
   password            = "not-a-real-password"
 }
 
@@ -21,7 +21,7 @@ run "defaults" {
   }
 
   assert {
-    condition     = azurerm_private_dns_zone.this[0].name == "onyx-postgres-prod.private.postgres.database.azure.com"
+    condition     = azurerm_private_dns_zone.this[0].name == "lumen-postgres-prod.private.postgres.database.azure.com"
     error_message = "Azure requires the private DNS zone name to end in .private.postgres.database.azure.com."
   }
 
@@ -74,7 +74,7 @@ run "an_action_group_wires_every_alert" {
   command = plan
 
   variables {
-    action_group_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Insights/actionGroups/onyx-pager"]
+    action_group_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Insights/actionGroups/lumen-pager"]
   }
 
   assert {
@@ -98,7 +98,7 @@ run "entra_only_drops_the_password_login" {
     tenant_id                          = "00000000-0000-0000-0000-000000000000"
     password                           = null
     entra_administrator_object_id      = "11111111-1111-1111-1111-111111111111"
-    entra_administrator_principal_name = "onyx-db-admins"
+    entra_administrator_principal_name = "lumen-db-admins"
     entra_administrator_principal_type = "Group"
   }
 
@@ -138,7 +138,7 @@ run "an_existing_dns_zone_is_reused" {
   command = plan
 
   variables {
-    private_dns_zone_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Network/privateDnsZones/existing.private.postgres.database.azure.com"
+    private_dns_zone_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Network/privateDnsZones/existing.private.postgres.database.azure.com"
   }
 
   assert {
@@ -168,7 +168,7 @@ run "a_database_the_server_ships_is_not_recreated" {
 
   assert {
     condition     = output.db_name == "postgres"
-    error_message = "The output still reports what Onyx connects to."
+    error_message = "The output still reports what Lumen connects to."
   }
 }
 
@@ -176,7 +176,7 @@ run "a_database_of_our_own_is_created" {
   command = plan
 
   variables {
-    db_name = "onyx"
+    db_name = "lumen"
   }
 
   assert {
@@ -185,11 +185,11 @@ run "a_database_of_our_own_is_created" {
   }
 }
 
-run "the_extensions_onyx_needs_are_allow_listed" {
+run "the_extensions_lumen_needs_are_allow_listed" {
   command = plan
 
   # Azure refuses CREATE EXTENSION unless the extension is on this list, and it
-  # starts empty, so Onyx's migrations fail on a fresh server without it.
+  # starts empty, so Lumen's migrations fail on a fresh server without it.
   assert {
     condition     = azurerm_postgresql_flexible_server_configuration.azure_extensions[0].name == "azure.extensions"
     error_message = "The allowlist is written to the azure.extensions server parameter."
@@ -197,7 +197,7 @@ run "the_extensions_onyx_needs_are_allow_listed" {
 
   assert {
     condition     = azurerm_postgresql_flexible_server_configuration.azure_extensions[0].value == "pgcrypto,pg_trgm"
-    error_message = "pgcrypto and pg_trgm are what Onyx's migrations create."
+    error_message = "pgcrypto and pg_trgm are what Lumen's migrations create."
   }
 }
 
@@ -386,7 +386,7 @@ run "rejects_a_password_that_would_be_discarded" {
     tenant_id                          = "00000000-0000-0000-0000-000000000000"
     password                           = "not-a-real-password"
     entra_administrator_object_id      = "11111111-1111-1111-1111-111111111111"
-    entra_administrator_principal_name = "onyx-db-admins"
+    entra_administrator_principal_name = "lumen-db-admins"
     entra_administrator_principal_type = "Group"
   }
 

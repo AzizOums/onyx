@@ -9,7 +9,7 @@ from typing import Any
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.managers.pat import PATManager
 from tests.integration.common_utils.test_models import DATestUser
 

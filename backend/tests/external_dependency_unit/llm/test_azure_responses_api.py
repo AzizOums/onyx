@@ -19,9 +19,9 @@ from urllib.parse import parse_qs, urlparse
 import pytest
 from litellm.llms.custom_httpx.http_handler import HTTPHandler
 
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.models import LanguageModelInput, UserMessage
-from onyx.llm.multi_llm import _AZURE_V1_API_VERSIONS, LitellmLLM
+from lumen.llm.constants import LlmProviderNames
+from lumen.llm.models import LanguageModelInput, UserMessage
+from lumen.llm.multi_llm import _AZURE_V1_API_VERSIONS, LitellmLLM
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.nightly

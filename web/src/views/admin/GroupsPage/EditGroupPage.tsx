@@ -35,7 +35,7 @@ import type { SecuritySettings, UserGroup } from "@/lib/types";
 import { useUser } from "@/providers/UserProvider";
 import { useSettings } from "@/lib/settings/hooks";
 import { Tier } from "@/lib/settings/types";
-import { tierAtLeast } from "@/lib/tiers";
+import { TOKEN_RATE_LIMITS_AVAILABLE } from "@/lib/tiers";
 import type { MemberRow, TokenRateLimitDisplay } from "./interfaces";
 import {
   makeBaseColumns,
@@ -80,8 +80,6 @@ function EditGroupPage({ groupId }: EditGroupPageProps) {
   const settings = useSettings();
   const { user } = useUser();
   const currentUserId = user?.id;
-  const isEnterpriseTier = tierAtLeast(settings.tier, Tier.ENTERPRISE);
-  const tokenLimitsDisabledTooltip = markdown(t("tokenLimits.disabledTooltip"));
 
   // Fetch the group data — poll every 5s while syncing so the UI updates
   // automatically when the backend finishes processing the previous edit.
@@ -508,7 +506,7 @@ function EditGroupPage({ groupId }: EditGroupPageProps) {
 
       // Group-scoped create/update/delete routes admit a group admin, so their full save
       // (including PUT/DELETE of existing limits) is authorized.
-      if (isEnterpriseTier && canEditTokenLimits) {
+      if (TOKEN_RATE_LIMITS_AVAILABLE && canEditTokenLimits) {
         await saveTokenLimits(groupId, tokenLimits, tokenRateLimits ?? []);
       }
 
@@ -760,12 +758,13 @@ function EditGroupPage({ groupId }: EditGroupPageProps) {
                     attachedAgents={group?.personas}
                   />
 
-                  <TokenLimitSection
-                    limits={tokenLimits}
-                    onLimitsChange={setTokenLimits}
-                    disabled={!isEnterpriseTier || !canEditTokenLimits}
-                    disabledTooltip={tokenLimitsDisabledTooltip}
-                  />
+                  {TOKEN_RATE_LIMITS_AVAILABLE && (
+                    <TokenLimitSection
+                      limits={tokenLimits}
+                      onLimitsChange={setTokenLimits}
+                      disabled={!canEditTokenLimits}
+                    />
+                  )}
                 </>
               )}
 

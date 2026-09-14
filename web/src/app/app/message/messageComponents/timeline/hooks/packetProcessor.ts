@@ -12,7 +12,7 @@ import {
   MessageStart,
 } from "@/app/app/services/streamingModels";
 import { CitationMap } from "@/app/app/interfaces";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { LumenDocument } from "@/lib/search/interfaces";
 import {
   isActualToolCallPacket,
   isToolPacket,
@@ -37,7 +37,7 @@ export interface ProcessorState {
   citationMap: CitationMap;
 
   // Documents
-  documentMap: Map<string, OnyxDocument>;
+  documentMap: Map<string, LumenDocument>;
 
   // Packet grouping
   groupedPacketsMap: Map<string, Packet[]>;

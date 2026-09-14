@@ -8,7 +8,7 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     EndpointPolicy,
     GatedAppKind,
     MCPAuthenticationPerformer,
@@ -16,8 +16,8 @@ from onyx.db.enums import (
     MCPTransport,
     SandboxStatus,
 )
-from onyx.db.gated_app import get_action_policies
-from onyx.db.mcp import (
+from lumen.db.gated_app import get_action_policies
+from lumen.db.mcp import (
     add_user_to_mcp_server,
     affected_user_ids_for_mcp_server,
     create_mcp_server__no_commit,
@@ -25,14 +25,14 @@ from onyx.db.mcp import (
     update_mcp_server__no_commit,
     upsert_user_connection_config,
 )
-from onyx.db.models import MCPServer, Tool
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.build.sandbox.util.mcp_config import (
+from lumen.db.models import MCPServer, Tool
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.features.build.sandbox.util.mcp_config import (
     craft_mcp_fingerprint,
     resolve_craft_mcp_servers,
 )
-from onyx.server.features.mcp import api as mcp_api
-from onyx.server.features.mcp.models import (
+from lumen.server.features.mcp import api as mcp_api
+from lumen.server.features.mcp.models import (
     MCPConnectionData,
     MCPServerSimpleUpdateRequest,
 )
@@ -181,7 +181,7 @@ def test_tool_policies_patch_round_trip(
     assert get_action_policies(db_session, GatedAppKind.MCP_SERVER, server.id) == {}
 
     # Unknown tool names are rejected.
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         mcp_api.update_mcp_server_simple(
             server.id,
             MCPServerSimpleUpdateRequest(

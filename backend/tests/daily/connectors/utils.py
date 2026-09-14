@@ -3,14 +3,14 @@ from typing import IO, TypeVar
 
 from pydantic import BaseModel
 
-from onyx.connectors.connector_runner import CheckpointOutputWrapper
-from onyx.connectors.interfaces import (
+from lumen.connectors.connector_runner import CheckpointOutputWrapper
+from lumen.connectors.interfaces import (
     BaseConnector,
     CheckpointedConnector,
     CheckpointedConnectorWithPermSync,
     SecondsSinceUnixEpoch,
 )
-from onyx.connectors.models import (
+from lumen.connectors.models import (
     ConnectorCheckpoint,
     ConnectorFailure,
     Document,

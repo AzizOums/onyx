@@ -12,14 +12,14 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.exceptions import ConnectorValidationError
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
-from onyx.db.models import Connector, Credential
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.documents.cc_pair import associate_credential_to_connector
-from onyx.server.documents.models import ConnectorCredentialPairMetadata
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.exceptions import ConnectorValidationError
+from lumen.connectors.models import InputType
+from lumen.db.enums import AccessType
+from lumen.db.models import Connector, Credential
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.documents.cc_pair import associate_credential_to_connector
+from lumen.server.documents.models import ConnectorCredentialPairMetadata
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.conftest import create_test_user
 
@@ -49,10 +49,10 @@ def test_validation_failure_leaves_a_connector_this_flow_did_not_create(
     db_session.commit()
 
     with patch(
-        "onyx.server.documents.cc_pair.validate_ccpair_for_user",
+        "lumen.server.documents.cc_pair.validate_ccpair_for_user",
         side_effect=ConnectorValidationError("bad settings"),
     ):
-        with pytest.raises(OnyxError):
+        with pytest.raises(LumenError):
             associate_credential_to_connector(
                 connector_id=connector.id,
                 credential_id=credential.id,
@@ -97,10 +97,10 @@ def test_integrity_error_leaves_the_caller_s_connector_alone(
     db_session.commit()
 
     with patch(
-        "onyx.server.documents.cc_pair.add_credential_to_connector",
+        "lumen.server.documents.cc_pair.add_credential_to_connector",
         side_effect=IntegrityError("stmt", {}, Exception("duplicate key")),
     ):
-        with pytest.raises(OnyxError):
+        with pytest.raises(LumenError):
             associate_credential_to_connector(
                 connector_id=connector.id,
                 credential_id=credential.id,

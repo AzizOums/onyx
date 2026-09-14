@@ -73,7 +73,7 @@ import {
   SvgEditBig,
   SvgFolderPlus,
   SvgMoreHorizontal,
-  SvgOnyxOctagon,
+  SvgLumenOctagon,
   SvgSearchMenu,
   SvgSettings,
 } from "@opal/icons";
@@ -262,17 +262,17 @@ export default function AppSidebar() {
   const [showMoveCustomAgentModal, setShowMoveCustomAgentModal] =
     useState(false);
 
-  // Check if Onyx Craft is enabled via settings (backed by PostHog feature flag)
+  // Check if Lumen Craft is enabled via settings (backed by PostHog feature flag)
   // Only explicit true enables the feature; false or undefined = disabled
-  const isOnyxCraftEnabled = combinedSettingsData?.onyx_craft_enabled === true;
+  const isLumenCraftEnabled = combinedSettingsData?.lumen_craft_enabled === true;
 
   // Fetch notifications for build mode intro
   const { notifications, refresh: mutateNotifications } = useNotifications({
-    enabled: isOnyxCraftEnabled,
+    enabled: isLumenCraftEnabled,
   });
 
-  // Find build_mode feature announcement notification (only if Onyx Craft is enabled)
-  const buildModeNotification = isOnyxCraftEnabled
+  // Find build_mode feature announcement notification (only if Lumen Craft is enabled)
+  const buildModeNotification = isLumenCraftEnabled
     ? notifications?.find(
         (n) =>
           n.notif_type === NotificationType.FEATURE_ANNOUNCEMENT &&
@@ -296,7 +296,7 @@ export default function AppSidebar() {
   const hasTenantModal = !!(newTenantInfo || invitationInfo);
   useEffect(() => {
     if (
-      isOnyxCraftEnabled &&
+      isLumenCraftEnabled &&
       buildModeNotification &&
       !hasAutoTriggeredRef.current &&
       !hasTenantModal &&
@@ -307,7 +307,7 @@ export default function AppSidebar() {
     }
   }, [
     buildModeNotification,
-    isOnyxCraftEnabled,
+    isLumenCraftEnabled,
     hasTenantModal,
     isCraftAnimationDisabled,
   ]);
@@ -506,7 +506,7 @@ export default function AppSidebar() {
       <SidebarTab
         icon={
           folded || visibleAgents.length === 0
-            ? SvgOnyxOctagon
+            ? SvgLumenOctagon
             : SvgMoreHorizontal
         }
         href="/app/agents"
@@ -625,7 +625,7 @@ export default function AppSidebar() {
               </SidebarTab>
             )}
           />
-          {isOnyxCraftEnabled && (
+          {isLumenCraftEnabled && (
             <div data-testid="AppSidebar/build">
               <SidebarTab
                 icon={SvgDevKit}
@@ -715,7 +715,7 @@ export default function AppSidebar() {
             )}
             <AccountPopover
               onShowBuildIntro={
-                isOnyxCraftEnabled ? handleShowBuildIntro : undefined
+                isLumenCraftEnabled ? handleShowBuildIntro : undefined
               }
             />
           </div>

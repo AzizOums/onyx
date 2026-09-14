@@ -1,7 +1,7 @@
 ---
 name: merge-dependabot-prs
 description: >
-  Triages and lands a batch of open Dependabot PRs in the Onyx repo, where main
+  Triages and lands a batch of open Dependabot PRs in the Lumen repo, where main
   is gated exclusively by GitHub's merge queue: approves and enqueues green PRs,
   closes superseded duplicates, fixes mechanical CI failures (stale
   backend/requirements exports, stale bun.lock), tells real regressions apart
@@ -9,7 +9,7 @@ description: >
   Use when the user asks to merge, clean up, clear out, or land Dependabot (or
   similar bot-authored) PRs.
 license: MIT
-compatibility: Requires git, pre-commit, uv, bun, ods (the repo venv's devtools script), and gh (GitHub CLI) authenticated with write access to onyx-dot-app/onyx.
+compatibility: Requires git, pre-commit, uv, bun, ods (the repo venv's devtools script), and gh (GitHub CLI) authenticated with write access to lumen-dot-app/lumen.
 metadata:
   author: jmelahman
   version: "1.1"
@@ -27,7 +27,7 @@ with `AskUserQuestion` — not per PR, and not after the fact. Re-confirm if a
 genuinely new kind of problem appears mid-flight (e.g. a real regression where
 a mechanical fix was expected).
 
-## How Onyx gates merges
+## How Lumen gates merges
 
 - `main` merges **exclusively through the merge queue** ("Main Protection"
   ruleset). Enqueue with `gh pr merge <pr> --auto` — no strategy flag; the
@@ -73,7 +73,7 @@ them:
 
 - **Green & ready** — every check completed and passing, advisory included.
 - **Failing — mechanical** — only a generated/lock file wasn't regenerated
-  after the bump (see step 5 for the Onyx cases).
+  after the bump (see step 5 for the Lumen cases).
 - **Failing — needs diagnosis** — anything else; requires reading the failing
   job's log first, never just the check name.
 - **Conflicting** — real merge conflict against main.
@@ -126,7 +126,7 @@ rebase), re-running `gh pr merge <pr> --auto` is routine, not a failure.
 ## 5. Mechanical: fix in an isolated worktree
 
 Once the bucket is approved, individual stale-generated-file fixes don't need
-per-PR confirmation. Known Onyx cases:
+per-PR confirmation. Known Lumen cases:
 
 - **uv bumps** (`dependabot:python`): the exported `backend/requirements/*.txt`
   files go stale when only `pyproject.toml`/`uv.lock` were bumped. Regenerate

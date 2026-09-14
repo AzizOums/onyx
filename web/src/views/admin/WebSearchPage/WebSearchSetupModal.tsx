@@ -4,7 +4,7 @@ import { Formik, Form } from "formik";
 import { useTranslations } from "next-intl";
 import * as Yup from "yup";
 import { SvgArrowExchange, SvgSimpleLoader } from "@opal/icons";
-import { SvgOnyxLogo } from "@opal/logos";
+import { SvgLumenLogo } from "@opal/logos";
 import { Button } from "@opal/components";
 import { Modal } from "@opal/components";
 import { useModalClose } from "@opal/components";
@@ -98,7 +98,7 @@ export function WebSearchSetupModal({ state }: WebSearchSetupModalProps) {
   const requiresApiKey =
     category === "search"
       ? searchProviderRequiresApiKey(providerType)
-      : providerType !== "onyx_web_crawler";
+      : providerType !== "lumen_web_crawler";
 
   const configField =
     category === "search"
@@ -219,7 +219,7 @@ export function WebSearchSetupModal({ state }: WebSearchSetupModalProps) {
               <Modal.Header
                 icon={icon}
                 moreIcon1={SvgArrowExchange}
-                moreIcon2={SvgOnyxLogo}
+                moreIcon2={SvgLumenLogo}
                 title={
                   isEditing
                     ? t("setupModal.editHeader.title", {

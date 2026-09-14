@@ -14,7 +14,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: process.env.SKIP_TYPE_CHECK === "1",
   },
-  transpilePackages: ["@onyx-ai/opal", "@onyx-ai/shared"],
+  transpilePackages: ["@lumen-ai/opal", "@lumen-ai/shared"],
   typedRoutes: true,
   // `next dev` otherwise appends its own managed block to web/AGENTS.md on every
   // start, which dirties the tree. Keep our agent instructions author-owned.
@@ -130,7 +130,7 @@ const nextConfig = {
       // Legacy /assistants → /agents redirects (added in PR #8869).
       // Preserves backward compatibility for bookmarks, shared links, and
       // hardcoded URLs that still reference the old /assistants paths.
-      // TODO: Remove these redirects in v4.0 — https://linear.app/onyx-app/issue/ENG-3771
+      // TODO: Remove these redirects in v4.0 — https://linear.app/lumen-app/issue/ENG-3771
       {
         source: "/admin/assistants",
         destination: "/admin/agents",
@@ -259,8 +259,8 @@ const sentryEnabled = Boolean(
 
 // Sentry webpack plugin options
 const sentryWebpackPluginOptions = {
-  org: process.env.SENTRY_ORG || "onyx-vl",
-  project: process.env.SENTRY_PROJECT || "onyx-web",
+  org: process.env.SENTRY_ORG || "lumen-vl",
+  project: process.env.SENTRY_PROJECT || "lumen-web",
   authToken: process.env.SENTRY_AUTH_TOKEN,
   silent: !sentryEnabled, // Silence output when Sentry is disabled
   dryRun: !sentryEnabled, // Don't upload source maps when Sentry is disabled

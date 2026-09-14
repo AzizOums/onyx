@@ -1,7 +1,7 @@
 """Integration tests for CREATE_USER_API_KEYS permission gate.
 
 Covers the personal-access-token creation endpoint in
-``backend/onyx/server/pat/api.py`` (router prefix ``/user/pats``).
+``backend/lumen/server/pat/api.py`` (router prefix ``/user/pats``).
 The basic-access GET endpoints on the same router are covered by
 ``test_basic_access.py`` — this file only exercises the CREATE token.
 """
@@ -11,7 +11,7 @@ from typing import Any
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.test_models import DATestAPIKey, DATestUser
 from tests.integration.tests.permissions._access_matrix import (
     USER_KINDS,

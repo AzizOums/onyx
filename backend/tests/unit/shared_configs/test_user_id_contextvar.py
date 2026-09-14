@@ -7,16 +7,16 @@ from fastapi import Depends, FastAPI, WebSocket
 from fastapi.responses import StreamingResponse
 from fastapi.testclient import TestClient
 
-from onyx.auth import users
-from onyx.auth.users import (
+from lumen.auth import users
+from lumen.auth.users import (
     current_chat_accessible_user,
     current_user_from_websocket,
     get_user_manager,
     optional_fastapi_current_user,
     optional_user,
 )
-from onyx.configs.constants import ANONYMOUS_USER_UUID
-from onyx.db.engine.async_sql_engine import get_async_session
+from lumen.configs.constants import ANONYMOUS_USER_UUID
+from lumen.db.engine.async_sql_engine import get_async_session
 from shared_configs.contextvars import CURRENT_USER_ID_CONTEXTVAR, get_current_user_id
 
 

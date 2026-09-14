@@ -11,7 +11,7 @@ import { Text } from "@/components/ui/text";
 import { TextInput } from "@/components/ui/text-input";
 import { MinimalAgent, splitAgentsForGallery } from "@/chat/agents";
 import { useSelectAgent } from "@/hooks/useLiveAgent";
-import SvgOnyxOctagon from "@/icons/onyx-octagon";
+import SvgLumenOctagon from "@/icons/lumen-octagon";
 import SvgSearch from "@/icons/search";
 import SvgX from "@/icons/x";
 
@@ -49,7 +49,7 @@ export default function AgentsScreen() {
 
       <SettingsLayout.Root keyboardShouldPersistTaps="handled">
         <SettingsLayout.Header
-          icon={SvgOnyxOctagon}
+          icon={SvgLumenOctagon}
           title="Agents"
           description="Pick an agent to start a chat."
         >

@@ -15,9 +15,9 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import AccessType, SwitchoverType
-from onyx.db.search_settings import get_current_search_settings
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import AccessType, SwitchoverType
+from lumen.db.search_settings import get_current_search_settings
 from tests.integration.common_utils.constants import API_SERVER_URL, MAX_DELAY
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.cc_pair import CCPairManager

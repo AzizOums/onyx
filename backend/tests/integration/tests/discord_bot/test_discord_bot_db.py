@@ -9,8 +9,8 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.auth.permissions import get_effective_permissions
-from onyx.db.discord_bot import (
+from lumen.auth.permissions import get_effective_permissions
+from lumen.db.discord_bot import (
     bulk_create_channel_configs,
     create_discord_bot_config,
     create_guild_config,
@@ -28,10 +28,10 @@ from onyx.db.discord_bot import (
     update_discord_channel_config,
     update_guild_config,
 )
-from onyx.db.enums import Permission
-from onyx.db.models import Persona, User
-from onyx.db.utils import DiscordChannelView
-from onyx.server.manage.discord_bot.utils import generate_discord_registration_key
+from lumen.db.enums import Permission
+from lumen.db.models import Persona, User
+from lumen.db.utils import DiscordChannelView
+from lumen.server.manage.discord_bot.utils import generate_discord_registration_key
 
 
 def _create_test_persona(db_session: Session, persona_id: int, name: str) -> Persona:
@@ -683,7 +683,7 @@ class TestServiceApiKeyAPI:
 @pytest.fixture
 def db_session() -> Generator[Session, None, None]:
     """Create database session for tests."""
-    from onyx.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+    from lumen.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
     from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 
     SqlEngine.init_engine(pool_size=10, max_overflow=5)

@@ -165,7 +165,7 @@ type ToolConfiguration = Readonly<Record<number, ToolState>>;
 
 const NEUTRAL: ToolConfiguration = {};
 
-const STORAGE_PREFIX = "onyx:tools";
+const STORAGE_PREFIX = "lumen:tools";
 
 function chatKey(chatSessionId: string): string {
   return `${STORAGE_PREFIX}:chat:${chatSessionId}`;

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# k8s-down.sh — tear down the Onyx dev cluster.
+# k8s-down.sh — tear down the Lumen dev cluster.
 #
 # Default: uninstall the helm release and delete the kind cluster (wipes data).
 # --keep-cluster preserves the cluster and its PVCs for reinstall.
@@ -10,14 +10,14 @@
 #   deployment/helm/dev/k8s-down.sh --keep-cluster
 #
 # Flags:
-#   --cluster-name <name>   kind cluster name (default: onyx-dev)
-#   --namespace <ns>        k8s namespace (default: onyx)
-#   --keep-cluster          uninstall Onyx but keep the kind cluster
+#   --cluster-name <name>   kind cluster name (default: lumen-dev)
+#   --namespace <ns>        k8s namespace (default: lumen)
+#   --keep-cluster          uninstall Lumen but keep the kind cluster
 
 set -euo pipefail
 
-CLUSTER_NAME="onyx-dev"
-NAMESPACE="onyx"
+CLUSTER_NAME="lumen-dev"
+NAMESPACE="lumen"
 KEEP_CLUSTER=0
 
 while [[ $# -gt 0 ]]; do
@@ -43,7 +43,7 @@ fi
 
 kubectl config use-context "kind-$CLUSTER_NAME" >/dev/null
 
-# Same context safety guard as k8s-up.sh — the 'onyx' namespace exists in prod
+# Same context safety guard as k8s-up.sh — the 'lumen' namespace exists in prod
 # EKS too, so refuse anything but the exact expected kind context.
 EXPECTED_CTX="kind-$CLUSTER_NAME"
 CURRENT_CTX="$(kubectl config current-context)"
@@ -57,8 +57,8 @@ if [[ "$KEEP_CLUSTER" -eq 1 ]]; then
   # PVCs are intentionally left intact so the next install reuses postgres /
   # opensearch / vespa / minio data. For a clean slate, omit --keep-cluster
   # or run: kubectl -n $NAMESPACE delete pvc --all
-  echo "uninstalling helm release 'onyx' in namespace '$NAMESPACE' ..."
-  helm uninstall onyx -n "$NAMESPACE" 2>/dev/null || true
+  echo "uninstalling helm release 'lumen' in namespace '$NAMESPACE' ..."
+  helm uninstall lumen -n "$NAMESPACE" 2>/dev/null || true
 
   echo "done. cluster 'kind-$CLUSTER_NAME' is preserved (PVCs intact)."
 else

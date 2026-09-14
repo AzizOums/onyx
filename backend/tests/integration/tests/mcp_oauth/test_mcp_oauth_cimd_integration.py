@@ -1,11 +1,11 @@
-"""Verify OAuth through Onyx API endpoints and a protected MCP server."""
+"""Verify OAuth through Lumen API endpoints and a protected MCP server."""
 
 import ssl
 from urllib.parse import parse_qs, urlparse
 
 import httpx
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     MCPAuthenticationPerformer,
     MCPAuthenticationType,
     MCPOAuthProviderMode,

@@ -3,7 +3,7 @@
 Runs every eval question in `scope_eval_cases.py` directly through
 `decide_search_scope` (real LLM, no agent loop) and fails if the pass rate
 drops below the threshold. This is the CI gate for changes to
-`onyx/prompts/filter_extration.py` — see the workflow
+`lumen/prompts/filter_extration.py` — see the workflow
 `.github/workflows/pr-connector-filter-eval.yml`, which runs this file only
 when the prompt (or the flow around it) changes.
 
@@ -26,11 +26,11 @@ from collections import defaultdict
 
 from pydantic import BaseModel
 
-from onyx.configs.constants import DocumentSource, MessageType
-from onyx.llm.interfaces import LLM
-from onyx.secondary_llm_flows.source_filter import decide_search_scope
-from onyx.tools.models import ChatMinimalTextMessage
-from onyx.utils.threadpool_concurrency import run_functions_tuples_in_parallel
+from lumen.configs.constants import DocumentSource, MessageType
+from lumen.llm.interfaces import LLM
+from lumen.secondary_llm_flows.source_filter import decide_search_scope
+from lumen.tools.models import ChatMinimalTextMessage
+from lumen.utils.threadpool_concurrency import run_functions_tuples_in_parallel
 from tests.evals.connector_filter_eval.scope_eval_cases import (
     SCOPE_EVAL_CASES,
     ScopeEvalCase,

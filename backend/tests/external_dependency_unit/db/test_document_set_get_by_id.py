@@ -10,10 +10,10 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.models import DocumentSet as DocumentSetDBModel
-from onyx.db.models import User
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.document_set.api import get_document_set
+from lumen.db.models import DocumentSet as DocumentSetDBModel
+from lumen.db.models import User
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.features.document_set.api import get_document_set
 from tests.external_dependency_unit.conftest import create_test_user
 
 
@@ -47,7 +47,7 @@ def test_an_admin_reads_one_set_by_id(db_session: Session) -> None:
 def test_a_missing_set_is_not_found(db_session: Session) -> None:
     admin = create_test_user(db_session, "docset-get-missing", is_admin=True)
 
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         get_document_set(
             document_set_id=2_000_000_000, user=admin, db_session=db_session
         )
@@ -57,7 +57,7 @@ def test_a_private_set_stays_hidden_from_a_basic_user(db_session: Session) -> No
     basic = create_test_user(db_session, "docset-get-basic")
     document_set_id = _document_set(db_session, is_public=False)
 
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         get_document_set(
             document_set_id=document_set_id, user=basic, db_session=db_session
         )

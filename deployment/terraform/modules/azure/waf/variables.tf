@@ -186,7 +186,7 @@ variable "max_request_body_size_in_kb" {
 
 variable "file_upload_limit_in_mb" {
   type        = number
-  description = "Largest file upload allowed through. Onyx accepts document uploads, so this needs to clear the largest file a user will send."
+  description = "Largest file upload allowed through. Lumen accepts document uploads, so this needs to clear the largest file a user will send."
   default     = 750
 
   validation {

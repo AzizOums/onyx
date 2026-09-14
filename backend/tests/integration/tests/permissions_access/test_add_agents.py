@@ -14,7 +14,7 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.test_models import DATestAPIKey, DATestUser
 from tests.integration.tests.permissions._access_matrix import (
     USER_KINDS,

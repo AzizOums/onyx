@@ -10,12 +10,12 @@ import (
 )
 
 const (
-	EnvServerURL      = "ONYX_SERVER_URL"
-	EnvAPIPrefix      = "ONYX_API_PREFIX"
-	EnvAPIKey         = "ONYX_PAT"
-	EnvAgentID        = "ONYX_PERSONA_ID"
-	EnvSSHHostKey     = "ONYX_SSH_HOST_KEY"
-	EnvStreamMarkdown = "ONYX_STREAM_MARKDOWN"
+	EnvServerURL      = "LUMEN_SERVER_URL"
+	EnvAPIPrefix      = "LUMEN_API_PREFIX"
+	EnvAPIKey         = "LUMEN_PAT"
+	EnvAgentID        = "LUMEN_PERSONA_ID"
+	EnvSSHHostKey     = "LUMEN_SSH_HOST_KEY"
+	EnvStreamMarkdown = "LUMEN_STREAM_MARKDOWN"
 )
 
 // Features holds experimental feature flags for the CLI.
@@ -26,8 +26,8 @@ type Features struct {
 	StreamMarkdown *bool `json:"stream_markdown,omitempty"`
 }
 
-// OnyxCliConfig holds the CLI configuration.
-type OnyxCliConfig struct {
+// LumenCliConfig holds the CLI configuration.
+type LumenCliConfig struct {
 	ServerURL      string   `json:"server_url"`
 	APIKey         string   `json:"api_key"`
 	DefaultAgentID int      `json:"default_persona_id"`
@@ -35,9 +35,9 @@ type OnyxCliConfig struct {
 }
 
 // DefaultConfig returns a config with default values.
-func DefaultConfig() OnyxCliConfig {
-	return OnyxCliConfig{
-		ServerURL:      "https://cloud.onyx.app",
+func DefaultConfig() LumenCliConfig {
+	return LumenCliConfig{
+		ServerURL:      "https://cloud.lumen.app",
 		APIKey:         "",
 		DefaultAgentID: 0,
 	}
@@ -53,7 +53,7 @@ func (f Features) StreamMarkdownEnabled() bool {
 }
 
 // IsConfigured returns true if the config has a personal access token (PAT).
-func (c OnyxCliConfig) IsConfigured() bool {
+func (c LumenCliConfig) IsConfigured() bool {
 	return c.APIKey != ""
 }
 
@@ -66,7 +66,7 @@ func apiPrefix() string {
 }
 
 // APIURL returns the API base for a server origin or an already-prefixed URL.
-// Set ONYX_API_PREFIX="" for direct backend access without a proxy path.
+// Set LUMEN_API_PREFIX="" for direct backend access without a proxy path.
 func APIURL(serverURL string) string {
 	baseURL := strings.TrimRight(serverURL, "/")
 	prefix := apiPrefix()
@@ -81,8 +81,8 @@ func APIURL(serverURL string) string {
 	return baseURL + suffix
 }
 
-// OnyxWebURL removes an API prefix when the configured URL already includes it.
-func OnyxWebURL(serverURL string) string {
+// LumenWebURL removes an API prefix when the configured URL already includes it.
+func LumenWebURL(serverURL string) string {
 	baseURL := strings.TrimRight(serverURL, "/")
 	prefix := apiPrefix()
 	if prefix == "" {
@@ -91,16 +91,16 @@ func OnyxWebURL(serverURL string) string {
 	return strings.TrimSuffix(baseURL, "/"+prefix)
 }
 
-// ConfigDir returns ~/.config/onyx-cli
+// ConfigDir returns ~/.config/lumen-cli
 func ConfigDir() string {
 	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
-		return filepath.Join(xdg, "onyx-cli")
+		return filepath.Join(xdg, "lumen-cli")
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return filepath.Join(".", ".config", "onyx-cli")
+		return filepath.Join(".", ".config", "lumen-cli")
 	}
-	return filepath.Join(home, ".config", "onyx-cli")
+	return filepath.Join(home, ".config", "lumen-cli")
 }
 
 // ConfigFilePath returns the full path to the config file.
@@ -117,7 +117,7 @@ func ConfigExists() bool {
 // LoadFromDisk reads config from the file only, without applying environment
 // variable overrides. Use this when you need the persisted config values
 // (e.g., to preserve them during a save operation).
-func LoadFromDisk() OnyxCliConfig {
+func LoadFromDisk() LumenCliConfig {
 	cfg := DefaultConfig()
 
 	data, err := os.ReadFile(ConfigFilePath())
@@ -131,7 +131,7 @@ func LoadFromDisk() OnyxCliConfig {
 }
 
 // Load reads config from file and applies environment variable overrides.
-func Load() OnyxCliConfig {
+func Load() LumenCliConfig {
 	cfg := LoadFromDisk()
 
 	// Environment overrides
@@ -158,7 +158,7 @@ func Load() OnyxCliConfig {
 }
 
 // Save writes the config to disk, creating parent directories if needed.
-func Save(cfg OnyxCliConfig) error {
+func Save(cfg LumenCliConfig) error {
 	dir := ConfigDir()
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err

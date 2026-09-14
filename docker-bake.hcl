@@ -3,23 +3,23 @@ group "default" {
 }
 
 variable "BACKEND_REPOSITORY" {
-  default = "onyxdotapp/onyx-backend"
+  default = "lumendotapp/lumen-backend"
 }
 
 variable "WEB_SERVER_REPOSITORY" {
-  default = "onyxdotapp/onyx-web-server"
+  default = "lumendotapp/lumen-web-server"
 }
 
 variable "MODEL_SERVER_REPOSITORY" {
-  default = "onyxdotapp/onyx-model-server"
+  default = "lumendotapp/lumen-model-server"
 }
 
 variable "CLI_REPOSITORY" {
-  default = "onyxdotapp/onyx-cli"
+  default = "lumendotapp/lumen-cli"
 }
 
 variable "DEVCONTAINER_REPOSITORY" {
-  default = "onyxdotapp/onyx-devcontainer"
+  default = "lumendotapp/lumen-devcontainer"
 }
 
 variable "TAG" {

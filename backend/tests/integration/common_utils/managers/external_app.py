@@ -1,7 +1,7 @@
 from typing import Any
 
-from onyx.db.enums import EndpointPolicy, ExternalAppType
-from onyx.server.features.build.external_apps.models import (
+from lumen.db.enums import EndpointPolicy, ExternalAppType
+from lumen.server.features.build.external_apps.models import (
     CreateBuiltInExternalAppRequest,
     CreateCustomExternalAppRequest,
     ExternalAppAdminResponse,

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { loginAs, apiLogin } from "@tests/e2e/utils/auth";
 import { ensureOnboardingComplete } from "@tests/e2e/utils/chatActions";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import {
   startMcpPerUserKeyServer,
   McpServerProcess,
@@ -69,7 +69,7 @@ test.describe("MCP per-user API key auth (multi-field template)", () => {
     const adminContext = await browser.newContext({
       storageState: "admin_auth.json",
     });
-    const adminClient = new OnyxApiClient(adminContext.request);
+    const adminClient = new LumenApiClient(adminContext.request);
 
     createdProviderId = await adminClient.ensurePublicProvider();
 
@@ -110,7 +110,7 @@ test.describe("MCP per-user API key auth (multi-field template)", () => {
     const adminContext = await browser.newContext({
       storageState: "admin_auth.json",
     });
-    const adminClient = new OnyxApiClient(adminContext.request);
+    const adminClient = new LumenApiClient(adminContext.request);
 
     if (createdProviderId !== null) {
       await adminClient.deleteProvider(createdProviderId);

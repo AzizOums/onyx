@@ -8,16 +8,16 @@ from collections.abc import Generator
 
 import pytest
 
-from onyx.access.models import DocumentAccess
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import Document
-from onyx.db.enums import EmbeddingPrecision
-from onyx.document_index.interfaces_new import IndexingMetadata, TenantState
-from onyx.document_index.opensearch.client import wait_for_opensearch_with_timeout
-from onyx.document_index.opensearch.opensearch_document_index import (
+from lumen.access.models import DocumentAccess
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import Document
+from lumen.db.enums import EmbeddingPrecision
+from lumen.document_index.interfaces_new import IndexingMetadata, TenantState
+from lumen.document_index.opensearch.client import wait_for_opensearch_with_timeout
+from lumen.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
-from onyx.indexing.models import ChunkEmbedding, DocMetadataAwareIndexChunk
+from lumen.indexing.models import ChunkEmbedding, DocMetadataAwareIndexChunk
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import (
     CURRENT_TENANT_ID_CONTEXTVAR,

@@ -13,9 +13,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/release"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/git"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/prompt"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/release"
 )
 
 const cherryPickPRLabel = "cherry-pick 🍒"

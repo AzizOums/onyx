@@ -4,7 +4,7 @@ How to provision a Box test enterprise so the daily tests in this directory
 (`test_box_basic.py`) pass. The tests assert against the exact corpus
 defined below — names and file contents must match character-for-character.
 
-The unit tests under `backend/tests/unit/onyx/connectors/box/` need none of
+The unit tests under `backend/tests/unit/lumen/connectors/box/` need none of
 this; they run fully offline.
 
 ## 1. Create a Box developer account
@@ -59,25 +59,25 @@ Collect from the Configuration tab:
    collaborations to a **deactivated** user with `cannot_invite_deactivated_user`
    — if the login you want is already taken by a deactivated account, use a
    distinct login (a `+alias` on the same inbox works, e.g.
-   `oauth+box@onyx.app`).
+   `oauth+box@lumen.app`).
 
 ## 4. Create the test corpus
 
 Create, in the primary (impersonated) user's **All Files**:
 
 ```
-Onyx Connector Test Folder/
-├── root_doc.txt        content: box root doc for onyx connector tests
-├── public_doc.txt      content: public doc for onyx connector tests
-├── editor_doc.txt      content: editor doc for onyx connector tests
-├── Onyx Example Link   web link (bookmark) -> https://www.onyx.app
-│                       description: example bookmark for onyx connector tests
+Lumen Connector Test Folder/
+├── root_doc.txt        content: box root doc for lumen connector tests
+├── public_doc.txt      content: public doc for lumen connector tests
+├── editor_doc.txt      content: editor doc for lumen connector tests
+├── Lumen Example Link   web link (bookmark) -> https://www.lumen.app
+│                       description: example bookmark for lumen connector tests
 ├── Subfolder A/
-│   └── alpha.txt       content: alpha doc for onyx connector tests
+│   └── alpha.txt       content: alpha doc for lumen connector tests
 ├── Shared Folder/
-│   └── shared.txt      content: shared doc for onyx connector tests
+│   └── shared.txt      content: shared doc for lumen connector tests
 └── Uploader Folder/
-    └── uploader_doc.txt  content: uploader doc for onyx connector tests
+    └── uploader_doc.txt  content: uploader doc for lumen connector tests
 ```
 
 The corpus exercises **multiple share levels** for the collaborator user, which
@@ -104,16 +104,16 @@ Details that matter:
   collaboration is active, not pending.
 - `public_doc.txt`: shared link access **"People with the link"** (the `open`
   level), no password.
-- Do **not** add a shared link or collaborations to `Onyx Connector Test
+- Do **not** add a shared link or collaborations to `Lumen Connector Test
   Folder` itself, `Subfolder A`, `root_doc.txt`, or `alpha.txt` — the tests
   assert those are owner-only.
-- `Onyx Example Link` is a **web link** (bookmark), not a file: create it in the
-  root test folder pointing to `https://www.onyx.app` with the description
+- `Lumen Example Link` is a **web link** (bookmark), not a file: create it in the
+  root test folder pointing to `https://www.lumen.app` with the description
   above. It's only indexed when the connector's `include_web_links` is on, as a
   thin bookmark document (name + description as text; the linked page is not
   fetched).
 
-Then create a group named exactly `Onyx Test Group` and add the collaborator
+Then create a group named exactly `Lumen Test Group` and add the collaborator
 user as a member. Do not collaborate this group onto any folder; it exists only
 to exercise group sync.
 
@@ -157,7 +157,7 @@ For ad-hoc manual exploration without pytest, the connector has a dev entry
 point (add `BOX_FOLDER_IDS=<id>` to scope it):
 
 ```bash
-PYTHONPATH=backend python backend/onyx/connectors/box/connector.py
+PYTHONPATH=backend python backend/lumen/connectors/box/connector.py
 ```
 
 ## What the tests assert (summary)
@@ -165,7 +165,7 @@ PYTHONPATH=backend python backend/onyx/connectors/box/connector.py
 - `test_load_documents` — the six documents (by name, extracted content,
   `path` metadata, UTC timestamps, owner email, `app.box.com` links) and the
   four folder hierarchy nodes.
-- `test_web_links` — with `include_web_links` on, the `Onyx Example Link`
+- `test_web_links` — with `include_web_links` on, the `Lumen Example Link`
   bookmark is indexed as a `box-weblink-*` document whose section links to the
   target URL and whose text carries the name + description.
 - `test_poll_window_filters_documents_but_not_hierarchy` — a 1970 poll window
@@ -174,7 +174,7 @@ PYTHONPATH=backend python backend/onyx/connectors/box/connector.py
   (folder Viewer) and `editor_doc.txt` (file Editor) grant the collaborator;
   `uploader_doc.txt` (folder Uploader) does NOT (upload-only role);
   `root_doc.txt` is owner-only; `public_doc.txt` is public via its open link.
-- `test_group_sync` — `Onyx Test Group` syncs with the collaborator as a
+- `test_group_sync` — `Lumen Test Group` syncs with the collaborator as a
   member, and the synthetic `box-enterprise-all-users` group contains every
   managed user.
 - `test_validate_connector_settings` — valid credentials pass validation and

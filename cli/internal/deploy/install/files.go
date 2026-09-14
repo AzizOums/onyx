@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/deployfiles"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/release"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/state"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/deployfiles"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/release"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/state"
 )
 
 // managedFiles returns the files for the selected mode: the base set plus the

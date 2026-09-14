@@ -1,12 +1,12 @@
 # Security Policy
 
-We take the security of Onyx and our users seriously. Thank you for helping
-keep Onyx and its community safe by practicing responsible disclosure.
+We take the security of Lumen and our users seriously. Thank you for helping
+keep Lumen and its community safe by practicing responsible disclosure.
 
 ## Supported Versions
 
 Security fixes are applied to the `main` branch and the latest tagged release.
-We strongly recommend running the most recent release of Onyx. Older releases
+We strongly recommend running the most recent release of Lumen. Older releases
 are not guaranteed to receive backported security patches.
 
 ## Reporting a Vulnerability
@@ -17,7 +17,7 @@ and put other users at risk before a fix is available.
 
 Instead, please use **GitHub Private Vulnerability Reporting** to file a
 report at
-<https://github.com/onyx-dot-app/onyx/security/advisories/new>. This
+<https://github.com/lumen-dot-app/lumen/security/advisories/new>. This
 creates a private advisory visible only to the maintainers and ensures
 your report is tracked rather than landing in an individual inbox.
 
@@ -25,7 +25,7 @@ Please include as much of the following as you can — it helps us triage
 faster:
 
 - A description of the issue and the impact you believe it has.
-- The Onyx version, deployment type (self-hosted, Onyx Cloud, Docker, Helm,
+- The Lumen version, deployment type (self-hosted, Lumen Cloud, Docker, Helm,
   etc.), and any relevant configuration.
 - Step-by-step reproduction instructions or a proof-of-concept.
 - Any logs, screenshots, or sample payloads that demonstrate the issue.
@@ -48,9 +48,9 @@ After you report a vulnerability:
 
 In scope:
 
-- The Onyx application code in this repository (backend, web, desktop, CLI,
+- The Lumen application code in this repository (backend, web, desktop, CLI,
   connectors, deployment manifests).
-- Official Onyx-published Docker images and Helm charts.
+- Official Lumen-published Docker images and Helm charts.
 
 Out of scope:
 
@@ -70,4 +70,4 @@ We will not pursue or support legal action against researchers who:
 - Give us a reasonable opportunity to remediate before any public
   disclosure.
 
-Thank you for helping keep Onyx and our community secure.
+Thank you for helping keep Lumen and our community secure.

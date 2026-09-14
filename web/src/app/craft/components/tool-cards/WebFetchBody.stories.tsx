@@ -35,13 +35,13 @@ function webfetch(overrides: Partial<ToolCallState>): ToolCallState {
 export const JsonResponse: Story = {
   args: {
     toolCall: webfetch({
-      description: "https://api.github.com/repos/onyx-dot-app/onyx",
+      description: "https://api.github.com/repos/lumen-dot-app/lumen",
       rawOutput: `{
   "id": 758315521,
-  "name": "onyx",
-  "full_name": "onyx-dot-app/onyx",
+  "name": "lumen",
+  "full_name": "lumen-dot-app/lumen",
   "private": false,
-  "html_url": "https://github.com/onyx-dot-app/onyx",
+  "html_url": "https://github.com/lumen-dot-app/lumen",
   "description": "Gen-AI Chat for Teams",
   "language": "Python",
   "stargazers_count": 12450,

@@ -11,9 +11,9 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/models"
 	"github.com/spf13/cobra"
 )
 
@@ -33,7 +33,7 @@ func TestSearch_NoQuery(t *testing.T) {
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return exitcodes.New(exitcodes.BadRequest,
-				"no query provided\n  Usage: onyx-cli search \"your query\" [\"another query\" ...]")
+				"no query provided\n  Usage: lumen-cli search \"your query\" [\"another query\" ...]")
 		}
 		return origRunE(cmd, args)
 	}
@@ -405,7 +405,7 @@ func TestWriteSearchJSON_OverLimitIsValidJSON(t *testing.T) {
 func TestWriteSearchJSON_TempSaveFailureEmitsFullResponse(t *testing.T) {
 	// Dropped results must never be unrecoverable: with no temp copy, the
 	// full over-limit response is emitted instead of a truncated envelope.
-	t.Setenv("TMPDIR", "/nonexistent-onyx-cli-test")
+	t.Setenv("TMPDIR", "/nonexistent-lumen-cli-test")
 	var out, errOut bytes.Buffer
 	ios := &iostreams.IOStreams{Out: &out, ErrOut: &errOut}
 	output := searchOutput{Results: makeSearchResults(20, 500)}
@@ -685,7 +685,7 @@ func TestTruncateMultiSearchOutput_LargestFittingCapDespiteNonMonotoneSizes(t *t
 	if err != nil {
 		t.Fatalf("marshal failed: %v", err)
 	}
-	fullPath := "/tmp/" + strings.Repeat("x", 120) + "/onyx-search-full.json"
+	fullPath := "/tmp/" + strings.Repeat("x", 120) + "/lumen-search-full.json"
 
 	// Oracle: the documented envelope for a given uniform cap k.
 	capAt := func(k int) multiSearchOutput {

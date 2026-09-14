@@ -6,10 +6,10 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.document_set import delete_document_set
-from onyx.db.enums import PermissionAuthority
-from onyx.db.models import DocumentSet, DocumentSet__UserGroup, User, UserGroup
-from onyx.server.features.document_set import api
+from lumen.db.document_set import delete_document_set
+from lumen.db.enums import PermissionAuthority
+from lumen.db.models import DocumentSet, DocumentSet__UserGroup, User, UserGroup
+from lumen.server.features.document_set import api
 
 DOCUMENT_SET_ID = 42
 TENANT_ID = "test-tenant"

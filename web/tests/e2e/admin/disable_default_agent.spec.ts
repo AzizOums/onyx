@@ -2,7 +2,7 @@ import { test, expect, Page } from "@playwright/test";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import { loginAs } from "@tests/e2e/utils/auth";
 import { createAgent } from "@tests/e2e/utils/agentUtils";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 
 const MAX_SETTING_SAVE_ATTEMPTS = 5;
 const SETTING_SAVE_RETRY_DELAY_MS = 750;
@@ -104,7 +104,7 @@ test.describe("Disable Default Agent Setting @exclusive", () => {
   test.afterEach(async ({ page }) => {
     // Clean up any assistant created during the test
     if (createdAssistantId !== null) {
-      const client = new OnyxApiClient(page.request);
+      const client = new LumenApiClient(page.request);
       await client.deleteAgent(createdAssistantId);
       createdAssistantId = null;
     }
@@ -159,8 +159,8 @@ test.describe("Disable Default Agent Setting @exclusive", () => {
     await newSessionButton.click();
 
     // Verify the WelcomeMessage shown is NOT from the default agent
-    // Default agent shows onyx-logo, custom agents show agent-name-display
-    await expect(page.locator('[data-testid="onyx-logo"]')).not.toBeVisible();
+    // Default agent shows lumen-logo, custom agents show agent-name-display
+    await expect(page.locator('[data-testid="lumen-logo"]')).not.toBeVisible();
     await expect(
       page.locator('[data-testid="agent-name-display"]')
     ).toBeVisible();

@@ -5,7 +5,7 @@ import { AgentAvatar } from "@/components/avatars/AgentAvatar";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { MinimalAgent } from "@/chat/agents";
-import SvgOnyxLogo from "@/icons/onyx-logo";
+import SvgLumenLogo from "@/icons/lumen-logo";
 import { getRandomGreeting } from "@/lib/greetings";
 
 interface WelcomeMessageProps {
@@ -34,7 +34,7 @@ export function WelcomeMessage({ agent, isDefaultAgent }: WelcomeMessageProps) {
 
   return (
     <View className="items-center gap-8">
-      <Icon as={SvgOnyxLogo} size={32} className="text-text-05" />
+      <Icon as={SvgLumenLogo} size={32} className="text-text-05" />
       <Text font="heading-h2" color="text-05">
         {greeting}
       </Text>

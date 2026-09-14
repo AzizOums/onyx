@@ -15,23 +15,23 @@ import pytest
 from sqlalchemy import event
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     MCPAuthenticationPerformer,
     MCPAuthenticationType,
     MCPTransport,
 )
-from onyx.db.mcp import (
+from lumen.db.mcp import (
     create_connection_config,
     create_mcp_server__no_commit,
     update_mcp_server__no_commit,
 )
-from onyx.db.models import MCPServer, Tool
-from onyx.server.features.build.sandbox.util.mcp_config import (
+from lumen.db.models import MCPServer, Tool
+from lumen.server.features.build.sandbox.util.mcp_config import (
     craft_mcp_fingerprint,
     resolve_craft_mcp_servers,
 )
-from onyx.server.features.mcp.api import get_craft_mcp_servers_for_user
-from onyx.server.features.mcp.models import MCPConnectionData
+from lumen.server.features.mcp.api import get_craft_mcp_servers_for_user
+from lumen.server.features.mcp.models import MCPConnectionData
 from tests.external_dependency_unit.conftest import create_test_user
 
 

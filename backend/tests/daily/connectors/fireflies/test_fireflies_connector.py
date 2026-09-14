@@ -5,9 +5,9 @@ from typing import Any
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.fireflies.connector import FirefliesConnector
-from onyx.connectors.models import Document, HierarchyNode
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.fireflies.connector import FirefliesConnector
+from lumen.connectors.models import Document, HierarchyNode
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(TestSecret.FIREFLIES_API_KEY)

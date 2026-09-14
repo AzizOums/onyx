@@ -4,11 +4,11 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.confluence.connector import ConfluenceConnector
-from onyx.connectors.credentials_provider import OnyxStaticCredentialsProvider
-from onyx.connectors.models import Document
-from onyx.file_processing.enums import HtmlBasedConnectorTransformLinksStrategy
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.confluence.connector import ConfluenceConnector
+from lumen.connectors.credentials_provider import LumenStaticCredentialsProvider
+from lumen.connectors.models import Document
+from lumen.file_processing.enums import HtmlBasedConnectorTransformLinksStrategy
 from tests.daily.connectors.utils import load_all_from_connector
 from tests.utils.secret_names import TestSecret
 
@@ -27,7 +27,7 @@ def _make_connector(access_token: str) -> ConfluenceConnector:
         is_cloud=True,
     )
     connector.set_credentials_provider(
-        OnyxStaticCredentialsProvider(
+        LumenStaticCredentialsProvider(
             None,
             DocumentSource.CONFLUENCE,
             {
@@ -47,7 +47,7 @@ def parser_regression_documents(
         test_secrets[TestSecret.CONFLUENCE_ACCESS_TOKEN].strip()
     )
     with patch(
-        "onyx.file_processing.html_utils.HTML_BASED_CONNECTOR_TRANSFORM_LINKS_STRATEGY",
+        "lumen.file_processing.html_utils.HTML_BASED_CONNECTOR_TRANSFORM_LINKS_STRATEGY",
         HtmlBasedConnectorTransformLinksStrategy.MARKDOWN,
     ):
         result = load_all_from_connector(connector, 0, time.time())

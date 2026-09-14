@@ -1,17 +1,17 @@
-"""The Google Drive built-in provider: full read/write, Onyx-managed, and its
+"""The Google Drive built-in provider: full read/write, Lumen-managed, and its
 action catalog matches the request paths the bundled ``gdrive_api.py`` helper
 calls. Reads are auto-approved (ALWAYS); mutations default to ASK."""
 
 from __future__ import annotations
 
-from onyx.db.enums import EndpointPolicy, ExternalAppType
-from onyx.external_apps.providers.actions import RestRoute, path_matches
-from onyx.external_apps.providers.base import OnyxManagedExtApp
-from onyx.external_apps.providers.google_drive import (
+from lumen.db.enums import EndpointPolicy, ExternalAppType
+from lumen.external_apps.providers.actions import RestRoute, path_matches
+from lumen.external_apps.providers.base import LumenManagedExtApp
+from lumen.external_apps.providers.google_drive import (
     GoogleDriveAction,
     GoogleDriveProvider,
 )
-from onyx.external_apps.providers.registry import PROVIDERS
+from lumen.external_apps.providers.registry import PROVIDERS
 
 _READ_ACTIONS = {
     GoogleDriveAction.FILES_READ,
@@ -31,7 +31,7 @@ def _provider() -> GoogleDriveProvider:
 
 def test_registered_as_managed_drive_provider() -> None:
     provider = _provider()
-    assert isinstance(provider, OnyxManagedExtApp)
+    assert isinstance(provider, LumenManagedExtApp)
     assert provider.spec.app_type == ExternalAppType.GOOGLE_DRIVE
 
 

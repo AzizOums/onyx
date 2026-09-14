@@ -14,19 +14,19 @@ from uuid import UUID, uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.beat_schedule import BEAT_EXPIRES_DEFAULT
-from onyx.background.celery.tasks.port import tasks as port_task
-from onyx.background.celery.tasks.port.tasks import run_check_for_port, run_port_attempt
-from onyx.configs.constants import OnyxCeleryQueues, OnyxCeleryTask
-from onyx.db.enums import PortAttemptStatus, UserFileStatus
-from onyx.db.models import (
+from lumen.background.celery.tasks.beat_schedule import BEAT_EXPIRES_DEFAULT
+from lumen.background.celery.tasks.port import tasks as port_task
+from lumen.background.celery.tasks.port.tasks import run_check_for_port, run_port_attempt
+from lumen.configs.constants import LumenCeleryQueues, LumenCeleryTask
+from lumen.db.enums import PortAttemptStatus, UserFileStatus
+from lumen.db.models import (
     ConnectorCredentialPair,
     PortAttempt,
     SearchSettings,
     User,
     UserFile,
 )
-from onyx.db.port_attempt import (
+from lumen.db.port_attempt import (
     _user_file_port_has_pending_work,
     all_user_scopes_ported,
     create_port_attempt,
@@ -34,13 +34,13 @@ from onyx.db.port_attempt import (
     mark_port_in_progress,
     mark_port_succeeded,
 )
-from onyx.db.port_orphan_candidate import (
+from lumen.db.port_orphan_candidate import (
     clear_port_orphan_candidates,
     get_port_orphan_candidate_doc_ids,
     record_port_orphan_candidates_for_user_file,
 )
-from onyx.db.search_settings import get_current_search_settings
-from onyx.db.swap_index import _port_swap_ready
+from lumen.db.search_settings import get_current_search_settings
+from lumen.db.swap_index import _port_swap_ready
 from shared_configs.contextvars import get_current_tenant_id
 from tests.external_dependency_unit.conftest import create_test_user, delete_test_user
 from tests.external_dependency_unit.indexing_helpers import (
@@ -235,8 +235,8 @@ def test_check_for_port_creates_user_attempt_on_user_file_port_queue(
     assert attempts[0].cc_pair_id is None
 
     call = celery_app.send_task.call_args
-    assert call.args[0] == OnyxCeleryTask.RUN_USER_FILE_PORT_ATTEMPT
-    assert call.kwargs["queue"] == OnyxCeleryQueues.USER_FILE_PORT
+    assert call.args[0] == LumenCeleryTask.RUN_USER_FILE_PORT_ATTEMPT
+    assert call.kwargs["queue"] == LumenCeleryQueues.USER_FILE_PORT
     assert call.kwargs["kwargs"] == {
         "port_attempt_id": attempts[0].id,
         "tenant_id": get_current_tenant_id(),

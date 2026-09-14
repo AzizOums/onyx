@@ -10,13 +10,13 @@ These tests verify that:
 
 import pytest
 
-from onyx.chat.llm_step import translate_history_to_llm_format
-from onyx.chat.models import ChatMessageSimple
-from onyx.configs.constants import MessageType
-from onyx.llm.interfaces import LLMConfig
-from onyx.llm.models import ChatCompletionMessage, SystemMessage, UserMessage
-from onyx.prompts.chat_prompts import CODE_BLOCK_MARKDOWN
-from onyx.prompts.constants import SYSTEM_REMINDER_TAG_CLOSE, SYSTEM_REMINDER_TAG_OPEN
+from lumen.chat.llm_step import translate_history_to_llm_format
+from lumen.chat.models import ChatMessageSimple
+from lumen.configs.constants import MessageType
+from lumen.llm.interfaces import LLMConfig
+from lumen.llm.models import ChatCompletionMessage, SystemMessage, UserMessage
+from lumen.prompts.chat_prompts import CODE_BLOCK_MARKDOWN
+from lumen.prompts.constants import SYSTEM_REMINDER_TAG_CLOSE, SYSTEM_REMINDER_TAG_OPEN
 
 
 def _ensure_list(

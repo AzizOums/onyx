@@ -84,7 +84,7 @@ import {
   UNSET_REASONING_STOP,
   reasoningStopIndex,
 } from "@/sections/model-selector/setting-controls";
-import { LLM_GATEWAY_MIN_TIER, tierAtLeast } from "@/lib/tiers";
+import { LLM_GATEWAY_AVAILABLE, tierAtLeast } from "@/lib/tiers";
 import { Tooltip } from "@opal/components";
 import { useCloudSubscription } from "@/hooks/useCloudSubscription";
 import { useSmoothStreaming } from "@/hooks/useSmoothStreaming";
@@ -1711,7 +1711,7 @@ function GatewayAccessSection({
   onCreateToken,
 }: GatewayAccessSectionProps) {
   const t = useTranslations("settings");
-  const gatewayTier = useTierAtLeast(LLM_GATEWAY_MIN_TIER);
+  const gatewayTier = LLM_GATEWAY_AVAILABLE;
   const { llmProviders } = useLLMProviders();
   const [gatewayUrl, setGatewayUrl] = useState("");
 
@@ -2408,20 +2408,7 @@ function AccountsAccessSettings() {
                   </Section>
                 </Section>
               </Card>
-            ) : (
-              <Card border="solid" rounding={4}>
-                <Section alignItems="start" height="fit">
-                  <Section flexDirection="row" justifyContent="between">
-                    <Text font="secondary-body" color="text-03">
-                      {t("apiKeys.upsell.description")}
-                    </Text>
-                    <Button prominence="secondary" href="/admin/billing">
-                      {t("apiKeys.upsell.upgradeButton")}
-                    </Button>
-                  </Section>
-                </Section>
-              </Card>
-            )}
+            ) : null}
           </Section>
         )}
       </Section>

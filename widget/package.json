@@ -1,9 +1,9 @@
 {
-  "name": "onyx-chat-widget",
+  "name": "lumen-chat-widget",
   "version": "1.0.0",
-  "description": "Embeddable chat widget for Onyx",
+  "description": "Embeddable chat widget for Lumen",
   "type": "module",
-  "main": "dist/onyx-widget.js",
+  "main": "dist/lumen-widget.js",
   "types": "dist/types/index.d.ts",
   "files": [
     "dist"

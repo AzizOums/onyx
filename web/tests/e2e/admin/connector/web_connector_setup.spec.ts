@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import { ConnectorSetupPage } from "@tests/e2e/admin/connector/ConnectorSetupPage";
 import { IndexingStatusPage } from "@tests/e2e/admin/connector/IndexingStatusPage";
 
@@ -13,7 +13,7 @@ import { IndexingStatusPage } from "@tests/e2e/admin/connector/IndexingStatusPag
  * `afterEach` (looked up by name so cleanup also runs if the test fails
  * mid-way after creation).
  */
-const DOCS_URL = "https://docs.onyx.app";
+const DOCS_URL = "https://docs.lumen.app";
 
 test.describe("Web connector setup", () => {
   let connectorName: string;
@@ -24,7 +24,7 @@ test.describe("Web connector setup", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     try {
       const idToDelete =
         ccPairId ?? (await apiClient.findCCPairByName("web", connectorName));
@@ -51,7 +51,7 @@ test.describe("Web connector setup", () => {
 
     // Pause via the API as soon as the connector exists so background
     // workers don't start crawling the site while the test finishes.
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     ccPairId = await apiClient.findCCPairByName("web", connectorName);
     expect(ccPairId).not.toBeNull();
     await apiClient.pauseConnector(ccPairId!);

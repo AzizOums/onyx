@@ -9,7 +9,7 @@ import (
 func TestFormatFileRewritesUnformattedSource(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "main.tf")
-	unformatted := "variable \"name\" {\ntype=string\n  default   = \"onyx\"\n}\n"
+	unformatted := "variable \"name\" {\ntype=string\n  default   = \"lumen\"\n}\n"
 	if err := os.WriteFile(path, []byte(unformatted), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -26,7 +26,7 @@ func TestFormatFileRewritesUnformattedSource(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := "variable \"name\" {\n  type    = string\n  default = \"onyx\"\n}\n"
+	want := "variable \"name\" {\n  type    = string\n  default = \"lumen\"\n}\n"
 	if string(got) != want {
 		t.Errorf("got:\n%s\nwant:\n%s", got, want)
 	}

@@ -118,7 +118,7 @@ export default function ScimModal({
                     prominence="secondary"
                     icon={SvgDownload}
                     onClick={() =>
-                      downloadFile(`onyx-scim-token-${Date.now()}.txt`, {
+                      downloadFile(`lumen-scim-token-${Date.now()}.txt`, {
                         content: view.rawToken,
                       })
                     }

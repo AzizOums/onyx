@@ -1,4 +1,4 @@
-# Onyx Azure modules
+# Lumen Azure modules
 
 ## Status
 
@@ -10,7 +10,7 @@ a first deployment.
 ## Overview
 
 This directory contains Terraform modules to provision the core Azure
-infrastructure for Onyx:
+infrastructure for Lumen:
 
 - `vnet`: a virtual network with subnets sized for AKS, a NAT gateway for
   stable egress, and optional flow logs
@@ -21,12 +21,12 @@ infrastructure for Onyx:
 - `redis`: an Azure Managed Redis behind a private endpoint, with four metric
   alerts. Off by default, because the in-cluster Redis needs no extra
   configuration -- see below
-- `storage`: a storage account and container for the Onyx file store, with
+- `storage`: a storage account and container for the Lumen file store, with
   versioning, lifecycle rules and network rules
 - `waf`: a regional Web Application Firewall policy for an Application Gateway
-- `onyx`: a higher-level composition that wires the above together
+- `lumen`: a higher-level composition that wires the above together
 
-Use the `onyx` module for a working cluster with sane defaults. Use the
+Use the `lumen` module for a working cluster with sane defaults. Use the
 individual modules when you need more control.
 
 These mirror the AWS modules in `../aws`. Read
@@ -40,14 +40,14 @@ else, point `source` at this repository and pin a ref:
 
 ```hcl
 module "vnet" {
-  source              = "git::https://github.com/onyx-dot-app/onyx.git//deployment/terraform/modules/azure/vnet?ref=tf-azure/v1.0.0"
-  resource_group_name = "onyx-prod"
+  source              = "git::https://github.com/lumen-dot-app/lumen.git//deployment/terraform/modules/azure/vnet?ref=tf-azure/v1.0.0"
+  resource_group_name = "lumen-prod"
   location            = "eastus"
 }
 ```
 
 Azure releases are tagged `tf-azure/vX.Y.Z`, versioned independently of both
-the AWS modules and Onyx product releases. A commit sha works as a `ref` too,
+the AWS modules and Lumen product releases. A commit sha works as a `ref` too,
 and is the better choice for automated consumers: a sha cannot be moved, where
 a tag can.
 
@@ -76,10 +76,10 @@ provider "azurerm" {
   storage_use_azuread = true
 }
 
-module "onyx" {
-  source = "./modules/azure/onyx"
+module "lumen" {
+  source = "./modules/azure/lumen"
 
-  name     = "onyx"
+  name     = "lumen"
   location = local.location
   size     = "medium"
 
@@ -94,22 +94,22 @@ module "onyx" {
 # The kubernetes provider needs the cluster, so it reads its credentials back
 # out of the module.
 provider "kubernetes" {
-  host                   = module.onyx.cluster_host
-  cluster_ca_certificate = base64decode(module.onyx.cluster_ca_certificate)
-  client_certificate     = base64decode(module.onyx.client_certificate)
-  client_key             = base64decode(module.onyx.client_key)
+  host                   = module.lumen.cluster_host
+  cluster_ca_certificate = base64decode(module.lumen.cluster_ca_certificate)
+  client_certificate     = base64decode(module.lumen.client_certificate)
+  client_key             = base64decode(module.lumen.client_key)
 }
 
 output "storage_account_name" {
-  value = module.onyx.storage_account_name
+  value = module.lumen.storage_account_name
 }
 
 output "postgres_host" {
-  value = module.onyx.postgres_host
+  value = module.lumen.postgres_host
 }
 
 output "redis_host" {
-  value = module.onyx.redis_host
+  value = module.lumen.redis_host
 }
 ```
 
@@ -142,8 +142,8 @@ because on Azure it carries the document index itself.
 ### Using an existing network
 
 ```hcl
-module "onyx" {
-  source = "./modules/azure/onyx"
+module "lumen" {
+  source = "./modules/azure/lumen"
 
   location               = "eastus"
   create_virtual_network = false
@@ -167,7 +167,7 @@ NAT gateway, set `aks_outbound_type = "userAssignedNATGateway"` to keep it.
 
 ## What each module does
 
-### `onyx`
+### `lumen`
 
 Creates a resource group, then wires the modules below together with t-shirt
 sizing. Its outputs carry everything the Helm chart needs.
@@ -195,17 +195,17 @@ and the database.
 
 An Azure Managed Redis reachable only through a private endpoint.
 
-Onyx runs on it, but not on the default settings, so `enable_redis` defaults
+Lumen runs on it, but not on the default settings, so `enable_redis` defaults
 to `false`. Two separate limits apply, both measured against live caches rather
 than assumed:
 
 - **Only database 0 exists.** `SELECT 1` and above return `DB index is out of
   range` under every clustering policy, because that is a Redis Enterprise
-  property rather than a clustering one. Onyx defaults to database 0 for the
+  property rather than a clustering one. Lumen defaults to database 0 for the
   app, 14 for Celery results and 15 for the Celery broker, so a caller must set
   `REDIS_DB_NUMBER`, `REDIS_DB_NUMBER_CELERY` and
   `REDIS_DB_NUMBER_CELERY_RESULT_BACKEND` to `0`. The three key namespaces do
-  not collide: Onyx prefixes its own keys with the tenant, Celery results are
+  not collide: Lumen prefixes its own keys with the tenant, Celery results are
   `celery-task-meta-*` and the broker uses `_kombu.binding.*` and bare queue
   names.
 - **Sharded policies break Celery.** `EnterpriseCluster` presents one endpoint
@@ -231,7 +231,7 @@ resource rather than a renamed one, and the differences show:
 - It speaks TLS on **10000**, where the retiring service used 6380. There is no
   plaintext port to disable and no minimum TLS version to set.
 - Eviction policies are spelled `VolatileLRU`, not `volatile-lru`.
-- Clustering is not really a choice for Onyx. Every instance shards unless the
+- Clustering is not really a choice for Lumen. Every instance shards unless the
   policy says otherwise, so the module asks for `NoCluster`.
 - Alerts report under `Microsoft.Cache/redisEnterprise`, and the single-thread
   server load metric is replaced by processor time.
@@ -239,7 +239,7 @@ resource rather than a renamed one, and the differences show:
 ### `storage`
 
 A storage account and a private container. Shared access keys are off by
-default: Onyx authenticates with `DefaultAzureCredential`, so no key has to
+default: Lumen authenticates with `DefaultAzureCredential`, so no key has to
 exist.
 
 ### `waf`
@@ -274,7 +274,7 @@ region. The composition creates a second storage account for them, so the
 network never depends on the account holding application data:
 
 ```hcl
-module "onyx" {
+module "lumen" {
   # ...
   enable_flow_logs = true
 }
@@ -290,15 +290,15 @@ This only applies to a network the composition creates. With
 log storage account that nothing would ever write to; configure the flow log
 against your own network instead.
 
-## Installing the Onyx Helm chart (after Terraform)
+## Installing the Lumen Helm chart (after Terraform)
 
 ```bash
 az aks get-credentials --resource-group "$(terraform output -raw resource_group_name)" \
   --name "$(terraform output -raw cluster_name)"
 ```
 
-**Install into the `onyx` namespace.** A Kubernetes service account belongs to
-one namespace, and the `aks` module creates the federated one in `onyx`. A
+**Install into the `lumen` namespace.** A Kubernetes service account belongs to
+one namespace, and the `aks` module creates the federated one in `lumen`. A
 release installed anywhere else references an account that does not exist there,
 and the API and Celery pods never start.
 
@@ -307,7 +307,7 @@ created before it exists and the Helm install happens afterwards. So the release
 joins that namespace rather than making its own:
 
 ```bash
-helm install onyx onyx/onyx --namespace onyx -f values.yaml
+helm install lumen lumen/lumen --namespace lumen -f values.yaml
 ```
 
 Set `create_workload_namespace = false` if something else already creates it.
@@ -327,7 +327,7 @@ call fails to authenticate.
 ```yaml
 serviceAccount:
   create: false
-  name: onyx-workload-access   # matches the aks module's default, in namespace onyx
+  name: lumen-workload-access   # matches the aks module's default, in namespace lumen
 
 # The label is per pod, so it goes on every component that touches the file
 # store: the API server and the Celery workers.
@@ -374,7 +374,7 @@ The outputs line up with the environment the app reads:
 | `AZURE_STORAGE_ACCOUNT_URL` | `storage_account_url` |
 | `AZURE_FILE_STORE_CONTAINER_NAME` | `storage_container_name` |
 
-Leave `AZURE_STORAGE_ACCOUNT_KEY` unset. Onyx authenticates with
+Leave `AZURE_STORAGE_ACCOUNT_KEY` unset. Lumen authenticates with
 `DefaultAzureCredential`, which picks up the workload identity from step 1, and
 the storage account has shared keys turned off anyway.
 
@@ -388,7 +388,7 @@ dedicated pool sits empty:
 ```yaml
 opensearch:
   nodeSelector:
-    onyx.app/workload: document-index
+    lumen.app/workload: document-index
   tolerations:
     - key: document-index
       operator: Equal

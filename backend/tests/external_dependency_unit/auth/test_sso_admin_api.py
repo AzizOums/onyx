@@ -17,22 +17,22 @@ from fastapi.testclient import TestClient
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from onyx.auth.users import current_user
-from onyx.configs.app_configs import WEB_DOMAIN
-from onyx.db.engine.sql_engine import get_session
-from onyx.db.enums import SSOProviderType
-from onyx.db.models import SSOProvider
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError, register_onyx_exception_handlers
-from onyx.server.manage.sso.api import admin_router
-from onyx.utils.encryption import is_masked_credential
+from lumen.auth.users import current_user
+from lumen.configs.app_configs import WEB_DOMAIN
+from lumen.db.engine.sql_engine import get_session
+from lumen.db.enums import SSOProviderType
+from lumen.db.models import SSOProvider
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError, register_lumen_exception_handlers
+from lumen.server.manage.sso.api import admin_router
+from lumen.utils.encryption import is_masked_credential
 
 
 @pytest.fixture(autouse=True)
 def _stub_idp_url_guard() -> Generator[None, None, None]:
     # Provider CRUD here uses placeholder IdP URLs and must not hit the network.
     # The URL guard itself is covered in test_sso_url_guard.
-    with patch("onyx.server.manage.sso.api.validate_idp_url", return_value=None):
+    with patch("lumen.server.manage.sso.api.validate_idp_url", return_value=None):
         yield
 
 
@@ -43,7 +43,7 @@ def client(
 ) -> Generator[TestClient, None, None]:
     assert tenant_context is None
     app = FastAPI()
-    register_onyx_exception_handlers(app)
+    register_lumen_exception_handlers(app)
     app.include_router(admin_router)
 
     app.dependency_overrides[current_user] = lambda: SimpleNamespace(
@@ -122,7 +122,7 @@ def _build_saml_request(name: str) -> dict[str, Any]:
             "idp_entity_id": "https://idp.example.com/entity",
             "idp_sso_url": "https://idp.example.com/sso",
             "idp_x509_cert": "cert",
-            "sp_entity_id": "onyx",
+            "sp_entity_id": "lumen",
         },
         "allowed_email_domains": ["companya.com"],
     }
@@ -303,7 +303,7 @@ def test_create_saml_provider(
                 "idp_entity_id": "https://idp.example.com/entity",
                 "idp_sso_url": "https://idp.example.com/sso",
                 "idp_x509_cert": "MIIDsamplecertvalue",
-                "sp_entity_id": "onyx",
+                "sp_entity_id": "lumen",
                 "sp_private_key": "-----BEGIN PRIVATE KEY-----secret",
             },
             "allowed_email_domains": ["companysaml.com"],
@@ -335,8 +335,8 @@ def test_create_rejects_masked_credentials(
         "/admin/sso/provider",
         json=_build_oidc_request(name, "••••••••••••"),
     )
-    assert response.status_code == OnyxErrorCode.INVALID_INPUT.status_code
-    assert response.json()["error_code"] == OnyxErrorCode.INVALID_INPUT.code
+    assert response.status_code == LumenErrorCode.INVALID_INPUT.status_code
+    assert response.json()["error_code"] == LumenErrorCode.INVALID_INPUT.code
 
     db_session.expire_all()
     stored_provider = db_session.scalars(
@@ -375,10 +375,10 @@ def test_create_duplicate_name_returns_duplicate_resource(
         json=_build_oidc_request(name, "another-secret-value"),
     )
     assert (
-        duplicate_response.status_code == OnyxErrorCode.DUPLICATE_RESOURCE.status_code
+        duplicate_response.status_code == LumenErrorCode.DUPLICATE_RESOURCE.status_code
     )
     assert (
-        duplicate_response.json()["error_code"] == OnyxErrorCode.DUPLICATE_RESOURCE.code
+        duplicate_response.json()["error_code"] == LumenErrorCode.DUPLICATE_RESOURCE.code
     )
 
     db_session.expire_all()
@@ -414,11 +414,11 @@ def test_cannot_disable_last_provider_when_password_auth_off(
 
     with (
         patch(
-            "onyx.server.manage.sso.api.load_effective_uncached",
+            "lumen.server.manage.sso.api.load_effective_uncached",
             _auth_disabled_settings,
         ),
         patch(
-            "onyx.server.manage.sso.api.fetch_sso_providers",
+            "lumen.server.manage.sso.api.fetch_sso_providers",
             return_value=[SimpleNamespace(id=provider_id)],
         ),
     ):
@@ -427,8 +427,8 @@ def test_cannot_disable_last_provider_when_password_auth_off(
             json={"enabled": False},
         )
 
-    assert response.status_code == OnyxErrorCode.INVALID_INPUT.status_code
-    assert response.json()["error_code"] == OnyxErrorCode.INVALID_INPUT.code
+    assert response.status_code == LumenErrorCode.INVALID_INPUT.status_code
+    assert response.json()["error_code"] == LumenErrorCode.INVALID_INPUT.code
 
     db_session.expire_all()
     stored = db_session.get(SSOProvider, provider_id)
@@ -450,11 +450,11 @@ def test_can_disable_provider_when_another_remains_and_auth_off(
 
     with (
         patch(
-            "onyx.server.manage.sso.api.load_effective_uncached",
+            "lumen.server.manage.sso.api.load_effective_uncached",
             _auth_disabled_settings,
         ),
         patch(
-            "onyx.server.manage.sso.api.fetch_sso_providers",
+            "lumen.server.manage.sso.api.fetch_sso_providers",
             return_value=[
                 SimpleNamespace(id=provider_id),
                 SimpleNamespace(id=provider_id + 1),
@@ -477,23 +477,23 @@ def test_missing_provider_routes_return_not_found(client: TestClient) -> None:
         f"/admin/sso/provider/{missing_provider_id}",
         json={"display_name": "Missing"},
     )
-    assert patch_response.status_code == OnyxErrorCode.NOT_FOUND.status_code
-    assert patch_response.json()["error_code"] == OnyxErrorCode.NOT_FOUND.code
+    assert patch_response.status_code == LumenErrorCode.NOT_FOUND.status_code
+    assert patch_response.json()["error_code"] == LumenErrorCode.NOT_FOUND.code
 
     enabled_response = client.post(
         f"/admin/sso/provider/{missing_provider_id}/enabled",
         json={"enabled": False},
     )
-    assert enabled_response.status_code == OnyxErrorCode.NOT_FOUND.status_code
-    assert enabled_response.json()["error_code"] == OnyxErrorCode.NOT_FOUND.code
+    assert enabled_response.status_code == LumenErrorCode.NOT_FOUND.status_code
+    assert enabled_response.json()["error_code"] == LumenErrorCode.NOT_FOUND.code
 
 
 def _gated_bridge(*_args: Any, **_kwargs: Any) -> Any:
     """Stands in for the EE tier bridge as a below-Business tenant."""
 
     def _deny() -> None:
-        raise OnyxError(
-            OnyxErrorCode.FEATURE_NOT_AVAILABLE,
+        raise LumenError(
+            LumenErrorCode.FEATURE_NOT_AVAILABLE,
             "Multiple enabled SSO providers require the Business or Enterprise plan.",
         )
 
@@ -518,7 +518,7 @@ def test_second_enabled_provider_requires_business_tier(
     first_id = first_response.json()["id"]
 
     with patch(
-        "onyx.server.manage.sso.api.fetch_ee_implementation_or_noop",
+        "lumen.server.manage.sso.api.fetch_ee_implementation_or_noop",
         _gated_bridge,
     ):
         second_name = _new_provider_name()
@@ -527,11 +527,11 @@ def test_second_enabled_provider_requires_business_tier(
             json=_build_oidc_request(second_name, "second-secret"),
         )
         assert (
-            gated_create.status_code == OnyxErrorCode.FEATURE_NOT_AVAILABLE.status_code
+            gated_create.status_code == LumenErrorCode.FEATURE_NOT_AVAILABLE.status_code
         )
         assert (
             gated_create.json()["error_code"]
-            == OnyxErrorCode.FEATURE_NOT_AVAILABLE.code
+            == LumenErrorCode.FEATURE_NOT_AVAILABLE.code
         )
 
         disable_first = client.post(
@@ -565,11 +565,11 @@ def test_second_enabled_provider_requires_business_tier(
         )
         assert (
             gated_reenable.status_code
-            == OnyxErrorCode.FEATURE_NOT_AVAILABLE.status_code
+            == LumenErrorCode.FEATURE_NOT_AVAILABLE.status_code
         )
 
 
-@patch("onyx.db.sso_provider.MULTI_TENANT", True)
+@patch("lumen.db.sso_provider.MULTI_TENANT", True)
 def test_multi_tenant_rejects_saml_and_admits_oauth(
     client: TestClient, provider_names: list[str]
 ) -> None:
@@ -579,8 +579,8 @@ def test_multi_tenant_rejects_saml_and_admits_oauth(
         "/admin/sso/provider",
         json=_build_saml_request(_new_provider_name("saml-test")),
     )
-    assert saml_response.status_code == OnyxErrorCode.SINGLE_TENANT_ONLY.status_code
-    assert saml_response.json()["error_code"] == OnyxErrorCode.SINGLE_TENANT_ONLY.code
+    assert saml_response.status_code == LumenErrorCode.SINGLE_TENANT_ONLY.status_code
+    assert saml_response.json()["error_code"] == LumenErrorCode.SINGLE_TENANT_ONLY.code
 
     oidc_name = _new_provider_name()
     provider_names.append(oidc_name)
@@ -599,7 +599,7 @@ def test_multi_tenant_rejects_saml_and_admits_oauth(
 
 
 @pytest.mark.parametrize("domains", [[], [" "], ["", "  "]])
-@patch("onyx.server.manage.sso.api.MULTI_TENANT", True)
+@patch("lumen.server.manage.sso.api.MULTI_TENANT", True)
 def test_multi_tenant_requires_bounded_email_domains(
     client: TestClient, domains: list[str]
 ) -> None:
@@ -609,13 +609,13 @@ def test_multi_tenant_requires_bounded_email_domains(
     request["allowed_email_domains"] = domains
 
     response = client.post("/admin/sso/provider", json=request)
-    assert response.status_code == OnyxErrorCode.INVALID_INPUT.status_code
+    assert response.status_code == LumenErrorCode.INVALID_INPUT.status_code
 
 
 @pytest.mark.parametrize(
     "domain", ["company a.com", "notadomain", "-bad.com", "bad_.com"]
 )
-@patch("onyx.server.manage.sso.api.MULTI_TENANT", True)
+@patch("lumen.server.manage.sso.api.MULTI_TENANT", True)
 def test_multi_tenant_rejects_malformed_email_domains(
     client: TestClient, domain: str
 ) -> None:
@@ -625,7 +625,7 @@ def test_multi_tenant_rejects_malformed_email_domains(
     request["allowed_email_domains"] = [domain]
 
     response = client.post("/admin/sso/provider", json=request)
-    assert response.status_code == OnyxErrorCode.INVALID_INPUT.status_code
+    assert response.status_code == LumenErrorCode.INVALID_INPUT.status_code
 
 
 def test_single_tenant_allows_unbounded_email_domains(

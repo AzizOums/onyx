@@ -363,14 +363,14 @@ describe("Apps vs MCP servers", () => {
         .closest("[aria-hidden]")
         ?.getAttribute("aria-hidden");
 
-    expect(hiddenState(/Integrations Onyx supports/)).toBe("false");
+    expect(hiddenState(/Integrations Lumen supports/)).toBe("false");
     expect(hiddenState("Acme CRM")).toBe("false");
     expect(hiddenState(/Servers an admin made available/)).toBe("true");
     expect(hiddenState("Asana MCP")).toBe("true");
 
     await user.click(screen.getByRole("tab", { name: /MCP servers/ }));
 
-    expect(hiddenState(/Integrations Onyx supports/)).toBe("true");
+    expect(hiddenState(/Integrations Lumen supports/)).toBe("true");
     expect(hiddenState("Acme CRM")).toBe("true");
     expect(hiddenState(/Servers an admin made available/)).toBe("false");
     expect(hiddenState("Asana MCP")).toBe("false");

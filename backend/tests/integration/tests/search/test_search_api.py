@@ -7,7 +7,7 @@ import os
 import httpx
 import pytest
 
-from onyx.db.enums import AccessType, Permission
+from lumen.db.enums import AccessType, Permission
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.cc_pair import CCPairManager

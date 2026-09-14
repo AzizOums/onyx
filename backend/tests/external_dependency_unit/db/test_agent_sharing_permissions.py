@@ -7,26 +7,26 @@ import pytest
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     Permission,
     PersonaAccessLevel,
     PersonaSharePermission,
     PersonaSharingStatus,
 )
-from onyx.db.models import Persona__User, User
-from onyx.db.persona import (
+from lumen.db.models import Persona__User, User
+from lumen.db.persona import (
     fetch_persona_by_id_for_user,
     get_minimal_persona_snapshots_for_user,
     update_persona_access,
     upsert_persona,
 )
-from onyx.db.persona_sharing import (
+from lumen.db.persona_sharing import (
     derive_persona_sharing_status,
     get_persona_access_level,
 )
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.persona.api import delete_persona
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.features.persona.api import delete_persona
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.external_dependency_unit.db.agent_sharing_helpers import (
     create_test_persona,
@@ -293,9 +293,9 @@ def test_delete_persona_unowned_raises_403_not_400(db_session: Session) -> None:
     stranger = create_test_user(db_session, "del-stranger")
     persona = create_test_persona(db_session, owner)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         delete_persona(persona_id=persona.id, user=stranger, db_session=db_session)
-    assert exc_info.value.error_code == OnyxErrorCode.INSUFFICIENT_PERMISSIONS
+    assert exc_info.value.error_code == LumenErrorCode.INSUFFICIENT_PERMISSIONS
     assert exc_info.value.status_code == 403
 
 

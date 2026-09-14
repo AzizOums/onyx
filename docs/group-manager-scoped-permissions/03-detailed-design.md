@@ -14,7 +14,7 @@ Reuses the dead `is_curator` slot semantically (we **add** `is_manager` and late
 **not** rename in-place — the backfill needs both columns to coexist during the transition).
 
 ```python
-# backend/onyx/db/models.py  — class User__UserGroup (currently lines 4356-4368)
+# backend/lumen/db/models.py  — class User__UserGroup (currently lines 4356-4368)
 is_manager: Mapped[bool] = mapped_column(
     Boolean, nullable=False, default=False, server_default=text("false")
 )
@@ -37,7 +37,7 @@ GATE-2 review chose **cache the boolean** so the route gate needs **zero queries
 cache. `effective_permissions` therefore stays **global-tokens-only**; the manager flag is a sibling field.
 
 ```python
-# backend/onyx/db/models.py  — class User
+# backend/lumen/db/models.py  — class User
 is_group_manager: Mapped[bool] = mapped_column(
     Boolean, nullable=False, default=False, server_default=text("false")
 )
@@ -110,7 +110,7 @@ release — keeps a code rollback possible while §8 is unproven.
 **One classifier decides authority everywhere — no `allow_scope` fork, no separate `has_permission_or_scope`.**
 `has_permission` itself returns the authority. The classifier + bundle live in the pure `permissions.py`; the
 DB-querying scope logic (scope resolution, write gates, read clause) lives in
-**`backend/onyx/auth/scoped_permissions.py`** (imports `User`, `User__UserGroup`, the bundle — one direction).
+**`backend/lumen/auth/scoped_permissions.py`** (imports `User`, `User__UserGroup`, the bundle — one direction).
 
 ### 2.1 The manager ability bundle (in `permissions.py`)
 
@@ -231,14 +231,14 @@ def assert_within_scope(
         final = set(current_group_ids) | set(requested_group_ids)
         if managed and final and final.issubset(managed) and is_non_public:
             return
-    raise OnyxError(
-        OnyxErrorCode.INSUFFICIENT_PERMISSIONS,
+    raise LumenError(
+        LumenErrorCode.INSUFFICIENT_PERMISSIONS,
         "Group managers can only act on private resources within the groups they manage.",
     )                                                        # NONE, or out-of-scope
 
 def assert_global(user: User, *, permission: Permission) -> None:   # delete / admin-only on a bundle token
     if has_permission(user, permission) is not PermissionAuthority.GLOBAL:
-        raise OnyxError(OnyxErrorCode.INSUFFICIENT_PERMISSIONS, "Admin only.")   # SCOPED manager rejected
+        raise LumenError(LumenErrorCode.INSUFFICIENT_PERMISSIONS, "Admin only.")   # SCOPED manager rejected
 ```
 
 `assert_within_scope` invariants: `final ⊆ managed` (closes capture-by-reassign), `final` non-empty (stays in
@@ -254,7 +254,7 @@ them.
 ### 2.6 Manager assignment helpers (EE)
 
 ```python
-# backend/ee/onyx/db/user_group.py
+# backend/ee/lumen/db/user_group.py
 def make_group_manager(db_session: Session, user_id: UUID, group_id: int) -> None:
     """Flip is_manager=true on the (user, group) row. Row must exist (a manager is a member).
     Idempotent. Used by the migration backfill helper and the assignment UI."""
@@ -264,7 +264,7 @@ def revoke_group_manager(db_session: Session, user_id: UUID, group_id: int) -> N
 
 ### 2.7 Cached-flag recompute (D1 plumbing)
 
-`backend/onyx/db/permissions.py:43` `recompute_user_permissions__no_commit` — **extend** to also set
+`backend/lumen/db/permissions.py:43` `recompute_user_permissions__no_commit` — **extend** to also set
 `user.is_group_manager = EXISTS(is_manager=true for that user)` in the same write. This already fires on
 membership add/remove (`update_user_group:570`). Additionally, `make_group_manager` / `revoke_group_manager`
 must call `recompute_user_permissions__no_commit([user_id], db_session)` for the affected user so a pure
@@ -323,13 +323,13 @@ def within_managed_scope_clause(
 
 | File | Existing editable fallback | Integration |
 |---|---|---|
-| `backend/onyx/db/document_set.py:41` | `sa_false()` (no owner/share concept) | `|=` scope clause over `DocumentSet__UserGroup` (`is_public.is_(False)`). The one resource where a standalone scope filter *happens* to match (`false() OR clause == clause`); still expressed as `|=` for uniformity. |
-| `backend/onyx/db/connector_credential_pair.py:50` | member-of-owning-group (all groups ⊆ mine) ∨ creator | `|=` scope clause over `UserGroup__ConnectorCredentialPair` (`access_type == PRIVATE`). |
-| `backend/onyx/db/persona.py:77` | owner ∨ owning-group member ∨ EDITOR direct/group share ∨ org-edit | `|=` scope clause over `Persona__UserGroup` (`is_public.is_(False)`); `add:agents` ownership tier unchanged. |
-| `backend/onyx/db/skill.py:260` (`list_skills_for_admin`) | none — unfiltered `select(Skill)` | **NEW scoped admin-list path**, not an `_add_user_filters` edit: scope clause over `Skill__UserGroup` (`is_public.is_(False)`), fail-closed, taken only when the caller is `SCOPED`. **Do NOT touch `_add_user_visibility_filter` (`skill.py:85`)** — it has no editable/viewing split and feeds the agent RUNTIME injection path. (§11.2) |
-| `backend/onyx/db/feedback.py:46` | admin-only (`FULL_ADMIN_PANEL_ACCESS`) | **NO CHANGE** — not in the bundle. (§11.7) |
-| `backend/onyx/db/credentials.py:41` | owner-keyed (`Credential.user_id==user.id`) | **NO CHANGE** — credentials stay owner-scoped; document the deliberate no-op. |
-| `backend/ee/onyx/db/token_limit.py` | no `_add_user_filters`; direct group query | enforce managed-scope in the group-token-limit **write/endpoint** path. Minor. |
+| `backend/lumen/db/document_set.py:41` | `sa_false()` (no owner/share concept) | `|=` scope clause over `DocumentSet__UserGroup` (`is_public.is_(False)`). The one resource where a standalone scope filter *happens* to match (`false() OR clause == clause`); still expressed as `|=` for uniformity. |
+| `backend/lumen/db/connector_credential_pair.py:50` | member-of-owning-group (all groups ⊆ mine) ∨ creator | `|=` scope clause over `UserGroup__ConnectorCredentialPair` (`access_type == PRIVATE`). |
+| `backend/lumen/db/persona.py:77` | owner ∨ owning-group member ∨ EDITOR direct/group share ∨ org-edit | `|=` scope clause over `Persona__UserGroup` (`is_public.is_(False)`); `add:agents` ownership tier unchanged. |
+| `backend/lumen/db/skill.py:260` (`list_skills_for_admin`) | none — unfiltered `select(Skill)` | **NEW scoped admin-list path**, not an `_add_user_filters` edit: scope clause over `Skill__UserGroup` (`is_public.is_(False)`), fail-closed, taken only when the caller is `SCOPED`. **Do NOT touch `_add_user_visibility_filter` (`skill.py:85`)** — it has no editable/viewing split and feeds the agent RUNTIME injection path. (§11.2) |
+| `backend/lumen/db/feedback.py:46` | admin-only (`FULL_ADMIN_PANEL_ACCESS`) | **NO CHANGE** — not in the bundle. (§11.7) |
+| `backend/lumen/db/credentials.py:41` | owner-keyed (`Credential.user_id==user.id`) | **NO CHANGE** — credentials stay owner-scoped; document the deliberate no-op. |
+| `backend/ee/lumen/db/token_limit.py` | no `_add_user_filters`; direct group query | enforce managed-scope in the group-token-limit **write/endpoint** path. Minor. |
 
 **Fail-closed:** `scoped_group_ids_subquery` yields no rows for a non-manager, so `within_managed_scope_clause`
 contributes nothing — never an unfiltered statement.
@@ -416,7 +416,7 @@ model `db/pat.py`). A manager's **group** scope is never encoded in the token �
 
 ```
 backend/
-  onyx/
+  lumen/
     auth/
       scoped_permissions.py            ← NEW: scoped_group_ids_subquery, get_scoped_groups,
                                               assert_within_scope, assert_global, within_managed_scope_clause
@@ -437,7 +437,7 @@ backend/
     db/tools.py                        ← MOD: owner-or-admin manage gates (D8); agent-mediated scope kept only for view (§11.1)
     server/.../{document_set,connector,cc_pair,persona}/api.py  ← MOD: allow_scope=True deps
     server/.../permissions api         ← MOD: /users/me/permissions adds is_manager
-  ee/onyx/
+  ee/lumen/
     db/user_group.py                   ← MOD: make/revoke_group_manager + gates in update/add_users
     db/persona.py                      ← MOD: update_persona_access gate
     db/token_limit.py                  ← MOD: managed-scope enforcement on group token-limit writes
@@ -466,7 +466,7 @@ web/
 7. **Keep the bundle out of `effective_permissions.global`.** Never persist scoped tokens; resolve live.
 8. **Migration before drops.** Backfill `is_manager` before any later release drops `role`/`is_curator`.
 9. **Credentials unchanged.** Owner-scoped; deliberately no manager inheritance.
-10. **Tracing / OnyxError / typing conventions** per CLAUDE.md (raise `OnyxError`, strict typing, no
+10. **Tracing / LumenError / typing conventions** per CLAUDE.md (raise `LumenError`, strict typing, no
     `response_model`).
 11. **Extend the existing permission tests; don't reflexively add new test files.** The new permission
     system already has good coverage — verify the relevant suite is sound and add to it when the behavior is
@@ -496,12 +496,12 @@ bundle** (its agent-mediated GATE 2 later dropped — **D8**) · **D5 skills = i
 **D6 managers may do everything EXCEPT delete** (narrowed by **D9**: a creator may delete what they made).
 
 ### 11.0 PREREQUISITE — independent boot bug (fix before/with PR1)
-`current_curator_or_admin_user` was removed from `onyx/auth/users.py` by §1–7 but is still imported by
-`server/features/skill/api.py:16` and `server/documents/targeted_reindex.py:22` → `import onyx.main` raises
+`current_curator_or_admin_user` was removed from `lumen/auth/users.py` by §1–7 but is still imported by
+`server/features/skill/api.py:16` and `server/documents/targeted_reindex.py:22` → `import lumen.main` raises
 `ImportError` and **the API server cannot boot on this branch** (verified at runtime). Re-point both off the
 dead dep: skills → see §11.2; `targeted_reindex.py:80/163` → `require_permission(MANAGE_CONNECTORS)` (matches
 its connector/indexing peers). This is a merge-integration break, not a §8 feature change, but it blocks
-everything. Add an `import onyx.main` smoke test to CI so a deleted auth dep fails fast.
+everything. Add an `import lumen.main` smoke test to CI so a deleted auth dep fails fast.
 
 ### 11.1 Actions (D4 — `MANAGE_ACTIONS` in the bundle; manage is owner-or-admin per D8)
 > **⚠️ SUPERSEDED by D8 (2026-08-03) for the _management_ verbs.** The agent-mediated GATE 2 below
@@ -622,7 +622,7 @@ capture. So is the reverse — sharing a public agent *into* a managed group —
 
 Plumbing (review-F2/F4/BR-3): thread the acting `user: User` into `update_persona_access` from all callers
 (`create_update_persona` `persona.py:384`, `update_persona_shared` `persona.py:472`, `update_group_agents`
-`user_group/api.py:269/281`); apply to BOTH `onyx/db/persona.py:273` (MIT) and `ee/onyx/db/persona.py:68` (EE);
+`user_group/api.py:269/281`); apply to BOTH `lumen/db/persona.py:273` (MIT) and `ee/lumen/db/persona.py:68` (EE);
 re-read current groups + `is_public` in-txn (don't trust caller flags). `is_public` stays owner/admin-gated
 (unchanged — `update_persona_shared`'s `is_owner_or_admin`). The group `/agents` roster surface uses the same
 manager-scope GATE 2 (target group ∈ managed) — §11.4.

@@ -9,7 +9,7 @@ import json
 
 import pytest
 
-from onyx.sandbox_proxy.errors import SandboxProxyError, http_403
+from lumen.sandbox_proxy.errors import SandboxProxyError, http_403
 
 
 @pytest.mark.parametrize("code", list(SandboxProxyError))

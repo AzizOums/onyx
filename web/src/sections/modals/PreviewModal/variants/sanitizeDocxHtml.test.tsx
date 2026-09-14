@@ -49,13 +49,13 @@ describe("sanitizeDocxHtml", () => {
 
   it("preserves https hyperlinks and basic document formatting", () => {
     const dirty =
-      '<a href="https://onyx.app">Onyx</a>' +
+      '<a href="https://lumen.app">Lumen</a>' +
       "<table><tr><td><b>bold</b> <i>italic</i></td></tr></table>" +
       "<h1>Heading</h1>";
     const doc = parse(sanitizeDocxHtml(dirty));
 
     expect(doc.querySelector("a")?.getAttribute("href")).toBe(
-      "https://onyx.app"
+      "https://lumen.app"
     );
     expect(doc.querySelector("table")).not.toBeNull();
     expect(doc.querySelector("td b")?.textContent).toBe("bold");
@@ -68,12 +68,12 @@ describe("sanitizeDocxHtml", () => {
       "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
     const doc = parse(
       sanitizeDocxHtml(
-        `<a href="mailto:hi@onyx.app">mail</a><img src="${dataUrl}">`
+        `<a href="mailto:hi@lumen.app">mail</a><img src="${dataUrl}">`
       )
     );
 
     expect(doc.querySelector("a")?.getAttribute("href")).toBe(
-      "mailto:hi@onyx.app"
+      "mailto:hi@lumen.app"
     );
     expect(doc.querySelector("img")?.getAttribute("src")).toBe(dataUrl);
   });

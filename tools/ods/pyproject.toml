@@ -3,13 +3,13 @@ requires = ["hatchling==1.29.0", "go-bin~=1.26.4", "manygo==0.2.0"]
 build-backend = "hatchling.build"
 
 [project]
-name = "onyx-devtools"
-description = "Developer utilities for working on onyx.app"
-authors = [{ name = "Onyx AI", email = "founders@onyx.app" }]
+name = "lumen-devtools"
+description = "Developer utilities for working on lumen.app"
+authors = [{ name = "Lumen AI", email = "founders@lumen.app" }]
 readme = "README.md"
 requires-python = ">=3.9"
 keywords = [
-  "onyx", "cli", "devtools", "tools", "tooling",
+  "lumen", "cli", "devtools", "tools", "tooling",
 ]
 classifiers = [
     "Programming Language :: Go",
@@ -26,7 +26,7 @@ dependencies = [
 
 
 [project.urls]
-Repository = "https://github.com/onyx-dot-app/onyx"
+Repository = "https://github.com/lumen-dot-app/lumen"
 
 [tool.hatch.build]
 include = ["go.mod", "go.sum", "main.go", "**/*.go", "**/*.py", "README.md"]

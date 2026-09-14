@@ -1,6 +1,6 @@
 # GraphQL Queries Reference
 
-Useful GitHub GraphQL queries for merge-queue triage in onyx-dot-app/onyx.
+Useful GitHub GraphQL queries for merge-queue triage in lumen-dot-app/lumen.
 
 ## Real merge-queue status for a PR
 
@@ -9,7 +9,7 @@ Useful GitHub GraphQL queries for merge-queue triage in onyx-dot-app/onyx.
 ```bash
 gh api graphql -f query='
 {
-  repository(owner: "onyx-dot-app", name: "onyx") {
+  repository(owner: "lumen-dot-app", name: "lumen") {
     pullRequest(number: PR_NUMBER) {
       isInMergeQueue
       mergeQueueEntry {
@@ -30,7 +30,7 @@ Before treating a failing check as "caused by this PR," see if the same check al
 ```bash
 gh api graphql -f query='
 {
-  repository(owner: "onyx-dot-app", name: "onyx") {
+  repository(owner: "lumen-dot-app", name: "lumen") {
     object(expression: "main") {
       ... on Commit {
         checkSuites(first: 20) {

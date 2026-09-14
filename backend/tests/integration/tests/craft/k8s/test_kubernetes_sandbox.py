@@ -8,15 +8,15 @@ import pytest
 from kubernetes import client
 from kubernetes.client.rest import ApiException
 
-from onyx.server.features.build.configs import (
+from lumen.server.features.build.configs import (
     SANDBOX_BACKEND,
     SANDBOX_NAMESPACE,
     SandboxBackend,
 )
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from lumen.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
-from onyx.utils.logger import setup_logger
+from lumen.utils.logger import setup_logger
 from tests.integration.tests.craft.k8s.k8s_fixtures import (
     OwnedLivePod,
     PoolSession,

@@ -11,20 +11,20 @@ from datetime import datetime, timezone
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import InputType
-from onyx.db.enums import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import InputType
+from lumen.db.enums import (
     AccessType,
     ConnectorCredentialPairStatus,
     PermissionSyncStatus,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     Connector,
     ConnectorCredentialPair,
     Credential,
     ExternalGroupPermissionSyncAttempt,
 )
-from onyx.db.permission_sync_attempt import (
+from lumen.db.permission_sync_attempt import (
     complete_external_group_sync_attempt,
     create_external_group_sync_attempt,
     get_external_group_sync_attempt,

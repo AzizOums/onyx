@@ -2,9 +2,9 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.cache.interface import CacheBackend, CacheLock
-from onyx.db.enums import ApprovalDecision, GatedAppKind
-from onyx.sandbox_proxy.approval_cache import (
+from lumen.cache.interface import CacheBackend, CacheLock
+from lumen.db.enums import ApprovalDecision, GatedAppKind
+from lumen.sandbox_proxy.approval_cache import (
     _wake_key,
     cache_session_grant_actions,
     cached_session_grants_cover,

@@ -1,20 +1,20 @@
 # Third-party trademark notice
 
-The `@onyx-ai/opal/logos` subpath ships brand marks (logos, wordmarks) of
-third-party products and services that Onyx integrates with — including
+The `@lumen-ai/opal/logos` subpath ships brand marks (logos, wordmarks) of
+third-party products and services that Lumen integrates with — including
 but not limited to Anthropic, OpenAI, Google, Microsoft, Slack, GitHub,
 GitLab, Notion, Confluence, Dropbox, Salesforce, and others.
 
-All such marks remain the property of their respective owners. Onyx
+All such marks remain the property of their respective owners. Lumen
 makes **no claim of ownership, sponsorship, endorsement, affiliation,
 or trademark** over any third-party mark distributed in this package.
 
 These marks are shipped solely for **nominative use** — to identify the
-external products, integrations, and providers that Onyx connects to —
-inside Onyx's first-party UI and consumers of `@onyx-ai/opal`.
+external products, integrations, and providers that Lumen connects to —
+inside Lumen's first-party UI and consumers of `@lumen-ai/opal`.
 
 If you are a trademark owner and would like a mark adjusted or removed,
-please open an issue at <https://github.com/onyx-dot-app/onyx/issues>.
+please open an issue at <https://github.com/lumen-dot-app/lumen/issues>.
 
 The Opal source code (everything except the marks themselves) is
 licensed under the MIT License — see `package.json`.

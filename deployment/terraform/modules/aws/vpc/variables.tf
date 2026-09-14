@@ -1,7 +1,7 @@
 variable "vpc_name" {
   type        = string
   description = "The name of the VPC"
-  default     = "onyx-vpc"
+  default     = "lumen-vpc"
 }
 
 variable "cidr_block" {

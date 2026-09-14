@@ -16,12 +16,12 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.chat.emitter import Emitter
-from onyx.db.models import OAuthAccount, OAuthConfig, Persona, Tool, User
-from onyx.db.oauth_config import create_oauth_config, upsert_user_oauth_token
-from onyx.llm.factory import get_default_llm
-from onyx.tools.tool_constructor import SearchToolConfig, construct_tools
-from onyx.tools.tool_implementations.custom.custom_tool import CustomTool
+from lumen.chat.emitter import Emitter
+from lumen.db.models import OAuthAccount, OAuthConfig, Persona, Tool, User
+from lumen.db.oauth_config import create_oauth_config, upsert_user_oauth_token
+from lumen.llm.factory import get_default_llm
+from lumen.tools.tool_constructor import SearchToolConfig, construct_tools
+from lumen.tools.tool_implementations.custom.custom_tool import CustomTool
 from tests.external_dependency_unit.answer.conftest import ensure_default_llm_provider
 from tests.external_dependency_unit.conftest import create_test_user
 
@@ -402,7 +402,7 @@ class TestOAuthToolIntegrationPriority:
         }
         mock_response.raise_for_status = Mock()
 
-        with patch("onyx.auth.oauth_token_manager.requests.post") as mock_post:
+        with patch("lumen.auth.oauth_token_manager.requests.post") as mock_post:
             mock_post.return_value = mock_response
 
             # Construct tools

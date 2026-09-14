@@ -29,23 +29,23 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.document import prepare_to_modify_documents
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import IndexingStatus
-from onyx.db.index_attempt_metrics import (
+from lumen.db.document import prepare_to_modify_documents
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import IndexingStatus
+from lumen.db.index_attempt_metrics import (
     StageEventBuffer,
     get_stage_metrics_for_attempt,
     record_single_event,
     record_stage_aggregate,
 )
-from onyx.db.index_attempt_metrics_models import IndexAttemptStage
-from onyx.db.models import (
+from lumen.db.index_attempt_metrics_models import IndexAttemptStage
+from lumen.db.models import (
     ConnectorCredentialPair,
     IndexAttempt,
     IndexAttemptStageMetric,
 )
-from onyx.db.models import Document as DbDocument
-from onyx.server.documents.models import (
+from lumen.db.models import Document as DbDocument
+from lumen.server.documents.models import (
     IndexAttemptStageMetricSnapshot,
     synthesize_unaccounted,
 )

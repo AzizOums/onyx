@@ -10,10 +10,10 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
-	"github.com/onyx-dot-app/onyx/cli/internal/overflow"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/models"
+	"github.com/lumen-dot-app/lumen/cli/internal/overflow"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +31,7 @@ func newAskCmd(ios *iostreams.IOStreams) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "ask [question]",
 		Short: "Ask a question and print the answer to stdout",
-		Long: `Send a one-shot question to an Onyx agent and print the response.
+		Long: `Send a one-shot question to an Lumen agent and print the response.
 
 The question can be provided as a positional argument, via --prompt, or piped
 through stdin. When stdin contains piped data, it is sent as context along
@@ -41,11 +41,11 @@ When stdout is not a TTY (e.g., called by a script or AI agent), output is
 automatically truncated to --max-output bytes and the full response is saved
 to a temp file. Set --max-output 0 to disable truncation.`,
 		Args: cobra.MaximumNArgs(1),
-		Example: `  onyx-cli ask "What connectors are available?"
-  onyx-cli ask --agent-id 3 "Summarize our Q4 revenue"
-  onyx-cli ask --json "List all users" | jq '.event.content'
-  cat error.log | onyx-cli ask --prompt "Find the root cause"
-  echo "what is onyx?" | onyx-cli ask`,
+		Example: `  lumen-cli ask "What connectors are available?"
+  lumen-cli ask --agent-id 3 "Summarize our Q4 revenue"
+  lumen-cli ask --json "List all users" | jq '.event.content'
+  cat error.log | lumen-cli ask --prompt "Find the root cause"
+  echo "what is lumen?" | lumen-cli ask`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, client, err := requireClient()
 			if err != nil {
@@ -233,6 +233,6 @@ func resolveQuestion(ios *iostreams.IOStreams, args []string, prompt string) (st
 	case stdinContent != "":
 		return stdinContent, nil
 	default:
-		return "", exitcodes.New(exitcodes.BadRequest, "no question provided\n  Usage: onyx-cli ask \"your question\"\n  Or:    echo \"context\" | onyx-cli ask --prompt \"your question\"")
+		return "", exitcodes.New(exitcodes.BadRequest, "no question provided\n  Usage: lumen-cli ask \"your question\"\n  Or:    echo \"context\" | lumen-cli ask --prompt \"your question\"")
 	}
 }

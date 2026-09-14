@@ -2,8 +2,8 @@ import time
 
 import pytest
 
-from onyx.connectors.discord.connector import DiscordConnector
-from onyx.connectors.models import Document, DocumentSource, HierarchyNode
+from lumen.connectors.discord.connector import DiscordConnector
+from lumen.connectors.models import Document, DocumentSource, HierarchyNode
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(TestSecret.DISCORD_CONNECTOR_BOT_TOKEN)

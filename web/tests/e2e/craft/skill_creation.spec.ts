@@ -6,8 +6,8 @@ test("SKILL.md populates the create form after confirmation", async ({
   const settingsResponse = await page.request.get("/api/settings");
   const settings = settingsResponse.ok() ? await settingsResponse.json() : null;
   test.skip(
-    settings?.settings?.onyx_craft_enabled !== true,
-    "Onyx Craft is disabled in this environment"
+    settings?.settings?.lumen_craft_enabled !== true,
+    "Lumen Craft is disabled in this environment"
   );
 
   await page.goto("/craft/v1/skills/new");

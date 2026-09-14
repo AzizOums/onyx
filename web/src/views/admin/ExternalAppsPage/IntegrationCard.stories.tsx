@@ -71,12 +71,12 @@ export const OrphanedProvider: Story = {
   },
 };
 
-/** Onyx-managed built-in: editable policies, never deletable. */
-export const OnyxManaged: Story = {
+/** Lumen-managed built-in: editable policies, never deletable. */
+export const LumenManaged: Story = {
   args: {
     integration: {
       ...APP,
-      facts: ["provided by Onyx", "7 actions", "no custom skills"],
+      facts: ["provided by Lumen", "7 actions", "no custom skills"],
       remove: null,
     },
   },

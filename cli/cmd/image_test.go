@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/lumen-dot-app/lumen/cli/internal/api"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/models"
 	"github.com/spf13/cobra"
 )
 
@@ -223,11 +223,11 @@ func TestLoadReferenceImages_Empty(t *testing.T) {
 }
 
 func TestImageErrorToExit_NotConfigured(t *testing.T) {
-	err := imageErrorToExit(&api.OnyxAPIError{StatusCode: 404, Detail: "no config"})
+	err := imageErrorToExit(&api.LumenAPIError{StatusCode: 404, Detail: "no config"})
 	assertExitCode(t, err, exitcodes.NotAvailable)
 }
 
 func TestImageErrorToExit_ServerError(t *testing.T) {
-	err := imageErrorToExit(&api.OnyxAPIError{StatusCode: 500, Detail: "boom"})
+	err := imageErrorToExit(&api.LumenAPIError{StatusCode: 500, Detail: "boom"})
 	assertExitCode(t, err, exitcodes.ServerError)
 }

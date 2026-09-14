@@ -1,6 +1,6 @@
 # Usage reports: what they are for
 
-This document defines what an Onyx usage report must tell an organization admin,
+This document defines what an Lumen usage report must tell an organization admin,
 and why. It starts from the admin's job, not from the data we happen to store.
 
 The rule that governs every decision here: **a number belongs in the report only
@@ -71,7 +71,7 @@ Message volume is a trap. It rises when three people go heavy.
 
 Measure breadth first, then habit, then depth:
 
-- Distinct humans who used Onyx in the period.
+- Distinct humans who used Lumen in the period.
 - How many use it every week, and whether that count rises.
 - Multi-turn sessions versus one-question-and-leave.
 - The funnel: invited, first message, five messages, weekly habit.
@@ -94,7 +94,7 @@ Nobody knows what a good absolute thumbs-down rate is.
 This section is the most actionable, and it does not exist today.
 
 - Connectors that are indexed but never cited.
-- Topics that people ask often and Onyx answers badly.
+- Topics that people ask often and Lumen answers badly.
 - Agents that nobody uses.
 
 Each item maps to one concrete action: add a source, write a document, delete
@@ -112,7 +112,7 @@ list, with names on it.
 
 ## The flagship: the knowledge gap report
 
-Every vendor can report spend and logins. Only Onyx knows **what the
+Every vendor can report spend and logins. Only Lumen knows **what the
 organization tries to learn and fails to find.**
 
 A monthly artifact that lists the top unanswered questions, clustered by topic,

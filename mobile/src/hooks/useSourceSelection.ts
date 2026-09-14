@@ -12,7 +12,7 @@ import { useSession } from "@/state/session";
 
 // Per instance: a shared snapshot would carry another workspace's choices.
 function storageKey(serverUrl: string): string {
-  return `onyx.chat.source_preferences.${serverUrl}`;
+  return `lumen.chat.source_preferences.${serverUrl}`;
 }
 
 /*

@@ -17,8 +17,8 @@ Edge cases:
 
 from datetime import datetime, timedelta, timezone
 
-from onyx.db.models import IndexingStatus
-from onyx.server.documents.models import CCPairFullInfo, ConnectorIndexingStatusLite
+from lumen.db.models import IndexingStatus
+from lumen.server.documents.models import CCPairFullInfo, ConnectorIndexingStatusLite
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.connector import ConnectorManager
 from tests.integration.common_utils.managers.credential import CredentialManager

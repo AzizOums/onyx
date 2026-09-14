@@ -12,15 +12,15 @@ import httpx
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.enums import (
+from lumen.configs.constants import DocumentSource
+from lumen.db.enums import (
     AccessType,
     ConnectorCredentialPairStatus,
     ExternalAppType,
     SandboxStatus,
     SkillSharePermission,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     Connector,
     ConnectorCredentialPair,
     Credential,
@@ -32,10 +32,10 @@ from onyx.db.models import (
     UserGroup,
     UserGroup__ConnectorCredentialPair,
 )
-from onyx.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
-from onyx.server.features.skill.models import SkillResponse, SkillUserShareRequest
-from onyx.skills.built_in import BUILT_IN_SKILLS, BuiltInSkillDefinition
-from onyx.skills.push import (
+from lumen.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
+from lumen.server.features.skill.models import SkillResponse, SkillUserShareRequest
+from lumen.skills.built_in import BUILT_IN_SKILLS, BuiltInSkillDefinition
+from lumen.skills.push import (
     build_skills_fileset_for_user,
     push_skill_to_affected_sandboxes,
 )
@@ -241,9 +241,9 @@ def _seed_custom_skill(
 ) -> Skill:
     import hashlib
 
-    from onyx.configs.constants import FileOrigin
-    from onyx.db.models import Skill__UserGroup
-    from onyx.file_store.file_store import get_default_file_store
+    from lumen.configs.constants import FileOrigin
+    from lumen.db.models import Skill__UserGroup
+    from lumen.file_store.file_store import get_default_file_store
 
     bundle_bytes = _bundle(name, body)
     file_store = get_default_file_store()
@@ -859,7 +859,7 @@ class TestSkillPushLowLevel:
         pycache.mkdir()
         (pycache / "foo.pyc").write_bytes(b"\x00\x01")
 
-        monkeypatch.setattr("onyx.skills.built_in.BUILTIN_SKILLS_PATH", skills_root)
+        monkeypatch.setattr("lumen.skills.built_in.BUILTIN_SKILLS_PATH", skills_root)
         monkeypatch.setitem(
             BUILT_IN_SKILLS,
             name,

@@ -11,25 +11,25 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     MCPAuthenticationPerformer,
     MCPAuthenticationType,
     MCPTransport,
 )
-from onyx.db.mcp import get_user_connection_config
-from onyx.db.models import User
-from onyx.server.features.mcp.api import (
+from lumen.db.mcp import get_user_connection_config
+from lumen.db.models import User
+from lumen.server.features.mcp.api import (
     HEADER_SUBSTITUTIONS,
     _upsert_mcp_server,
     save_user_credentials,
 )
-from onyx.server.features.mcp.credentials import extract_connection_data
-from onyx.server.features.mcp.models import (
+from lumen.server.features.mcp.credentials import extract_connection_data
+from lumen.server.features.mcp.models import (
     MCPAuthTemplate,
     MCPToolCreateRequest,
     MCPUserCredentialsRequest,
 )
-from onyx.utils.encryption import mask_string
+from lumen.utils.encryption import mask_string
 from tests.external_dependency_unit.conftest import create_test_user
 
 
@@ -88,7 +88,7 @@ class TestSaveUserCredentialsSubstitutesUserEmail:
         )
 
         with patch(
-            "onyx.server.features.mcp.api.test_mcp_server_credentials",
+            "lumen.server.features.mcp.api.test_mcp_server_credentials",
             return_value=(True, "ok"),
         ):
             save_user_credentials(
@@ -139,7 +139,7 @@ class TestAdminEditPreservesAdminReauth:
         self, db_session: Session, admin: User, server_id: int, new_key: str
     ) -> None:
         with patch(
-            "onyx.server.features.mcp.api.test_mcp_server_credentials",
+            "lumen.server.features.mcp.api.test_mcp_server_credentials",
             return_value=(True, "ok"),
         ):
             save_user_credentials(
@@ -214,7 +214,7 @@ class TestAdminEditPreservesAdminReauth:
         server_id, server_name, template = self._create_server(db_session, admin)
 
         with patch(
-            "onyx.server.features.mcp.api.test_mcp_server_credentials",
+            "lumen.server.features.mcp.api.test_mcp_server_credentials",
             return_value=(True, "ok"),
         ):
             save_user_credentials(

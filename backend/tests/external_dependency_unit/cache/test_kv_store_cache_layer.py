@@ -15,12 +15,12 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy import delete
 
-from onyx.cache.interface import CacheBackend
-from onyx.cache.postgres_backend import PostgresCacheBackend
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.models import CacheStore, KVStore
-from onyx.key_value_store.interface import KvKeyNotFoundError
-from onyx.key_value_store.store import REDIS_KEY_PREFIX, PgRedisKVStore
+from lumen.cache.interface import CacheBackend
+from lumen.cache.postgres_backend import PostgresCacheBackend
+from lumen.db.engine.sql_engine import get_session_with_tenant
+from lumen.db.models import CacheStore, KVStore
+from lumen.key_value_store.interface import KvKeyNotFoundError
+from lumen.key_value_store.store import REDIS_KEY_PREFIX, PgRedisKVStore
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 
 

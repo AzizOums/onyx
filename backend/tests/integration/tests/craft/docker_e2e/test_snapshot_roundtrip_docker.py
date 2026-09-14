@@ -17,15 +17,15 @@ from uuid import UUID, uuid4
 import pytest
 from sqlalchemy import select
 
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import Sandbox
-from onyx.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
-from onyx.server.features.build.sandbox.docker.docker_sandbox_manager import (
+from lumen.db.engine.sql_engine import get_session_with_tenant
+from lumen.db.enums import SandboxStatus
+from lumen.db.models import Sandbox
+from lumen.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
+from lumen.server.features.build.sandbox.docker.docker_sandbox_manager import (
     OPENCODE_DATA_DIR,
     SANDBOX_EXEC_USER,
 )
-from onyx.server.features.build.sandbox.session_workspace import SESSIONS_ROOT
+from lumen.server.features.build.sandbox.session_workspace import SESSIONS_ROOT
 from tests.integration.common_utils.managers.build_session import BuildSessionManager
 from tests.integration.common_utils.managers.user import UserManager
 from tests.integration.common_utils.test_models import DATestUser
@@ -92,8 +92,8 @@ def test_session_and_opencode_history_survive_snapshot_restore(
 
     output_token = uuid4().hex
     history_token = uuid4().hex
-    output_file = f"{session_path}/outputs/onyx-roundtrip-output.txt"
-    history_file = f"{OPENCODE_DATA_DIR}/onyx-roundtrip-history.txt"
+    output_file = f"{session_path}/outputs/lumen-roundtrip-output.txt"
+    history_file = f"{OPENCODE_DATA_DIR}/lumen-roundtrip-history.txt"
 
     # Seed one marker in the per-session outputs dir and one in opencode's data
     # home, both as the sandbox user so they round-trip with correct ownership.

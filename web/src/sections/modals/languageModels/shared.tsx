@@ -50,7 +50,7 @@ import { useSWRConfig } from "swr";
 import {
   SvgArrowExchange,
   SvgChevronDown,
-  SvgOnyxOctagon,
+  SvgLumenOctagon,
   SvgOrganization,
   SvgPlusCircle,
   SvgRefreshCw,
@@ -60,7 +60,7 @@ import {
   SvgX,
   SvgSimpleLoader,
 } from "@opal/icons";
-import SvgOnyxLogo from "@opal/logos/onyx-logo";
+import SvgLumenLogo from "@opal/logos/lumen-logo";
 import { Card, EmptyMessageCard } from "@opal/components";
 import { ContentAction } from "@opal/layouts";
 import type { ContentMdEditHandle } from "@opal/layouts/content/ContentMd";
@@ -140,7 +140,7 @@ export function APIKeyField({
 /**
  * Builds the API Base URL `subDescription` for self-hosted and custom
  * providers. These point at a service on the admin's own machine, which
- * `localhost` does not reach from inside a container — so when Onyx is
+ * `localhost` does not reach from inside a container — so when Lumen is
  * containerized, a note about `host.docker.internal` goes between
  * `description` and `suffix`.
  */
@@ -442,7 +442,7 @@ export function ModelAccessField() {
             ) : (
               <div className="w-full p-2">
                 <Content
-                  icon={SvgOnyxOctagon}
+                  icon={SvgLumenOctagon}
                   title={t("access.noAgents.title")}
                   description={t("access.noAgents.description")}
                   variant="section"
@@ -1129,7 +1129,7 @@ function ModalWrapperInner({
           <Modal.Header
             icon={providerIcon}
             moreIcon1={SvgArrowExchange}
-            moreIcon2={SvgOnyxLogo}
+            moreIcon2={SvgLumenLogo}
             title={title}
             description={description}
             onClose={onClose}

@@ -43,8 +43,8 @@ import yaml
 
 from tests.common.paths import find_ancestor_containing
 
-_REPO_ROOT = find_ancestor_containing("deployment/helm/charts/onyx")
-_CHART_DIR = _REPO_ROOT / "deployment" / "helm" / "charts" / "onyx"
+_REPO_ROOT = find_ancestor_containing("deployment/helm/charts/lumen")
+_CHART_DIR = _REPO_ROOT / "deployment" / "helm" / "charts" / "lumen"
 _PREPULLER_TEMPLATE = "templates/sandbox-image-prepuller.yaml"
 _PODTEMPLATE_TEMPLATE = "templates/sandbox-podtemplate.yaml"
 
@@ -84,10 +84,10 @@ def _run_helm(
     cmd = [
         helm,
         "template",
-        "onyx",
+        "lumen",
         str(_CHART_DIR),
         "-n",
-        "onyx",
+        "lumen",
         "-f",
         str(_CHART_DIR / "values-ci.yaml"),
         "--kube-version",
@@ -152,15 +152,15 @@ def test_prepuller_image_matches_the_sandbox_pod_image() -> None:
         + pod_template["template"]["spec"]["initContainers"]
     }
 
-    assert sandbox_images == {"onyxdotapp/sandbox:v9.8.7"}
-    assert prepuller_image == "onyxdotapp/sandbox:v9.8.7"
+    assert sandbox_images == {"lumendotapp/sandbox:v9.8.7"}
+    assert prepuller_image == "lumendotapp/sandbox:v9.8.7"
 
 
 def test_prepuller_image_follows_explicit_override() -> None:
     spec = _prepuller_pod_spec(
-        ["--set-string", "configMap.SANDBOX_CONTAINER_IMAGE=onyxdotapp/sandbox:dev"]
+        ["--set-string", "configMap.SANDBOX_CONTAINER_IMAGE=lumendotapp/sandbox:dev"]
     )
-    assert spec["containers"][0]["image"] == "onyxdotapp/sandbox:dev"
+    assert spec["containers"][0]["image"] == "lumendotapp/sandbox:dev"
 
 
 def test_prepuller_scheduling_matches_the_sandbox_pod() -> None:
@@ -241,7 +241,7 @@ def test_prepuller_ships_no_cluster_scoped_objects() -> None:
     every existing install failed to upgrade:
 
         Error: UPGRADE FAILED: cannot patch
-        "onyx-onyx-sandbox-image-prepuller" with kind PriorityClass: ...
+        "lumen-lumen-sandbox-image-prepuller" with kind PriorityClass: ...
         value: Forbidden: may not be changed in an update.
 
     `PriorityClass.value` is immutable and `helm upgrade` patches, so that field
@@ -313,7 +313,7 @@ def test_prepuller_resolves_pull_credentials() -> None:
 
 def test_prepuller_runs_in_the_sandbox_namespace() -> None:
     """Which is why the release-namespace imagePullSecrets above can't be used."""
-    assert _prepuller()["metadata"]["namespace"] == "onyx-sandboxes"
+    assert _prepuller()["metadata"]["namespace"] == "lumen-sandboxes"
 
 
 def test_prepuller_service_account_follows_the_configured_name() -> None:

@@ -35,7 +35,7 @@ if ! uv run --no-sync alembic upgrade head; then
   exit 1
 fi
 
-uv run --no-sync uvicorn onyx.main:app \
+uv run --no-sync uvicorn lumen.main:app \
   --host "$api_server_host" --port "$api_server_port" \
   > "$log_path" 2>&1 &
 server_pid=$!

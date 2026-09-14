@@ -7,8 +7,8 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
-from onyx.server.features.build.user_library.api import (
+from lumen.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
+from lumen.server.features.build.user_library.api import (
     DeleteFileResponse,
     UploadResponse,
 )

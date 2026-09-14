@@ -1,0 +1,10 @@
+{
+    "mcpServers": {
+      "Lumen": {
+        "url": "https://cloud.lumen.app/mcp",
+        "headers": {
+          "Authorization": "Bearer [YOUR PAT OR API KEY HERE]"
+        }
+      }
+    }
+  }

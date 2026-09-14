@@ -12,9 +12,9 @@ from __future__ import annotations
 import sqlalchemy as sa
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ExternalAppType
-from onyx.db.models import User
-from onyx.utils.sensitive import SensitiveValue
+from lumen.db.enums import ExternalAppType
+from lumen.db.models import User
+from lumen.utils.sensitive import SensitiveValue
 from tests.external_dependency_unit.craft.db_helpers import (
     make_external_app,
     make_skill,

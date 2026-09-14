@@ -19,7 +19,7 @@ import {
   SvgImageSmall,
   SvgInfoSmall,
   SvgMusicSmall,
-  SvgOnyxOctagon,
+  SvgLumenOctagon,
   SvgPenSmall,
   SvgQuestionMarkSmall,
   SvgSearchSmall,
@@ -79,7 +79,7 @@ function SvgOctagonWrapper({ size, children }: SvgOctagonWrapperProps) {
       <div className="absolute inset-0 flex items-center justify-center">
         {children}
       </div>
-      <SvgOnyxOctagon className="stroke-text-04" height={size} width={size} />
+      <SvgLumenOctagon className="stroke-text-04" height={size} width={size} />
     </div>
   );
 }

@@ -15,8 +15,8 @@ import sys
 
 from sqlalchemy import select
 
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_tenant
-from onyx.db.models import User
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_tenant
+from lumen.db.models import User
 
 
 def get_tenant_users(tenant_id: str) -> dict:

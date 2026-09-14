@@ -14,15 +14,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/deployfiles"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/paths"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/release"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/resources"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/state"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/ui"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/version"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/deployfiles"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/paths"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/release"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/resources"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/state"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/ui"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/version"
 )
 
 // Resource expectations (halved thresholds in lite mode), from install.sh.
@@ -65,7 +65,7 @@ type preflight struct {
 	rootless       bool
 }
 
-// RunInstall implements `deploy install` (and the install-onyx alias): fresh
+// RunInstall implements `deploy install` (and the install-lumen alias): fresh
 // installs, and restart/update runs against an existing deployment.
 func RunInstall(ctx context.Context, deps Deps, opts Options) error {
 	ctx, cancel := context.WithCancel(ctx)
@@ -107,7 +107,7 @@ func (in *installer) runInstall(ctx context.Context) error {
 	// material from init-letsencrypt.sh before compose can as much as render.
 	if in.opts.Prod && !rerun {
 		return exitcodes.Newf(exitcodes.BadRequest,
-			"no deployment/.env at %s — prod mode manages an existing production deployment; set one up per deployment/docker_compose/docker-compose.prod.yml first, then adopt it with `onyx-cli deploy upgrade --prod --dir %s`",
+			"no deployment/.env at %s — prod mode manages an existing production deployment; set one up per deployment/docker_compose/docker-compose.prod.yml first, then adopt it with `lumen-cli deploy upgrade --prod --dir %s`",
 			in.root.Dir, in.root.Dir)
 	}
 
@@ -182,7 +182,7 @@ func (in *installer) runInstall(ctx context.Context) error {
 	in.resolveProject(manifest)
 
 	if in.fancy() {
-		in.wiz = ui.StartWizard(in.deps.IOS.Out, "Onyx Installer", in.deps.CLIVersion, in.cancel)
+		in.wiz = ui.StartWizard(in.deps.IOS.Out, "Lumen Installer", in.deps.CLIVersion, in.cancel)
 		defer in.wiz.Abort()
 	}
 
@@ -238,13 +238,13 @@ func (in *installer) runInstall(ctx context.Context) error {
 				"keep the current configuration",
 				"leave the deployment as it is"
 			if running {
-				title, cancelHint = "Onyx is already running here. What would you like to do?",
+				title, cancelHint = "Lumen is already running here. What would you like to do?",
 					"leave everything running"
 			}
 			choice, err := in.selectOne(title,
 				[]ui.Option{
 					{Label: "Restart", Hint: restartHint},
-					{Label: "Upgrade", Hint: "move to a newer Onyx version"},
+					{Label: "Upgrade", Hint: "move to a newer Lumen version"},
 					{Label: "Cancel", Hint: cancelHint},
 				}, 0)
 			if err != nil {
@@ -259,7 +259,7 @@ func (in *installer) runInstall(ctx context.Context) error {
 			case 2:
 				if running {
 					return exitcodes.New(exitcodes.General,
-						"cancelled — services left running (stop them with `onyx-cli deploy stop`)")
+						"cancelled — services left running (stop them with `lumen-cli deploy stop`)")
 				}
 				return exitcodes.New(exitcodes.General, "cancelled")
 			}
@@ -276,7 +276,7 @@ func (in *installer) runInstall(ctx context.Context) error {
 			// Said once, whichever way the decision was reached: the run is
 			// about to sit on `pull` for a while, and this is what stops that
 			// looking like downtime.
-			in.infof("Onyx keeps serving while the images download; each service is replaced once, at the end")
+			in.infof("Lumen keeps serving while the images download; each service is replaced once, at the end")
 		}
 	} else {
 		if err := in.askModeQuestion(); err != nil {
@@ -314,7 +314,7 @@ func (in *installer) runInstall(ctx context.Context) error {
 		in.infof("Managing existing install at %s (created by install.sh)", in.root.Dir)
 	}
 	for _, alt := range in.root.Ambiguous {
-		in.warnf("Another Onyx install exists at %s — pass --dir to target it instead", alt)
+		in.warnf("Another Lumen install exists at %s — pass --dir to target it instead", alt)
 	}
 	if !hadManifest && paths.IsInstall(in.root.Dir) {
 		in.infof("No %s found — adopting this install; files not written by the CLI are treated as potentially customized", state.FileName)
@@ -465,7 +465,7 @@ func (in *installer) validateTag(ctx context.Context, tag string) (string, error
 	}
 	normalized, checkable := release.NormalizeVersionTag(tag)
 	if normalized != tag {
-		in.infof("Using %s (Onyx versions are v-prefixed)", normalized)
+		in.infof("Using %s (Lumen versions are v-prefixed)", normalized)
 	}
 	// A dry run writes nothing and pulls nothing, so it stays offline.
 	if !checkable || in.localFiles() || in.opts.DryRun {
@@ -488,12 +488,12 @@ func (in *installer) validateTag(ctx context.Context, tag string) (string, error
 		return normalized, nil
 	}
 	return "", exitcodes.Newf(exitcodes.BadRequest,
-		"version %s not found — Onyx releases look like v4.4.6 (https://github.com/onyx-dot-app/onyx/releases)", normalized)
+		"version %s not found — Lumen releases look like v4.4.6 (https://github.com/lumen-dot-app/lumen/releases)", normalized)
 }
 
 // appImage is the one image every deployment runs whatever its mode, so the
 // tags present for it are the versions this host could deploy right now.
-const appImage = "onyxdotapp/onyx-backend"
+const appImage = "lumendotapp/lumen-backend"
 
 // errOffline stands in for the release lookup --offline never makes, so the
 // one place that turns a failed lookup into an offered version handles both.
@@ -525,9 +525,9 @@ func (in *installer) unreachableTagFallback(ctx context.Context) string {
 	if in.opts.Offline {
 		// edge may well be here too; it just isn't a version, so it can't be
 		// compared with anything or verified as the one that was meant.
-		in.warnf("%s — no released Onyx images on this host, offering edge", why)
+		in.warnf("%s — no released Lumen images on this host, offering edge", why)
 	} else {
-		in.warnf("Could not determine latest Onyx release — falling back to main / edge")
+		in.warnf("Could not determine latest Lumen release — falling back to main / edge")
 	}
 	return "edge"
 }
@@ -648,7 +648,7 @@ func (in *installer) resolveDockerProblems(ctx context.Context, pre preflight) e
 				return err
 			}
 			if !ok {
-				return exitcodes.New(exitcodes.General, "Docker is required to run Onyx")
+				return exitcodes.New(exitcodes.General, "Docker is required to run Lumen")
 			}
 			if err := in.suspend(func() error {
 				return dockercmd.InstallDockerLinux(ctx, in.deps.Runner, in.deps.IOS.Out)
@@ -661,7 +661,7 @@ func (in *installer) resolveDockerProblems(ctx context.Context, pre preflight) e
 			in.successf("Docker installed successfully")
 		case runtime.GOOS == "windows":
 			in.plainf("%s", dockercmd.DockerDesktopInstructionsWindows)
-			return exitcodes.New(exitcodes.General, "Docker Desktop is required to run Onyx")
+			return exitcodes.New(exitcodes.General, "Docker Desktop is required to run Lumen")
 		default:
 			return exitcodes.New(exitcodes.General,
 				"Docker is not installed. Please install Docker Desktop first.\n  Visit: https://docs.docker.com/get-docker/")
@@ -679,7 +679,7 @@ func (in *installer) resolveDockerProblems(ctx context.Context, pre preflight) e
 			return err
 		}
 		if !ok {
-			return exitcodes.New(exitcodes.General, "Docker Compose is required to run Onyx")
+			return exitcodes.New(exitcodes.General, "Docker Compose is required to run Lumen")
 		}
 		if err := in.suspend(func() error {
 			return dockercmd.InstallComposePluginLinux(ctx, in.deps.Runner, in.deps.IOS.Out)
@@ -774,7 +774,7 @@ func (in *installer) resourceWarnings(pre preflight) error {
 	if !warning {
 		return nil
 	}
-	in.warnf("Onyx recommends at least %dGB RAM and %dGB disk space in %s mode.", ramWant, diskWant, mode)
+	in.warnf("Lumen recommends at least %dGB RAM and %dGB disk space in %s mode.", ramWant, diskWant, mode)
 	cont, err := in.confirmYN("Continue anyway?", true)
 	if err != nil {
 		return err
@@ -846,7 +846,7 @@ func (in *installer) createFreshEnv(envPath, tag string) (string, int, error) {
 		env = SetVarUncomment(env, "ENABLE_CRAFT", "true")
 		backend := sandboxBackendForTag(tag)
 		env = SetVarUncomment(env, "SANDBOX_BACKEND", backend)
-		in.successf("Onyx Craft enabled (ENABLE_CRAFT=true, SANDBOX_BACKEND=%s)", backend)
+		in.successf("Lumen Craft enabled (ENABLE_CRAFT=true, SANDBOX_BACKEND=%s)", backend)
 		if backend == "docker" {
 			in.plainf("%s", craftSecurityWarning)
 		} else {
@@ -915,7 +915,7 @@ func (in *installer) reconfigureExistingEnv(envPath, updateTag string) (string, 
 		env = SetVarUncomment(env, "ENABLE_CRAFT", "true")
 		backend := sandboxBackendForTag(effectiveTag)
 		env = SetVarUncomment(env, "SANDBOX_BACKEND", backend)
-		in.successf("Onyx Craft enabled (ENABLE_CRAFT=true, SANDBOX_BACKEND=%s, image tag: %s)", backend, effectiveTag)
+		in.successf("Lumen Craft enabled (ENABLE_CRAFT=true, SANDBOX_BACKEND=%s, image tag: %s)", backend, effectiveTag)
 	}
 
 	// Lite mode on an existing .env: the template ships with s3-filestore
@@ -965,7 +965,7 @@ func (in *installer) guardRunningServices(ctx context.Context) (bool, error) {
 	}
 	if in.prompt.AssumeDefaults && !in.opts.Force {
 		return true, exitcodes.New(exitcodes.General,
-			"Onyx services are running — pass --force to recreate them with the new configuration, or stop them first with `onyx-cli deploy stop`")
+			"Lumen services are running — pass --force to recreate them with the new configuration, or stop them first with `lumen-cli deploy stop`")
 	}
 	in.forceRecreate = true
 	return true, nil
@@ -1032,7 +1032,7 @@ func (in *installer) pullImages(ctx context.Context, tag string, hostPort int) e
 		if ctx.Err() != nil {
 			return err
 		}
-		in.infof("Check your internet connection and re-run. If the issue persists: founders@onyx.app")
+		in.infof("Check your internet connection and re-run. If the issue persists: founders@lumen.app")
 		return exitcodes.Newf(exitcodes.General, "docker compose pull failed: %v", err)
 	}
 	return nil
@@ -1148,8 +1148,8 @@ func (in *installer) startServices(ctx context.Context, tag, prevTag string, hos
 			// it had already brought up, which is worth saying before the run
 			// reports itself cancelled.
 			in.infof("Services that already started are still running:")
-			in.cmdf("onyx-cli deploy status%s", in.dirArg())
-			in.cmdf("onyx-cli deploy stop%s", in.dirArg())
+			in.cmdf("lumen-cli deploy status%s", in.dirArg())
+			in.cmdf("lumen-cli deploy stop%s", in.dirArg())
 			return err
 		}
 		in.infof("Current container status:")
@@ -1157,10 +1157,10 @@ func (in *installer) startServices(ctx context.Context, tag, prevTag string, hos
 		ps.Stdout, ps.Stderr = in.deps.IOS.Out, in.deps.IOS.ErrOut
 		_, _ = in.deps.Runner.Run(ctx, ps)
 		in.infof("Check the logs of any unhealthy service:")
-		in.cmdf("onyx-cli deploy status%s", in.dirArg())
-		in.cmdf("onyx-cli deploy logs%s <service>", in.dirArg())
+		in.cmdf("lumen-cli deploy status%s", in.dirArg())
+		in.cmdf("lumen-cli deploy logs%s <service>", in.dirArg())
 		in.explainIncompleteStart(tag, prevTag)
-		in.infof("If the issue persists, please contact: founders@onyx.app")
+		in.infof("If the issue persists, please contact: founders@lumen.app")
 		return exitcodes.Newf(exitcodes.General, "docker compose up failed: %v", err)
 	}
 	return nil
@@ -1179,11 +1179,11 @@ func (in *installer) explainIncompleteStart(tag, prevTag string) {
 		in.warnf("Keep %s: it holds the secrets any volumes created just now were initialized with.",
 			filepath.Join("deployment", ".env"))
 		in.infof("Fix the problem above and re-run %s, or start clean with %s.",
-			in.paint.Accent("onyx-cli deploy install"), in.paint.Accent("onyx-cli deploy uninstall"))
+			in.paint.Accent("lumen-cli deploy install"), in.paint.Accent("lumen-cli deploy uninstall"))
 	case prevTag != tag:
 		in.warnf("Partially deployed: services that started are on %s, the rest are still on %s.", tag, prevTag)
 		in.infof("`.env` stays on %s so a re-run finishes the move; to go back, run %s.",
-			tag, in.paint.Accent(fmt.Sprintf("onyx-cli deploy upgrade --tag %s", prevTag)))
+			tag, in.paint.Accent(fmt.Sprintf("lumen-cli deploy upgrade --tag %s", prevTag)))
 	}
 }
 
@@ -1318,7 +1318,7 @@ func (in *installer) printFailureDiagnosis(output string) {
 		in.plainf("  • Raise the daemon limits: %s → [Service] LimitMEMLOCK=infinity, LimitNOFILE=1048576 → %s",
 			in.paint.Accent("systemctl --user edit docker"), in.paint.Accent("systemctl --user restart docker"))
 		in.plainf("    (OpenSearch may also need: %s)", in.paint.Accent("sudo sysctl -w vm.max_map_count=262144"))
-		in.plainf("  • Or deploy Lite mode (no OpenSearch): %s", in.paint.Accent("onyx-cli deploy install --lite"))
+		in.plainf("  • Or deploy Lite mode (no OpenSearch): %s", in.paint.Accent("lumen-cli deploy install --lite"))
 		return
 	}
 	if strings.Contains(lower, "address already in use") || strings.Contains(lower, "port is already allocated") {
@@ -1387,12 +1387,12 @@ func (in *installer) printSuccess(ctx context.Context, hostPort int) {
 	if in.prod {
 		url = in.prodAccessURL()
 	}
-	headline := "Onyx is ready"
+	headline := "Lumen is ready"
 	if url != "" {
 		headline += "  →  " + ui.Accent(url)
 	}
 	if in.opts.NoWait {
-		headline = "Onyx containers started (still initializing — check: " + ui.Accent("onyx-cli deploy status") + ")"
+		headline = "Lumen containers started (still initializing — check: " + ui.Accent("lumen-cli deploy status") + ")"
 	}
 	lines := []string{headline}
 	if !in.prod {
@@ -1431,7 +1431,7 @@ func (in *installer) printSuccess(ctx context.Context, hostPort int) {
 		in.plainf("%s", l)
 	}
 	in.plainf("")
-	in.infof("For help or issues, contact: founders@onyx.app")
+	in.infof("For help or issues, contact: founders@lumen.app")
 	in.starPrompt(ctx)
 }
 
@@ -1467,10 +1467,10 @@ func (in *installer) recordProject(manifest *state.Manifest) {
 // recognizes them months later, when something needs doing.
 func manageLines() []string {
 	cmds := []struct{ cmd, what string }{
-		{"onyx-cli deploy status", "health, version, and URL"},
-		{"onyx-cli deploy upgrade", "move to a newer version"},
-		{"onyx-cli deploy stop", "shut the services down"},
-		{"onyx-cli deploy uninstall", "remove it and its data"},
+		{"lumen-cli deploy status", "health, version, and URL"},
+		{"lumen-cli deploy upgrade", "move to a newer version"},
+		{"lumen-cli deploy stop", "shut the services down"},
+		{"lumen-cli deploy uninstall", "remove it and its data"},
 	}
 	width := 0
 	for _, c := range cmds {
@@ -1500,20 +1500,20 @@ func (in *installer) askStarQuestion() bool {
 	if _, err := exec.LookPath("gh"); err != nil {
 		return false
 	}
-	ok, err := in.confirmYN("Enjoying Onyx? ⭐ Star the repo on GitHub?", true)
+	ok, err := in.confirmYN("Enjoying Lumen? ⭐ Star the repo on GitHub?", true)
 	return err == nil && ok
 }
 
 func (in *installer) starRepo(ctx context.Context) {
 	cmd := dockercmd.Command{
 		Name: "gh",
-		Args: []string{"api", "-X", "PUT", "/user/starred/onyx-dot-app/onyx"},
+		Args: []string{"api", "-X", "PUT", "/user/starred/lumen-dot-app/lumen"},
 		Env:  map[string]string{"GH_PAGER": ""},
 	}
 	if _, err := in.deps.Runner.Run(ctx, cmd); err == nil {
 		in.successf("Thanks for the star!")
 	} else {
-		in.infof("Star us at: https://github.com/onyx-dot-app/onyx")
+		in.infof("Star us at: https://github.com/lumen-dot-app/lumen")
 	}
 }
 

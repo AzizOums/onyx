@@ -11,26 +11,26 @@ import pytest
 import redis
 from sqlalchemy.orm import Session
 
-from onyx.cache.factory import get_cache_backend
-from onyx.db.enums import (
+from lumen.cache.factory import get_cache_backend
+from lumen.db.enums import (
     ApprovalDecidedVia,
     ApprovalDecision,
     EndpointPolicy,
     GatedAppKind,
 )
-from onyx.db.models import BuildSession
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.external_apps.matching.engine import MatchedAction
-from onyx.sandbox_proxy import approval_cache
-from onyx.server.features.build.approvals.api import (
+from lumen.db.models import BuildSession
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.external_apps.matching.engine import MatchedAction
+from lumen.sandbox_proxy import approval_cache
+from lumen.server.features.build.approvals.api import (
     DecisionBody,
     list_live_approvals,
     submit_decision,
     submit_session_grant,
 )
-from onyx.server.features.build.configs import SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS
-from onyx.server.features.build.db.action_approval import (
+from lumen.server.features.build.configs import SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS
+from lumen.server.features.build.db.action_approval import (
     get_action_approval,
     get_action_approval_for_user,
     insert_action_approval,
@@ -128,10 +128,10 @@ def test_list_live_approvals_non_owner_gets_not_found(
     )
     db_session.commit()
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         list_live_approvals(session_id=session.id, user=intruder, db_session=db_session)
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == LumenErrorCode.NOT_FOUND
 
 
 # --------------------------------------------------------------------------- #
@@ -257,7 +257,7 @@ def test_submit_decision_different_decision_raises_conflict(
         db_session=db_session,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         submit_decision(
             approval_id=approval.approval_id,
             body=DecisionBody(decision=ApprovalDecision.APPROVED),
@@ -265,7 +265,7 @@ def test_submit_decision_different_decision_raises_conflict(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.CONFLICT
+    assert exc_info.value.error_code == LumenErrorCode.CONFLICT
 
 
 @pytest.mark.parametrize("case", ["missing", "non_owner"])
@@ -293,7 +293,7 @@ def test_submit_decision_not_found(
         db_session.commit()
         target_id = approval.approval_id
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         submit_decision(
             approval_id=target_id,
             body=DecisionBody(decision=ApprovalDecision.APPROVED),
@@ -301,7 +301,7 @@ def test_submit_decision_not_found(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == LumenErrorCode.NOT_FOUND
 
 
 def test_submit_decision_pushes_wake_on_redis(

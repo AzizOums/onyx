@@ -2,12 +2,12 @@ name: Release Terraform Provider
 
 # The public Terraform Registry only serves a provider from a repository named
 # after it, so the provider is published from a mirror,
-# onyx-dot-app/terraform-provider-onyx, rather than from this monorepo.
+# lumen-dot-app/terraform-provider-lumen, rather than from this monorepo.
 #
-# This workflow does one thing: copy terraform-provider-onyx/ to that mirror as
+# This workflow does one thing: copy terraform-provider-lumen/ to that mirror as
 # one commit tagged vX.Y.Z. The tag push starts the mirror's own Publish
 # workflow, which builds and signs the release. That file lives at
-# terraform-provider-onyx/.github/workflows/publish.yml and travels with the
+# terraform-provider-lumen/.github/workflows/publish.yml and travels with the
 # directory it publishes.
 #
 # Cut a release with `ods release tf-provider`, which pushes the tag below.
@@ -31,8 +31,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  MIRROR_REPO: onyx-dot-app/terraform-provider-onyx
-  PROVIDER_DIR: terraform-provider-onyx
+  MIRROR_REPO: lumen-dot-app/terraform-provider-lumen
+  PROVIDER_DIR: terraform-provider-lumen
 
 jobs:
   mirror:
@@ -68,8 +68,8 @@ jobs:
         with:
           client-id: ${{ vars.TF_PROVIDER_RELEASE_APP_ID }}
           private-key: ${{ secrets.TF_PROVIDER_RELEASE_APP_PRIVATE_KEY }}
-          owner: onyx-dot-app
-          repositories: terraform-provider-onyx
+          owner: lumen-dot-app
+          repositories: terraform-provider-lumen
           permission-contents: write
 
       - name: Checkout

@@ -8,7 +8,7 @@ import {
   SelectButton,
   Text,
 } from "@opal/components";
-import { SvgOnyxOctagon } from "@opal/icons";
+import { SvgLumenOctagon } from "@opal/icons";
 import { Section } from "@opal/layouts";
 import { usePersonaMessages, usePersonaUniqueUsers } from "@/lib/usage/hooks";
 import { useAdminAgents } from "@/lib/agents/hooks";
@@ -51,7 +51,7 @@ function PersonaPicker({
     >
       <Popover.Trigger asChild>
         <SelectButton
-          icon={SvgOnyxOctagon}
+          icon={SvgLumenOctagon}
           state="empty"
           variant="select-input"
         >
@@ -75,7 +75,7 @@ function PersonaPicker({
                   sizePreset="main-ui"
                   rounding={2}
                   selectVariant="select-heavy"
-                  icon={SvgOnyxOctagon}
+                  icon={SvgLumenOctagon}
                   title={agent.name}
                   state={selectedAgent?.id === agent.id ? "selected" : "empty"}
                   onClick={() => onSelect(agent.id)}

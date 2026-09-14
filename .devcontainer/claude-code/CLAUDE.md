@@ -1,16 +1,16 @@
 # DEVCONTAINER OVERLAY
 
-Running **inside the Onyx dev container**. These notes are additive to the root
+Running **inside the Lumen dev container**. These notes are additive to the root
 `/workspace/CLAUDE.md`; on conflict with a host-oriented instruction there, prefer these.
 
 ## No Docker daemon in here
 
-Don't use `docker` / `docker exec` / `docker compose`. Onyx services run as sibling
-containers on the `onyx_default` network, reachable directly by hostname — the root
+Don't use `docker` / `docker exec` / `docker compose`. Lumen services run as sibling
+containers on the `lumen_default` network, reachable directly by hostname — the root
 guide's `psql` command works as-is here (the env vars below plus `POSTGRES_PASSWORD`
 are exported); its `docker exec` fallback won't.
 
-## Service hostnames (`onyx_default` network)
+## Service hostnames (`lumen_default` network)
 
 Each is also exported as an env var:
 
@@ -37,4 +37,4 @@ handler at `web/src/app/api/[...path]/route.ts`), so **`localhost:3000` serves b
 **Stop the dev servers when you're finished with them:**
 
 - frontend: `pkill -f "next dev"; pkill -f next-server`
-- backend: `pkill -f "uvicorn onyx.main:app"`
+- backend: `pkill -f "uvicorn lumen.main:app"`

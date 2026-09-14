@@ -7,9 +7,9 @@ from uuid import UUID, uuid4
 
 import pytest
 
-from onyx.cache.factory import get_cache_backend
-from onyx.db.enums import ApprovalDecision, GatedAppKind
-from onyx.sandbox_proxy.approval_cache import (
+from lumen.cache.factory import get_cache_backend
+from lumen.db.enums import ApprovalDecision, GatedAppKind
+from lumen.sandbox_proxy.approval_cache import (
     _wake_key,
     announce_approval,
     announce_key,

@@ -15,8 +15,8 @@ import sys
 
 from sqlalchemy import func, select
 
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_tenant
-from onyx.db.models import ConnectorCredentialPair, Document
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_tenant
+from lumen.db.models import ConnectorCredentialPair, Document
 
 
 def check_documents_deleted(tenant_id: str) -> dict:

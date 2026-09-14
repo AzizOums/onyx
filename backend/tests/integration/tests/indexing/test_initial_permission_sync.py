@@ -6,17 +6,17 @@ import httpx
 import pytest
 from sqlalchemy import select
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.mock_connector.connector import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.mock_connector.connector import (
     EXTERNAL_USER_EMAILS,
     EXTERNAL_USER_GROUP_IDS,
     MockConnectorCheckpoint,
 )
-from onyx.connectors.models import Document, InputType
-from onyx.db.document import get_documents_by_ids
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import AccessType, IndexingStatus, PermissionSyncStatus
-from onyx.db.models import DocPermissionSyncAttempt
+from lumen.connectors.models import Document, InputType
+from lumen.db.document import get_documents_by_ids
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import AccessType, IndexingStatus, PermissionSyncStatus
+from lumen.db.models import DocPermissionSyncAttempt
 from tests.integration.common_utils.constants import (
     MOCK_CONNECTOR_SERVER_HOST,
     MOCK_CONNECTOR_SERVER_PORT,

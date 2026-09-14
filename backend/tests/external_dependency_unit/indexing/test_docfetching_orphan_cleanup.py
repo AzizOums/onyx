@@ -32,17 +32,17 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing.run_docfetching import run_docfetching_entrypoint
-from onyx.configs.constants import DocumentSource, FileOrigin
-from onyx.connectors import factory as connector_factory
-from onyx.connectors.factory import instantiate_connector
-from onyx.connectors.interfaces import LoadConnector
-from onyx.connectors.models import Document, HierarchyNode, InputType, TextSection
-from onyx.db.enums import EmbeddingPrecision, IndexingStatus, IndexModelStatus
-from onyx.db.file_record import get_filerecord_by_file_id_optional
-from onyx.db.models import Credential, FileRecord, IndexAttempt, SearchSettings
-from onyx.file_store.file_store import get_default_file_store
-from onyx.file_store.staging import (
+from lumen.background.indexing.run_docfetching import run_docfetching_entrypoint
+from lumen.configs.constants import DocumentSource, FileOrigin
+from lumen.connectors import factory as connector_factory
+from lumen.connectors.factory import instantiate_connector
+from lumen.connectors.interfaces import LoadConnector
+from lumen.connectors.models import Document, HierarchyNode, InputType, TextSection
+from lumen.db.enums import EmbeddingPrecision, IndexingStatus, IndexModelStatus
+from lumen.db.file_record import get_filerecord_by_file_id_optional
+from lumen.db.models import Credential, FileRecord, IndexAttempt, SearchSettings
+from lumen.file_store.file_store import get_default_file_store
+from lumen.file_store.staging import (
     build_raw_file_callback,
     cleanup_staged_files_for_attempt,
     reap_prior_attempt_staged_files,

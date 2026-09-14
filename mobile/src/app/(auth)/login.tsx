@@ -20,13 +20,13 @@ export default function LoginScreen() {
 
   return (
     <AuthScreenShell
-      title="Welcome to Onyx"
+      title="Welcome to Lumen"
       subtitle="Your open source AI platform for work"
       footer={
         <>
           {hasPassword ? (
             <AuthSwitchLink
-              prompt="New to Onyx?"
+              prompt="New to Lumen?"
               actionLabel="Create an Account"
               onPress={() => router.replace("/(auth)/signup")}
             />

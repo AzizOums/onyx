@@ -5,9 +5,9 @@ from __future__ import annotations
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SkillSharePermission
-from onyx.db.models import User
-from onyx.db.skill import (
+from lumen.db.enums import SkillSharePermission
+from lumen.db.models import User
+from lumen.db.skill import (
     SkillManagementPolicy,
     fetch_skill,
     list_skills,

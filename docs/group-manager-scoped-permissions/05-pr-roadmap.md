@@ -26,7 +26,7 @@ STANDARD by the `account_type` backfill, so no live capability is regressed whil
 
 | PR | Title | Est. LOC | Depends on | Key deliverable |
 |----|-------|----------|------------|-----------------|
-| 0 | `fix(perms): re-point skill/targeted-reindex off removed curator dep` | ~30 | — | **Unblocks boot** — `import onyx.main` currently fails (§11.0); independent of §8 |
+| 0 | `fix(perms): re-point skill/targeted-reindex off removed curator dep` | ~30 | — | **Unblocks boot** — `import lumen.main` currently fails (§11.0); independent of §8 |
 | 1 | `feat(perms): add is_manager + is_group_manager columns and backfill` | ~220 | 0 | Schema + role-gated migration + cached-flag recompute |
 | 2 | `feat(perms): scoped-manager authorization primitives` | ~330 | 1 | `scoped_permissions.py` (bundle w/o actions, gates, scope helpers) + `require_permission(allow_scope)` — inert |
 | 3 | `feat(perms): scope connectors & document sets to group managers` | ~560 | 2 | Two-gate enforcement on cc_pairs + doc sets incl. status/name/property/prune (delete admin-only) |
@@ -54,9 +54,9 @@ highest-value resource types, exercised by the escalation integration suite (man
 
 ## PR 0 — Boot-fix prerequisite: re-point off the removed curator dep
 - **Goal:** restore a bootable app — independent of §8, but blocks every later PR.
-- **Scope (in):** `current_curator_or_admin_user` was deleted from `onyx/auth/users.py` by §1–7 but is still
+- **Scope (in):** `current_curator_or_admin_user` was deleted from `lumen/auth/users.py` by §1–7 but is still
   imported by `server/features/skill/api.py:16` (deps `:173/186/223/259/297/322`) and
-  `server/documents/targeted_reindex.py:22`, so `import onyx.main` raises `ImportError`. Re-point both onto the
+  `server/documents/targeted_reindex.py:22`, so `import lumen.main` raises `ImportError`. Re-point both onto the
   correct `require_permission(...)` dep: `targeted_reindex.py:80/163` → `MANAGE_CONNECTORS` (its connector
   peers); skills → `FULL_ADMIN_PANEL_ACCESS` in PR0 (safe, unbreaks boot), narrowed to the new
   `MANAGE_SKILLS, allow_scope=True` when the skill GATE 2 lands in PR4 (§11.2). DELETE endpoints excluded
@@ -64,7 +64,7 @@ highest-value resource types, exercised by the escalation integration suite (man
 - **Out of scope:** any manager scoping (that's PR1+).
 - **Est. size:** ~30 LOC.
 - **Depends on:** —
-- **Tests on merge:** `python -c "import onyx.main"` succeeds; skill admin + targeted-reindex endpoints import.
+- **Tests on merge:** `python -c "import lumen.main"` succeeds; skill admin + targeted-reindex endpoints import.
 - **Drift checkpoint:** confirm whether §1–7 already intends a specific replacement dep for these endpoints
   (align with how the other ex-curator endpoints were migrated) before picking the token.
 
@@ -77,9 +77,9 @@ highest-value resource types, exercised by the escalation integration suite (man
 - **Files:**
   | File | New/Modified | This PR's slice |
   |------|--------------|-----------------|
-  | `backend/onyx/db/models.py` | modified | 2 boolean columns (`User__UserGroup`, `User`) |
+  | `backend/lumen/db/models.py` | modified | 2 boolean columns (`User__UserGroup`, `User`) |
   | `backend/alembic/versions/c71a18ea7d07_*.py` | new | add columns + role-gated backfill |
-  | `backend/onyx/db/permissions.py` | modified | recompute sets `is_group_manager` |
+  | `backend/lumen/db/permissions.py` | modified | recompute sets `is_group_manager` |
   | `backend/tests/integration/tests/usergroup/test_group_membership_updates_user_permissions.py` | modified | recompute sets `is_group_manager` (folded into the existing recompute test) |
   | `tests/integration/tests/migrations/test_is_manager_backfill_migration.py` | new (DEFERRED) | backfill correctness via real alembic |
 - **Est. size:** ~220 LOC
@@ -94,15 +94,15 @@ highest-value resource types, exercised by the escalation integration suite (man
 
 ## PR 2 — Authorization primitives (inert core)
 - **Goal:** land the reusable scope logic and the route-gate extension with no behavior change.
-- **Scope (in):** new `backend/onyx/auth/scoped_permissions.py` — `SCOPED_MANAGER_PERMISSIONS`,
+- **Scope (in):** new `backend/lumen/auth/scoped_permissions.py` — `SCOPED_MANAGER_PERMISSIONS`,
   `scoped_group_ids_subquery`, `get_scoped_groups`, `has_permission` (reads cached flag),
   `within_managed_scope_clause`, `assert_within_scope`; extend `require_permission(allow_scope=False)`.
 - **Out of scope:** wiring any endpoint/filter to them (PR3+).
 - **Files:**
   | File | New/Modified | This PR's slice |
   |------|--------------|-----------------|
-  | `backend/onyx/auth/scoped_permissions.py` | new | bundle + scope helpers + both gates |
-  | `backend/onyx/auth/permissions.py` | modified | `require_permission(..., allow_scope)` |
+  | `backend/lumen/auth/scoped_permissions.py` | new | bundle + scope helpers + both gates |
+  | `backend/lumen/auth/permissions.py` | modified | `require_permission(..., allow_scope)` |
   | `backend/tests/external_dependency_unit/.../test_scoped_permissions.py` | new | gate logic + clause SQL |
 - **Est. size:** ~330 LOC
 - **Depends on:** PR 1
@@ -127,10 +127,10 @@ highest-value resource types, exercised by the escalation integration suite (man
 - **Files:**
   | File | New/Modified | This PR's slice |
   |------|--------------|-----------------|
-  | `backend/onyx/db/connector_credential_pair.py` | modified | filter re-key + create/update gate |
-  | `backend/onyx/db/document_set.py` | modified | filter rebuild + create/update gate |
-  | `backend/onyx/server/documents/{connector,cc_pair}.py` | modified | `allow_scope=True` deps |
-  | `backend/onyx/server/features/document_set/api.py` | modified | `allow_scope=True` deps |
+  | `backend/lumen/db/connector_credential_pair.py` | modified | filter re-key + create/update gate |
+  | `backend/lumen/db/document_set.py` | modified | filter rebuild + create/update gate |
+  | `backend/lumen/server/documents/{connector,cc_pair}.py` | modified | `allow_scope=True` deps |
+  | `backend/lumen/server/features/document_set/api.py` | modified | `allow_scope=True` deps |
   | `backend/tests/integration/.../test_group_manager_resources.py` | new | escalation suite (these two) |
 - **Est. size:** ~520 LOC
 - **Depends on:** PR 2
@@ -161,16 +161,16 @@ highest-value resource types, exercised by the escalation integration suite (man
 - **Files:**
   | File | New/Modified | This PR's slice |
   |------|--------------|-----------------|
-  | `backend/onyx/db/persona.py` | modified | filter + `update_persona_access` MIT twin gate + owner carve-out (§11.5) |
-  | `backend/ee/onyx/db/persona.py` | modified | `update_persona_access` EE gate (lockstep signature) |
-  | `backend/onyx/db/skill.py` | modified | scoped admin-list path + `replace_skill_grants` GATE 2 + is_public toggle gate (§11.2) |
-  | `backend/onyx/server/features/skill/api.py` | modified | re-point off curator dep; `allow_scope=True` by verb (DELETE stays admin-only) |
-  | `backend/onyx/server/features/{tool,mcp}/api.py` | modified | `allow_scope=True` (reach + create); manage (edit/toggle/auth) stays **owner-or-admin** — agent-mediated GATE 2 dropped per **D8** |
-  | `backend/onyx/db/tools.py` | modified | `can_manage_own_tool` / `can_manage_mcp_server` owner-or-admin gates (D8); agent-mediated scope kept only for *view* |
-  | `backend/ee/onyx/db/token_limit.py` | modified | managed-scope on group token-limit writes |
-  | `backend/onyx/server/.../persona api` | modified | `ADD_AGENTS, allow_scope=True` deps |
+  | `backend/lumen/db/persona.py` | modified | filter + `update_persona_access` MIT twin gate + owner carve-out (§11.5) |
+  | `backend/ee/lumen/db/persona.py` | modified | `update_persona_access` EE gate (lockstep signature) |
+  | `backend/lumen/db/skill.py` | modified | scoped admin-list path + `replace_skill_grants` GATE 2 + is_public toggle gate (§11.2) |
+  | `backend/lumen/server/features/skill/api.py` | modified | re-point off curator dep; `allow_scope=True` by verb (DELETE stays admin-only) |
+  | `backend/lumen/server/features/{tool,mcp}/api.py` | modified | `allow_scope=True` (reach + create); manage (edit/toggle/auth) stays **owner-or-admin** — agent-mediated GATE 2 dropped per **D8** |
+  | `backend/lumen/db/tools.py` | modified | `can_manage_own_tool` / `can_manage_mcp_server` owner-or-admin gates (D8); agent-mediated scope kept only for *view* |
+  | `backend/ee/lumen/db/token_limit.py` | modified | managed-scope on group token-limit writes |
+  | `backend/lumen/server/.../persona api` | modified | `ADD_AGENTS, allow_scope=True` deps |
   | `backend/tests/integration/.../test_group_manager_agents.py` | new | agent + skill + action escalation + ADD_AGENTS-owner no-regression + PAT narrowing |
-  | `backend/onyx/db/feedback.py` | unchanged | NO CHANGE — admin-only, not in bundle (§11.7) |
+  | `backend/lumen/db/feedback.py` | unchanged | NO CHANGE — admin-only, not in bundle (§11.7) |
 - **Est. size:** ~620 LOC (agents + skills + actions + token limits)
 - **Depends on:** PR 2 (independent of PR 3)
 - **Feature-flag state:** N/A — lands-together invariant.
@@ -182,7 +182,7 @@ highest-value resource types, exercised by the escalation integration suite (man
 
 ## PR 5 — Manager assignment & group-membership scoping (backend complete)
 - **Goal:** let admins/in-group managers create managers, and scope membership edits; expose the flag to clients.
-- **Scope (in):** `make_group_manager`/`revoke_group_manager` (`ee/onyx/db/user_group.py`) + recompute trigger
+- **Scope (in):** `make_group_manager`/`revoke_group_manager` (`ee/lumen/db/user_group.py`) + recompute trigger
   (extend `recompute_user_permissions__no_commit(user_ids, db_session)` to set `is_group_manager` — §11.7);
   gates in `update_user_group`/`add_users_to_user_group` (`group_id ∈ managed`) **plus a per-cc_pair GATE 2 on
   `update_user_group`'s `cc_pair_ids` re-attach (§11.6 — else a manager attaches out-of-scope connectors)**;
@@ -196,9 +196,9 @@ highest-value resource types, exercised by the escalation integration suite (man
 - **Files:**
   | File | New/Modified | This PR's slice |
   |------|--------------|-----------------|
-  | `backend/ee/onyx/db/user_group.py` | modified | make/revoke + membership gates |
-  | `backend/ee/onyx/server/user_group/api.py` | modified | allow_scope deps + manager-assign endpoint |
-  | `backend/onyx/server/.../permissions api` | modified | `/me/permissions` adds `is_manager` |
+  | `backend/ee/lumen/db/user_group.py` | modified | make/revoke + membership gates |
+  | `backend/ee/lumen/server/user_group/api.py` | modified | allow_scope deps + manager-assign endpoint |
+  | `backend/lumen/server/.../permissions api` | modified | `/me/permissions` adds `is_manager` |
   | `backend/tests/integration/.../test_group_manager_membership.py` | new | assign authz + membership scope |
 - **Est. size:** ~400 LOC
 - **Depends on:** PR 3, PR 4

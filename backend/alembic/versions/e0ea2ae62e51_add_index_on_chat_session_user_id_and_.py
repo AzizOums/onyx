@@ -4,9 +4,9 @@ Revision ID: e0ea2ae62e51
 Revises: c2cc933f0a40
 Create Date: 2026-07-23 23:13:21.795575
 
-Adds a composite btree index on (user_id, onyxbot_flow, time_updated DESC) to
+Adds a composite btree index on (user_id, lumenbot_flow, time_updated DESC) to
 back the chat-history sidebar query (get_chat_sessions_by_user), which filters
-on user_id + onyxbot_flow and orders by time_updated DESC. Without it Postgres
+on user_id + lumenbot_flow and orders by time_updated DESC. Without it Postgres
 plans a Seq Scan + Sort that degrades linearly as chat_session grows.
 
 chat_session is hot (time_updated is bumped on every message), so the index is
@@ -31,7 +31,7 @@ down_revision = "c2cc933f0a40"
 branch_labels = None
 depends_on = None
 
-INDEX_NAME = "ix_chat_session_user_id_onyxbot_flow_time_updated"
+INDEX_NAME = "ix_chat_session_user_id_lumenbot_flow_time_updated"
 
 
 def _index_state(conn: sa.engine.Connection, schema: str) -> bool | None:
@@ -72,7 +72,7 @@ def upgrade() -> None:
             conn.exec_driver_sql(f'DROP INDEX CONCURRENTLY "{schema}"."{INDEX_NAME}"')
         conn.exec_driver_sql(
             f'CREATE INDEX CONCURRENTLY "{INDEX_NAME}" '
-            f'ON "{schema}".chat_session (user_id, onyxbot_flow, time_updated DESC)'
+            f'ON "{schema}".chat_session (user_id, lumenbot_flow, time_updated DESC)'
         )
 
 

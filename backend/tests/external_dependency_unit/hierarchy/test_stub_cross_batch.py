@@ -13,10 +13,10 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import HierarchyNode as PydanticHierarchyNode
-from onyx.db.enums import HierarchyNodeType
-from onyx.db.hierarchy import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import HierarchyNode as PydanticHierarchyNode
+from lumen.db.enums import HierarchyNodeType
+from lumen.db.hierarchy import (
     ensure_source_node_exists,
     get_hierarchy_node_by_raw_id,
     get_source_hierarchy_node,

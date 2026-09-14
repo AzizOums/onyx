@@ -15,16 +15,16 @@ from collections.abc import Generator
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import IndexingStatus
-from onyx.db.models import (
+from lumen.db.enums import IndexingStatus
+from lumen.db.models import (
     ConnectorCredentialPair,
     IndexAttempt,
     IndexAttemptError,
     TargetedReindexJob,
     TargetedReindexJobTarget,
 )
-from onyx.db.search_settings import get_current_search_settings
-from onyx.db.targeted_reindex import (
+from lumen.db.search_settings import get_current_search_settings
+from lumen.db.targeted_reindex import (
     MAX_TARGETS_PER_REQUEST,
     TargetSpec,
     create_targeted_reindex_job,

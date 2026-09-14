@@ -5,7 +5,7 @@ import "testing"
 const dependabotFixture = `[
   {
     "state": "open",
-    "html_url": "https://github.com/onyx-dot-app/onyx/security/dependabot/1",
+    "html_url": "https://github.com/lumen-dot-app/lumen/security/dependabot/1",
     "dependency": {
       "package": {"ecosystem": "pip", "name": "requests"},
       "manifest_path": "/pyproject.toml"
@@ -23,7 +23,7 @@ const dependabotFixture = `[
   },
   {
     "state": "open",
-    "html_url": "https://github.com/onyx-dot-app/onyx/security/dependabot/2",
+    "html_url": "https://github.com/lumen-dot-app/lumen/security/dependabot/2",
     "dependency": {"package": {"ecosystem": "npm", "name": "left-pad"}},
     "security_advisory": {
       "ghsa_id": "GHSA-dddd",
@@ -35,7 +35,7 @@ const dependabotFixture = `[
   },
   {
     "state": "dismissed",
-    "html_url": "https://github.com/onyx-dot-app/onyx/security/dependabot/3",
+    "html_url": "https://github.com/lumen-dot-app/lumen/security/dependabot/3",
     "dependency": {"package": {"ecosystem": "npm", "name": "ignored-pkg"}},
     "security_advisory": {"ghsa_id": "GHSA-eeee", "severity": "critical", "summary": "dismissed"},
     "security_vulnerability": {"severity": "critical"}

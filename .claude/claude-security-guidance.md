@@ -1,4 +1,4 @@
-# Security guidance for Onyx
+# Security guidance for Lumen
 
 Additional review rules for this repository. Built-in vulnerability checks
 still apply; the rules below are repo-specific and should be treated as
@@ -6,7 +6,7 @@ high-signal findings.
 
 ## Multi-tenancy
 
-- Onyx is multi-tenant. Database access on per-tenant data must go
+- Lumen is multi-tenant. Database access on per-tenant data must go
   through the tenant-aware SQLAlchemy session that the request/Celery
   middleware sets up; new code paths that obtain a session by other
   means and read tenant data are suspect. Reads from the public schema
@@ -39,7 +39,7 @@ high-signal findings.
 ## Credentials and secrets
 
 - Connector credentials must go through the encrypted credential storage
-  in `backend/onyx/db/credentials.py`. Do not read or write connector
+  in `backend/lumen/db/credentials.py`. Do not read or write connector
   credentials as plaintext columns or stash them in unrelated tables.
 - Do not log API keys, OAuth tokens or codes, connector credentials,
   session cookies, or full request/response bodies that may contain

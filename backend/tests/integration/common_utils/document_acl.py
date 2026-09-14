@@ -8,16 +8,16 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.access.access import _get_access_for_documents
-from onyx.access.utils import prefix_external_group, prefix_user_email
-from onyx.configs.constants import PUBLIC_DOC_PAT
-from onyx.db.models import (
+from lumen.access.access import _get_access_for_documents
+from lumen.access.utils import prefix_external_group, prefix_user_email
+from lumen.configs.constants import PUBLIC_DOC_PAT
+from lumen.db.models import (
     DocumentByConnectorCredentialPair,
     User,
     User__ExternalUserGroupId,
 )
-from onyx.db.users import fetch_user_by_id
-from onyx.utils.logger import setup_logger
+from lumen.db.users import fetch_user_by_id
+from lumen.utils.logger import setup_logger
 from tests.integration.common_utils.test_models import DATestCCPair, DATestUser
 
 logger = setup_logger()

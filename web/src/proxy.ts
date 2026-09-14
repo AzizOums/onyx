@@ -19,8 +19,8 @@ const PUBLIC_ROUTES = ["/auth", "/anonymous", "/_next", "/api"];
 // into the build), so WEB_FRAME_PROTECTION_ENABLED is read at runtime and
 // applies on restart without a rebuild.
 //
-// frame-ancestors controls who may embed Onyx in an <iframe>. On by default;
-// WEB_FRAME_PROTECTION_ENABLED=false drops it so any origin may frame Onyx.
+// frame-ancestors controls who may embed Lumen in an <iframe>. On by default;
+// WEB_FRAME_PROTECTION_ENABLED=false drops it so any origin may frame Lumen.
 // chrome-extension:/moz-extension: are app-wide (the extension iframes every
 // route, not just /nrf) and cover both Chromium and Firefox builds.
 // X-Frame-Options is omitted: it can't express the extension allowance and
@@ -84,8 +84,9 @@ const CSP_HEADER = [
   // img-src stays broad: chat markdown and connector content render remote
   // images.
   strictCspEnabled ? "img-src 'self' data: blob: https:;" : "",
-  // cdn.onyx.app serves the Craft page's animated background video.
-  strictCspEnabled ? "media-src 'self' blob: data: https://cdn.onyx.app;" : "",
+  // media-src stays same-origin: the Craft background video is opt-in through
+  // NEXT_PUBLIC_VIDEO_BACKGROUND_SRC, and a remote host must be allowed here.
+  strictCspEnabled ? "media-src 'self' blob: data:;" : "",
   // worker-src blob: covers pdf.js-style workers and the PostHog session
   // recorder; frame-src blob: covers in-app PDF preview.
   strictCspEnabled ? "worker-src 'self' blob:;" : "",

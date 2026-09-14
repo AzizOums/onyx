@@ -15,10 +15,10 @@ from uuid import uuid4
 import pytest
 from redis.exceptions import RedisError
 
-from onyx.cache import factory
-from onyx.cache.interface import CacheBackendType
-from onyx.server.features.build.sandbox import serve_transport
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from lumen.cache import factory
+from lumen.cache.interface import CacheBackendType
+from lumen.server.features.build.sandbox import serve_transport
+from lumen.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
 

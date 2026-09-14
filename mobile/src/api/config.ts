@@ -21,7 +21,7 @@ export function getBaseUrl(): string {
   const raw = getStoredServerUrl() ?? process.env.EXPO_PUBLIC_API_URL;
   if (!raw) {
     throw new Error(
-      "No Onyx server URL configured. Connect to an instance first " +
+      "No Lumen server URL configured. Connect to an instance first " +
         "(or set EXPO_PUBLIC_API_URL in mobile/.env.local for development).",
     );
   }

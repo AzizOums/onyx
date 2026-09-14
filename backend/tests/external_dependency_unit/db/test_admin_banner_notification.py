@@ -9,13 +9,13 @@ from collections.abc import Generator
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import NotificationType
-from onyx.db.admin_banner import clear_admin_banner, get_admin_banner, set_admin_banner
-from onyx.db.notification import get_notifications
-from onyx.server.features.admin_banner import api as admin_banner_api
-from onyx.server.features.admin_banner.api import AdminBannerUpdateRequest
-from onyx.server.features.notifications import api as notifications_api
-from onyx.server.features.notifications.utils import (
+from lumen.configs.constants import NotificationType
+from lumen.db.admin_banner import clear_admin_banner, get_admin_banner, set_admin_banner
+from lumen.db.notification import get_notifications
+from lumen.server.features.admin_banner import api as admin_banner_api
+from lumen.server.features.admin_banner.api import AdminBannerUpdateRequest
+from lumen.server.features.notifications import api as notifications_api
+from lumen.server.features.notifications.utils import (
     ensure_system_announcement_notification,
 )
 from tests.external_dependency_unit.conftest import create_test_user

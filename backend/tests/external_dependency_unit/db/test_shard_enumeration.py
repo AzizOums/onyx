@@ -17,13 +17,13 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
-from onyx.configs.app_configs import POSTGRES_DB
-from onyx.db.engine import shard_registry, tenant_utils
-from onyx.db.engine.shard_registry import get_engine_for_shard
-from onyx.db.engine.sql_engine import (
+from lumen.configs.app_configs import POSTGRES_DB
+from lumen.db.engine import shard_registry, tenant_utils
+from lumen.db.engine.shard_registry import get_engine_for_shard
+from lumen.db.engine.sql_engine import (
     SqlEngine,
 )
-from onyx.db.engine.tenant_utils import (
+from lumen.db.engine.tenant_utils import (
     get_all_tenant_ids,
     get_schemas_needing_migration,
     get_tenant_ids_by_shard,
@@ -74,11 +74,11 @@ def two_shards(
 
     monkeypatch.setattr(
         shard_registry,
-        "ONYX_DB_SHARDS_JSON",
+        "LUMEN_DB_SHARDS_JSON",
         f'{{"{SECOND_SHARD}": {{"db": "{second_database}"}}}}',
     )
-    monkeypatch.setattr(shard_registry, "ONYX_DB_DEFAULT_SHARD", DEFAULT_SHARD)
-    monkeypatch.setattr(shard_registry, "ONYX_DB_CATALOG_SHARD", DEFAULT_SHARD)
+    monkeypatch.setattr(shard_registry, "LUMEN_DB_DEFAULT_SHARD", DEFAULT_SHARD)
+    monkeypatch.setattr(shard_registry, "LUMEN_DB_CATALOG_SHARD", DEFAULT_SHARD)
     # Enumeration short-circuits to the default schema outside multi-tenant mode.
     monkeypatch.setattr(tenant_utils, "MULTI_TENANT", True)
     shard_registry.reset_shard_specs()
@@ -98,12 +98,12 @@ def two_shards(
 
 @pytest.fixture(scope="function")
 def one_shard(monkeypatch: pytest.MonkeyPatch) -> Generator[str, None, None]:
-    """No `ONYX_DB_SHARDS`, i.e. every deployment that exists today."""
+    """No `LUMEN_DB_SHARDS`, i.e. every deployment that exists today."""
     SqlEngine.init_engine(pool_size=5, max_overflow=2)
 
-    monkeypatch.setattr(shard_registry, "ONYX_DB_SHARDS_JSON", "")
-    monkeypatch.setattr(shard_registry, "ONYX_DB_DEFAULT_SHARD", DEFAULT_SHARD)
-    monkeypatch.setattr(shard_registry, "ONYX_DB_CATALOG_SHARD", DEFAULT_SHARD)
+    monkeypatch.setattr(shard_registry, "LUMEN_DB_SHARDS_JSON", "")
+    monkeypatch.setattr(shard_registry, "LUMEN_DB_DEFAULT_SHARD", DEFAULT_SHARD)
+    monkeypatch.setattr(shard_registry, "LUMEN_DB_CATALOG_SHARD", DEFAULT_SHARD)
     monkeypatch.setattr(tenant_utils, "MULTI_TENANT", True)
     shard_registry.reset_shard_specs()
 

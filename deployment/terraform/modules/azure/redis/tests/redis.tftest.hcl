@@ -4,11 +4,11 @@
 mock_provider "azurerm" {}
 
 variables {
-  name                       = "onyx-redis-prod"
-  resource_group_name        = "onyx-rg"
+  name                       = "lumen-redis-prod"
+  resource_group_name        = "lumen-rg"
   location                   = "eastus2"
-  private_endpoint_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Network/virtualNetworks/onyx-vnet/subnets/onyx-private-endpoints"
-  virtual_network_id         = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Network/virtualNetworks/onyx-vnet"
+  private_endpoint_subnet_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Network/virtualNetworks/lumen-vnet/subnets/lumen-private-endpoints"
+  virtual_network_id         = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Network/virtualNetworks/lumen-vnet"
 }
 
 run "defaults_are_private_and_tls_only" {
@@ -39,10 +39,10 @@ run "a_plain_redis_client_can_talk_to_it" {
   command = plan
 
   # Both sharding policies fail with CROSSSLOT on Celery's first publish, so the
-  # non-sharded policy is the only one Onyx runs on unchanged.
+  # non-sharded policy is the only one Lumen runs on unchanged.
   assert {
     condition     = one(azurerm_managed_redis.this.default_database).clustering_policy == "NoCluster"
-    error_message = "Onyx needs the non-sharded policy; a sharded one breaks Celery with CROSSSLOT."
+    error_message = "Lumen needs the non-sharded policy; a sharded one breaks Celery with CROSSSLOT."
   }
 }
 
@@ -128,7 +128,7 @@ run "an_existing_dns_zone_is_reused" {
   command = plan
 
   variables {
-    private_dns_zone_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Network/privateDnsZones/privatelink.redis.azure.net"
+    private_dns_zone_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Network/privateDnsZones/privatelink.redis.azure.net"
   }
 
   assert {
@@ -144,7 +144,7 @@ run "reusing_a_dns_zone_needs_no_virtual_network" {
   # caller who brings their own has already linked it.
   variables {
     virtual_network_id  = null
-    private_dns_zone_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Network/privateDnsZones/privatelink.redis.azure.net"
+    private_dns_zone_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Network/privateDnsZones/privatelink.redis.azure.net"
   }
 
   assert {

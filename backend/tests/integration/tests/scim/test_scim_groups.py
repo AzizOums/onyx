@@ -20,7 +20,7 @@ User lifecycle tests live in test_scim_users.py.
 import httpx
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.constants import (
     ADMIN_USER_NAME,
     API_SERVER_URL,

@@ -3,14 +3,14 @@ concurrency:
   group: Helm-Chart-Version-Check-${{ github.workflow }}-${{ github.head_ref || github.event.workflow_run.head_branch || github.run_id }}
   cancel-in-progress: true
 
-# Requires deployment/helm/charts/onyx/Chart.yaml `version` to be bumped above the
+# Requires deployment/helm/charts/lumen/Chart.yaml `version` to be bumped above the
 # version on main whenever the packaged chart changes. helm-chart-releases.yml
 # republishes the chart on every push to main that touches the charts, and will
 # NOT overwrite an already-published version, so a chart change that reuses
 # main's version is silently never released. This gate prevents that.
 #
 # Uses native path filtering: the workflow only runs when watched chart files
-# change (onyx-cnpg-crds is bundled into the onyx chart via Chart.lock, so it
+# change (lumen-cnpg-crds is bundled into the lumen chart via Chart.lock, so it
 # counts too). Because of this it cannot be a *required* branch-protection check
 # -- a required check that is filtered out on unrelated PRs stays stuck "pending"
 # and blocks merges. It is enforced as a visible failing check on chart PRs.
@@ -18,8 +18,8 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "deployment/helm/charts/onyx/**"
-      - "deployment/helm/charts/onyx-cnpg-crds/**"
+      - "deployment/helm/charts/lumen/**"
+      - "deployment/helm/charts/lumen-cnpg-crds/**"
 
 permissions:
   contents: read
@@ -38,7 +38,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          CHART_FILE="deployment/helm/charts/onyx/Chart.yaml"
+          CHART_FILE="deployment/helm/charts/lumen/Chart.yaml"
 
           # Compare against the current tip of main (what the release publishes
           # from), so concurrent PRs can't both ship the same new version.

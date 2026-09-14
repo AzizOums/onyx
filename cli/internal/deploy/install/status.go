@@ -9,12 +9,12 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/deployfiles"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/paths"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/state"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/ui"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/deployfiles"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/paths"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/state"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/ui"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
 )
 
 // Status is the machine-readable `deploy status --json` payload.
@@ -74,11 +74,11 @@ func (in *installer) runStatus(ctx context.Context, jsonOut bool) error {
 		if jsonOut {
 			return in.emitStatus(st, exitcodes.NotAvailable)
 		}
-		in.infof("No Onyx install found at %s", in.root.Dir)
+		in.infof("No Lumen install found at %s", in.root.Dir)
 		for _, alt := range in.root.Ambiguous {
 			in.infof("(another install exists at %s — pass --dir to inspect it)", alt)
 		}
-		in.infof("Install one with: %s", in.paint.Accent("onyx-cli deploy install"))
+		in.infof("Install one with: %s", in.paint.Accent("lumen-cli deploy install"))
 		return exitcodes.New(exitcodes.NotAvailable, "not installed")
 	}
 	st.Installed = true
@@ -137,7 +137,7 @@ func (in *installer) runStatus(ctx context.Context, jsonOut bool) error {
 		return in.emitStatus(st, code)
 	}
 
-	in.plainf("Onyx deployment at %s (%s)", st.Dir, st.Source)
+	in.plainf("Lumen deployment at %s (%s)", st.Dir, st.Source)
 	in.plainf("  Mode: %s%s%s", st.Mode,
 		map[bool]string{true: " + craft", false: ""}[st.IncludeCraft],
 		map[bool]string{true: " + dev", false: ""}[st.Dev])
@@ -146,7 +146,7 @@ func (in *installer) runStatus(ctx context.Context, jsonOut bool) error {
 	in.plainf("  Version (running):  %s", in.orUnknown(st.RunningTag))
 	if drift(st.ManifestTag, st.EnvTag, st.RunningTag) {
 		in.warnf("Version drift detected — the manifest, .env, and running containers disagree.")
-		in.infof("A restart applies .env: %s", in.paint.Accent("onyx-cli deploy stop && onyx-cli deploy install"))
+		in.infof("A restart applies .env: %s", in.paint.Accent("lumen-cli deploy stop && lumen-cli deploy install"))
 	}
 	in.plainf("")
 	if len(st.Services) == 0 {
@@ -163,7 +163,7 @@ func (in *installer) runStatus(ctx context.Context, jsonOut bool) error {
 	}
 	in.plainf("")
 	if st.AccessURL != "" {
-		in.infof("Access Onyx at: %s", st.AccessURL)
+		in.infof("Access Lumen at: %s", st.AccessURL)
 	}
 	// One count, one list: every service that isn't up is worth naming,
 	// whichever way it isn't. Splitting the verdict by kind used to drop the
@@ -249,10 +249,10 @@ func (in *installer) inspectContainers(ctx context.Context) (services []Service,
 			svc.Service = parts[4]
 		}
 		services = append(services, svc)
-		// Only Onyx app images carry the deployment version; infrastructure
+		// Only Lumen app images carry the deployment version; infrastructure
 		// containers (nginx, postgres, redis, ...) have their own tags.
 		if runningTag == "" && strings.HasPrefix(svc.Status, "Up") &&
-			strings.Contains(svc.Image, "onyxdotapp/onyx") {
+			strings.Contains(svc.Image, "lumendotapp/lumen") {
 			if idx := strings.LastIndex(svc.Image, ":"); idx != -1 {
 				runningTag = svc.Image[idx+1:]
 			}
@@ -391,10 +391,10 @@ func (in *installer) explainFailures(services []Service) {
 	// Nothing has gone wrong when every one of them is still coming up, so the
 	// command to offer is the one that watches them finish.
 	if coming {
-		in.infof("Follow along: %s", in.paint.Accent("onyx-cli deploy logs -f"+in.dirArg()+named))
+		in.infof("Follow along: %s", in.paint.Accent("lumen-cli deploy logs -f"+in.dirArg()+named))
 		return
 	}
-	in.infof("See why: %s", in.paint.Accent("onyx-cli deploy logs"+in.dirArg()+named))
+	in.infof("See why: %s", in.paint.Accent("lumen-cli deploy logs"+in.dirArg()+named))
 }
 
 // severity is how much attention one container's state deserves.

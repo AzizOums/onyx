@@ -7,14 +7,14 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import NotificationType
-from onyx.db.connector_alerts import (
+from lumen.configs.constants import NotificationType
+from lumen.db.connector_alerts import (
     clear_connector_alerts__no_commit,
     notify_admins_of_connector_alert,
 )
-from onyx.db.enums import NotificationSeverity
-from onyx.db.models import Notification, User
-from onyx.db.notification import (
+from lumen.db.enums import NotificationSeverity
+from lumen.db.models import Notification, User
+from lumen.db.notification import (
     batch_create_notifications,
     count_notifications,
     create_notification,
@@ -22,7 +22,7 @@ from onyx.db.notification import (
     dismiss_user_notifications,
     get_notifications,
 )
-from onyx.server.features.notifications import api as notifications_api
+from lumen.server.features.notifications import api as notifications_api
 from tests.external_dependency_unit.conftest import create_test_user
 
 

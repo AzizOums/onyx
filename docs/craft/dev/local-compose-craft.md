@@ -7,8 +7,8 @@ How to iterate on Craft against the docker-compose sandbox backend
 
 You want to work on the **docker** sandbox path or the **sandbox-proxy**
 service — typically because you're touching code under
-`backend/onyx/sandbox_proxy/`,
-`backend/onyx/server/features/build/sandbox/docker/`, or
+`backend/lumen/sandbox_proxy/`,
+`backend/lumen/server/features/build/sandbox/docker/`, or
 `deployment/docker_compose/docker-compose.craft.yml`.
 
 For day-to-day Craft work against the kubernetes backend (the canonical
@@ -22,12 +22,12 @@ the right tool when the docker plumbing itself is what you're changing.
 - Docker Desktop running with at least 8 CPU / 16 GB allocated.
 - The CONTRIBUTING.md prereqs (Python 3.13, uv, Node 22, the venv,
   `.vscode/.env`).
-- A built `onyxdotapp/sandbox:dev` image. Build with:
+- A built `lumendotapp/sandbox:dev` image. Build with:
 
   ```bash
   docker build \
-    -t onyxdotapp/sandbox:dev \
-    backend/onyx/server/features/build/sandbox/image
+    -t lumendotapp/sandbox:dev \
+    backend/lumen/server/features/build/sandbox/image
   ```
 
   The sandbox image is shared between K8s and compose; the same tag
@@ -38,7 +38,7 @@ the right tool when the docker plumbing itself is what you're changing.
 Pre-create the compose-external resources the craft overlay references:
 
 ```bash
-docker network create onyx_craft_sandbox
+docker network create lumen_craft_sandbox
 docker volume create sandbox_proxy_ca
 ```
 
@@ -55,7 +55,7 @@ Useful for smoke-testing end-to-end behavior.
 
 ```bash
 cd deployment/docker_compose
-SANDBOX_CONTAINER_IMAGE=onyxdotapp/sandbox:dev \
+SANDBOX_CONTAINER_IMAGE=lumendotapp/sandbox:dev \
 docker compose \
   -f docker-compose.yml \
   -f docker-compose.craft.yml \
@@ -102,15 +102,15 @@ Iterate on `sandbox_proxy/` code with the VSCode debugger attached.
    PYTHONPATH=./backend \
    SANDBOX_BACKEND=docker \
    SANDBOX_PROXY_LISTEN_PORT=8888 \
-   python -m onyx.sandbox_proxy.server
+   python -m lumen.sandbox_proxy.server
    ```
 
-   `PYTHONPATH=./backend` is required because the `onyx` package lives
+   `PYTHONPATH=./backend` is required because the `lumen` package lives
    under `backend/`; running from the repo root without it raises
    `ModuleNotFoundError`. Same applies to step 3 below.
 
    Or add a VSCode launch config that points at
-   `backend/onyx/sandbox_proxy/server.py` with the same env. The
+   `backend/lumen/sandbox_proxy/server.py` with the same env. The
    proxy reads `.vscode/.env` for Postgres + Redis hosts.
 
    The `SANDBOX_PROXY_LISTEN_PORT=8888` override is load-bearing for
@@ -131,10 +131,10 @@ Iterate on `sandbox_proxy/` code with the VSCode debugger attached.
    ```bash
    PYTHONPATH=./backend \
    SANDBOX_BACKEND=docker \
-   SANDBOX_CONTAINER_IMAGE=onyxdotapp/sandbox:dev \
+   SANDBOX_CONTAINER_IMAGE=lumendotapp/sandbox:dev \
    SANDBOX_PROXY_HOST=host.docker.internal \
    SANDBOX_PROXY_PORT=8888 \
-   uvicorn onyx.main:app --host 0.0.0.0 --port 8080
+   uvicorn lumen.main:app --host 0.0.0.0 --port 8080
    ```
 
    The api_server provisions sandbox containers via the host docker
@@ -185,7 +185,7 @@ docker compose -f docker-compose.yml -f docker-compose.craft.yml down
 docker volume rm sandbox_proxy_ca
 
 # Optional: clear sandbox state.
-docker volume ls --filter "name=onyx-craft-sandbox-" -q | xargs -r docker volume rm
+docker volume ls --filter "name=lumen-craft-sandbox-" -q | xargs -r docker volume rm
 ```
 
 ## Common issues
@@ -197,12 +197,12 @@ docker volume ls --filter "name=onyx-craft-sandbox-" -q | xargs -r docker volume
 
 - **`firewall-init.sh: FATAL: could not resolve proxy host sandbox-proxy`** —
   the sandbox container can't resolve the proxy name. Check that the
-  sandbox is on the `onyx_craft_sandbox` network (`docker inspect
+  sandbox is on the `lumen_craft_sandbox` network (`docker inspect
   sandbox-<id8>`) and that the proxy is up on the same network.
 
 - **All egress fails with 403 `unidentified_sandbox`** — the
   `DockerEventsLookup` doesn't see the sandbox container's labels.
-  Verify the labels with `docker inspect sandbox-<id8> | grep onyx.app`;
+  Verify the labels with `docker inspect sandbox-<id8> | grep lumen.app`;
   if missing, the manager wasn't running with `SANDBOX_BACKEND=docker`.
 
 - **`docker volume inspect: No such volume: sandbox_proxy_ca`** — the

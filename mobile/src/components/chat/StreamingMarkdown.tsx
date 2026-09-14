@@ -1,9 +1,9 @@
-// enriched-markdown needs concrete style values, not NativeWind classes — resolve Onyx tokens here.
+// enriched-markdown needs concrete style values, not NativeWind classes — resolve Lumen tokens here.
 import { useMemo } from "react";
 import { useColorScheme } from "react-native";
 import { StreamdownText } from "react-native-streamdown";
 import type { MarkdownStyle } from "react-native-enriched-markdown";
-import { textPresets, varsDark, varsLight } from "@onyx-ai/shared/native";
+import { textPresets, varsDark, varsLight } from "@lumen-ai/shared/native";
 
 // "muted": reasoning/secondary body — text-03 with a tighter paragraph rhythm.
 type StreamingMarkdownVariant = "default" | "muted";
@@ -26,7 +26,7 @@ function buildMarkdownStyle(
 ): MarkdownStyle {
   const vars = scheme === "dark" ? varsDark : varsLight;
   const color = (token: string): string => vars[token] ?? "#000000";
-  // Fenced code has no Onyx token; use Atom One's flat base color (no per-token highlighting).
+  // Fenced code has no Lumen token; use Atom One's flat base color (no per-token highlighting).
   const codeBaseColor = scheme === "dark" ? "#e2e6eb" : "#383a42";
   const muted = variant === "muted";
   const bodyColor = color(muted ? "--text-03" : "--text-05");

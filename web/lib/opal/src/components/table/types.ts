@@ -32,7 +32,7 @@ export type ColumnWidth = DataColumnWidth | FixedColumnWidth;
 
 export type QualifierContentType = "simple" | "icon" | "image";
 
-export type OnyxColumnKind = "qualifier" | "data" | "display" | "actions";
+export type LumenColumnKind = "qualifier" | "data" | "display" | "actions";
 
 // ---------------------------------------------------------------------------
 // Column definitions (discriminated union on `kind`)
@@ -40,8 +40,8 @@ export type OnyxColumnKind = "qualifier" | "data" | "display" | "actions";
 
 export type ColumnAlignment = "left" | "center" | "right";
 
-interface OnyxColumnBase<TData> {
-  kind: OnyxColumnKind;
+interface LumenColumnBase<TData> {
+  kind: LumenColumnKind;
   /** Stable column identifier (mirrors the TanStack column ID). */
   id: string;
   def: ColumnDef<TData, any>;
@@ -49,7 +49,7 @@ interface OnyxColumnBase<TData> {
 }
 
 /** Qualifier column — leading avatar/icon/checkbox column. */
-export interface OnyxQualifierColumn<TData> extends OnyxColumnBase<TData> {
+export interface LumenQualifierColumn<TData> extends LumenColumnBase<TData> {
   kind: "qualifier";
   alignment?: never;
   /** Content type for body-row `<TableQualifier>`. */
@@ -67,7 +67,7 @@ export interface OnyxQualifierColumn<TData> extends OnyxColumnBase<TData> {
 }
 
 /** Data column — accessor-based column with sorting/resizing. */
-export interface OnyxDataColumn<TData> extends OnyxColumnBase<TData> {
+export interface LumenDataColumn<TData> extends LumenColumnBase<TData> {
   kind: "data";
   alignment?: ColumnAlignment;
   /** Override the sort icon for this column. */
@@ -75,13 +75,13 @@ export interface OnyxDataColumn<TData> extends OnyxColumnBase<TData> {
 }
 
 /** Display column — non-accessor column with custom rendering. */
-export interface OnyxDisplayColumn<TData> extends OnyxColumnBase<TData> {
+export interface LumenDisplayColumn<TData> extends LumenColumnBase<TData> {
   kind: "display";
   alignment?: ColumnAlignment;
 }
 
 /** Actions column — fixed column with visibility/sorting popovers. */
-export interface OnyxActionsColumn<TData> extends OnyxColumnBase<TData> {
+export interface LumenActionsColumn<TData> extends LumenColumnBase<TData> {
   kind: "actions";
   alignment?: never;
   /** Show column visibility popover. @default true */
@@ -93,11 +93,11 @@ export interface OnyxActionsColumn<TData> extends OnyxColumnBase<TData> {
 }
 
 /** Discriminated union of all column types. */
-export type OnyxColumnDef<TData> =
-  | OnyxQualifierColumn<TData>
-  | OnyxDataColumn<TData>
-  | OnyxDisplayColumn<TData>
-  | OnyxActionsColumn<TData>;
+export type LumenColumnDef<TData> =
+  | LumenQualifierColumn<TData>
+  | LumenDataColumn<TData>
+  | LumenDisplayColumn<TData>
+  | LumenActionsColumn<TData>;
 
 // ---------------------------------------------------------------------------
 // Server-side pagination / sorting / search
@@ -143,7 +143,7 @@ export interface DataTableProps<TData> {
   /** Row data array. */
   data: TData[];
   /** Column definitions created via `createTableColumns()`. */
-  columns: OnyxColumnDef<TData>[];
+  columns: LumenColumnDef<TData>[];
   /** Extract a unique string ID from each row. Used for stable row identity. */
   getRowId: (row: TData) => string;
   /** Rows per page. Set `Infinity` to disable pagination. @default 10 */

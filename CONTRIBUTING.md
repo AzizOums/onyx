@@ -1,6 +1,6 @@
-# Contributing to Onyx
+# Contributing to Lumen
 
-Hey there! We are so excited that you're interested in Onyx.
+Hey there! We are so excited that you're interested in Lumen.
 
 ## Table of Contents
 
@@ -29,7 +29,7 @@ Hey there! We are so excited that you're interested in Onyx.
 
 ## Contribution Opportunities
 
-The [GitHub Issues](https://github.com/onyx-dot-app/onyx/issues) page is a great place to look for and share contribution ideas.
+The [GitHub Issues](https://github.com/lumen-dot-app/lumen/issues) page is a great place to look for and share contribution ideas.
 
 If you have your own feature that you would like to build, please create an issue and community members can provide feedback and upvote if they feel a common need.
 
@@ -44,17 +44,17 @@ To contribute, please follow the
 
 Create a GitHub issue and see if there are upvotes. If you feel the feature is sufficiently value-additive and you would like approval to contribute it to the repo, tag [Yuhong](https://github.com/yuhongsun96) to review.
 
-If you do not get a response within a week, feel free to email yuhong@onyx.app and include the issue in the message.
+If you do not get a response within a week, feel free to email yuhong@lumen.app and include the issue in the message.
 
 Not all small features and enhancements will be accepted as there is a balance between feature richness and bloat. We strive to provide the best user experience possible so we have to be intentional about what we include in the app.
 
 ### 2. Get the design approved
 
-The Onyx team will either provide a design doc and PRD for the feature or request one from you, the contributor. The scope and detail of the design will depend on the individual feature.
+The Lumen team will either provide a design doc and PRD for the feature or request one from you, the contributor. The scope and detail of the design will depend on the individual feature.
 
 ### 3. IP attribution for EE contributions
 
-If you are contributing features to Onyx Enterprise Edition, you are required to sign the [IP Assignment Agreement](contributor_ip_assignment/EE_Contributor_IP_Assignment_Agreement.md).
+If you are contributing features to Lumen Enterprise Edition, you are required to sign the [IP Assignment Agreement](contributor_ip_assignment/EE_Contributor_IP_Assignment_Agreement.md).
 
 ### 4. Review and testing
 
@@ -66,18 +66,18 @@ If we approve an issue, we are promising you the following:
 
 - Your work will receive timely attention and we will put aside other important items to ensure you are not blocked.
 - You will receive necessary coaching on eng quality, system design, etc. to ensure the feature is completed well.
-- The Onyx team will pull resources and bandwidth from design, PM, and engineering to ensure that you have all the resources to build the feature to the quality required for merging.
+- The Lumen team will pull resources and bandwidth from design, PM, and engineering to ensure that you have all the resources to build the feature to the quality required for merging.
 
 Because this is a large investment from our team, we ask that you:
 
-- Thoroughly read all the requirements of the design docs, engineering best practices, and try to minimize overhead for the Onyx team.
-- Complete the feature in a timely manner to reduce context switching and an ongoing resource pull from the Onyx team.
+- Thoroughly read all the requirements of the design docs, engineering best practices, and try to minimize overhead for the Lumen team.
+- Complete the feature in a timely manner to reduce context switching and an ongoing resource pull from the Lumen team.
 
 ---
 
 ## Development Setup
 
-Onyx being a fully functional app, relies on some external software, specifically:
+Lumen being a fully functional app, relies on some external software, specifically:
 
 - [Postgres](https://www.postgresql.org/) (Relational DB)
 - [OpenSearch](https://opensearch.org/) (Vector DB/Search Engine)
@@ -86,7 +86,7 @@ Onyx being a fully functional app, relies on some external software, specificall
 - [Nginx](https://nginx.org/) (Not needed for development flows generally)
 
 > **Note:**
-> This guide provides instructions to build and run Onyx locally from source with Docker containers providing the above external software.
+> This guide provides instructions to build and run Lumen locally from source with Docker containers providing the above external software.
 > We believe this combination is easier for development purposes. If you prefer to use pre-built container images, see [Running in Docker](#running-in-docker) below.
 
 ### Prerequisites
@@ -130,7 +130,7 @@ uv run playwright install
 
 ### Frontend: Node Dependencies
 
-Navigate to `onyx/web` and run:
+Navigate to `lumen/web` and run:
 
 ```bash
 bun install
@@ -146,7 +146,7 @@ Set up pre-commit hooks (`ruff` / `ruff format`):
 uv run pre-commit install
 ```
 
-We also use `ty` for static type checking. Onyx is fully type-annotated, and we want to keep it that way! To run the ty checks manually:
+We also use `ty` for static type checking. Lumen is fully type-annotated, and we want to keep it that way! To run the ty checks manually:
 
 ```bash
 uv run ty check
@@ -154,18 +154,18 @@ uv run ty check
 
 #### Frontend
 
-We use `oxfmt` for formatting. The desired version will be installed via `bun install` from the `onyx/web` directory. To run the formatter:
+We use `oxfmt` for formatting. The desired version will be installed via `bun install` from the `lumen/web` directory. To run the formatter:
 
 ```bash
-bunx oxfmt .  # from onyx/web
+bunx oxfmt .  # from lumen/web
 ```
 
 Pre-commit will also run oxfmt automatically on files you've recently touched. If re-formatted, your commit will fail. Re-stage your changes and commit again.
 
-We use `oxlint` for linting. The desired version will be installed via `bun install` from the `onyx/web` directory. To run the linter:
+We use `oxlint` for linting. The desired version will be installed via `bun install` from the `lumen/web` directory. To run the linter:
 
 ```bash
-bunx oxlint  # from onyx/web
+bunx oxlint  # from lumen/web
 bunx oxlint --fix  # auto-fix what it can
 ```
 
@@ -190,7 +190,7 @@ Before starting, make sure the Docker Daemon is running.
 
 1. Open the Debug view in VSCode (Cmd+Shift+D on macOS)
 2. From the dropdown at the top, select "Clear and Restart External Volumes and Containers" and press the green play button
-3. From the dropdown at the top, select "Run All Onyx Services" and press the green play button
+3. From the dropdown at the top, select "Run All Lumen Services" and press the green play button
 4. Navigate to http://localhost:3000 in your browser to start using the app
 5. Set breakpoints by clicking to the left of line numbers to help debug while the app is running
 6. Use the debug toolbar to step through code, inspect variables, etc.
@@ -212,7 +212,7 @@ Before starting, make sure the Docker Daemon is running.
 
 You will need Docker installed to run these containers.
 
-Navigate to `onyx/deployment/docker_compose`, then start up Postgres/OpenSearch/Redis/MinIO with:
+Navigate to `lumen/deployment/docker_compose`, then start up Postgres/OpenSearch/Redis/MinIO with:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d index relational_db cache minio
@@ -220,15 +220,15 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d index relat
 
 (index refers to OpenSearch, relational_db refers to Postgres, and cache refers to Redis)
 
-#### Running Onyx locally
+#### Running Lumen locally
 
-To start the frontend, navigate to `onyx/web` and run:
+To start the frontend, navigate to `lumen/web` and run:
 
 ```bash
 bun run dev
 ```
 
-Next, start the model server which runs the local NLP models. Navigate to `onyx/backend` and run:
+Next, start the model server which runs the local NLP models. Navigate to `lumen/backend` and run:
 
 ```bash
 uvicorn model_server.main:app --reload --port 9000
@@ -240,24 +240,24 @@ _For Windows (for compatibility with both PowerShell and Command Prompt):_
 powershell -Command "uvicorn model_server.main:app --reload --port 9000"
 ```
 
-The first time running Onyx, you will need to run the DB migrations for Postgres. After the first time, this is no longer required unless the DB models change.
+The first time running Lumen, you will need to run the DB migrations for Postgres. After the first time, this is no longer required unless the DB models change.
 
-Navigate to `onyx/backend` and with the venv active, run:
+Navigate to `lumen/backend` and with the venv active, run:
 
 ```bash
 alembic upgrade head
 ```
 
-Next, start the task queue which orchestrates the background jobs. Still in `onyx/backend`, run:
+Next, start the task queue which orchestrates the background jobs. Still in `lumen/backend`, run:
 
 ```bash
 python ./scripts/dev_run_background_jobs.py
 ```
 
-To run the backend API server, navigate back to `onyx/backend` and run:
+To run the backend API server, navigate back to `lumen/backend` and run:
 
 ```bash
-AUTH_TYPE=basic uvicorn onyx.main:app --reload --port 8080
+AUTH_TYPE=basic uvicorn lumen.main:app --reload --port 8080
 ```
 
 _For Windows (for compatibility with both PowerShell and Command Prompt):_
@@ -265,7 +265,7 @@ _For Windows (for compatibility with both PowerShell and Command Prompt):_
 ```bash
 powershell -Command "
     $env:AUTH_TYPE='basic'
-    uvicorn onyx.main:app --reload --port 8080
+    uvicorn lumen.main:app --reload --port 8080
 "
 ```
 
@@ -280,27 +280,27 @@ You should now have 4 servers running:
 - Model server
 - Background jobs
 
-Now, visit http://localhost:3000 in your browser. You should see the Onyx onboarding wizard where you can connect your external LLM provider to Onyx.
+Now, visit http://localhost:3000 in your browser. You should see the Lumen onboarding wizard where you can connect your external LLM provider to Lumen.
 
-You've successfully set up a local Onyx instance!
+You've successfully set up a local Lumen instance!
 
 ### Running on a Local Kubernetes Cluster
 
-For Onyx Craft (Build) development, sandboxes are real Kubernetes pods — run `make craft-up` to bring up a local kind cluster in one shot. See [Local Kubernetes Development](/docs/craft/dev/local-kubernetes.md) for the full workflow.
+For Lumen Craft (Build) development, sandboxes are real Kubernetes pods — run `make craft-up` to bring up a local kind cluster in one shot. See [Local Kubernetes Development](/docs/craft/dev/local-kubernetes.md) for the full workflow.
 
 ### Running in Docker
 
-You can run the full Onyx application stack from pre-built images including all external software dependencies.
+You can run the full Lumen application stack from pre-built images including all external software dependencies.
 
-Navigate to `onyx/deployment/docker_compose` and run:
+Navigate to `lumen/deployment/docker_compose` and run:
 
 ```bash
 docker compose up -d
 ```
 
-After Docker pulls and starts these containers, navigate to http://localhost:3000 to use Onyx.
+After Docker pulls and starts these containers, navigate to http://localhost:3000 to use Lumen.
 
-If you want to make changes to Onyx and run those changes in Docker, you can also build a local version of the Onyx container images that incorporates your changes:
+If you want to make changes to Lumen and run those changes in Docker, you can also build a local version of the Lumen container images that incorporates your changes:
 
 ```bash
 docker compose up -d --build
@@ -308,8 +308,8 @@ docker compose up -d --build
 
 > **Note:** Local builds use the public Docker Hub base images, so they need no extra
 > registry access. Our release builds override the base images with the Docker Hardened
-> Image (`dhi.io`) equivalents, so the published `onyxdotapp/onyx-web-server` and
-> `onyxdotapp/onyx-model-server` images differ from a local `--build` in their base layers.
+> Image (`dhi.io`) equivalents, so the published `lumendotapp/lumen-web-server` and
+> `lumendotapp/lumen-model-server` images differ from a local `--build` in their base layers.
 
 > **Note:** `docker-compose.yml`, `docker-compose.prod.yml` and
 > `docker-compose.prod-no-letsencrypt.yml` are generated from `docker-compose.template.yml`
@@ -437,7 +437,7 @@ Add clear comments:
 
 - Avoid holding resources for extended periods (DB sessions, locks/semaphores).
 - Validate objects on creation and right before use.
-- Connector code (data to Onyx documents):
+- Connector code (data to Lumen documents):
   - Any in-memory structure that can grow without bound based on input must be periodically size-checked.
   - If a connector is OOMing (often shows up as "missing celery tasks"), this is a top thing to check retroactively.
 - Async and event loops:
@@ -506,9 +506,9 @@ Add clear comments:
 
 ## Release Process
 
-Onyx loosely follows the SemVer versioning standard.
+Lumen loosely follows the SemVer versioning standard.
 A set of Docker containers will be pushed automatically to DockerHub with every tag.
-You can see the containers [here](https://hub.docker.com/search?q=onyx%2F).
+You can see the containers [here](https://hub.docker.com/search?q=lumen%2F).
 
 ---
 
@@ -522,4 +522,4 @@ See you there!
 
 ## Enterprise Edition Contributions
 
-If you are contributing features to Onyx Enterprise Edition (code under any `ee/` directory), you are required to sign the [IP Assignment Agreement](contributor_ip_assignment/EE_Contributor_IP_Assignment_Agreement.md) ([PDF version](contributor_ip_assignment/EE_Contributor_IP_Assignment_Agreement.pdf)).
+If you are contributing features to Lumen Enterprise Edition (code under any `ee/` directory), you are required to sign the [IP Assignment Agreement](contributor_ip_assignment/EE_Contributor_IP_Assignment_Agreement.md) ([PDF version](contributor_ip_assignment/EE_Contributor_IP_Assignment_Agreement.pdf)).

@@ -4,8 +4,8 @@
 mock_provider "azurerm" {}
 
 variables {
-  name                = "onyx"
-  resource_group_name = "onyx-rg"
+  name                = "lumen"
+  resource_group_name = "lumen-rg"
   location            = "eastus"
 }
 
@@ -18,7 +18,7 @@ run "default_subnets" {
   }
 
   assert {
-    condition     = azurerm_subnet.this["aks"].name == "onyx-aks"
+    condition     = azurerm_subnet.this["aks"].name == "lumen-aks"
     error_message = "Subnet names should be prefixed with the module name."
   }
 
@@ -99,7 +99,7 @@ run "flow_logs_require_a_network_watcher_too" {
 
   variables {
     enable_flow_logs            = true
-    flow_log_storage_account_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxflowlogs"
+    flow_log_storage_account_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenflowlogs"
   }
 
   expect_failures = [var.enable_flow_logs]
@@ -110,7 +110,7 @@ run "flow_logs_plan_when_both_destination_and_watcher_are_set" {
 
   variables {
     enable_flow_logs            = true
-    flow_log_storage_account_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxflowlogs"
+    flow_log_storage_account_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenflowlogs"
     network_watcher_name        = "NetworkWatcher_eastus"
   }
 
@@ -157,7 +157,7 @@ run "rejects_a_blank_network_watcher_name" {
 
   variables {
     enable_flow_logs            = true
-    flow_log_storage_account_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxflowlogs"
+    flow_log_storage_account_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenflowlogs"
     network_watcher_name        = "   "
   }
 

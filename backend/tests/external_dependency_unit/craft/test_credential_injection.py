@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ExternalAppType
-from onyx.external_apps.credentials import resolve_injection_headers
+from lumen.db.enums import ExternalAppType
+from lumen.external_apps.credentials import resolve_injection_headers
 from tests.external_dependency_unit.craft.db_helpers import (
     make_external_app,
     make_skill,

@@ -1,4 +1,4 @@
-// Package api provides the HTTP client for communicating with the Onyx server.
+// Package api provides the HTTP client for communicating with the Lumen server.
 package api
 
 import (
@@ -16,11 +16,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/lumen-dot-app/lumen/cli/internal/config"
+	"github.com/lumen-dot-app/lumen/cli/internal/models"
 )
 
-// Client is the Onyx API client.
+// Client is the Lumen API client.
 //
 // Three http.Clients are kept so each call site can pick a timeout matched to
 // its expected work: 3min for quick JSON endpoints, 5min for /search (which
@@ -38,7 +38,7 @@ type Client struct {
 // NewClient creates a new API client from config.
 // ServerURL may be a server origin or an API base that already includes the
 // configured API prefix.
-func NewClient(cfg config.OnyxCliConfig) *Client {
+func NewClient(cfg config.LumenCliConfig) *Client {
 	var transport *http.Transport
 	if t, ok := http.DefaultTransport.(*http.Transport); ok {
 		transport = t.Clone()
@@ -77,7 +77,7 @@ func (c *Client) newRequest(ctx context.Context, method, path string, body io.Re
 	if c.apiKey != "" {
 		bearer := "Bearer " + c.apiKey
 		req.Header.Set("Authorization", bearer)
-		req.Header.Set("X-Onyx-Authorization", bearer)
+		req.Header.Set("X-Lumen-Authorization", bearer)
 	}
 	return req, nil
 }
@@ -88,12 +88,12 @@ func checkResponse(resp *http.Response) error {
 	}
 	body, _ := io.ReadAll(resp.Body)
 	if isHTMLResponse(resp.Header.Get("Content-Type"), body) {
-		return &OnyxAPIError{
+		return &LumenAPIError{
 			StatusCode: resp.StatusCode,
 			Detail:     "server returned HTML instead of JSON — check that your server URL is correct",
 		}
 	}
-	return &OnyxAPIError{StatusCode: resp.StatusCode, Detail: string(body)}
+	return &LumenAPIError{StatusCode: resp.StatusCode, Detail: string(body)}
 }
 
 func isHTMLResponse(contentType string, body []byte) bool {
@@ -107,7 +107,7 @@ func isHTMLResponse(contentType string, body []byte) bool {
 func wrapTimeoutError(err error) error {
 	var netErr net.Error
 	if errors.As(err, &netErr) && netErr.Timeout() {
-		return &OnyxAPIError{StatusCode: 408, Detail: fmt.Sprintf("request timed out: %v", err)}
+		return &LumenAPIError{StatusCode: 408, Detail: fmt.Sprintf("request timed out: %v", err)}
 	}
 	return err
 }
@@ -186,10 +186,10 @@ func (c *Client) GenerateImage(ctx context.Context, req models.ImageGenerationRe
 		default:
 			statusCode = 502
 		}
-		return nil, &OnyxAPIError{StatusCode: statusCode, Detail: resp.Detail}
+		return nil, &LumenAPIError{StatusCode: statusCode, Detail: resp.Detail}
 	}
 	if len(resp.Images) == 0 {
-		return nil, &OnyxAPIError{StatusCode: 502, Detail: "server returned no images"}
+		return nil, &LumenAPIError{StatusCode: 502, Detail: "server returned no images"}
 	}
 	return &resp.ImageGenerationResponse, nil
 }
@@ -241,7 +241,7 @@ func (c *Client) TestConnection(ctx context.Context) error {
 
 	if resp2.StatusCode == 401 || resp2.StatusCode == 403 {
 		if isHTML || strings.Contains(respServer, "awselb") {
-			return &AuthError{Message: fmt.Sprintf("HTTP %d from a reverse proxy (not the Onyx backend).\n  Check your deployment's ingress / proxy configuration", resp2.StatusCode)}
+			return &AuthError{Message: fmt.Sprintf("HTTP %d from a reverse proxy (not the Lumen backend).\n  Check your deployment's ingress / proxy configuration", resp2.StatusCode)}
 		}
 		if resp2.StatusCode == 401 {
 			return &AuthError{Message: fmt.Sprintf("invalid personal access token.\n  %s", body)}
@@ -253,7 +253,7 @@ func (c *Client) TestConnection(ctx context.Context) error {
 	if body != "" {
 		detail += fmt.Sprintf("\n  Response: %s", body)
 	}
-	return &OnyxAPIError{StatusCode: resp2.StatusCode, Detail: detail}
+	return &LumenAPIError{StatusCode: resp2.StatusCode, Detail: detail}
 }
 
 // ListAgents returns visible agents.
@@ -360,7 +360,7 @@ func (c *Client) UploadFile(ctx context.Context, filePath string) (*models.FileD
 	}
 
 	if len(snapshot.UserFiles) == 0 {
-		return nil, &OnyxAPIError{StatusCode: 400, Detail: "File upload returned no files"}
+		return nil, &LumenAPIError{StatusCode: 400, Detail: "File upload returned no files"}
 	}
 
 	uf := snapshot.UserFiles[0]

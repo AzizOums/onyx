@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/git"
 )
 
 // ResolveCommit resolves a commit-ish to a full commit SHA.

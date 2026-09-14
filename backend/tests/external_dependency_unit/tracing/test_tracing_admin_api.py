@@ -10,21 +10,21 @@ from typing import cast
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.models import User
-from onyx.db.tracing import delete_tracing_provider
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.manage.tracing import api as tracing_api
-from onyx.server.manage.tracing.api import (
+from lumen.db.models import User
+from lumen.db.tracing import delete_tracing_provider
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.manage.tracing import api as tracing_api
+from lumen.server.manage.tracing.api import (
     adopt_env_tracing_provider,
     disconnect_tracing_provider,
     list_tracing_providers,
     upsert_tracing_provider_endpoint,
 )
-from onyx.server.manage.tracing.models import (
+from lumen.server.manage.tracing.models import (
     TracingProviderTestRequest,
     TracingProviderUpsertRequest,
 )
-from onyx.tracing import provider_config
+from lumen.tracing import provider_config
 from shared_configs.enums import TracingProviderType
 
 # Handlers tolerate a None user (updated_by becomes null); cast to satisfy typing.
@@ -90,7 +90,7 @@ def test_disconnect_removes_db_row(db_session: Session) -> None:
 
 
 def test_validate_endpoint_rejects_missing_key(db_session: Session) -> None:
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         tracing_api.test_tracing_provider(
             TracingProviderTestRequest(provider_type=TracingProviderType.BRAINTRUST),
             _NO_USER,
@@ -99,7 +99,7 @@ def test_validate_endpoint_rejects_missing_key(db_session: Session) -> None:
 
 
 def test_adopt_env_without_env_raises(db_session: Session) -> None:
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         adopt_env_tracing_provider(TracingProviderType.BRAINTRUST, _NO_USER, db_session)
 
 
@@ -119,5 +119,5 @@ def test_adopt_env_copies_into_db_row(
 
 def test_multi_tenant_gate_rejects(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(tracing_api, "MULTI_TENANT", True)
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         tracing_api._reject_if_multi_tenant()

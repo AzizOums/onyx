@@ -21,7 +21,7 @@ output "port" {
 # Reported from the variable rather than the resource, because a database the
 # server ships is not one this module creates.
 output "db_name" {
-  description = "Name of the database Onyx connects to, whether this module created it or the server shipped it"
+  description = "Name of the database Lumen connects to, whether this module created it or the server shipped it"
   value       = var.db_name
 }
 

@@ -9,29 +9,29 @@ import {
 import { cn } from "@opal/utils";
 import Text from "@/refresh-components/texts/Text";
 import Truncated from "@/refresh-components/texts/Truncated";
-import { SvgOnyxLogo, SvgOnyxLogoTyped } from "@opal/logos";
+import { SvgLumenLogo, SvgLumenLogoTyped } from "@opal/logos";
 
 export interface LogoProps {
   folded?: boolean;
   size?: number;
   className?: string;
-  // Always render the real Onyx logo, ignoring enterprise white-label settings
-  // (custom logo / application name). Used by Onyx-branded surfaces like Craft.
-  onyxBranded?: boolean;
+  // Always render the real Lumen logo, ignoring enterprise white-label settings
+  // (custom logo / application name). Used by Lumen-branded surfaces like Craft.
+  lumenBranded?: boolean;
 }
 
-export function Logo({ folded, size, className, onyxBranded }: LogoProps) {
+export function Logo({ folded, size, className, lumenBranded }: LogoProps) {
   const t = useTranslations("common");
   const resolvedSize = size ?? DEFAULT_LOGO_SIZE_PX;
   const { enterprise, logoUrl } = useSettings();
   const logoDisplayStyle = enterprise?.logo_display_style;
   const applicationName = enterprise?.application_name;
 
-  if (onyxBranded) {
+  if (lumenBranded) {
     return folded ? (
-      <SvgOnyxLogo size={resolvedSize} className={cn("shrink-0", className)} />
+      <SvgLumenLogo size={resolvedSize} className={cn("shrink-0", className)} />
     ) : (
-      <SvgOnyxLogoTyped size={resolvedSize} className={className} />
+      <SvgLumenLogoTyped size={resolvedSize} className={className} />
     );
   }
 
@@ -51,7 +51,7 @@ export function Logo({ folded, size, className, onyxBranded }: LogoProps) {
       />
     </div>
   ) : (
-    <SvgOnyxLogo size={resolvedSize} className={cn("shrink-0", className)} />
+    <SvgLumenLogo size={resolvedSize} className={cn("shrink-0", className)} />
   );
 
   const renderNameAndPoweredBy = (opts: {
@@ -68,7 +68,7 @@ export function Logo({ folded, size, className, onyxBranded }: LogoProps) {
               <Truncated headingH3>{applicationName}</Truncated>
             )}
             {!NEXT_PUBLIC_DO_NOT_USE_TOGGLE_OFF_DANSWER_POWERED &&
-              !enterprise?.hide_onyx_branding && (
+              !enterprise?.hide_lumen_branding && (
                 <Text
                   secondaryBody
                   text03
@@ -98,8 +98,8 @@ export function Logo({ folded, size, className, onyxBranded }: LogoProps) {
   return applicationName ? (
     renderNameAndPoweredBy({ includeLogo: true, includeName: true })
   ) : folded ? (
-    <SvgOnyxLogo size={resolvedSize} className={cn("shrink-0", className)} />
+    <SvgLumenLogo size={resolvedSize} className={cn("shrink-0", className)} />
   ) : (
-    <SvgOnyxLogoTyped size={resolvedSize} className={className} />
+    <SvgLumenLogoTyped size={resolvedSize} className={className} />
   );
 }

@@ -13,9 +13,9 @@ Contract under test (observed through the admin response's ``actions`` view):
 - clearing an override means sending that action explicitly as ``ASK``.
 """
 
-from onyx.db.enums import EndpointPolicy, ExternalAppType
-from onyx.external_apps.providers.slack import SlackAction
-from onyx.server.features.build.external_apps.models import ExternalAppAdminResponse
+from lumen.db.enums import EndpointPolicy, ExternalAppType
+from lumen.external_apps.providers.slack import SlackAction
+from lumen.server.features.build.external_apps.models import ExternalAppAdminResponse
 from tests.integration.common_utils.managers.external_app import ExternalAppManager
 from tests.integration.common_utils.test_models import DATestUser
 

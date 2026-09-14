@@ -3,12 +3,12 @@ from typing import Any
 import httpx
 import pytest
 
-from onyx.db.enums import ExternalAppType
-from onyx.server.features.build.external_apps.models import (
+from lumen.db.enums import ExternalAppType
+from lumen.server.features.build.external_apps.models import (
     ExternalAppAdminResponse,
     ExternalAppUserResponse,
 )
-from onyx.utils.encryption import mask_credential_dict
+from lumen.utils.encryption import mask_credential_dict
 from tests.integration.common_utils.managers.external_app import ExternalAppManager
 from tests.integration.common_utils.managers.skill import SkillManager
 from tests.integration.common_utils.managers.user import UserManager

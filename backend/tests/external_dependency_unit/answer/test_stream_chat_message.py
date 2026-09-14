@@ -6,10 +6,10 @@ from uuid import UUID
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.chat.models import CreateChatSessionID
-from onyx.configs.constants import DocumentSource
-from onyx.server.query_and_chat.models import MessageResponseIDInfo
-from onyx.server.query_and_chat.streaming_models import (
+from lumen.chat.models import CreateChatSessionID
+from lumen.configs.constants import DocumentSource
+from lumen.server.query_and_chat.models import MessageResponseIDInfo
+from lumen.server.query_and_chat.streaming_models import (
     AgentResponseStart,
     GeneratedImage,
     ImageGenerationFinal,

@@ -16,15 +16,15 @@ from uuid import UUID, uuid4
 
 from mitmproxy import http
 
-from onyx.db.enums import EndpointPolicy, GatedAppKind
-from onyx.external_apps.matching.engine import (
+from lumen.db.enums import EndpointPolicy, GatedAppKind
+from lumen.external_apps.matching.engine import (
     AllMatchedActions,
     GatedTarget,
     MatchedAction,
 )
-from onyx.sandbox_proxy.addons.gate import _IdentityResolver
-from onyx.sandbox_proxy.credential_injection import CredentialResolver, InjectionContext
-from onyx.sandbox_proxy.identity import (
+from lumen.sandbox_proxy.addons.gate import _IdentityResolver
+from lumen.sandbox_proxy.credential_injection import CredentialResolver, InjectionContext
+from lumen.sandbox_proxy.identity import (
     ResolvedSandbox,
     SandboxIdentity,
     SandboxIPLookup,

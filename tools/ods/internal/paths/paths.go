@@ -21,9 +21,9 @@ func GitRoot() (string, error) {
 	return strings.TrimSpace(string(output)), nil
 }
 
-// DataDir returns the data directory for onyx-dev tools.
-// On Linux/macOS: ~/.local/share/onyx-dev/
-// On Windows: %LOCALAPPDATA%/onyx-dev/
+// DataDir returns the data directory for lumen-dev tools.
+// On Linux/macOS: ~/.local/share/lumen-dev/
+// On Windows: %LOCALAPPDATA%/lumen-dev/
 func DataDir() string {
 	var base string
 	if runtime.GOOS == "windows" {
@@ -45,12 +45,12 @@ func DataDir() string {
 			base = filepath.Join(home, ".local", "share")
 		}
 	}
-	return filepath.Join(base, "onyx-dev")
+	return filepath.Join(base, "lumen-dev")
 }
 
-// ConfigDir returns the per-user config directory for onyx-dev tools.
-// On Linux/macOS: ~/.config/onyx-dev/ (respects XDG_CONFIG_HOME)
-// On Windows:    %APPDATA%/onyx-dev/
+// ConfigDir returns the per-user config directory for lumen-dev tools.
+// On Linux/macOS: ~/.config/lumen-dev/ (respects XDG_CONFIG_HOME)
+// On Windows:    %APPDATA%/lumen-dev/
 func ConfigDir() string {
 	var base string
 	if runtime.GOOS == "windows" {
@@ -72,7 +72,7 @@ func ConfigDir() string {
 			base = filepath.Join(home, ".config")
 		}
 	}
-	return filepath.Join(base, "onyx-dev")
+	return filepath.Join(base, "lumen-dev")
 }
 
 // ConfigFilePath returns the path to the ods config file.
@@ -107,7 +107,7 @@ func BackendDir() (string, error) {
 // ResolveInBackend resolves one provided path to an absolute path inside the
 // backend directory, or fails loudly. Relative paths are tried against the
 // working directory, the backend directory, and the repository root, so the
-// 'backend/onyx/chat' (pre-commit) and 'onyx/chat' (backend-relative) selector
+// 'backend/lumen/chat' (pre-commit) and 'lumen/chat' (backend-relative) selector
 // forms work from any working directory. Every candidate is checked against the
 // backend boundary, so a selector cannot escape it with '..' segments.
 func ResolveInBackend(p string, backendDir string) (string, os.FileInfo, error) {

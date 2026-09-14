@@ -3,15 +3,15 @@ from typing import Any
 from opensearchpy import OpenSearch
 from opensearchpy.exceptions import NotFoundError
 
-from onyx.configs.app_configs import (
+from lumen.configs.app_configs import (
     OPENSEARCH_ADMIN_PASSWORD,
     OPENSEARCH_ADMIN_USERNAME,
     OPENSEARCH_HOST,
     OPENSEARCH_REST_API_PORT,
     OPENSEARCH_USE_SSL,
 )
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.search_settings import get_current_search_settings
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.search_settings import get_current_search_settings
 
 
 class vespa_fixture:

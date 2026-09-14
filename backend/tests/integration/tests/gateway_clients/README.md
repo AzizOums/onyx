@@ -1,7 +1,7 @@
 # Gateway Client Integration Tests
 
-Exercises the Onyx AI gateway's Anthropic (`ee/onyx/server/gateway/anthropic_passthrough.py`)
-and OpenAI (`ee/onyx/server/gateway/openai_passthrough.py`) passthrough endpoints with
+Exercises the Lumen AI gateway's Anthropic (`ee/lumen/server/gateway/anthropic_passthrough.py`)
+and OpenAI (`ee/lumen/server/gateway/openai_passthrough.py`) passthrough endpoints with
 REAL coding-agent CLIs: `@anthropic-ai/claude-code` and `@openai/codex`.
 
 ## Why this directory is different
@@ -11,7 +11,7 @@ Every other suite under `tests/integration` talks to an in-process FastAPI
 *subprocess*, which needs a real TCP listener. `conftest.py`'s
 `_real_api_server` fixture therefore:
 
-- Skips the whole module unless `GET {API_SERVER_URL}/health` returns the Onyx
+- Skips the whole module unless `GET {API_SERVER_URL}/health` returns the Lumen
   health payload (default `http://127.0.0.1:8080`) — you need a real,
   out-of-process dev `api_server` running, not just Postgres/Redis/etc.
 - Swaps the shared `tests.integration.common_utils.http_client` client for a

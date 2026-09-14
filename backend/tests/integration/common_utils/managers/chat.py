@@ -4,15 +4,15 @@ from uuid import UUID
 
 import httpx
 
-from onyx.context.search.models import SavedSearchDoc, SearchDoc
-from onyx.file_store.models import FileDescriptor
-from onyx.llm.override_models import LLMOverride
-from onyx.server.query_and_chat.models import (
+from lumen.context.search.models import SavedSearchDoc, SearchDoc
+from lumen.file_store.models import FileDescriptor
+from lumen.llm.override_models import LLMOverride
+from lumen.server.query_and_chat.models import (
     AUTO_PLACE_AFTER_LATEST_MESSAGE,
     ChatSessionCreationRequest,
     SendMessageRequest,
 )
-from onyx.server.query_and_chat.streaming_models import StreamingType
+from lumen.server.query_and_chat.streaming_models import StreamingType
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import (

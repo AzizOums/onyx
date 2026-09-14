@@ -17,14 +17,14 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.background.periodic_poller import (
+from lumen.background.periodic_poller import (
     PERIODIC_TASK_KV_PREFIX,
     _PeriodicTaskDef,
     _try_claim_task,
     _try_run_periodic_task,
 )
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from onyx.db.models import KVStore
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from lumen.db.models import KVStore
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 

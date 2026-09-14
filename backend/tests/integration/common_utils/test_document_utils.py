@@ -1,8 +1,8 @@
 import uuid
 from datetime import datetime, timezone
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import (
     ConnectorFailure,
     Document,
     DocumentFailure,

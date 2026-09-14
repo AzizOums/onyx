@@ -8,7 +8,7 @@ import (
 
 	"charm.land/lipgloss/v2"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/markdown"
+	"github.com/lumen-dot-app/lumen/cli/internal/markdown"
 )
 
 // entryKind is the type of chat entry.

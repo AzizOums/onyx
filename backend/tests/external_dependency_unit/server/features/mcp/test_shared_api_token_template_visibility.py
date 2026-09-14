@@ -9,27 +9,27 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     MCPAuthenticationPerformer,
     MCPAuthenticationType,
     MCPTransport,
 )
-from onyx.db.mcp import (
+from lumen.db.mcp import (
     create_connection_config,
     get_mcp_server_by_id,
     get_user_connection_config,
 )
-from onyx.server.features.mcp.api import (
+from lumen.server.features.mcp.api import (
     _db_mcp_server_to_api_mcp_server,
     _upsert_mcp_server,
 )
-from onyx.server.features.mcp.credentials import get_mcp_auth_template
-from onyx.server.features.mcp.models import (
+from lumen.server.features.mcp.credentials import get_mcp_auth_template
+from lumen.server.features.mcp.models import (
     MCPAuthTemplate,
     MCPConnectionData,
     MCPToolCreateRequest,
 )
-from onyx.utils.encryption import is_masked_credential
+from lumen.utils.encryption import is_masked_credential
 from tests.external_dependency_unit.conftest import create_test_user
 
 _LITERAL_HEADER_VALUE = "literal-secret-value"

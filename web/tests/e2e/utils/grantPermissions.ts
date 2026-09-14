@@ -1,16 +1,16 @@
 import type { Browser } from "@playwright/test";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import { Permission } from "@/lib/types";
 
 async function asAdmin<T>(
   browser: Browser,
-  fn: (api: OnyxApiClient) => Promise<T>
+  fn: (api: LumenApiClient) => Promise<T>
 ): Promise<T> {
   const context = await browser.newContext({
     storageState: "admin_auth.json",
   });
   try {
-    return await fn(new OnyxApiClient(context.request));
+    return await fn(new LumenApiClient(context.request));
   } finally {
     await context.close();
   }

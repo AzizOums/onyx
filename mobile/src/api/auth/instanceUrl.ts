@@ -3,7 +3,11 @@
 import { getApiPrefix } from "@/api/config";
 import type { AuthTypeMetadata } from "@/api/types";
 
-export const ONYX_CLOUD_URL = "https://cloud.onyx.app";
+// This build ships no hosted instance, so the connect screen starts empty and
+// shows this only as a placeholder shape. Set EXPO_PUBLIC_DEFAULT_SERVER_URL to
+// pre-fill your own server.
+export const DEFAULT_SERVER_URL = process.env.EXPO_PUBLIC_DEFAULT_SERVER_URL ?? "";
+export const SERVER_URL_PLACEHOLDER = "https://lumen.your-company.com";
 
 const PROBE_TIMEOUT_MS = 10_000;
 
@@ -11,7 +15,7 @@ const PROBE_TIMEOUT_MS = 10_000;
 export function normalizeServerUrl(input: string): string {
   const trimmed = input.trim();
   if (trimmed.length === 0) {
-    throw new Error("Enter your Onyx instance URL.");
+    throw new Error("Enter your Lumen instance URL.");
   }
   const withScheme = /^https?:\/\//i.test(trimmed)
     ? trimmed
@@ -28,7 +32,7 @@ export function normalizeServerUrl(input: string): string {
   return `${url.origin}${url.pathname}`.replace(/\/+$/, "");
 }
 
-// Reject non-Onyx responses (captive portal, HTML error page) so we don't commit a dead URL.
+// Reject non-Lumen responses (captive portal, HTML error page) so we don't commit a dead URL.
 // Servers older than the multi_tenant field serve auth_type instead.
 function isAuthTypeMetadata(value: unknown): value is AuthTypeMetadata {
   if (typeof value !== "object" || value === null) {
@@ -54,13 +58,13 @@ export async function probeAuthType(
       signal: controller.signal,
     });
   } catch {
-    throw new Error("Couldn't reach an Onyx instance at that address.");
+    throw new Error("Couldn't reach an Lumen instance at that address.");
   } finally {
     clearTimeout(timeout);
   }
 
   if (!res.ok) {
-    throw new Error("Couldn't reach an Onyx instance at that address.");
+    throw new Error("Couldn't reach an Lumen instance at that address.");
   }
 
   let body: unknown;
@@ -70,7 +74,7 @@ export async function probeAuthType(
     body = undefined;
   }
   if (!isAuthTypeMetadata(body)) {
-    throw new Error("That address doesn't look like an Onyx instance.");
+    throw new Error("That address doesn't look like an Lumen instance.");
   }
   return body;
 }

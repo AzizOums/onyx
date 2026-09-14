@@ -15,7 +15,7 @@ export default function SidePanelHeader({
   chatSessionId,
 }: SidePanelHeaderProps) {
   const t = useTranslations("chat");
-  const handleOpenInOnyx = () => {
+  const handleOpenInLumen = () => {
     const path = chatSessionId ? `/app?chatId=${chatSessionId}` : "/app";
     window.open(`${window.location.origin}${path}`, "_blank");
   };
@@ -33,8 +33,8 @@ export default function SidePanelHeader({
         <Button
           prominence="tertiary"
           icon={SvgExternalLink}
-          onClick={handleOpenInOnyx}
-          tooltip={t("nrf.sidePanelHeader.openInOnyxButton.tooltip")}
+          onClick={handleOpenInLumen}
+          tooltip={t("nrf.sidePanelHeader.openInLumenButton.tooltip")}
         />
       </div>
     </header>

@@ -59,7 +59,7 @@ export default function WelcomeMessage({
   } else if (isDefaultAgent) {
     content = (
       <Section
-        data-testid="onyx-logo"
+        data-testid="lumen-logo"
         flexDirection="column"
         alignItems="start"
         gap={2}

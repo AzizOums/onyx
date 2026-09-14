@@ -17,7 +17,7 @@ export interface BuildLlmSelection {
 
 export type ProviderKey = "anthropic" | "openai" | "openrouter";
 
-export const CRAFT_GATEWAY_PROVIDER = "onyx";
+export const CRAFT_GATEWAY_PROVIDER = "lumen";
 
 // The recommended model is each provider's `is_recommended_default`, sourced
 // server-side from recommended-models.json — never a hardcoded list here.
@@ -194,9 +194,9 @@ export function resolveSessionLlmSelection(
 
 // Tracks whether the user has dismissed the craft onboarding intro so it only
 // auto-shows once per user (mirrors the main app's
-// `onyx:onboardingCompleted:{userId}`).
+// `lumen:onboardingCompleted:{userId}`).
 function craftOnboardingSeenKey(userId: string): string {
-  return `onyx:craftOnboardingSeen:${userId}`;
+  return `lumen:craftOnboardingSeen:${userId}`;
 }
 
 export function getCraftOnboardingSeen(userId: string): boolean {

@@ -15,12 +15,12 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy import delete, text
 from sqlalchemy.orm import Session
 
-import onyx.auth.users as users_module
-from onyx.auth.users import UserManager
-from onyx.db.engine.async_sql_engine import get_async_session_context_manager
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import OAuthAccount, User
-from onyx.server.security.store import _build_env_defaults
+import lumen.auth.users as users_module
+from lumen.auth.users import UserManager
+from lumen.db.engine.async_sql_engine import get_async_session_context_manager
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.models import OAuthAccount, User
+from lumen.server.security.store import _build_env_defaults
 from tests.external_dependency_unit.conftest import create_test_user, delete_test_user
 
 _CALLBACK_TIMEOUT_SECONDS = 5

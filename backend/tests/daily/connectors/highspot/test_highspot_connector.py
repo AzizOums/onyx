@@ -7,9 +7,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.highspot.connector import HighspotConnector
-from onyx.connectors.models import Document, HierarchyNode
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.highspot.connector import HighspotConnector
+from lumen.connectors.models import Document, HierarchyNode
 from tests.utils.secret_names import TestSecret
 
 pytestmark = pytest.mark.secrets(
@@ -47,7 +47,7 @@ def highspot_connector(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_highspot_connector_basic(
@@ -85,7 +85,7 @@ def test_highspot_connector_basic(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_highspot_connector_slim(
@@ -109,7 +109,7 @@ def test_highspot_connector_slim(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_highspot_connector_poll_source(
@@ -152,7 +152,7 @@ def test_highspot_connector_poll_source(
     assert len(target_doc.sections) == 1
     section = target_doc.sections[0]
     # Highspot's link domain is tenant-specific (this sandbox uses
-    # sandbox-onyx.highspot.com), so compare against the item's own `url` fetched
+    # sandbox-lumen.highspot.com), so compare against the item's own `url` fetched
     # above instead of a hardcoded domain that would go stale on its own.
     assert section.link == target_item.get(
         "url", f"https://www.highspot.com/items/{target_doc_id}"

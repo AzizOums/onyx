@@ -109,9 +109,9 @@ func TestComposeCommandStacksFilesInOrder(t *testing.T) {
 	c := &Compose{docker: NewDocker(&fakeRunner{})}
 	cmd := c.Command("/root/deployment",
 		map[string]string{"HOST_PORT": "3000"},
-		[]string{"docker-compose.yml", "docker-compose.onyx-lite.yml"},
+		[]string{"docker-compose.yml", "docker-compose.lumen-lite.yml"},
 		"up", "-d", "--wait", "--wait-timeout", "600")
-	want := "docker compose -f docker-compose.yml -f docker-compose.onyx-lite.yml up -d --wait --wait-timeout 600"
+	want := "docker compose -f docker-compose.yml -f docker-compose.lumen-lite.yml up -d --wait --wait-timeout 600"
 	if got := argv(cmd); got != want {
 		t.Fatalf("argv = %q, want %q", got, want)
 	}

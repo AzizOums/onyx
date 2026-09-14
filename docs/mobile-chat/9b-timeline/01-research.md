@@ -5,7 +5,7 @@
 ## Requirement
 
 Port web's chat **agentic reasoning timeline** (`AgentTimeline` — reasoning/search/tool sub-steps with step
-containers, headers, icons, connector lines, collapse/expand) to the Onyx React Native + Expo mobile app
+containers, headers, icons, connector lines, collapse/expand) to the Lumen React Native + Expo mobile app
 (`mobile/`), at **web parity** (match web's look AND structure), extending the 9a foundation and registering
 into the PR-3 renderer dispatch. Backend is unchanged. This is the rich-chat phase that additionally builds the
 **`AgentTimeline` composition layer** that every later phase (search/fetch/tool renderers, 9c–9e) plugs into.
@@ -23,7 +23,7 @@ into the PR-3 renderer dispatch. Backend is unchanged. This is the rich-chat pha
 - **Web parity is required** (per `../05-pr-roadmap.md` PR 9a–9e callout): match web's look AND structure; port
   the step-container/header/icon/connector/collapse shape, don't invent a new mobile timeline. Document any
   platform-driven divergence.
-- **Chat layer is native** (`mobile/src/chat/`, NOT `@onyx-ai/shared`) per the PR-2 decision. Web is untouched.
+- **Chat layer is native** (`mobile/src/chat/`, NOT `@lumen-ai/shared`) per the PR-2 decision. Web is untouched.
   Backend is unchanged (reasoning packets already exist).
 
 ## Current status & reuse (from codebase scan — exact paths, validated by direct read)
@@ -61,7 +61,7 @@ into the PR-3 renderer dispatch. Backend is unchanged. This is the rich-chat pha
 
 **Backend (reasoning packets — already emitted, no backend change):** `ReasoningStart type="reasoning_start"`
 (no fields), `ReasoningDelta type="reasoning_delta" {reasoning: str}`, `ReasoningDone type="reasoning_done"`,
-from `backend/onyx/chat/llm_step.py`, carrying `Placement.turn_index/tab_index`. **There is NO `message_end` on
+from `backend/lumen/chat/llm_step.py`, carrying `Placement.turn_index/tab_index`. **There is NO `message_end` on
 the wire** — the whole turn completes only via `OverallStop (type="stop")`. **`SECTION_END` is usually
 client-synthesized** (web injects it into prior groups on a new `turn_index` and into all open groups on STOP —
 this is how a step is marked "complete"). `TopLevelBranching {num_parallel_branches}` is pre-parallel metadata.
@@ -90,7 +90,7 @@ this is how a step is marked "complete"). `TopLevelBranching {num_parallel_branc
 **Mobile primitives + gotchas (from render-infra scan):** available — `View`, `Text` (font+color enum), `Icon`,
 `Separator`, `Button`, `Card`, `Content/ContentAction`, `Spinner` (RN `Animated`, jest-safe), `StreamingMarkdown`
 (enriched-markdown; colors must resolve to concrete hex via `varsLight/varsDark` + `textPresets` from
-`@onyx-ai/shared/native` — NativeWind classes don't apply inside the markdown lib), `reanimated 4.3.1` (shimmer
+`@lumen-ai/shared/native` — NativeWind classes don't apply inside the markdown lib), `reanimated 4.3.1` (shimmer
 today; `ChatSurface` uses `LinearTransition/FadeIn/FadeOut`). **No `Collapsible`/`Accordion` primitive exists** —
 expand/collapse is net-new (ASK owner: port web UX vs compose reanimated). **No chevron-up** (rotate
 `chevron-down`); **no brain/reasoning icon** and **no plain circle** glyph (web reasoning uses `SvgCircle`) —

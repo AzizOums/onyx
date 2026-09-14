@@ -6,13 +6,13 @@ motivation isn't obvious from the diff.
 
 Related files:
 
-- `backend/onyx/server/features/build/sandbox/image/Dockerfile`
-- `backend/onyx/server/features/build/sandbox/image/initial-requirements.in`
-- `backend/onyx/server/features/build/sandbox/image/initial-requirements.txt`
-- `backend/onyx/server/features/build/sandbox/image/sandbox_daemon/snapshot.py`
-- `backend/onyx/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
-- `backend/onyx/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh`
-- `deployment/helm/charts/onyx/templates/sandbox-namespace.yaml`
+- `backend/lumen/server/features/build/sandbox/image/Dockerfile`
+- `backend/lumen/server/features/build/sandbox/image/initial-requirements.in`
+- `backend/lumen/server/features/build/sandbox/image/initial-requirements.txt`
+- `backend/lumen/server/features/build/sandbox/image/sandbox_daemon/snapshot.py`
+- `backend/lumen/server/features/build/sandbox/kubernetes/kubernetes_sandbox_manager.py`
+- `backend/lumen/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh`
+- `deployment/helm/charts/lumen/templates/sandbox-namespace.yaml`
 
 ## SHA-pinned base + helper images
 
@@ -33,7 +33,7 @@ drift.
 The sandbox image used to include a pod-side storage client for snapshot
 upload/download. That is no longer part of the architecture: the sidecar tars
 and untars local filesystem state, and the API server persists snapshot bytes
-through the normal Onyx FileStore.
+through the normal Lumen FileStore.
 
 Do not add AWS CLI, `s5cmd`, or provider-specific object-store CLIs back to the
 sandbox image for snapshots. If a future feature needs durable storage, route it
@@ -82,7 +82,7 @@ We keep only:
 - **Sandbox daemon dependencies**: `fastapi`, `uvicorn[standard]`,
   `pydantic`, `cryptography`.
 - **Skill-specific runtime**: `google-genai` (image-generation skill),
-  `onyx-cli`.
+  `lumen-cli`.
 
 We deliberately do **not** pre-install the heavy ML/CV stack
 (`opencv-python`, `scikit-learn`, `scikit-image`, `scipy`, `xgboost`,
@@ -99,7 +99,7 @@ The pptx skill needs LibreOffice + poppler-utils + extra fonts +
 pptxgenjs in the image (~700 MB). Skills themselves are pushed by the
 API server at session setup, but their **runtime tools** must be in
 the image already (the in-pod `soffice` / `pdftoppm` / `pptxgenjs` calls
-from `onyx/skills/builtin/pptx/scripts/`).
+from `lumen/skills/builtin/pptx/scripts/`).
 
 - Prod / default: `ENABLE_SKILLS=true` — full image, all skills work.
 - Dev kind clusters / CI: `ENABLE_SKILLS=false` — ~700 MB smaller, but
@@ -112,8 +112,8 @@ To toggle in dev:
 
 ```
 docker build --build-arg ENABLE_SKILLS=false \
-    -t onyxdotapp/sandbox:dev-noskills \
-    backend/onyx/server/features/build/sandbox/image
+    -t lumendotapp/sandbox:dev-noskills \
+    backend/lumen/server/features/build/sandbox/image
 ```
 
 If you add a new skill that depends on a heavy system package (Chrome,
@@ -131,7 +131,7 @@ Kubernetes uses a DaemonSet over the sandbox node pool
 
 This section previously recorded the opposite decision — that we accept
 cold pulls — on an estimate of ~3–6 s per pull from AZ-local bandwidth.
-Measurement contradicted it. Evicting `onyxdotapp/sandbox:latest` from a
+Measurement contradicted it. Evicting `lumendotapp/sandbox:latest` from a
 kind node and timing `crictl pull` (1070 MB compressed, 34 MB/s
 effective) gave:
 
@@ -175,8 +175,8 @@ they would never even be collected.
   long-lived pod pins them, and a DaemonSet also covers nodes that join
   after install.
 - **The image ref *and pull policy* are shared with the sandbox
-  PodTemplate**, via the `onyx.sandboxImage` /
-  `onyx.sandboxImagePullPolicy` helpers. A drifted tag pins layers nobody
+  PodTemplate**, via the `lumen.sandboxImage` /
+  `lumen.sandboxImagePullPolicy` helpers. A drifted tag pins layers nobody
   uses while every sandbox still cold-pulls. The pull policy is part of
   that, not a detail: pinning the prepuller to `IfNotPresent` while the
   sandbox pods run `Always` reproduces the same drift one level down —
@@ -225,7 +225,7 @@ and the cutoff is exclusive — while keeping the object's name. Every
 cluster already holding the class then failed to upgrade:
 
 ```
-Error: UPGRADE FAILED: cannot patch "onyx-onyx-sandbox-image-prepuller"
+Error: UPGRADE FAILED: cannot patch "lumen-lumen-sandbox-image-prepuller"
 with kind PriorityClass: ... value: Forbidden: may not be changed in an
 update.
 ```
@@ -324,7 +324,7 @@ long-lived service also left a container idling forever for no reason
 beyond satisfying `docker compose up --wait` — which `replicas: 0` sidesteps
 entirely, since there is nothing for the wait to observe.
 
-Do not warm at api_server startup. Blocking there would put all of Onyx's
+Do not warm at api_server startup. Blocking there would put all of Lumen's
 readiness behind the registry, and not just on first install: `:latest`
 is the default and is in `_MUTABLE_SANDBOX_IMAGE_TAGS`, for which
 `_ensure_sandbox_image` skips the local-presence check and always pulls.
@@ -339,13 +339,13 @@ the host's image store, so whichever pull happened first covers it.
 ### Private registries
 
 Relevant only if you mirror the sandbox image into your own registry;
-the default `onyxdotapp/sandbox` on Docker Hub is public and needs no
+the default `lumendotapp/sandbox` on Docker Hub is public and needs no
 credentials.
 
 **Attach the pull secret to the sandbox ServiceAccount. Chart-level
 `imagePullSecrets` will not work for sandbox workloads.** Both the
 prepuller and the sandbox pods run in `SANDBOX_NAMESPACE`
-(`onyx-sandboxes` by default), while `.Values.imagePullSecrets` names
+(`lumen-sandboxes` by default), while `.Values.imagePullSecrets` names
 secrets in the *release* namespace — and a kubelet resolves an
 imagePullSecret in the pod's own namespace. Listing those names on a
 sandbox-namespace pod points at secrets that do not exist there.
@@ -358,7 +358,7 @@ leaves the real account uncredentialed and every pull failing:
 ```bash
 # Chart defaults. Override to match configMap.SANDBOX_NAMESPACE and
 # configMap.SANDBOX_SERVICE_ACCOUNT_NAME if your deployment sets them.
-SANDBOX_NS=onyx-sandboxes
+SANDBOX_NS=lumen-sandboxes
 SANDBOX_SA=sandbox
 
 kubectl -n "$SANDBOX_NS" create secret docker-registry regcred \
@@ -431,8 +431,8 @@ Pick up node-image baking if either of:
 
 ## Recorded benchmark — 2026-05-21
 
-Captured on a local `kind-onyx-dev` cluster, `REPS=3` cold + warm runs
-per image via `backend/onyx/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh`.
+Captured on a local `kind-lumen-dev` cluster, `REPS=3` cold + warm runs
+per image via `backend/lumen/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh`.
 Cold = `crictl rmi` + `kind load` + pod create + `kubectl wait Ready`;
 warm = pod create + Ready with image already on the node.
 
@@ -469,7 +469,7 @@ Caveats:
 The harness lives at:
 
 ```
-backend/onyx/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh
+backend/lumen/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh
 ```
 
 It accepts one or more locally-built sandbox image tags and, per image,
@@ -480,7 +480,7 @@ pod-create→Ready. Image sizes are read from `docker image inspect`.
 
 ### Prereqs
 
-- Local kind cluster on the `kind-onyx-dev` context (see
+- Local kind cluster on the `kind-lumen-dev` context (see
   `docs/craft/dev/local-kubernetes.md`). The script refuses to run against
   any other kubectl context as a safety guard.
 - Tools on `$PATH`: `docker`, `kind`, `kubectl`, `python3`.
@@ -489,15 +489,15 @@ pod-create→Ready. Image sizes are read from `docker image inspect`.
 
 ```bash
 # 1. Build current dev image + a candidate you want to compare
-make craft-sandbox-image            # → onyxdotapp/sandbox:dev
+make craft-sandbox-image            # → lumendotapp/sandbox:dev
 docker build --build-arg ENABLE_SKILLS=false \
-    -t onyxdotapp/sandbox:candidate \
-    backend/onyx/server/features/build/sandbox/image
+    -t lumendotapp/sandbox:candidate \
+    backend/lumen/server/features/build/sandbox/image
 
 # 2. Benchmark both (3 reps each scenario by default)
-REPS=3 backend/onyx/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh \
-    onyxdotapp/sandbox:dev \
-    onyxdotapp/sandbox:candidate
+REPS=3 backend/lumen/server/features/build/sandbox/kubernetes/scripts/bench-sandbox-spinup.sh \
+    lumendotapp/sandbox:dev \
+    lumendotapp/sandbox:candidate
 ```
 
 Output is a per-image table of image size + min/median/max latency for
@@ -508,8 +508,8 @@ each scenario, ready to paste into a PR description.
 | Var | Default | Notes |
 |---|---|---|
 | `REPS` | `3` | Iterations per scenario per image. |
-| `NS` | `onyx-sandboxes` | Namespace bench pods live in (auto-created). |
-| `KIND_CLUSTER` | `onyx-dev` | Used for `kind load --name` + context check. |
+| `NS` | `lumen-sandboxes` | Namespace bench pods live in (auto-created). |
+| `KIND_CLUSTER` | `lumen-dev` | Used for `kind load --name` + context check. |
 | `KIND_NODE` | `<cluster>-control-plane` | Node where `crictl rmi` runs. |
 | `WAIT_TIMEOUT` | `300s` | `kubectl wait` timeout per pod. |
 

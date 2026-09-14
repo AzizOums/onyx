@@ -105,7 +105,7 @@ export function useSettings(): AppSettings {
   return {
     ...core,
     enterprise: enterprise ?? null,
-    appName: enterprise?.application_name?.trim() || "Onyx",
+    appName: enterprise?.application_name?.trim() || "Lumen",
     logoUrl: enterprise?.use_custom_logo
       ? `/api/enterprise-settings/logo?v=${logoBuster}`
       : null,

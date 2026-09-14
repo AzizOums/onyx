@@ -12,6 +12,7 @@ import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import { Button } from "@opal/components";
 import { SvgPlusCircle } from "@opal/icons";
 import { DOCS_ADMINS_PATH } from "@/lib/constants";
+import { docsChunk } from "@/lib/docs";
 
 const route = ADMIN_ROUTES.SLACK_BOTS;
 
@@ -57,15 +58,9 @@ function Main() {
 
       <p className="mb-6 text-sm text-muted-foreground">
         {t.rich("intro.docsPrompt.text", {
-          link: (chunks) => (
-            <a
-              className="text-blue-500 hover:underline"
-              href={`${DOCS_ADMINS_PATH}/getting_started/slack_bot_setup`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {chunks}
-            </a>
+          link: docsChunk(
+            "/admins/getting_started/slack_bot_setup",
+            "text-blue-500 hover:underline"
           ),
         })}
       </p>

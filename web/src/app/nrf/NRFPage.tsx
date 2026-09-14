@@ -40,7 +40,7 @@ import { Spacer } from "@opal/components";
 import { DEFAULT_CONTEXT_TOKENS } from "@/lib/constants";
 import { SvgUser, SvgMenu, SvgAlertTriangle } from "@opal/icons";
 import { useAppBackground } from "@/providers/AppBackgroundProvider";
-import { MinimalOnyxDocument } from "@/lib/search/interfaces";
+import { MinimalLumenDocument } from "@/lib/search/interfaces";
 import DocumentsSidebar from "@/sections/document-sidebar/DocumentsSidebar";
 import PreviewModal from "@/sections/modals/PreviewModal";
 import { useQueryController } from "@/providers/QueryControllerProvider";
@@ -58,7 +58,7 @@ const AVAILABLE_CONTEXT_TOKENS = Number(DEFAULT_CONTEXT_TOKENS) * 0.5;
 
 export default function NRFPage({ isSidePanel = false }: NRFPageProps) {
   const t = useTranslations("chat");
-  const { setUseOnyxAsNewTab } = useNRFPreferences();
+  const { setUseLumenAsNewTab } = useNRFPreferences();
 
   const searchParams = useSearchParams();
   // Shared with the tools popover in AppInputBar below. Mounted by the route.
@@ -146,7 +146,7 @@ export default function NRFPage({ isSidePanel = false }: NRFPageProps) {
   const [tabReadingEnabled, setTabReadingEnabled] = useState<boolean>(false);
   const [currentTabUrl, setCurrentTabUrl] = useState<string | null>(null);
   const [presentingDocument, setPresentingDocument] =
-    useState<MinimalOnyxDocument | null>(null);
+    useState<MinimalLumenDocument | null>(null);
 
   // Document sidebar state (from store)
   const documentSidebarVisible = useDocumentSidebarVisible();
@@ -240,18 +240,18 @@ export default function NRFPage({ isSidePanel = false }: NRFPageProps) {
     setSettingsOpen((prev) => !prev);
   };
 
-  // If user toggles the "Use Onyx" switch to off, prompt a modal
-  const handleUseOnyxToggle = (checked: boolean) => {
+  // If user toggles the "Use Lumen" switch to off, prompt a modal
+  const handleUseLumenToggle = (checked: boolean) => {
     if (!checked) {
       setShowTurnOffModal(true);
     } else {
-      setUseOnyxAsNewTab(true);
+      setUseLumenAsNewTab(true);
       sendSetDefaultNewTabMessage(true);
     }
   };
 
   const confirmTurnOff = () => {
-    setUseOnyxAsNewTab(false);
+    setUseLumenAsNewTab(false);
     setShowTurnOffModal(false);
     sendSetDefaultNewTabMessage(false);
   };
@@ -603,7 +603,7 @@ export default function NRFPage({ isSidePanel = false }: NRFPageProps) {
           <SettingsPanel
             settingsOpen={settingsOpen}
             toggleSettings={toggleSettings}
-            handleUseOnyxToggle={handleUseOnyxToggle}
+            handleUseLumenToggle={handleUseLumenToggle}
           />
 
           <Modal open={showTurnOffModal} onOpenChange={setShowTurnOffModal}>

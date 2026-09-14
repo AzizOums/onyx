@@ -7,21 +7,21 @@ from collections.abc import Callable
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import Sandbox, User
-from onyx.server.features.build.db.user_library import (
+from lumen.db.enums import SandboxStatus
+from lumen.db.models import Sandbox, User
+from lumen.server.features.build.db.user_library import (
     create_directory_record,
     fetch_user_file_for_user,
     get_or_create_craft_connector,
     set_sync_disabled,
     store_user_file,
 )
-from onyx.server.features.build.sandbox.user_library import (
+from lumen.server.features.build.sandbox.user_library import (
     USER_LIBRARY_MOUNT_PATH,
     build_user_library_fileset,
     sync_user_library_to_active_sandboxes,
 )
-from onyx.server.features.build.session.sandbox_lifecycle import (
+from lumen.server.features.build.session.sandbox_lifecycle import (
     build_managed_content_payload,
     push_managed_content,
 )
@@ -53,7 +53,7 @@ def _patch_user_library_manager(
     stub: StubSandboxManager,
 ) -> None:
     monkeypatch.setattr(
-        "onyx.server.features.build.sandbox.user_library.get_sandbox_manager",
+        "lumen.server.features.build.sandbox.user_library.get_sandbox_manager",
         lambda: stub,
     )
 

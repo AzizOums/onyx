@@ -10,8 +10,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/ui"
-	"github.com/onyx-dot-app/onyx/cli/internal/version"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/ui"
+	"github.com/lumen-dot-app/lumen/cli/internal/version"
 )
 
 // Compose progress formats, richest first: json carries per-layer byte

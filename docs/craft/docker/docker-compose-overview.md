@@ -1,6 +1,6 @@
-# Running Onyx Craft on Docker Compose
+# Running Lumen Craft on Docker Compose
 
-This guide walks through standing up Onyx Craft on the docker-compose
+This guide walks through standing up Lumen Craft on the docker-compose
 backend with the `opencode serve` HTTP transport (`AGENT_TRANSPORT=serve`).
 It covers the happy path and every gotcha encountered during initial bring-up
 on macOS, so an agent can follow it without re-discovering each issue.
@@ -15,19 +15,19 @@ docker-compose deployers.
 
 ```bash
 # 1. Stage compose files (they're not in any release tag yet).
-WT=/path/to/onyx/checkout            # this repo, checked out on a branch with the Docker backend
-mkdir -p ~/onyx_data/deployment ~/onyx_data/data/nginx
-cp "$WT"/deployment/docker_compose/docker-compose.yml          ~/onyx_data/deployment/
-cp "$WT"/deployment/docker_compose/docker-compose.craft.yml    ~/onyx_data/deployment/
-cp "$WT"/deployment/docker_compose/env.template                ~/onyx_data/deployment/
-cp "$WT"/deployment/data/nginx/app.conf.template               ~/onyx_data/data/nginx/
-cp "$WT"/deployment/data/nginx/run-nginx.sh                    ~/onyx_data/data/nginx/
+WT=/path/to/lumen/checkout            # this repo, checked out on a branch with the Docker backend
+mkdir -p ~/lumen_data/deployment ~/lumen_data/data/nginx
+cp "$WT"/deployment/docker_compose/docker-compose.yml          ~/lumen_data/deployment/
+cp "$WT"/deployment/docker_compose/docker-compose.craft.yml    ~/lumen_data/deployment/
+cp "$WT"/deployment/docker_compose/env.template                ~/lumen_data/deployment/
+cp "$WT"/deployment/data/nginx/app.conf.template               ~/lumen_data/data/nginx/
+cp "$WT"/deployment/data/nginx/run-nginx.sh                    ~/lumen_data/data/nginx/
 
 # 2. Run installer in --local mode with craft.
-bash "$WT"/deployment/docker_compose/install.sh --local --include-craft --dir ~/onyx_data
+bash "$WT"/deployment/docker_compose/install.sh --local --include-craft --dir ~/lumen_data
 
 # 3. Fix the .env (existing-env install path skips these; see "Required env vars" below).
-cat >> ~/onyx_data/deployment/.env <<'ENV'
+cat >> ~/lumen_data/deployment/.env <<'ENV'
 ENABLE_CRAFT=true
 SANDBOX_BACKEND=docker
 HOST_PORT=3001
@@ -38,7 +38,7 @@ ENV
 #    unreleased PR" below.
 
 # 5. Bring it up.
-(cd ~/onyx_data/deployment && docker compose -f docker-compose.yml -f docker-compose.craft.yml up -d)
+(cd ~/lumen_data/deployment && docker compose -f docker-compose.yml -f docker-compose.craft.yml up -d)
 
 # 6. Configure an LLM provider via Admin UI at http://localhost:3001
 #    (Craft will fail with "No default LLM model found" until you do this.)
@@ -49,8 +49,8 @@ ENV
 ## Prerequisites
 
 - Docker Desktop, OrbStack, or Docker Engine on Linux. The Craft overlay uses
-  the private `onyx-craft-api` bridge alias on every platform.
-- ~80 GB free Docker disk. Onyx's full stack pulls ~30 GB; local image
+  the private `lumen-craft-api` bridge alias on every platform.
+- ~80 GB free Docker disk. Lumen's full stack pulls ~30 GB; local image
   builds add another 10–15 GB; build cache balloons to 40+ GB if you let
   it. See [OpenSearch read-only block](#opensearch-flipped-into-read-only-mode-disk-full) below.
 - An LLM API key (Anthropic / OpenAI / etc).
@@ -59,16 +59,16 @@ ENV
 
 ## Required env vars
 
-These must end up in `~/onyx_data/deployment/.env` after install:
+These must end up in `~/lumen_data/deployment/.env` after install:
 
 | Variable | Required? | Notes |
 |---|---|---|
 | `ENABLE_CRAFT=true` | yes | `--include-craft` sets this (fresh installs and existing `.env`). |
 | `SANDBOX_BACKEND=docker` | yes | `--include-craft` sets this alongside `ENABLE_CRAFT`. |
-| `ONYX_SERVER_URL` | optional | Complete API base URL. The Craft overlay defaults to `http://onyx-craft-api:8080` on the private sandbox bridge. Override with a public URL only when desired, including its `/api` path prefix. |
+| `LUMEN_SERVER_URL` | optional | Complete API base URL. The Craft overlay defaults to `http://lumen-craft-api:8080` on the private sandbox bridge. Override with a public URL only when desired, including its `/api` path prefix. |
 | `HOST_PORT=3001` | only if 3000 conflicts | Default is 3000; nginx binds this on the host. Free up 3000 or change here. |
 | `IMAGE_TAG` | optional | Uses the normal compose default (`latest`) unless set. Craft uses this same tag for the sandbox image, so do not set a separate sandbox image for normal deployments. There are **no** Craft-specific app/backend images — Craft is enabled at runtime via `ENABLE_CRAFT=true` (above). See [image architecture](../infra/image-architecture.md). |
-| `ONYX_BACKEND_IMAGE` | only when running unreleased PRs | Lets you override just the backend image without forcing model-server / web-server to the same tag. |
+| `LUMEN_BACKEND_IMAGE` | only when running unreleased PRs | Lets you override just the backend image without forcing model-server / web-server to the same tag. |
 | `AGENT_TRANSPORT=serve` | for serve transport | `docker-compose.craft.yml` defaults this to `serve` (post-#11402); override to `acp` for the rollback path. Reaches the sandbox container via env passthrough. |
 | `ENABLE_OPENCODE_DEBUGGING=true` | optional | Dev-only pod-log viewer button in Craft UI. Default `false`. |
 
@@ -89,24 +89,24 @@ release. `docker-compose.craft.yml` doesn't exist in any release tag yet
 — craft is `main`-only. Pre-stage from a checkout:
 
 ```bash
-WT=/path/to/onyx
-mkdir -p ~/onyx_data/deployment ~/onyx_data/data/nginx
-cp "$WT"/deployment/docker_compose/docker-compose.yml          ~/onyx_data/deployment/
-cp "$WT"/deployment/docker_compose/docker-compose.craft.yml    ~/onyx_data/deployment/
-cp "$WT"/deployment/docker_compose/env.template                ~/onyx_data/deployment/
-cp "$WT"/deployment/data/nginx/app.conf.template               ~/onyx_data/data/nginx/
-cp "$WT"/deployment/data/nginx/run-nginx.sh                    ~/onyx_data/data/nginx/
+WT=/path/to/lumen
+mkdir -p ~/lumen_data/deployment ~/lumen_data/data/nginx
+cp "$WT"/deployment/docker_compose/docker-compose.yml          ~/lumen_data/deployment/
+cp "$WT"/deployment/docker_compose/docker-compose.craft.yml    ~/lumen_data/deployment/
+cp "$WT"/deployment/docker_compose/env.template                ~/lumen_data/deployment/
+cp "$WT"/deployment/data/nginx/app.conf.template               ~/lumen_data/data/nginx/
+cp "$WT"/deployment/data/nginx/run-nginx.sh                    ~/lumen_data/data/nginx/
 ```
 
 ### 2. Run the installer
 
 ```bash
-bash "$WT"/deployment/docker_compose/install.sh --local --include-craft --dir ~/onyx_data
+bash "$WT"/deployment/docker_compose/install.sh --local --include-craft --dir ~/lumen_data
 ```
 
 `--local` skips downloads and uses the pre-staged files. `--include-craft`
 opts into the Docker sandbox backend. `--dir` points at the staged directory —
-without it the installer defaults to `~/.config/onyx`.
+without it the installer defaults to `~/.config/lumen`.
 
 The installer is **interactive** — it prompts only when stdin is a terminal,
 so piping `2\n\n` as stdin does not work. Either run it from a terminal or
@@ -122,7 +122,7 @@ On an existing `.env`, `--include-craft` writes `ENABLE_CRAFT=true` and
 Set `HOST_PORT` only when the default port is unavailable:
 
 ```bash
-cat >> ~/onyx_data/deployment/.env <<'ENV'
+cat >> ~/lumen_data/deployment/.env <<'ENV'
 HOST_PORT=3001
 ENV
 ```
@@ -133,17 +133,17 @@ vars (see next section).
 ### 4. Bring up the stack
 
 ```bash
-cd ~/onyx_data/deployment
+cd ~/lumen_data/deployment
 docker compose -f docker-compose.yml -f docker-compose.craft.yml up -d
 ```
 
-The compose file references the `onyx_craft_sandbox` network as
+The compose file references the `lumen_craft_sandbox` network as
 `external: true`. The installer creates it *only on the fresh-install
 path*. If you're updating an existing install with `--include-craft`,
 create it manually:
 
 ```bash
-docker network create onyx_craft_sandbox
+docker network create lumen_craft_sandbox
 ```
 
 ### 5. Configure an LLM provider
@@ -161,7 +161,7 @@ ValueError: No default LLM model found
 Click **Craft** in the sidebar, send a prompt. Watch the api_server logs:
 
 ```bash
-docker logs -f onyx-api_server-1 2>&1 | grep -E "SANDBOX-SERVE|SESSION-LIFECYCLE"
+docker logs -f lumen-api_server-1 2>&1 | grep -E "SANDBOX-SERVE|SESSION-LIFECYCLE"
 ```
 
 You should see:
@@ -183,9 +183,9 @@ Build the affected images locally.
 ### Backend image
 
 ```bash
-cd /path/to/onyx
+cd /path/to/lumen
 docker build \
-    -t onyxdotapp/onyx-backend:craft-pr<N> \
+    -t lumendotapp/lumen-backend:craft-pr<N> \
     -f backend/Dockerfile \
     backend/
 ```
@@ -196,13 +196,13 @@ no Craft-specific backend image flavor.
 Then in `.env`:
 
 ```
-ONYX_BACKEND_IMAGE=onyxdotapp/onyx-backend:craft-pr<N>
+LUMEN_BACKEND_IMAGE=lumendotapp/lumen-backend:craft-pr<N>
 ```
 
 **Do not** change `IMAGE_TAG` to point at your PR build — `IMAGE_TAG`
 applies to *every* image referenced in the compose file (model-server,
 web-server, etc.), and Docker will try to pull
-`onyxdotapp/onyx-model-server:craft-pr<N>` and fail. `ONYX_BACKEND_IMAGE`
+`lumendotapp/lumen-model-server:craft-pr<N>` and fail. `LUMEN_BACKEND_IMAGE`
 is a backend-only override.
 
 ### Sandbox image
@@ -216,9 +216,9 @@ Build the sandbox image:
 
 ```bash
 docker build --network=host \
-    -t onyxdotapp/sandbox:pr<N> \
-    -f backend/onyx/server/features/build/sandbox/image/Dockerfile \
-    backend/onyx/server/features/build/sandbox/image/
+    -t lumendotapp/sandbox:pr<N> \
+    -f backend/lumen/server/features/build/sandbox/image/Dockerfile \
+    backend/lumen/server/features/build/sandbox/image/
 ```
 
 `--network=host` bypasses Docker Desktop's HTTP proxy if `deb.debian.org`
@@ -229,14 +229,14 @@ the Debian apt mirror.
 Then in `.env`:
 
 ```
-SANDBOX_CONTAINER_IMAGE=onyxdotapp/sandbox:pr<N>
+SANDBOX_CONTAINER_IMAGE=lumendotapp/sandbox:pr<N>
 ```
 
 After updating `.env`, force-recreate api_server + background so they
 pick up the new env:
 
 ```bash
-cd ~/onyx_data/deployment
+cd ~/lumen_data/deployment
 docker compose -f docker-compose.yml -f docker-compose.craft.yml \
     up -d --no-build --force-recreate api_server background
 ```
@@ -244,7 +244,7 @@ docker compose -f docker-compose.yml -f docker-compose.craft.yml \
 `--no-build` is important — without it, compose tries to *build* the
 image (using the `build:` directive that's also in the compose file), and
 fails because the relative `../../backend` build context doesn't resolve
-from `~/onyx_data/deployment`.
+from `~/lumen_data/deployment`.
 
 ---
 
@@ -252,7 +252,7 @@ from `~/onyx_data/deployment`.
 
 ### macOS bash 3.2: install script aborts with `unbound variable`
 
-Symptom (running `curl -fsSL …/install_onyx.sh | bash`):
+Symptom (running `curl -fsSL …/install_lumen.sh | bash`):
 
 ```
 /bin/bash: DOCKER_SUDO[@]: unbound variable
@@ -321,11 +321,11 @@ run_docker() {
 Symptom:
 
 ```
-network onyx_craft_sandbox declared as external, but could not be found
-✗ Failed to start Onyx services
+network lumen_craft_sandbox declared as external, but could not be found
+✗ Failed to start Lumen services
 ```
 
-Cause: install.sh's `docker network create onyx_craft_sandbox` runs
+Cause: install.sh's `docker network create lumen_craft_sandbox` runs
 only inside the fresh-install branch (`if [ ! -f $ENV_FILE ]`). When
 the script detects an existing `.env` it takes the update path and skips
 network creation entirely.
@@ -335,14 +335,14 @@ gate so it runs whenever `--include-craft` is set:
 
 ```bash
 if [ "$INCLUDE_CRAFT" = true ]; then
-    SANDBOX_NET="${SANDBOX_DOCKER_NETWORK:-onyx_craft_sandbox}"
+    SANDBOX_NET="${SANDBOX_DOCKER_NETWORK:-lumen_craft_sandbox}"
     if ! run_docker docker network inspect "$SANDBOX_NET" >/dev/null 2>&1; then
         run_docker docker network create "$SANDBOX_NET" >/dev/null
     fi
 fi
 ```
 
-Workaround until fixed: `docker network create onyx_craft_sandbox` manually.
+Workaround until fixed: `docker network create lumen_craft_sandbox` manually.
 
 ### `docker-compose.craft.yml` doesn't pass AGENT_TRANSPORT through (pre-#11402)
 
@@ -395,13 +395,13 @@ See "Running an unreleased PR".
 ### `IMAGE_TAG` applies to every image
 
 Symptom: pulling fails with `No such image:
-onyxdotapp/onyx-model-server:craft-pr<N>` after setting
+lumendotapp/lumen-model-server:craft-pr<N>` after setting
 `IMAGE_TAG=craft-pr<N>`.
 
 Cause: `IMAGE_TAG` is referenced by the compose file's `image:` lines
 for *all* services, not just the backend.
 
-Fix: use `ONYX_BACKEND_IMAGE` to override just the backend image.
+Fix: use `LUMEN_BACKEND_IMAGE` to override just the backend image.
 
 ### `compose up --force-recreate` triggers a build
 
@@ -411,13 +411,13 @@ not found` when the image-tag points at a local-only tag.
 Cause: when `image:` lookup fails to pull from registry, compose falls
 back to the `build:` directive in the compose file. The build context
 (`../../backend`) is relative to the compose file's directory, which
-won't resolve from `~/onyx_data/deployment`.
+won't resolve from `~/lumen_data/deployment`.
 
 Fix: pass `--no-build` to `docker compose up`.
 
 ### `compose down/up` leaves orphan containers
 
-Symptom: `Conflict. The container name "/onyx-cache-1" is already in
+Symptom: `Conflict. The container name "/lumen-cache-1" is already in
 use by container "…"` even though `down` reported it was removed.
 
 Cause: a previous `up --force-recreate` interleaved with a partial
@@ -466,7 +466,7 @@ Fix:
 ```bash
 lsof -nP -iTCP:3000 -sTCP:LISTEN     # find PID
 # either kill it, or:
-echo "HOST_PORT=3001" >> ~/onyx_data/deployment/.env
+echo "HOST_PORT=3001" >> ~/lumen_data/deployment/.env
 # then bring up the stack; access at http://localhost:3001
 ```
 
@@ -501,7 +501,7 @@ thinks exists but can't reach.
 Fix:
 
 ```bash
-docker exec onyx-relational_db-1 psql -U postgres -c \
+docker exec lumen-relational_db-1 psql -U postgres -c \
     "DELETE FROM sandbox WHERE id = '<sandbox-uuid>';"
 ```
 
@@ -521,8 +521,8 @@ Fix: kill the container + its volume:
 
 ```bash
 docker rm -f sandbox-<id>
-docker volume rm onyx-craft-sandbox-<id>
-docker exec onyx-relational_db-1 psql -U postgres -c \
+docker volume rm lumen-craft-sandbox-<id>
+docker exec lumen-relational_db-1 psql -U postgres -c \
     "DELETE FROM sandbox WHERE id = '<full-uuid>';"
 ```
 
@@ -534,15 +534,15 @@ Next Craft prompt re-provisions with the current code's env injection.
 
 1. **API server has the serve methods** (post-#11402 code is loaded):
    ```bash
-   docker exec onyx-api_server-1 grep -c "_serve_base_url\|_read_opencode_password" \
-       /app/onyx/server/features/build/sandbox/docker/docker_sandbox_manager.py
+   docker exec lumen-api_server-1 grep -c "_serve_base_url\|_read_opencode_password" \
+       /app/lumen/server/features/build/sandbox/docker/docker_sandbox_manager.py
    # Expected: 2
    ```
 
 2. **`SandboxBackend.DOCKER` exists** (post-#11222 code is loaded):
    ```bash
-   docker exec onyx-api_server-1 python -c \
-       "from onyx.server.features.build.configs import SandboxBackend; print(list(SandboxBackend))"
+   docker exec lumen-api_server-1 python -c \
+       "from lumen.server.features.build.configs import SandboxBackend; print(list(SandboxBackend))"
    # Expected: [..., <SandboxBackend.DOCKER: 'docker'>]
    ```
 
@@ -567,7 +567,7 @@ Next Craft prompt re-provisions with the current code's env injection.
 
 6. **opencode-serve is reachable** from api_server:
    ```bash
-   docker exec onyx-api_server-1 curl -fsS \
+   docker exec lumen-api_server-1 curl -fsS \
        -u "opencode:$(docker inspect sandbox-<id8> --format '{{range .Config.Env}}{{println .}}{{end}}' \
                        | grep '^OPENCODE_SERVER_PASSWORD=' | cut -d= -f2-)" \
        http://sandbox-<id8>:4096/doc \
@@ -577,7 +577,7 @@ Next Craft prompt re-provisions with the current code's env injection.
 
 7. **Logs show the full serve-transport sequence** when a prompt is sent:
    ```bash
-   docker logs -f onyx-api_server-1 2>&1 | grep -E "SANDBOX-SERVE|SESSION-LIFECYCLE"
+   docker logs -f lumen-api_server-1 2>&1 | grep -E "SANDBOX-SERVE|SESSION-LIFECYCLE"
    ```
    You should see `ensure_opencode_session`, `Created PodEventBus`,
    `opencode-serve ready`, `_send_message_via_serve`, `send_message completed`
@@ -589,12 +589,12 @@ Next Craft prompt re-provisions with the current code's env injection.
 
 ```bash
 # Stop the stack (keeps data):
-cd ~/onyx_data/deployment
+cd ~/lumen_data/deployment
 docker compose -f docker-compose.yml -f docker-compose.craft.yml down
 
 # Or use the CLI the installer hands over to:
-onyx-cli deploy stop      # stop containers, keep volumes
-onyx-cli deploy uninstall # stop AND wipe all data
+lumen-cli deploy stop      # stop containers, keep volumes
+lumen-cli deploy uninstall # stop AND wipe all data
 
 # Kill orphan sandbox containers:
 docker ps --filter "name=sandbox-" -q | xargs -r docker rm -f

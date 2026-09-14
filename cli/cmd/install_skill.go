@@ -5,9 +5,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/embedded"
-	"github.com/onyx-dot-app/onyx/cli/internal/fsutil"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/embedded"
+	"github.com/lumen-dot-app/lumen/cli/internal/fsutil"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +20,7 @@ var agentSkillDirs = map[string]string{
 
 const (
 	canonicalDir = ".agents/skills"
-	skillName    = "onyx-cli"
+	skillName    = "lumen-cli"
 )
 
 func newInstallSkillCmd(ios *iostreams.IOStreams) *cobra.Command {
@@ -32,11 +32,11 @@ func newInstallSkillCmd(ios *iostreams.IOStreams) *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "install-skill",
-		Short: "Install the Onyx CLI agent skill file",
+		Short: "Install the Lumen CLI agent skill file",
 		Long: `Install the bundled SKILL.md so that AI coding agents can discover and use
-the Onyx CLI as a tool.
+the Lumen CLI as a tool.
 
-Files are written to the canonical .agents/skills/onyx-cli/ directory. For
+Files are written to the canonical .agents/skills/lumen-cli/ directory. For
 agents that use their own skill directory (e.g. Claude Code uses .claude/skills/),
 a symlink is created pointing back to the canonical copy.
 
@@ -45,10 +45,10 @@ Use --global to install under your home directory instead.
 
 Use --copy to write independent copies instead of symlinks.
 Use --agent to target specific agents (can be repeated).`,
-		Example: `  onyx-cli install-skill
-  onyx-cli install-skill --global
-  onyx-cli install-skill --agent claude-code
-  onyx-cli install-skill --copy`,
+		Example: `  lumen-cli install-skill
+  lumen-cli install-skill --global
+  lumen-cli install-skill --agent claude-code
+  lumen-cli install-skill --copy`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			base, err := installBase(global)
 			if err != nil {

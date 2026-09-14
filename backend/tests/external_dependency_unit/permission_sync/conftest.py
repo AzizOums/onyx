@@ -3,10 +3,10 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType, ConnectorCredentialPairStatus
-from onyx.db.models import Connector, ConnectorCredentialPair, Credential
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import InputType
+from lumen.db.enums import AccessType, ConnectorCredentialPairStatus
+from lumen.db.models import Connector, ConnectorCredentialPair, Credential
 from tests.external_dependency_unit.conftest import create_test_user
 
 

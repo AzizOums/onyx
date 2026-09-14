@@ -9,9 +9,9 @@ import pytest
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SSOProviderType
-from onyx.db.models import SSOProvider
-from onyx.db.sso_provider import (
+from lumen.db.enums import SSOProviderType
+from lumen.db.models import SSOProvider
+from lumen.db.sso_provider import (
     create_sso_provider,
     fetch_sso_provider_by_name,
     fetch_sso_providers,
@@ -31,7 +31,7 @@ _SAML_CONFIG = {
     "idp_entity_id": "https://idp.example.com/entity",
     "idp_sso_url": "https://idp.example.com/sso",
     "idp_x509_cert": "MIIC-fake-cert",
-    "sp_entity_id": "https://onyx.example.com/saml",
+    "sp_entity_id": "https://lumen.example.com/saml",
 }
 
 

@@ -6,9 +6,9 @@ from uuid import uuid4
 import pytest
 from pydantic import BaseModel, ConfigDict
 
-from onyx.configs import app_configs
-from onyx.configs.constants import DocumentSource
-from onyx.tools.constants import SEARCH_TOOL_ID
+from lumen.configs import app_configs
+from lumen.configs.constants import DocumentSource
+from lumen.tools.constants import SEARCH_TOOL_ID
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.cc_pair import CCPairManager

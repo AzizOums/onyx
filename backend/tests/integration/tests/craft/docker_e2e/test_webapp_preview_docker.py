@@ -14,7 +14,7 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
+from lumen.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
 from tests.integration.common_utils.managers.user import UserManager
 from tests.integration.common_utils.test_models import DATestUser
 from tests.integration.tests.craft.docker_e2e.conftest import (

@@ -10,7 +10,7 @@ TEMPLATE_DIR="$(pwd)"
 SERVICE_DIR="$TEMPLATE_DIR/services"
 
 # Unified config file
-CONFIG_FILE="onyx_config.jsonl"
+CONFIG_FILE="lumen_config.jsonl"
 
 # Try to get AWS_REGION from config, fallback to default if not found
 AWS_REGION_FROM_CONFIG=$(remove_comments "$CONFIG_FILE" | jq -r '.AWSRegion // empty')
@@ -32,26 +32,26 @@ S3_BUCKET_FROM_CONFIG=$(remove_comments "$CONFIG_FILE" | jq -r '.S3Bucket // emp
 if [ -n "$S3_BUCKET_FROM_CONFIG" ]; then
     S3_BUCKET="$S3_BUCKET_FROM_CONFIG"
 else
-    S3_BUCKET="${S3_BUCKET:-onyx-ecs-fargate-configs}"
+    S3_BUCKET="${S3_BUCKET:-lumen-ecs-fargate-configs}"
 fi
 
 INFRA_ORDER=(
-  "onyx_efs_template.yaml"
-  "onyx_cluster_template.yaml"
-  "onyx_acm_template.yaml"
+  "lumen_efs_template.yaml"
+  "lumen_cluster_template.yaml"
+  "lumen_acm_template.yaml"
 )
 
 # Deployment order for services
 SERVICE_ORDER=(
-  "onyx_postgres_service_template.yaml"
-  "onyx_redis_service_template.yaml"
-  "onyx_vespaengine_service_template.yaml"
-  "onyx_model_server_indexing_service_template.yaml"
-  "onyx_model_server_inference_service_template.yaml"
-  "onyx_backend_api_server_service_template.yaml"
-  "onyx_backend_background_server_service_template.yaml"
-  "onyx_web_server_service_template.yaml"
-  "onyx_nginx_service_template.yaml"
+  "lumen_postgres_service_template.yaml"
+  "lumen_redis_service_template.yaml"
+  "lumen_vespaengine_service_template.yaml"
+  "lumen_model_server_indexing_service_template.yaml"
+  "lumen_model_server_inference_service_template.yaml"
+  "lumen_backend_api_server_service_template.yaml"
+  "lumen_backend_background_server_service_template.yaml"
+  "lumen_web_server_service_template.yaml"
+  "lumen_nginx_service_template.yaml"
 )
 
 # Function to validate a CloudFormation template
@@ -150,7 +150,7 @@ convert_underscores_to_hyphens() {
 deploy_infra_stacks() {
     for template_name in "${INFRA_ORDER[@]}"; do
       # Skip ACM template if HostedZoneId is not set
-      if [[ "$template_name" == "onyx_acm_template.yaml" ]]; then
+      if [[ "$template_name" == "lumen_acm_template.yaml" ]]; then
         HOSTED_ZONE_ID=$(remove_comments "$CONFIG_FILE" | jq -r '.HostedZoneId')
         if [ -z "$HOSTED_ZONE_ID" ] || [ "$HOSTED_ZONE_ID" == "" ] || [ "$HOSTED_ZONE_ID" == "null" ]; then
           echo "Skipping ACM template deployment because HostedZoneId is not set in $CONFIG_FILE"
@@ -186,7 +186,7 @@ deploy_services_stacks() {
     done
 }
 
-echo "Starting deployment of Onyx to ECS Fargate Cluster..."
+echo "Starting deployment of Lumen to ECS Fargate Cluster..."
 deploy_infra_stacks
 deploy_services_stacks
 

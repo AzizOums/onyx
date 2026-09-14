@@ -30,21 +30,21 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.user_file_processing.tasks import (
+from lumen.background.celery.tasks.user_file_processing.tasks import (
     _user_file_lock_key,
     _user_file_queued_key,
     check_user_file_processing,
     process_single_user_file,
 )
-from onyx.configs.constants import (
+from lumen.configs.constants import (
     CELERY_USER_FILE_PROCESSING_TASK_EXPIRES,
     USER_FILE_PROCESSING_MAX_QUEUE_DEPTH,
-    OnyxCeleryQueues,
-    OnyxCeleryTask,
+    LumenCeleryQueues,
+    LumenCeleryTask,
 )
-from onyx.db.enums import UserFileStatus
-from onyx.db.models import UserFile
-from onyx.redis.redis_pool import get_redis_client
+from lumen.db.enums import UserFileStatus
+from lumen.db.models import UserFile
+from lumen.redis.redis_pool import get_redis_client
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.conftest import create_test_user
 
@@ -53,7 +53,7 @@ from tests.external_dependency_unit.conftest import create_test_user
 # ---------------------------------------------------------------------------
 
 _PATCH_QUEUE_LEN = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.celery_get_queue_length"
+    "lumen.background.celery.tasks.user_file_processing.tasks.celery_get_queue_length"
 )
 
 
@@ -92,7 +92,7 @@ def _patch_task_app(task: Any, mock_app: MagicMock) -> Generator[None, None, Non
             return_value=mock_app,
         ),
         patch(
-            "onyx.background.celery.tasks.user_file_processing.tasks.celery_get_broker_client",
+            "lumen.background.celery.tasks.user_file_processing.tasks.celery_get_broker_client",
             return_value=MagicMock(),
         ),
     ):
@@ -242,8 +242,8 @@ class TestTaskExpiry:
 
             # Every submitted task must carry expires
             for call in mock_app.send_task.call_args_list:
-                assert call.args[0] == OnyxCeleryTask.PROCESS_SINGLE_USER_FILE
-                assert call.kwargs.get("queue") == OnyxCeleryQueues.USER_FILE_PROCESSING
+                assert call.args[0] == LumenCeleryTask.PROCESS_SINGLE_USER_FILE
+                assert call.kwargs.get("queue") == LumenCeleryQueues.USER_FILE_PROCESSING
                 assert (
                     call.kwargs.get("expires")
                     == CELERY_USER_FILE_PROCESSING_TASK_EXPIRES

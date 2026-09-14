@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/state"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/state"
 )
 
 // installFixture runs a real (fake-backed) fresh install and returns the root.
@@ -42,7 +42,7 @@ func TestUpgradeRewritesOnlyImageTag(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	upstream := "# compose at v4.2.0\nname: onyx\n"
+	upstream := "# compose at v4.2.0\nname: lumen\n"
 	deps := testDeps(t, runner, rawServer(t, upstream))
 	err = RunUpgrade(context.Background(), deps, Options{
 		NoPrompt: true, Tag: "v4.2.0", Dir: root, NoWait: true,
@@ -309,7 +309,7 @@ func TestUpgradeStartFailureKeepsTargetAndExplains(t *testing.T) {
 
 	failUp := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		if strings.Contains(argv(c), "up -d") {
-			return dockercmd.Result{}, errors.New("container onyx-index-1 is unhealthy")
+			return dockercmd.Result{}, errors.New("container lumen-index-1 is unhealthy")
 		}
 		return healthyDockerHandler(c)
 	}}
@@ -357,7 +357,7 @@ func TestUpgradeConfigFailureLeavesVersionAlone(t *testing.T) {
 	}
 
 	upgradeRunner := &fakeRunner{handler: healthyDockerHandler}
-	deps := testDeps(t, upgradeRunner, rawServer(t, "# compose at v4.2.0\nname: onyx\n"))
+	deps := testDeps(t, upgradeRunner, rawServer(t, "# compose at v4.2.0\nname: lumen\n"))
 	err := RunUpgrade(context.Background(), deps, Options{
 		NoPrompt: true, Tag: "v4.2.0", Dir: root, NoWait: true,
 	})

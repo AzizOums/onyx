@@ -52,7 +52,7 @@ const APP: ExternalAppAdminResponse = {
   enabled: true,
   actions: [],
   associated_skills: [],
-  is_onyx_managed: false,
+  is_lumen_managed: false,
 };
 
 const SLACK_DESCRIPTOR: BuiltInExternalAppDescriptor = {

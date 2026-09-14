@@ -47,26 +47,26 @@ updates:
     labels:
       - "dependabot:javascript"
   - package-ecosystem: "bun"
-    directory: "/backend/onyx/server/features/build/sandbox/image/templates/outputs/web"
+    directory: "/backend/lumen/server/features/build/sandbox/image/templates/outputs/web"
     schedule:
       interval: "weekly"
     cooldown:
       default-days: 7
     open-pull-requests-limit: 3
     assignees:
-      - "wenxi-onyx"
+      - "wenxi-lumen"
     labels:
       - "dependabot:javascript"
       - "dependabot:sandbox"
   - package-ecosystem: "docker"
-    directory: "/backend/onyx/server/features/build/sandbox/image"
+    directory: "/backend/lumen/server/features/build/sandbox/image"
     schedule:
       interval: "weekly"
     cooldown:
       default-days: 7
     open-pull-requests-limit: 3
     assignees:
-      - "wenxi-onyx"
+      - "wenxi-lumen"
     labels:
       - "dependabot:docker"
       - "dependabot:sandbox"

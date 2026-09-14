@@ -10,10 +10,10 @@ from uuid import UUID, uuid4
 import pytest
 from httpx import Response
 
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.enums import ApprovalDecision, ExternalAppType
-from onyx.db.external_app import get_built_in_external_app
-from onyx.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
+from lumen.db.engine.sql_engine import get_session_with_tenant
+from lumen.db.enums import ApprovalDecision, ExternalAppType
+from lumen.db.external_app import get_built_in_external_app
+from lumen.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.build_approvals import (

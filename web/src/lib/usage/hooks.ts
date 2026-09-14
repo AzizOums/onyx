@@ -9,7 +9,7 @@ import {
   convertDateToStartOfDay,
 } from "@/lib/dateUtils";
 import {
-  OnyxBotAnalytics,
+  LumenBotAnalytics,
   PersonaMessageAnalytics,
   PersonaUniqueUserAnalytics,
   QueryAnalytics,
@@ -61,16 +61,16 @@ export function useUserAnalytics(timeRange: DateRangePickerValue) {
   };
 }
 
-export function useOnyxBotAnalytics(timeRange: DateRangePickerValue) {
+export function useLumenBotAnalytics(timeRange: DateRangePickerValue) {
   const url = buildApiPath(
-    "/api/analytics/admin/onyxbot",
+    "/api/analytics/admin/lumenbot",
     analyticsRange(timeRange)
   );
-  const swrResponse = useSWR<OnyxBotAnalytics[]>(url, errorHandlingFetcher);
+  const swrResponse = useSWR<LumenBotAnalytics[]>(url, errorHandlingFetcher);
 
   return {
     ...swrResponse,
-    refreshOnyxBotAnalytics: () => mutate(url),
+    refreshLumenBotAnalytics: () => mutate(url),
   };
 }
 

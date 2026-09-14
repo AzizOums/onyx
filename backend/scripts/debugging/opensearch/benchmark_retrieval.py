@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Benchmarks OpenSearchDocumentIndex latency.
 
-Requires Onyx to be running as it reads search settings from the database.
+Requires Lumen to be running as it reads search settings from the database.
 
 Usage:
     source .venv/bin/activate
@@ -15,16 +15,16 @@ import time
 from scripts.debugging.opensearch.constants import DEV_TENANT_ID
 from scripts.debugging.opensearch.embedding_io import load_query_embedding_from_file
 
-from onyx.configs.chat_configs import NUM_RETURNED_HITS
-from onyx.context.search.enums import QueryType
-from onyx.context.search.models import IndexFilters
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from onyx.db.search_settings import get_current_search_settings
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.opensearch_document_index import (
+from lumen.configs.chat_configs import NUM_RETURNED_HITS
+from lumen.context.search.enums import QueryType
+from lumen.context.search.models import IndexFilters
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from lumen.db.search_settings import get_current_search_settings
+from lumen.document_index.interfaces_new import TenantState
+from lumen.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
-from onyx.indexing.models import IndexingSetting
+from lumen.indexing.models import IndexingSetting
 from shared_configs.configs import MULTI_TENANT
 from shared_configs.contextvars import (
     CURRENT_TENANT_ID_CONTEXTVAR,

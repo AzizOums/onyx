@@ -18,7 +18,7 @@ export interface ConfiguredIntegration {
   toggleEnabled: () => Promise<void>;
   /** Null → no Edit action (e.g. orphaned app types). */
   edit: (() => void) | null;
-  /** Null → not deletable (MCP servers, Onyx-managed apps). */
+  /** Null → not deletable (MCP servers, Lumen-managed apps). */
   remove: {
     run: () => Promise<void>;
     retainedCustomSkillCount: number;

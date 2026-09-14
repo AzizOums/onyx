@@ -15,7 +15,7 @@ import pytest
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     ApprovalDecidedVia,
     ApprovalDecision,
     GatedAppKind,
@@ -23,7 +23,7 @@ from onyx.db.enums import (
     ScheduledTaskStatus,
     ScheduledTaskTriggerSource,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     BuildSession,
     ExternalApp,
     MCPServer,
@@ -31,17 +31,17 @@ from onyx.db.models import (
     ScheduledTaskPreApprovedTarget,
     User,
 )
-from onyx.db.scheduled_task import (
+from lumen.db.scheduled_task import (
     create_scheduled_task,
     get_live_scheduled_run_grants,
     insert_run,
     mark_run_status,
     update_scheduled_task,
 )
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.build.db.action_approval import insert_action_approval
-from onyx.server.features.build.scheduled_tasks import api as scheduled_tasks_api
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.features.build.db.action_approval import insert_action_approval
+from lumen.server.features.build.scheduled_tasks import api as scheduled_tasks_api
 from tests.common.craft.payloads import default_action_entries
 from tests.external_dependency_unit.craft.db_helpers import (
     make_external_app,
@@ -493,7 +493,7 @@ def test_validate_app_ids_accepts_known_duplicates_and_reports_unknown_ids_once(
     scheduled_tasks_api._validate_app_ids(db_session, [])
     scheduled_tasks_api._validate_app_ids(db_session, [9, 7, 9])
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         scheduled_tasks_api._validate_app_ids(db_session, [456, 7, 123, 456])
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "Unknown external app id(s): [123, 456]"

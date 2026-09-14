@@ -13,7 +13,7 @@ export enum ThemePreference {
 }
 
 interface UserPreferences {
-  // TODO: rename to agent — https://linear.app/onyx-app/issue/ENG-3766
+  // TODO: rename to agent — https://linear.app/lumen-app/issue/ENG-3766
   chosen_assistants: number[] | null;
   visible_assistants: number[];
   hidden_assistants: number[];
@@ -219,7 +219,7 @@ export interface IndexAttemptSnapshot {
   time_updated: string;
 }
 
-// Mirror of `onyx.db.index_attempt_metrics_models.IndexAttemptStage`. The
+// Mirror of `lumen.db.index_attempt_metrics_models.IndexAttemptStage`. The
 // declaration order is the canonical pipeline order — the API serializes
 // stages in this order and the "Pipeline order" sort renders them as-is.
 // Keep in sync with the Python enum.
@@ -560,13 +560,13 @@ export interface UserGroup {
   permissions?: PermissionsOf<"UserGroup">;
 }
 
-// Mirrors `IncognitoAvailability` in backend/onyx/server/security/models.py.
+// Mirrors `IncognitoAvailability` in backend/lumen/server/security/models.py.
 export type IncognitoAvailability = "off" | "everyone" | "groups";
 
-// Mirrors `IncognitoRecordMode` in backend/onyx/db/enums.py.
+// Mirrors `IncognitoRecordMode` in backend/lumen/db/enums.py.
 export type IncognitoRecordMode = "full_history" | "usage_only";
 
-// Mirrors `SSRFProtectionLevel` in backend/onyx/server/security/models.py.
+// Mirrors `SSRFProtectionLevel` in backend/lumen/server/security/models.py.
 export type SSRFProtectionLevel =
   | "validate_all"
   | "validate_llm"
@@ -574,7 +574,7 @@ export type SSRFProtectionLevel =
   | "disabled";
 
 // Read shape of GET /admin/security: effective, env-merged settings (see
-// `SecuritySettings` in backend/onyx/server/security/models.py). Only the
+// `SecuritySettings` in backend/lumen/server/security/models.py). Only the
 // jwt_* fields are nullable, null meaning that check is off.
 export interface SecuritySettings {
   user_directory_admin_only: boolean;

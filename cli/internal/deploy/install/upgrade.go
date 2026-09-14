@@ -9,14 +9,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/deployfiles"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/paths"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/release"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/state"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/ui"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/version"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/deployfiles"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/paths"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/release"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/state"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/ui"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/version"
 )
 
 // RunUpgrade implements `deploy upgrade`: install.sh's "type 'update'"
@@ -39,12 +39,12 @@ func (in *installer) runUpgrade(ctx context.Context) error {
 	in.root = paths.Resolve(in.opts.Dir)
 	if len(in.root.Ambiguous) > 0 {
 		return exitcodes.Newf(exitcodes.BadRequest,
-			"multiple Onyx installs found (%s and %s) — pass --dir to pick one",
+			"multiple Lumen installs found (%s and %s) — pass --dir to pick one",
 			in.root.Dir, in.root.Ambiguous[0])
 	}
 	if !paths.IsInstall(in.root.Dir) {
 		return exitcodes.Newf(exitcodes.NotAvailable,
-			"no Onyx deployment found at %s — run `onyx-cli deploy install` first", in.root.Dir)
+			"no Lumen deployment found at %s — run `lumen-cli deploy install` first", in.root.Dir)
 	}
 
 	// --tag is checked before the wizard takes over the screen, so a typo
@@ -60,7 +60,7 @@ func (in *installer) runUpgrade(ctx context.Context) error {
 
 	// Upgrades share the install wizard (dry runs stay line-oriented).
 	if in.fancy() && !in.opts.DryRun {
-		in.wiz = ui.StartWizard(in.deps.IOS.Out, "Onyx Upgrade", in.deps.CLIVersion, in.cancel)
+		in.wiz = ui.StartWizard(in.deps.IOS.Out, "Lumen Upgrade", in.deps.CLIVersion, in.cancel)
 		defer in.wiz.Abort()
 	}
 
@@ -80,7 +80,7 @@ func (in *installer) runUpgrade(ctx context.Context) error {
 		// Reachable when a fresh install failed before its first start: the
 		// config files are there, but .env was rolled back.
 		return exitcodes.Newf(exitcodes.NotAvailable,
-			"no deployment/.env at %s — run `onyx-cli deploy install` to finish setting up this deployment", in.root.Dir)
+			"no deployment/.env at %s — run `lumen-cli deploy install` to finish setting up this deployment", in.root.Dir)
 	}
 	if err != nil {
 		return fmt.Errorf("failed to read %s: %w", envPath, err)
@@ -226,7 +226,7 @@ func (in *installer) runUpgrade(ctx context.Context) error {
 	}
 	// Reuse the port the deployment already runs on — scanning for a free one
 	// here would collide with our own still-running nginx and silently move
-	// Onyx to another port. Installs created by install.sh never recorded
+	// Lumen to another port. Installs created by install.sh never recorded
 	// HOST_PORT, so fall back to the port they are publishing right now.
 	// Prod skips all of it: the overlay publishes 80/443, HOST_PORT unread.
 	hostPort := 0
@@ -289,10 +289,10 @@ func (in *installer) printUpgradeSuccess(hostPort int, from, to string) {
 	if in.prod {
 		url = in.prodAccessURL()
 	}
-	headline := fmt.Sprintf("Onyx upgraded: %s → %s", from, to)
+	headline := fmt.Sprintf("Lumen upgraded: %s → %s", from, to)
 	var tail []string
 	if url != "" {
-		tail = []string{"Access Onyx at: " + ui.Accent(url), ""}
+		tail = []string{"Access Lumen at: " + ui.Accent(url), ""}
 	}
 	tail = append(tail, manageLines()...)
 	if in.wiz != nil {
@@ -337,7 +337,7 @@ func (in *installer) downgradeGuard(installedTag, targetTag string) error {
 	if !okInstalled || !okTarget || !target.LessThan(installed) {
 		return nil
 	}
-	in.warnf("Target %s is OLDER than the installed %s. Downgrades are not supported by Onyx and may corrupt data written by newer schema versions.", targetTag, installedTag)
+	in.warnf("Target %s is OLDER than the installed %s. Downgrades are not supported by Lumen and may corrupt data written by newer schema versions.", targetTag, installedTag)
 	if in.opts.AllowDowngrade {
 		in.infof("Proceeding anyway (--allow-downgrade).")
 		return nil

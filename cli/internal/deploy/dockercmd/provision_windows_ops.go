@@ -7,7 +7,7 @@ package dockercmd
 
 // DockerDesktopInstructionsWindows is printed when no working Docker is found
 // on native Windows.
-const DockerDesktopInstructionsWindows = `Docker Desktop was not found. To run Onyx on Windows:
+const DockerDesktopInstructionsWindows = `Docker Desktop was not found. To run Lumen on Windows:
 
   1. Install WSL2 (in an elevated PowerShell):  wsl --install
   2. Install Docker Desktop: https://docs.docker.com/desktop/setup/install/windows-install/

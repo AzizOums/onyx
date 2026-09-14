@@ -2,7 +2,7 @@ from collections.abc import Generator
 
 import pytest
 
-import onyx.db.engine.async_sql_engine as async_sql_engine
+import lumen.db.engine.async_sql_engine as async_sql_engine
 
 
 @pytest.fixture(autouse=True)

@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	tea "charm.land/bubbletea/v2"
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/browser"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/lumen-dot-app/lumen/cli/internal/api"
+	"github.com/lumen-dot-app/lumen/cli/internal/browser"
+	"github.com/lumen-dot-app/lumen/cli/internal/config"
+	"github.com/lumen-dot-app/lumen/cli/internal/models"
 )
 
 // handleSlashCommand dispatches slash commands and returns updated model + cmd.
@@ -52,7 +52,7 @@ func handleSlashCommand(m Model, text string) (Model, tea.Cmd) {
 		return cmdNew(m)
 
 	case "/connectors":
-		url := config.OnyxWebURL(m.config.ServerURL) + "/admin/indexing/status"
+		url := config.LumenWebURL(m.config.ServerURL) + "/admin/indexing/status"
 		if browser.OpenBrowser(url) {
 			m.viewport.addInfo("Opened " + url + " in browser")
 		} else {
@@ -61,7 +61,7 @@ func handleSlashCommand(m Model, text string) (Model, tea.Cmd) {
 		return m, nil
 
 	case "/settings":
-		url := config.OnyxWebURL(m.config.ServerURL) + "/app/settings/general"
+		url := config.LumenWebURL(m.config.ServerURL) + "/app/settings/general"
 		if browser.OpenBrowser(url) {
 			m.viewport.addInfo("Opened " + url + " in browser")
 		} else {

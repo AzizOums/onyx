@@ -178,7 +178,7 @@ export default function NewTeamModal() {
               width="full"
               rightIcon={SvgArrowRight}
             >
-              {t("tryOnyxButton.label")}
+              {t("tryLumenButton.label")}
             </Button>
           ) : (
             <>

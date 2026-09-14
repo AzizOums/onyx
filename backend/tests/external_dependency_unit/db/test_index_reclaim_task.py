@@ -13,29 +13,29 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-import onyx.background.celery.tasks.index_reclaim.tasks as reclaim_tasks
-from onyx.configs.constants import OnyxCeleryQueues, OnyxCeleryTask
-from onyx.context.search.models import SavedSearchSettings
-from onyx.db.enums import (
+import lumen.background.celery.tasks.index_reclaim.tasks as reclaim_tasks
+from lumen.configs.constants import LumenCeleryQueues, LumenCeleryTask
+from lumen.context.search.models import SavedSearchSettings
+from lumen.db.enums import (
     ConnectorCredentialPairStatus,
     EmbeddingPrecision,
     IndexModelStatus,
     IndexReclaimStatus,
 )
-from onyx.db.models import ConnectorCredentialPair, PortAttempt, SearchSettings
-from onyx.db.port_attempt import (
+from lumen.db.models import ConnectorCredentialPair, PortAttempt, SearchSettings
+from lumen.db.port_attempt import (
     create_port_attempt,
     mark_port_canceled,
     mark_port_in_progress,
 )
-from onyx.db.search_settings import (
+from lumen.db.search_settings import (
     create_search_settings,
     find_unreclaimed_past_by_index_name,
     get_current_search_settings,
     get_search_settings_by_id,
 )
-from onyx.document_index.opensearch.client import OpenSearchIndexClient
-from onyx.document_index.opensearch.index_reclaim import ReclaimOutcome
+from lumen.document_index.opensearch.client import OpenSearchIndexClient
+from lumen.document_index.opensearch.index_reclaim import ReclaimOutcome
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
     make_cc_pair,
@@ -454,8 +454,8 @@ def test_step_failure_bumps_attempts_then_blocks_at_cap(
 def _enqueued_settings_ids(celery_app: MagicMock) -> list[int]:
     ids = []
     for call in celery_app.send_task.call_args_list:
-        assert call.args[0] == OnyxCeleryTask.RUN_OLD_INDEX_RECLAIM
-        assert call.kwargs["queue"] == OnyxCeleryQueues.INDEX_RECLAIM
+        assert call.args[0] == LumenCeleryTask.RUN_OLD_INDEX_RECLAIM
+        assert call.kwargs["queue"] == LumenCeleryQueues.INDEX_RECLAIM
         ids.append(call.kwargs["kwargs"]["search_settings_id"])
     return ids
 

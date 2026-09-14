@@ -10,7 +10,7 @@ locals {
       max_count       = 1
       os_disk_size_gb = 100
       os_disk_type    = "Managed"
-      node_labels     = { "onyx.app/gpu" = "true" }
+      node_labels     = { "lumen.app/gpu" = "true" }
       node_taints     = ["nvidia.com/gpu=true:NoSchedule"]
       zones           = []
       mode            = "User"
@@ -24,7 +24,7 @@ locals {
       max_count       = var.sandbox_node_max_count
       os_disk_size_gb = var.sandbox_node_disk_size_gb
       os_disk_type    = "Managed"
-      node_labels     = { "onyx.app/workload" = "sandbox" }
+      node_labels     = { "lumen.app/workload" = "sandbox" }
       node_taints     = ["workload=sandbox:NoSchedule"]
       zones           = []
       mode            = "User"

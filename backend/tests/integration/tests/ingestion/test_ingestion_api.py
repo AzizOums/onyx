@@ -1,7 +1,7 @@
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import InputType
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import Document
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import InputType
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.models import Document
 from tests.integration.common_utils.managers.api_key import APIKeyManager
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.document import IngestionManager
@@ -15,7 +15,7 @@ def test_ingestion_api_crud(
     vespa_client: vespa_fixture,
 ) -> None:
     """Test create, list, and delete via the ingestion API."""
-    admin_user: DATestUser = UserManager.create(email="admin@onyx.app")
+    admin_user: DATestUser = UserManager.create(email="admin@lumen.app")
     cc_pair = CCPairManager.create_from_scratch(
         name="Ingestion-API-Test",
         source=DocumentSource.FILE,

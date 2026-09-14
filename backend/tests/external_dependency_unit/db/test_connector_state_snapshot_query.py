@@ -2,12 +2,12 @@ from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DEFAULT_CC_PAIR_ID, DocumentSource
-from onyx.db.connector_credential_pair import (
+from lumen.configs.constants import DEFAULT_CC_PAIR_ID, DocumentSource
+from lumen.db.connector_credential_pair import (
     ConnectorStateSnapshot,
     get_connector_state_snapshots,
 )
-from onyx.db.enums import AccessType, ConnectorCredentialPairStatus, IndexingMode
+from lumen.db.enums import AccessType, ConnectorCredentialPairStatus, IndexingMode
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
     make_cc_pair,

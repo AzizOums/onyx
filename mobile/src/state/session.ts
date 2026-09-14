@@ -6,7 +6,7 @@ import { create } from "zustand";
 
 import { appStorage } from "@/state/storage";
 
-const SERVER_URL_KEY = "onyx.session.server_url";
+const SERVER_URL_KEY = "lumen.session.server_url";
 
 export type SessionStatus = "loading" | "authed" | "anon";
 

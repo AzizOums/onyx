@@ -5,23 +5,23 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.chat.models import AnswerStreamPart, StreamingError
-from onyx.chat.process_message import handle_stream_message_objects
-from onyx.db.chat import create_chat_session
-from onyx.db.enums import LLMModelFlowType
-from onyx.db.llm import (
+from lumen.chat.models import AnswerStreamPart, StreamingError
+from lumen.chat.process_message import handle_stream_message_objects
+from lumen.db.chat import create_chat_session
+from lumen.db.enums import LLMModelFlowType
+from lumen.db.llm import (
     fetch_existing_llm_providers,
     remove_llm_provider,
     update_default_provider,
     upsert_llm_provider,
 )
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.manage.llm.models import (
+from lumen.llm.constants import LlmProviderNames
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )
-from onyx.server.query_and_chat.models import MessageResponseIDInfo, SendMessageRequest
-from onyx.server.query_and_chat.streaming_models import (
+from lumen.server.query_and_chat.models import MessageResponseIDInfo, SendMessageRequest
+from lumen.server.query_and_chat.streaming_models import (
     AgentResponseDelta,
     AgentResponseStart,
     Packet,

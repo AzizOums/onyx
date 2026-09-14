@@ -1,4 +1,4 @@
-// Package deployfilessync mirrors the deployment files that onyx-cli embeds
+// Package deployfilessync mirrors the deployment files that lumen-cli embeds
 // (via go:embed in cli/internal/deploy/deployfiles) from their source of truth
 // under deployment/. go:embed cannot reference files outside the cli module,
 // so byte-identical copies are checked in and kept in sync by
@@ -23,7 +23,7 @@ import (
 // half of `ods generate-compose`.
 var RelPaths = []string{
 	"docker_compose/docker-compose.yml",
-	"docker_compose/docker-compose.onyx-lite.yml",
+	"docker_compose/docker-compose.lumen-lite.yml",
 	"docker_compose/docker-compose.craft.yml",
 	"docker_compose/docker-compose.dev.yml",
 	"docker_compose/docker-compose.prod.yml",

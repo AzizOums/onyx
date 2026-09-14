@@ -12,9 +12,9 @@ from typing import Callable
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import Sandbox, User
-from onyx.server.features.build.sandbox.opencode.event_bus import PodEventBus
+from lumen.db.enums import SandboxStatus
+from lumen.db.models import Sandbox, User
+from lumen.server.features.build.sandbox.opencode.event_bus import PodEventBus
 from tests.common.craft.stubs import StubSandboxManager
 
 

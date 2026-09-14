@@ -13,68 +13,68 @@ The short version:
 - PostgreSQL is the source of truth for approvals. Redis is only a best-effort
   announce/wake/cache layer.
 - Sandboxes receive only placeholder credentials and a trusted proxy CA. Real
-  Onyx PATs, LLM provider keys, and external-app tokens are resolved by the
+  Lumen PATs, LLM provider keys, and external-app tokens are resolved by the
   proxy at request time.
 
 ## Key Files
 
 Proxy runtime:
 
-- `backend/onyx/sandbox_proxy/server.py` starts mitmproxy, health checks, CA
+- `backend/lumen/sandbox_proxy/server.py` starts mitmproxy, health checks, CA
   bootstrap, identity lookup, request evaluator, credential resolvers, and the
   gate addon.
-- `backend/onyx/sandbox_proxy/addons/gate.py` owns request classification,
+- `backend/lumen/sandbox_proxy/addons/gate.py` owns request classification,
   approval parking, grant resolution, credential injection dispatch, internal
   destination blocking, and SIGTERM drain cleanup.
-- `backend/onyx/sandbox_proxy/identity.py`,
+- `backend/lumen/sandbox_proxy/identity.py`,
   `identity_k8s.py`, and `identity_docker.py` resolve source IPs to sandbox,
   tenant, and user identity.
-- `backend/onyx/sandbox_proxy/request_evaluator.py` turns mitmproxy requests
+- `backend/lumen/sandbox_proxy/request_evaluator.py` turns mitmproxy requests
   into external-app action matches.
-- `backend/onyx/sandbox_proxy/credential_injection.py` and
-  `backend/onyx/sandbox_proxy/resolvers/` inject Onyx PATs, LLM provider keys,
+- `backend/lumen/sandbox_proxy/credential_injection.py` and
+  `backend/lumen/sandbox_proxy/resolvers/` inject Lumen PATs, LLM provider keys,
   and external-app credentials.
-- `backend/onyx/sandbox_proxy/approval_cache.py` defines Redis announce, wake,
+- `backend/lumen/sandbox_proxy/approval_cache.py` defines Redis announce, wake,
   and session-grant cache keys.
-- `backend/onyx/sandbox_proxy/ca.py`, `ca_k8s.py`, and `ca_docker.py` manage
+- `backend/lumen/sandbox_proxy/ca.py`, `ca_k8s.py`, and `ca_docker.py` manage
   the proxy CA.
 
 Approval persistence and API:
 
-- `backend/onyx/db/models.py` defines `ActionApproval`,
+- `backend/lumen/db/models.py` defines `ActionApproval`,
   `ExternalAppPolicy`, and `ScheduledTaskPreApprovedTarget`.
-- `backend/onyx/db/enums.py` defines `EndpointPolicy`,
+- `backend/lumen/db/enums.py` defines `EndpointPolicy`,
   `ApprovalDecision`, and `ApprovalDecidedVia`.
-- `backend/onyx/server/features/build/db/action_approval.py` owns approval DB
+- `backend/lumen/server/features/build/db/action_approval.py` owns approval DB
   operations. `try_record_decision` is the race arbiter.
-- `backend/onyx/server/features/build/approvals/api.py` exposes live approval
+- `backend/lumen/server/features/build/approvals/api.py` exposes live approval
   listing, approve/reject, and approve-for-session.
-- `backend/onyx/db/scheduled_task.py` contains scheduled-task pre-approval
+- `backend/lumen/db/scheduled_task.py` contains scheduled-task pre-approval
   lookups.
 
 External-app policy and matching:
 
-- `backend/onyx/external_apps/providers/` defines provider specs, OAuth flows,
+- `backend/lumen/external_apps/providers/` defines provider specs, OAuth flows,
   URL patterns, auth templates, action catalogs, and payload decoders.
-- `backend/onyx/external_apps/matching/engine.py` recognizes actions and
+- `backend/lumen/external_apps/matching/engine.py` recognizes actions and
   resolves effective policy.
-- `backend/onyx/external_apps/matching/rules.py` implements REST route and
+- `backend/lumen/external_apps/matching/rules.py` implements REST route and
   GraphQL operation matchers.
-- `backend/onyx/external_apps/credentials.py` renders injected auth headers.
-- `backend/onyx/external_apps/token_refresh.py` lazily refreshes OAuth access
+- `backend/lumen/external_apps/credentials.py` renders injected auth headers.
+- `backend/lumen/external_apps/token_refresh.py` lazily refreshes OAuth access
   tokens at injection time.
 
 Sandbox and deployment wiring:
 
-- `backend/onyx/server/features/build/sandbox/image/firewall-init.sh` installs
+- `backend/lumen/server/features/build/sandbox/image/firewall-init.sh` installs
   the proxy CA and applies in-sandbox egress lockdown.
-- `backend/onyx/server/features/build/sandbox/image/opencode-plugins/session-proxy-tag.ts`
+- `backend/lumen/server/features/build/sandbox/image/opencode-plugins/session-proxy-tag.ts`
   tags proxied requests with the originating `BuildSession` id.
-- `deployment/helm/charts/onyx/templates/sandbox-proxy/` deploys the Kubernetes
+- `deployment/helm/charts/lumen/templates/sandbox-proxy/` deploys the Kubernetes
   proxy.
-- `deployment/helm/charts/onyx/templates/sandbox-podtemplate.yaml` wires
+- `deployment/helm/charts/lumen/templates/sandbox-podtemplate.yaml` wires
   Kubernetes sandboxes to the proxy.
-- `deployment/helm/charts/onyx/templates/network-policy-sandbox-egress.yaml`
+- `deployment/helm/charts/lumen/templates/network-policy-sandbox-egress.yaml`
   provides the Kubernetes NetworkPolicy backstop for sandbox pods.
 - `deployment/docker_compose/docker-compose.craft.yml` wires the Docker backend
   proxy stack.
@@ -92,7 +92,7 @@ Frontend:
 
 ### Proxy Process
 
-`sandbox-proxy` runs `python -m onyx.sandbox_proxy.server`. At startup it:
+`sandbox-proxy` runs `python -m lumen.sandbox_proxy.server`. At startup it:
 
 1. Initializes a small SQLAlchemy pool with app name `sandbox_proxy`.
 2. Starts `/healthz` on `SANDBOX_PROXY_HEALTHZ_PORT`.
@@ -102,7 +102,7 @@ Frontend:
    `K8sInformerLookup` for Kubernetes, `DockerEventsLookup` for Docker.
 5. Refuses to serve traffic until the lookup completes initial sync.
 6. Registers credential resolvers in this order:
-   `OnyxPatResolver`, `LLMProviderKeyResolver`, `ExternalAppResolver`.
+   `LumenPatResolver`, `LLMProviderKeyResolver`, `ExternalAppResolver`.
 7. Starts mitmproxy in regular proxy mode with `GateAddon`.
 
 Readiness depends on the CA being ready, the identity lookup being synced, and
@@ -123,7 +123,7 @@ proxy and with the proxy CA in common SDK-specific CA env vars:
 
 Sandboxes are also given placeholder credentials:
 
-- `ONYX_PAT=replaced_by_egress_proxy`
+- `LUMEN_PAT=replaced_by_egress_proxy`
 - opencode LLM `api_key=replaced_by_egress_proxy`
 - `GH_TOKEN=replaced_by_egress_proxy`
 
@@ -140,7 +140,7 @@ and clear the capability bounding set before user code runs.
 
 Kubernetes also has a NetworkPolicy backstop: sandbox pods may egress only to
 the proxy and DNS. The proxy itself is ingress-restricted to the sandbox
-namespace and has broad egress because it must reach public APIs and Onyx
+namespace and has broad egress because it must reach public APIs and Lumen
 datastores.
 
 ### CA Persistence
@@ -193,7 +193,7 @@ If the source IP is missing, unknown, or the DB lookup fails, the proxy returns:
 {"error": "unidentified_sandbox", "message": "..."}
 ```
 
-This is fail-closed. A pod or container not known as an Onyx sandbox cannot use
+This is fail-closed. A pod or container not known as an Lumen sandbox cannot use
 the proxy.
 
 ### 2. Internal Destinations Are Blocked
@@ -204,7 +204,7 @@ proxy must enforce the real destination.
 
 `destination_is_blocked(host, port)`:
 
-- Allows the configured Onyx API server host and port.
+- Allows the configured Lumen API server host and port.
 - Blocks literal IPs that are not globally routable.
 - Resolves hostnames and blocks if any answer is not globally routable.
 - Blocks on DNS resolution failure.
@@ -276,7 +276,7 @@ is required.
 ### 5. Policy Decides Forward, Park, Or Block
 
 If no action match is returned, the proxy treats the request as off-catalog. It
-still runs host-level credential injection; this is how Onyx API PATs and LLM
+still runs host-level credential injection; this is how Lumen API PATs and LLM
 provider keys are injected for requests that are not external-app actions. If no
 resolver claims the request, it passes through untouched.
 
@@ -301,7 +301,7 @@ identity.
 
 The session id is carried in `Proxy-Authorization` basic-auth username. The
 sandbox-side opencode plugin
-`backend/onyx/server/features/build/sandbox/image/opencode-plugins/session-proxy-tag.ts`
+`backend/lumen/server/features/build/sandbox/image/opencode-plugins/session-proxy-tag.ts`
 extracts the session id from the session workspace path and rewrites
 `HTTP_PROXY` / `HTTPS_PROXY` to include:
 
@@ -488,13 +488,13 @@ from the egress proxy's external-app approval gate.
 The proxy uses first-claim-wins credential dispatch. Resolvers must keep
 `claims()` cheap and put DB/network work in `resolve()`.
 
-### Onyx PAT Resolver
+### Lumen PAT Resolver
 
-`OnyxPatResolver` claims requests whose host and port match
-`ONYX_SERVER_URL`.
+`LumenPatResolver` claims requests whose host and port match
+`LUMEN_SERVER_URL`.
 
 It loads the sandbox row and decrypts `Sandbox.encrypted_pat`, then injects both
-Onyx API key header names as bearer tokens. The tenant is embedded in the PAT,
+Lumen API key header names as bearer tokens. The tenant is embedded in the PAT,
 so the proxy does not add a separate tenant header.
 
 If the sandbox row is gone, has no PAT, or decryption fails, the resolver raises
@@ -747,7 +747,7 @@ Relevant config:
 
 - `ENABLE_CRAFT=true` enables Craft chart resources.
 - `SANDBOX_BACKEND` is `kubernetes` or `docker`.
-- `ONYX_SERVER_URL` must be the complete API base for sandbox API calls and PAT
+- `LUMEN_SERVER_URL` must be the complete API base for sandbox API calls and PAT
   injection.
 - `SANDBOX_PROXY_HOST` and `SANDBOX_PROXY_PORT` tell sandboxes where to proxy.
 - `SANDBOX_PROXY_LISTEN_PORT` and `SANDBOX_PROXY_HEALTHZ_PORT` configure the

@@ -8,13 +8,13 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import discord
 import pytest
 
-from onyx.onyxbot.discord.handle_commands import (
+from lumen.lumenbot.discord.handle_commands import (
     get_text_channels,
     handle_dm,
     handle_registration_command,
     handle_sync_channels_command,
 )
-from onyx.onyxbot.discord.handle_message import (
+from lumen.lumenbot.discord.handle_message import (
     process_chat_message,
     send_error_response,
     send_response,
@@ -35,16 +35,16 @@ class TestGuildRegistrationCommand:
 
         with (
             patch(
-                "onyx.onyxbot.discord.handle_commands.parse_discord_registration_key",
+                "lumen.lumenbot.discord.handle_commands.parse_discord_registration_key",
                 return_value="public",
             ),
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_session_with_tenant"
+                "lumen.lumenbot.discord.handle_commands.get_session_with_tenant"
             ) as mock_session,
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_guild_config_by_registration_key"
+                "lumen.lumenbot.discord.handle_commands.get_guild_config_by_registration_key"
             ) as mock_get_config,
-            patch("onyx.onyxbot.discord.handle_commands.bulk_create_channel_configs"),
+            patch("lumen.lumenbot.discord.handle_commands.bulk_create_channel_configs"),
         ):
             mock_db = MagicMock()
             mock_session.return_value.__enter__ = MagicMock(return_value=mock_db)
@@ -77,7 +77,7 @@ class TestGuildRegistrationCommand:
         mock_discord_message.content = "!register abc"  # Malformed
 
         with patch(
-            "onyx.onyxbot.discord.handle_commands.parse_discord_registration_key",
+            "lumen.lumenbot.discord.handle_commands.parse_discord_registration_key",
             return_value=None,  # Invalid format
         ):
             result = await handle_registration_command(
@@ -102,14 +102,14 @@ class TestGuildRegistrationCommand:
 
         with (
             patch(
-                "onyx.onyxbot.discord.handle_commands.parse_discord_registration_key",
+                "lumen.lumenbot.discord.handle_commands.parse_discord_registration_key",
                 return_value="public",
             ),
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_session_with_tenant"
+                "lumen.lumenbot.discord.handle_commands.get_session_with_tenant"
             ) as mock_session,
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_guild_config_by_registration_key",
+                "lumen.lumenbot.discord.handle_commands.get_guild_config_by_registration_key",
                 return_value=None,  # Not found
             ),
         ):
@@ -141,14 +141,14 @@ class TestGuildRegistrationCommand:
 
         with (
             patch(
-                "onyx.onyxbot.discord.handle_commands.parse_discord_registration_key",
+                "lumen.lumenbot.discord.handle_commands.parse_discord_registration_key",
                 return_value="public",
             ),
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_session_with_tenant"
+                "lumen.lumenbot.discord.handle_commands.get_session_with_tenant"
             ) as mock_session,
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_guild_config_by_registration_key"
+                "lumen.lumenbot.discord.handle_commands.get_guild_config_by_registration_key"
             ) as mock_get_config,
         ):
             mock_db = MagicMock()
@@ -183,7 +183,7 @@ class TestGuildRegistrationCommand:
         mock_discord_message.content = "!register discord_public.valid_token"
 
         with patch(
-            "onyx.onyxbot.discord.handle_commands.parse_discord_registration_key",
+            "lumen.lumenbot.discord.handle_commands.parse_discord_registration_key",
             return_value="public",
         ):
             # Guild already in cache
@@ -280,16 +280,16 @@ class TestSyncChannelsCommand:
 
         with (
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_session_with_tenant"
+                "lumen.lumenbot.discord.handle_commands.get_session_with_tenant"
             ) as mock_session,
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_guild_config_by_discord_id"
+                "lumen.lumenbot.discord.handle_commands.get_guild_config_by_discord_id"
             ) as mock_get_guild,
             patch(
-                "onyx.onyxbot.discord.handle_commands.get_guild_config_by_internal_id"
+                "lumen.lumenbot.discord.handle_commands.get_guild_config_by_internal_id"
             ) as mock_get_guild_internal,
             patch(
-                "onyx.onyxbot.discord.handle_commands.sync_channel_configs"
+                "lumen.lumenbot.discord.handle_commands.sync_channel_configs"
             ) as mock_sync,
         ):
             mock_db = MagicMock()
@@ -545,24 +545,24 @@ class TestBotLifecycle:
         mock_api_client: MagicMock,
     ) -> None:
         """setup_hook calls cache.refresh_all()."""
-        from onyx.onyxbot.discord.client import OnyxDiscordClient
+        from lumen.lumenbot.discord.client import LumenDiscordClient
 
         with (
             patch.object(
-                OnyxDiscordClient,
+                LumenDiscordClient,
                 "__init__",
                 lambda self: None,  # noqa: ARG005
             ),
             patch(
-                "onyx.onyxbot.discord.client.DiscordCacheManager",
+                "lumen.lumenbot.discord.client.DiscordCacheManager",
                 return_value=mock_cache_manager,
             ),
             patch(
-                "onyx.onyxbot.discord.client.OnyxAPIClient",
+                "lumen.lumenbot.discord.client.LumenAPIClient",
                 return_value=mock_api_client,
             ),
         ):
-            bot = OnyxDiscordClient()
+            bot = LumenDiscordClient()
             bot.cache = mock_cache_manager
             bot.api_client = mock_api_client
             bot.loop = MagicMock()
@@ -579,16 +579,16 @@ class TestBotLifecycle:
         mock_api_client: MagicMock,
     ) -> None:
         """setup_hook calls api_client.initialize()."""
-        from onyx.onyxbot.discord.client import OnyxDiscordClient
+        from lumen.lumenbot.discord.client import LumenDiscordClient
 
         with (
             patch.object(
-                OnyxDiscordClient,
+                LumenDiscordClient,
                 "__init__",
                 lambda self: None,  # noqa: ARG005
             ),
         ):
-            bot = OnyxDiscordClient()
+            bot = LumenDiscordClient()
             bot.cache = mock_cache_manager
             bot.api_client = mock_api_client
             bot.loop = MagicMock()
@@ -605,17 +605,17 @@ class TestBotLifecycle:
         mock_api_client: MagicMock,
     ) -> None:
         """close() calls api_client.close()."""
-        from onyx.onyxbot.discord.client import OnyxDiscordClient
+        from lumen.lumenbot.discord.client import LumenDiscordClient
 
         with (
             patch.object(
-                OnyxDiscordClient,
+                LumenDiscordClient,
                 "__init__",
                 lambda self: None,  # noqa: ARG005
             ),
-            patch.object(OnyxDiscordClient, "is_closed", return_value=True),
+            patch.object(LumenDiscordClient, "is_closed", return_value=True),
         ):
-            bot = OnyxDiscordClient()
+            bot = LumenDiscordClient()
             bot.cache = mock_cache_manager
             bot.api_client = mock_api_client
             bot._cache_refresh_task = None

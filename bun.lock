@@ -3,13 +3,13 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "onyx",
+      "name": "lumen",
       "devDependencies": {
         "@typescript/native-preview": "^7.0.0-dev.20260707.2",
       },
     },
     "desktop": {
-      "name": "onyx-desktop",
+      "name": "lumen-desktop",
       "version": "0.0.0-dev",
       "dependencies": {
         "@tauri-apps/api": "^2.11.1",
@@ -38,7 +38,7 @@
       },
     },
     "widget": {
-      "name": "onyx-chat-widget",
+      "name": "lumen-chat-widget",
       "version": "1.0.0",
       "dependencies": {
         "dompurify": "^3.4.13",
@@ -606,9 +606,9 @@
 
     "node-releases": ["node-releases@2.0.46", "", {}, "sha512-GYVXHE2KnrzAfsAjl4uP++evGFCrAU1jta4ubEjIG7YWt/64Gqv66a30yKwWczVjA6j3bM4nBwH7Pk1JmDHaxQ=="],
 
-    "onyx-chat-widget": ["onyx-chat-widget@workspace:widget"],
+    "lumen-chat-widget": ["lumen-chat-widget@workspace:widget"],
 
-    "onyx-desktop": ["onyx-desktop@workspace:desktop"],
+    "lumen-desktop": ["lumen-desktop@workspace:desktop"],
 
     "parse-entities": ["parse-entities@4.0.2", "", { "dependencies": { "@types/unist": "^2.0.0", "character-entities-legacy": "^3.0.0", "character-reference-invalid": "^2.0.0", "decode-named-character-reference": "^1.0.0", "is-alphanumerical": "^2.0.0", "is-decimal": "^2.0.0", "is-hexadecimal": "^2.0.0" } }, "sha512-GG2AQYWoLgL877gQIKeRPGO1xF9+eG1ujIb5soS5gPvLQ1y2o8FL90w2QWNdf9I361Mpp7726c+lj3U0qK1uGw=="],
 

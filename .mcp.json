@@ -12,7 +12,7 @@
     },
     "agent-wiki": {
       "type": "http",
-      "url": "https://dev-wiki.onyx.app/api/mcp"
+      "url": "https://dev-wiki.lumen.app/api/mcp"
     },
     "linear": {
       "type": "http",

@@ -1,7 +1,7 @@
-// Package paths resolves where an Onyx docker compose deployment lives on
-// disk. New installs default to ~/.config/onyx (XDG-style, matching the CLI's
+// Package paths resolves where an Lumen docker compose deployment lives on
+// disk. New installs default to ~/.config/lumen (XDG-style, matching the CLI's
 // own config dir convention); legacy installs created by install.sh in
-// ./onyx_data are detected and managed in place.
+// ./lumen_data are detected and managed in place.
 package paths
 
 import (
@@ -17,20 +17,20 @@ type Source string
 const (
 	// SourceFlag: the --dir flag.
 	SourceFlag Source = "--dir flag"
-	// SourceEnvDeploymentDir: the ONYX_DEPLOYMENT_DIR environment variable.
-	SourceEnvDeploymentDir Source = "ONYX_DEPLOYMENT_DIR"
+	// SourceEnvDeploymentDir: the LUMEN_DEPLOYMENT_DIR environment variable.
+	SourceEnvDeploymentDir Source = "LUMEN_DEPLOYMENT_DIR"
 	// SourceEnvInstallPrefix: the legacy INSTALL_PREFIX environment variable
 	// honored by install.sh.
 	SourceEnvInstallPrefix Source = "INSTALL_PREFIX"
-	// SourceLegacyCwd: an existing ./onyx_data install relative to the
+	// SourceLegacyCwd: an existing ./lumen_data install relative to the
 	// working directory (the location install.sh used).
-	SourceLegacyCwd Source = "legacy ./onyx_data"
+	SourceLegacyCwd Source = "legacy ./lumen_data"
 	// SourceDefault: the XDG-style default for new installs.
 	SourceDefault Source = "default"
 )
 
 // legacyDirName is the cwd-relative install directory install.sh created.
-const legacyDirName = "onyx_data"
+const legacyDirName = "lumen_data"
 
 // InstallRoot is a resolved deployment location.
 type InstallRoot struct {
@@ -42,22 +42,22 @@ type InstallRoot struct {
 	Ambiguous []string
 }
 
-// DefaultDir returns the XDG-style default install root: $XDG_CONFIG_HOME/onyx
-// or ~/.config/onyx. Mirrors config.ConfigDir()'s algorithm (which resolves
-// the CLI's own ~/.config/onyx-cli on every OS, including Windows) so the two
+// DefaultDir returns the XDG-style default install root: $XDG_CONFIG_HOME/lumen
+// or ~/.config/lumen. Mirrors config.ConfigDir()'s algorithm (which resolves
+// the CLI's own ~/.config/lumen-cli on every OS, including Windows) so the two
 // directories are siblings everywhere.
 func DefaultDir() string {
 	if xdg := os.Getenv("XDG_CONFIG_HOME"); xdg != "" {
-		return filepath.Join(xdg, "onyx")
+		return filepath.Join(xdg, "lumen")
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return filepath.Join(".", ".config", "onyx")
+		return filepath.Join(".", ".config", "lumen")
 	}
-	return filepath.Join(home, ".config", "onyx")
+	return filepath.Join(home, ".config", "lumen")
 }
 
-// IsInstall reports whether dir contains an Onyx deployment: a compose file
+// IsInstall reports whether dir contains an Lumen deployment: a compose file
 // (the base one, or the standalone prod file) or a .env under deployment/
 // (the markers install.sh itself checks before operating on a directory).
 func IsInstall(dir string) bool {
@@ -74,7 +74,7 @@ func IsInstall(dir string) bool {
 }
 
 // CheckDeletable reports whether dir is specific enough to be removed
-// recursively. The install root is named freely by --dir, ONYX_DEPLOYMENT_DIR
+// recursively. The install root is named freely by --dir, LUMEN_DEPLOYMENT_DIR
 // and the legacy INSTALL_PREFIX, and uninstall removes it with os.RemoveAll,
 // so deployment markers alone are not enough to authorize the delete: a stray
 // deployment/.env anywhere under a home directory would mark it, and the
@@ -102,7 +102,7 @@ func CheckDeletable(dir string) error {
 			return fmt.Errorf("%s contains your home directory", abs)
 		}
 	}
-	// Two segments below the root ("/opt/onyx", not "/opt") is the line
+	// Two segments below the root ("/opt/lumen", not "/opt") is the line
 	// between a deployment directory and a directory deployments live in.
 	rest := strings.Trim(strings.TrimPrefix(abs, filepath.VolumeName(abs)), string(os.PathSeparator))
 	if len(strings.Split(rest, string(os.PathSeparator))) < 2 {
@@ -121,15 +121,15 @@ func resolveSymlinks(p string) string {
 	return filepath.Clean(p)
 }
 
-// Resolve picks the install root. Precedence: --dir flag, ONYX_DEPLOYMENT_DIR,
-// legacy INSTALL_PREFIX, an existing legacy ./onyx_data install, then the
+// Resolve picks the install root. Precedence: --dir flag, LUMEN_DEPLOYMENT_DIR,
+// legacy INSTALL_PREFIX, an existing legacy ./lumen_data install, then the
 // XDG-style default (which need not exist yet — it is the target for fresh
 // installs).
 func Resolve(dirFlag string) InstallRoot {
 	if dirFlag != "" {
 		return InstallRoot{Dir: dirFlag, Source: SourceFlag}
 	}
-	if dir := os.Getenv("ONYX_DEPLOYMENT_DIR"); dir != "" {
+	if dir := os.Getenv("LUMEN_DEPLOYMENT_DIR"); dir != "" {
 		return InstallRoot{Dir: dir, Source: SourceEnvDeploymentDir}
 	}
 	if dir := os.Getenv("INSTALL_PREFIX"); dir != "" {

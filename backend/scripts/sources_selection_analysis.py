@@ -10,13 +10,13 @@ from typing import Optional
 
 import requests
 
-from onyx.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
+from lumen.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
 
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 
-from onyx.configs.app_configs import DOCUMENT_INDEX_NAME  # noqa: E402
-from onyx.configs.constants import SOURCE_TYPE  # noqa: E402
+from lumen.configs.app_configs import DOCUMENT_INDEX_NAME  # noqa: E402
+from lumen.configs.constants import SOURCE_TYPE  # noqa: E402
 
 ANALYSIS_FOLDER = f"{parent_dir}/scripts/.analysisfiles/"
 
@@ -377,13 +377,13 @@ class SelectionAnalysis:
             return False
 
     def do_request(self, query: str) -> dict:
-        """Request the Onyx API
+        """Request the Lumen API
 
         Args:
             query (str): A query
 
         Returns:
-            dict: The Onyx API response content
+            dict: The Lumen API response content
         """
         cookies = (
             {FASTAPI_USERS_AUTH_COOKIE_NAME: self._auth_cookie}
@@ -406,14 +406,14 @@ class SelectionAnalysis:
             if response.status_code != 200:
                 color_output(
                     (
-                        f"something goes wrong while requesting the Onyx API for the query '{query}': {response.text}"
+                        f"something goes wrong while requesting the Lumen API for the query '{query}': {response.text}"
                     ),
                     model="critical",
                 )
                 sys.exit(1)
         except Exception as e:
             color_output(
-                f"Unable to request the Onyx API for the query '{query}': {e}",
+                f"Unable to request the Lumen API for the query '{query}': {e}",
                 model="critical",
             )
             sys.exit(1)
@@ -441,10 +441,10 @@ class SelectionAnalysis:
             return json.load(f)
 
     def extract_content(self, contents: dict) -> dict:
-        """Extract the content returns by the Onyx API
+        """Extract the content returns by the Lumen API
 
         Args:
-            contents (dict): The onyx response content
+            contents (dict): The lumen response content
 
         Returns:
             dict: Data regarding the selected sources document
@@ -664,7 +664,7 @@ if __name__ == "__main__":
         type=str,
         default=None,
         help=(
-            "Currently, to get this script working when the Onyx Auth is "
+            "Currently, to get this script working when the Lumen Auth is "
             "enabled, you must extract from the UI your cookie 'fastapiusersauth' "
             "and then set it using this argument"
         ),
@@ -699,8 +699,8 @@ if __name__ == "__main__":
         type=int,
         default=3000,
         help=(
-            "The Onyx Web (not the API) port. We use the UI to forward the requests to the API. "
-            "It should be '3000' for local dev and '80' if Onyx runs using docker compose."
+            "The Lumen Web (not the API) port. We use the UI to forward the requests to the API. "
+            "It should be '3000' for local dev and '80' if Lumen runs using docker compose."
         ),
     )
     parser.add_argument(

@@ -9,7 +9,7 @@ import type { ProviderDescriptor } from "@/api/auth/providers";
 import { getStoredServerUrl } from "@/state/session";
 
 // Must match app.json's `scheme` + the backend's MOBILE_ALLOWED_REDIRECT_URIS allowlist.
-export const MOBILE_REDIRECT_URI = "onyx://auth/callback";
+export const MOBILE_REDIRECT_URI = "lumen://auth/callback";
 
 export interface BrowserSsoResult {
   code: string;
@@ -84,7 +84,7 @@ export async function runBrowserSso(
 ): Promise<BrowserSsoResult> {
   const serverUrl = getStoredServerUrl();
   if (!serverUrl) {
-    throw new Error("Connect to an Onyx instance before signing in.");
+    throw new Error("Connect to an Lumen instance before signing in.");
   }
   if (!descriptor.authorizePath) {
     throw new Error(`Provider ${descriptor.id} has no authorize endpoint.`);

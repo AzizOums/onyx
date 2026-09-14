@@ -38,7 +38,7 @@ describe("UrlBar", () => {
   test("contains long preview URLs inside the URL bar and copies them", async () => {
     const user = setupUser();
     const longPreviewUrl =
-      "https://craft-preview.onyx.app/sessions/session-with-a-very-long-id/apps/generated-webapp/routes/deeply/nested/path/with/an-unbroken-segment-that-would-otherwise-overflow-the-url-bar?query=another-unbroken-value-that-keeps-going";
+      "https://craft-preview.lumen.app/sessions/session-with-a-very-long-id/apps/generated-webapp/routes/deeply/nested/path/with/an-unbroken-segment-that-would-otherwise-overflow-the-url-bar?query=another-unbroken-value-that-keeps-going";
 
     render(
       <UrlBar
@@ -110,8 +110,8 @@ describe("UrlBar", () => {
 
   test("resets copy feedback when the displayed URL changes", async () => {
     const user = setupUser();
-    const firstPreviewUrl = "https://craft-preview.onyx.app/sessions/first";
-    const secondPreviewUrl = "https://craft-preview.onyx.app/sessions/second";
+    const firstPreviewUrl = "https://craft-preview.lumen.app/sessions/first";
+    const secondPreviewUrl = "https://craft-preview.lumen.app/sessions/second";
     const { rerender } = render(
       <UrlBar displayUrl={firstPreviewUrl} previewUrl={firstPreviewUrl} />
     );

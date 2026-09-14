@@ -17,15 +17,15 @@ from ragas.metrics import (  # ty: ignore[unresolved-import]
 )
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.context.search.models import IndexFilters, SavedSearchDoc
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.models import Document, FederatedConnector
-from onyx.db.search_settings import get_current_search_settings
-from onyx.document_index.factory import get_default_document_index
-from onyx.document_index.interfaces_new import DocumentSectionRequest
-from onyx.prompts.prompt_utils import build_doc_context_str
-from onyx.utils.logger import setup_logger
+from lumen.configs.constants import DocumentSource
+from lumen.context.search.models import IndexFilters, SavedSearchDoc
+from lumen.db.engine.sql_engine import get_session_with_tenant
+from lumen.db.models import Document, FederatedConnector
+from lumen.db.search_settings import get_current_search_settings
+from lumen.document_index.factory import get_default_document_index
+from lumen.document_index.interfaces_new import DocumentSectionRequest
+from lumen.prompts.prompt_utils import build_doc_context_str
+from lumen.utils.logger import setup_logger
 from tests.regression.search_quality.models import (
     CombinedMetrics,
     GroundTruth,

@@ -15,15 +15,15 @@ import pytest
 from requests import HTTPError, Response
 from sqlalchemy.orm import Session
 
-from onyx.auth.oauth_token_manager import (
+from lumen.auth.oauth_token_manager import (
     OAuthFlowParams,
     OAuthTokenManager,
     build_oauth_authorization_url,
     exchange_oauth_code_for_token,
 )
-from onyx.db.models import OAuthConfig
-from onyx.db.oauth_config import create_oauth_config, upsert_user_oauth_token
-from onyx.utils.sensitive import SensitiveValue
+from lumen.db.models import OAuthConfig
+from lumen.db.oauth_config import create_oauth_config, upsert_user_oauth_token
+from lumen.utils.sensitive import SensitiveValue
 from tests.external_dependency_unit.conftest import create_test_user
 
 
@@ -91,7 +91,7 @@ class TestOAuthTokenManagerValidation:
 
         assert access_token == "token_without_expiry"
 
-    @patch("onyx.auth.oauth_token_manager.requests.post")
+    @patch("lumen.auth.oauth_token_manager.requests.post")
     def test_get_valid_access_token_with_expired_token_refreshes(
         self, mock_post: Mock, db_session: Session
     ) -> None:
@@ -151,7 +151,7 @@ class TestOAuthTokenManagerValidation:
 
         assert access_token is None
 
-    @patch("onyx.auth.oauth_token_manager.requests.post")
+    @patch("lumen.auth.oauth_token_manager.requests.post")
     def test_get_valid_access_token_refresh_fails(
         self, mock_post: Mock, db_session: Session
     ) -> None:
@@ -180,7 +180,7 @@ class TestOAuthTokenManagerValidation:
 class TestOAuthTokenManagerRefresh:
     """Tests for token refresh functionality"""
 
-    @patch("onyx.auth.oauth_token_manager.requests.post")
+    @patch("lumen.auth.oauth_token_manager.requests.post")
     def test_refresh_token_success(self, mock_post: Mock, db_session: Session) -> None:
         """Test successful token refresh"""
         oauth_config = _create_test_oauth_config(db_session)
@@ -221,7 +221,7 @@ class TestOAuthTokenManagerRefresh:
         assert token_data["refresh_token"] == "new_refresh"
         assert "expires_at" in token_data
 
-    @patch("onyx.auth.oauth_token_manager.requests.post")
+    @patch("lumen.auth.oauth_token_manager.requests.post")
     def test_refresh_token_preserves_refresh_token(
         self, mock_post: Mock, db_session: Session
     ) -> None:
@@ -259,7 +259,7 @@ class TestOAuthTokenManagerRefresh:
         token_data = user_token.token_data.get_value(apply_mask=False)
         assert token_data["refresh_token"] == "old_refresh"
 
-    @patch("onyx.auth.oauth_token_manager.requests.post")
+    @patch("lumen.auth.oauth_token_manager.requests.post")
     def test_refresh_token_http_error(
         self, mock_post: Mock, db_session: Session
     ) -> None:
@@ -342,7 +342,7 @@ class TestOAuthTokenManagerExpiration:
 class TestOAuthTokenManagerCodeExchange:
     """Tests for authorization code exchange"""
 
-    @patch("onyx.auth.oauth_token_manager.requests.post")
+    @patch("lumen.auth.oauth_token_manager.requests.post")
     def test_exchange_code_for_token_success(
         self, mock_post: Mock, db_session: Session
     ) -> None:
@@ -387,7 +387,7 @@ class TestOAuthTokenManagerCodeExchange:
         ] == oauth_config.client_secret.get_value(apply_mask=False)
         assert call_args[1]["data"]["redirect_uri"] == "https://example.com/callback"
 
-    @patch("onyx.auth.oauth_token_manager.requests.post")
+    @patch("lumen.auth.oauth_token_manager.requests.post")
     def test_exchange_code_for_token_http_error(
         self, mock_post: Mock, db_session: Session
     ) -> None:
@@ -538,7 +538,7 @@ class TestSharedOAuthPrimitives:
     def test_build_authorization_url_includes_pkce_and_resource(self) -> None:
         url = build_oauth_authorization_url(
             _known_flow_params(),
-            redirect_uri="https://onyx.example.com/mcp/oauth/callback",
+            redirect_uri="https://lumen.example.com/mcp/oauth/callback",
             state="state_abc",
             code_challenge="challenge_xyz",
             resource="https://mcp.example.com/server",
@@ -556,7 +556,7 @@ class TestSharedOAuthPrimitives:
     def test_build_authorization_url_omits_pkce_and_resource_by_default(self) -> None:
         url = build_oauth_authorization_url(
             _known_flow_params(),
-            redirect_uri="https://onyx.example.com/callback",
+            redirect_uri="https://lumen.example.com/callback",
             state="state_abc",
         )
         query = parse_qs(urlparse(url).query)
@@ -564,8 +564,8 @@ class TestSharedOAuthPrimitives:
         assert "code_challenge_method" not in query
         assert "resource" not in query
 
-    @patch("onyx.auth.oauth_token_manager.validate_oauth_endpoint_url")
-    @patch("onyx.auth.oauth_token_manager.requests.post")
+    @patch("lumen.auth.oauth_token_manager.validate_oauth_endpoint_url")
+    @patch("lumen.auth.oauth_token_manager.requests.post")
     def test_exchange_code_sends_code_verifier(
         self, mock_post: Mock, mock_validate: Mock
     ) -> None:
@@ -583,7 +583,7 @@ class TestSharedOAuthPrimitives:
         token_data = exchange_oauth_code_for_token(
             _known_flow_params(),
             code="auth_code",
-            redirect_uri="https://onyx.example.com/mcp/oauth/callback",
+            redirect_uri="https://lumen.example.com/mcp/oauth/callback",
             code_verifier="verifier_123",
         )
 
@@ -595,8 +595,8 @@ class TestSharedOAuthPrimitives:
         assert sent["code_verifier"] == "verifier_123"
         assert sent["client_secret"] == "known_client_secret"
 
-    @patch("onyx.auth.oauth_token_manager.validate_oauth_endpoint_url")
-    @patch("onyx.auth.oauth_token_manager.requests.post")
+    @patch("lumen.auth.oauth_token_manager.validate_oauth_endpoint_url")
+    @patch("lumen.auth.oauth_token_manager.requests.post")
     def test_exchange_code_raises_on_http_error(
         self, mock_post: Mock, mock_validate: Mock
     ) -> None:
@@ -608,5 +608,5 @@ class TestSharedOAuthPrimitives:
             exchange_oauth_code_for_token(
                 _known_flow_params(),
                 code="bad",
-                redirect_uri="https://onyx.example.com/callback",
+                redirect_uri="https://lumen.example.com/callback",
             )

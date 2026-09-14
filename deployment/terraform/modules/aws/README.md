@@ -1,7 +1,7 @@
-# Onyx AWS modules
+# Lumen AWS modules
 
 ## Overview
-This directory contains Terraform modules to provision the core AWS infrastructure for Onyx:
+This directory contains Terraform modules to provision the core AWS infrastructure for Lumen:
 
 - `vpc`: Creates a VPC with public/private subnets sized for EKS, an optional S3 gateway endpoint, and VPC flow logs
 - `eks`: Provisions an Amazon EKS cluster, essential addons (EBS CSI, metrics server, cluster autoscaler), and optional IRSA for S3 and RDS access
@@ -9,11 +9,11 @@ This directory contains Terraform modules to provision the core AWS infrastructu
 - `redis`: Creates an ElastiCache for Redis replication group with CloudWatch alarms
 - `s3`: Creates an S3 bucket with versioning, encryption, lifecycle rules, and a scoped bucket policy
 - `opensearch`: Creates an Amazon OpenSearch domain for managed search workloads, with CloudWatch alarms
-- `onyx`: A higher-level composition that wires the above modules together for a complete, opinionated stack
+- `lumen`: A higher-level composition that wires the above modules together for a complete, opinionated stack
 
-Use the `onyx` module if you want a working EKS + Postgres + Redis + S3 stack with sane defaults. Use the individual modules if you need more granular control.
+Use the `lumen` module if you want a working EKS + Postgres + Redis + S3 stack with sane defaults. Use the individual modules if you need more granular control.
 
-These are the same modules Onyx runs for its own managed deployments. The managed
+These are the same modules Lumen runs for its own managed deployments. The managed
 deployments add operational wiring on top (alert routing, secret management, log
 aggregation) but provision the underlying AWS infrastructure from exactly this code.
 
@@ -24,12 +24,12 @@ else, point `source` at this repository and pin a ref:
 
 ```hcl
 module "vpc" {
-  source   = "git::https://github.com/onyx-dot-app/onyx.git//deployment/terraform/modules/aws/vpc?ref=tf/v1.0.2"
-  vpc_name = "onyx-vpc"
+  source   = "git::https://github.com/lumen-dot-app/lumen.git//deployment/terraform/modules/aws/vpc?ref=tf/v1.0.2"
+  vpc_name = "lumen-vpc"
 }
 ```
 
-Releases are tagged `tf/vX.Y.Z`, versioned independently of Onyx product
+Releases are tagged `tf/vX.Y.Z`, versioned independently of Lumen product
 releases. A commit sha works as a `ref` too, and is the better choice for
 automated consumers: a sha cannot be moved, where a tag can. Terraform clones
 the whole repository either way, so there is no meaningful speed difference.
@@ -42,7 +42,7 @@ The snippet below shows a minimal working example that:
 - Sets up providers
 - Waits for EKS to be ready
 - Configures `kubernetes` and `helm` providers against the created cluster
-- Provisions the full Onyx AWS stack via the `onyx` module
+- Provisions the full Lumen AWS stack via the `lumen` module
 
 ```hcl
 locals {
@@ -56,14 +56,14 @@ provider "aws" {
   region = local.region
 }
 
-module "onyx" {
+module "lumen" {
   # If your root module is next to this modules/ directory:
-  # source = "./modules/aws/onyx"
+  # source = "./modules/aws/lumen"
   # If referencing from this repo as a template, adjust the path accordingly.
-  source = "./modules/aws/onyx"
+  source = "./modules/aws/lumen"
 
   region            = local.region
-  name              = "onyx"            # used as a prefix and workspace-aware
+  name              = "lumen"            # used as a prefix and workspace-aware
   postgres_username = local.postgres_username
   postgres_password = local.postgres_password
   # create_vpc    = true  # default true; set to false to use an existing VPC (see below)
@@ -71,17 +71,17 @@ module "onyx" {
 
 resource "null_resource" "wait_for_cluster" {
   provisioner "local-exec" {
-    command = "aws eks wait cluster-active --name ${module.onyx.cluster_name} --region ${local.region}"
+    command = "aws eks wait cluster-active --name ${module.lumen.cluster_name} --region ${local.region}"
   }
 }
 
 data "aws_eks_cluster" "eks" {
-  name       = module.onyx.cluster_name
+  name       = module.lumen.cluster_name
   depends_on = [null_resource.wait_for_cluster]
 }
 
 data "aws_eks_cluster_auth" "eks" {
-  name       = module.onyx.cluster_name
+  name       = module.lumen.cluster_name
   depends_on = [null_resource.wait_for_cluster]
 }
 
@@ -101,14 +101,14 @@ provider "helm" {
 
 # Optional: expose handy outputs at the root module level
 output "cluster_name" {
-  value = module.onyx.cluster_name
+  value = module.lumen.cluster_name
 }
 output "postgres_connection_url" {
-  value     = "postgres://${urlencode(local.postgres_username)}:${urlencode(local.postgres_password)}@${module.onyx.postgres_address}:${module.onyx.postgres_port}/${module.onyx.postgres_db_name}"
+  value     = "postgres://${urlencode(local.postgres_username)}:${urlencode(local.postgres_password)}@${module.lumen.postgres_address}:${module.lumen.postgres_port}/${module.lumen.postgres_db_name}"
   sensitive = true
 }
 output "redis_connection_url" {
-  value     = module.onyx.redis_connection_url
+  value     = module.lumen.redis_connection_url
   sensitive = true
 }
 ```
@@ -121,7 +121,7 @@ terraform apply
 ```
 
 ## T-shirt sizing
-The `onyx` module takes a `size` input (`small` | `medium` | `large`, default `medium`) that sets
+The `lumen` module takes a `size` input (`small` | `medium` | `large`, default `medium`) that sets
 coherent defaults for every compute and data-plane knob. Pick a tier from your expected scale:
 
 | Tier | Users | Documents |
@@ -142,7 +142,7 @@ What each tier provisions:
 | OpenSearch masters² | 3× m7g.medium.search | 3× m7g.medium.search | 3× m7g.medium.search |
 
 Pair each tier with the matching sizing snippets from the Helm chart's
-`deployment/helm/charts/onyx/SIZING.md` (chart ≥ 0.8.0) — the tiers here size the
+`deployment/helm/charts/lumen/SIZING.md` (chart ≥ 0.8.0) — the tiers here size the
 infrastructure, the chart snippets size the workloads on it.
 
 ¹ The dedicated index node group only matters when running the document index in-cluster
@@ -161,7 +161,7 @@ fits one m7i.2xlarge (external Postgres/Redis/S3); with plain chart defaults the
 autoscaler settles at two nodes. Set `vespa_node_enabled = true` to add the dedicated
 node back.
 
-These defaults are calibrated from Onyx's own managed production fleet: memory, not CPU, is
+These defaults are calibrated from Lumen's own managed production fleet: memory, not CPU, is
 the binding dimension on the Kubernetes side, and the burstable `db.t4g.large` holds up to
 roughly the medium tier before CPU peaks make a fixed-performance class worthwhile.
 
@@ -191,11 +191,11 @@ plan` for `-/+ destroy and then create replacement` on the domain before applyin
 If you already have a VPC and subnets, disable VPC creation and provide IDs, CIDR, and the ID of the existing S3 gateway endpoint in that VPC:
 
 ```hcl
-module "onyx" {
-  source = "./modules/aws/onyx"
+module "lumen" {
+  source = "./modules/aws/lumen"
 
   region            = local.region
-  name              = "onyx"
+  name              = "lumen"
   postgres_username = "pgusername"
   postgres_password = "your-postgres-password"
 
@@ -210,7 +210,7 @@ module "onyx" {
 
 ## What each module does
 
-### `onyx`
+### `lumen`
 - Orchestrates `vpc`, `eks`, `postgres`, `redis`, and `s3`
 - Names resources using `name` and the current Terraform workspace
 - Exposes convenient outputs:
@@ -220,7 +220,7 @@ module "onyx" {
   - `opensearch_endpoint`, `opensearch_dashboard_endpoint`, `opensearch_domain_arn` (null unless `enable_opensearch`)
 
 Inputs (common):
-- `name` (default `onyx`), `region` (default `us-west-2`), `tags`
+- `name` (default `lumen`), `region` (default `us-west-2`), `tags`
 - `size` (`small`/`medium`/`large`, default `medium`) — see "T-shirt sizing" above — plus per-setting overrides (`main_node_*`, `vespa_node_*`, `postgres_instance_type`, `postgres_storage_gb`, `redis_instance_type`, `opensearch_*`)
 - `postgres_username`, `postgres_password`, `postgres_multi_az`
 - `redis_auth_token`: required unless `enable_redis_iam_auth` is true, because the
@@ -293,7 +293,7 @@ Key inputs include:
 
 ## Upgrading from an earlier version of these modules
 
-These modules were realigned with the versions Onyx runs in production. If you
+These modules were realigned with the versions Lumen runs in production. If you
 applied an earlier revision, note the following before your next `terraform apply`.
 
 **Renamed resources are handled for you.** The modules ship `moved` blocks that
@@ -315,12 +315,12 @@ modules add settings the old ones did not manage:
   read or a VPC endpoint grant is configured. The policy denies non-TLS
   requests. If you attached your own policy to a module bucket outside
   Terraform, the apply replaces it. Before you apply, move those statements
-  into `additional_policy_documents` on the `s3` module (on the `onyx` module:
+  into `additional_policy_documents` on the `s3` module (on the `lumen` module:
   `s3_additional_policy_documents` / `s3_upload_additional_policy_documents`)
 - `vpc` now creates flow logs and their IAM role
 - `postgres`, `redis`, and `opensearch` now create CloudWatch alarms
 - `postgres` now manages Multi-AZ (default false). If you enabled a standby
-  outside Terraform, set `postgres_multi_az = true` on the `onyx` module (or
+  outside Terraform, set `postgres_multi_az = true` on the `lumen` module (or
   `multi_az` on the `postgres` module) before applying, or the standby is removed
 - `eks` now enables the private API endpoint by default (`private_cluster_enabled`).
   This is additive and does not remove public access
@@ -331,31 +331,31 @@ the previous default, set the value explicitly before applying.
 **The Craft sandbox node group's key changed** from `craft_sandbox` to `sandbox`.
 A `moved` block handles the relabel, so the group is not recreated.
 
-## Installing the Onyx Helm chart (after Terraform)
-Once the cluster is active, deploy application workloads via Helm. You can use the chart in `deployment/helm/charts/onyx`.
+## Installing the Lumen Helm chart (after Terraform)
+Once the cluster is active, deploy application workloads via Helm. You can use the chart in `deployment/helm/charts/lumen`.
 
 ```bash
 # Set kubeconfig to your new cluster (if you’re not using the TF providers for kubernetes/helm)
 aws eks update-kubeconfig --name $(terraform output -raw cluster_name) --region ${AWS_REGION:-us-west-2}
 
-kubectl create namespace onyx --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace lumen --dry-run=client -o yaml | kubectl apply -f -
 
 # If using AWS S3 via IRSA created by the EKS module, consider disabling MinIO
-# Replace the path below with the absolute or correct relative path to the onyx Helm chart
-helm upgrade --install onyx /path/to/onyx/deployment/helm/charts/onyx \
-  --namespace onyx \
+# Replace the path below with the absolute or correct relative path to the lumen Helm chart
+helm upgrade --install lumen /path/to/lumen/deployment/helm/charts/lumen \
+  --namespace lumen \
   --set minio.enabled=false \
   --set serviceAccount.create=false \
-  --set serviceAccount.name=onyx-s3-access
+  --set serviceAccount.name=lumen-s3-access
 ```
 
 Notes:
-- The EKS module can create an IRSA role plus a Kubernetes `ServiceAccount` named `onyx-s3-access` (by default in namespace `onyx`) when `s3_bucket_names` is provided. Use that service account in the Helm chart to avoid static S3 credentials.
+- The EKS module can create an IRSA role plus a Kubernetes `ServiceAccount` named `lumen-s3-access` (by default in namespace `lumen`) when `s3_bucket_names` is provided. Use that service account in the Helm chart to avoid static S3 credentials.
 - If you prefer MinIO inside the cluster, leave `minio.enabled=true` (default) and skip IRSA.
 
 ## Workflow tips
 - First apply can be infra-only; once EKS is active, install the Helm chart.
-- Use Terraform workspaces to create isolated environments; the `onyx` module automatically includes the workspace in resource names.
+- Use Terraform workspaces to create isolated environments; the `lumen` module automatically includes the workspace in resource names.
 
 ## Security
 - Database and Redis connection outputs are marked sensitive. Handle them carefully.

@@ -11,13 +11,13 @@ from uuid import UUID, uuid4
 import pytest
 from kubernetes import client
 
-from onyx.configs.constants import MessageType
-from onyx.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
-from onyx.server.features.build.interactive_turns.models import InteractiveTurnResponse
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from lumen.configs.constants import MessageType
+from lumen.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
+from lumen.server.features.build.interactive_turns.models import InteractiveTurnResponse
+from lumen.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
-from onyx.server.features.build.session.models import MessageResponse
+from lumen.server.features.build.session.models import MessageResponse
 from tests.integration.common_utils.managers.build_session import BuildSessionManager
 from tests.integration.common_utils.managers.user import UserManager
 from tests.integration.tests.craft.k8s.k8s_fixtures import (

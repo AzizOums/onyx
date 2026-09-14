@@ -19,8 +19,8 @@ import os
 import httpx
 import pytest
 
-from onyx.db.enums import AccessType, Permission
-from onyx.server.documents.models import DocumentSource
+from lumen.db.enums import AccessType, Permission
+from lumen.server.documents.models import DocumentSource
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
@@ -164,7 +164,7 @@ def test_manage_connectors_user_can_edit_public_file_connector() -> None:
 
     # Editor can update files on the public cc-pair — `_add_user_filters`
     # returns the cc-pair lookup unfiltered for any user holding
-    # MANAGE_CONNECTORS (see onyx/db/connector_credential_pair.py:55).
+    # MANAGE_CONNECTORS (see lumen/db/connector_credential_pair.py:55).
     update_response = _update_connector_files(
         connector_id=connector.id,
         user_performing_action=editor,

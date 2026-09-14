@@ -19,9 +19,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/tui"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/git"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/paths"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/tui"
 )
 
 const playwrightWorkflow = "Run Playwright Tests"
@@ -62,7 +62,7 @@ You can also look up the latest run by branch name or PR number.
 Examples:
   ods trace                          # latest run for current branch
   ods trace 12345678                 # specific run ID
-  ods trace https://github.com/onyx-dot-app/onyx/actions/runs/12345678
+  ods trace https://github.com/lumen-dot-app/lumen/actions/runs/12345678
   ods trace --pr 9500                # latest run for PR #9500
   ods trace --branch main            # latest run for main branch
   ods trace --project admin          # only download admin project traces

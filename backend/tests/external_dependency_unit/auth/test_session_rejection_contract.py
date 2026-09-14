@@ -14,12 +14,12 @@ from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.orm import Session
 
-from onyx.auth.users import TenantAwareRedisStrategy
-from onyx.configs.app_configs import REDIS_AUTH_KEY_PREFIX
-from onyx.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
-from onyx.error_handling.exceptions import register_onyx_exception_handlers
-from onyx.redis.redis_pool import get_raw_redis_client
-from onyx.server.manage.users import router as user_router
+from lumen.auth.users import TenantAwareRedisStrategy
+from lumen.configs.app_configs import REDIS_AUTH_KEY_PREFIX
+from lumen.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
+from lumen.error_handling.exceptions import register_lumen_exception_handlers
+from lumen.redis.redis_pool import get_raw_redis_client
+from lumen.server.manage.users import router as user_router
 from tests.external_dependency_unit.conftest import create_test_user
 
 
@@ -27,7 +27,7 @@ from tests.external_dependency_unit.conftest import create_test_user
 def app() -> FastAPI:
     fastapi_app = FastAPI()
     fastapi_app.include_router(user_router)
-    register_onyx_exception_handlers(fastapi_app)
+    register_lumen_exception_handlers(fastapi_app)
     return fastapi_app
 
 

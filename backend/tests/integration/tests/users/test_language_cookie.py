@@ -7,7 +7,7 @@ The backend owns the NEXT_LOCALE cookie the web server layout reads:
 
 import httpx
 
-from onyx.configs.constants import NEXT_LOCALE_COOKIE_NAME
+from lumen.configs.constants import NEXT_LOCALE_COOKIE_NAME
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.user import UserManager

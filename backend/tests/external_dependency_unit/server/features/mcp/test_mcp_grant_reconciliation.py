@@ -5,9 +5,9 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.models import MCPServer, MCPServer__User, MCPServer__UserGroup, UserGroup
-from onyx.server.features.mcp.api import update_mcp_server_simple
-from onyx.server.features.mcp.models import MCPServerSimpleUpdateRequest
+from lumen.db.models import MCPServer, MCPServer__User, MCPServer__UserGroup, UserGroup
+from lumen.server.features.mcp.api import update_mcp_server_simple
+from lumen.server.features.mcp.models import MCPServerSimpleUpdateRequest
 from tests.external_dependency_unit.conftest import create_test_user
 
 

@@ -218,7 +218,7 @@ export const SELF_HOSTED_PROVIDERS: EmbeddingProvider[] = [
         queryPrefix: "query: ",
         passagePrefix: "passage: ",
         description:
-          "The smallest and fastest version of the E5 line of models. If you're running Onyx on a resource constrained system, then this may be a good choice.",
+          "The smallest and fastest version of the E5 line of models. If you're running Lumen on a resource constrained system, then this may be a good choice.",
       },
       {
         modelName: "intfloat/multilingual-e5-base",
@@ -329,7 +329,7 @@ export function findRegistryModel(modelName: string): EmbeddingModel | null {
  *   1. Should the backend route through a cloud API or the local model
  *      server? (Currently encoded as `provider_type IS NULL` vs `IS NOT
  *      NULL` — see the routing branch in
- *      `backend/onyx/natural_language_processing/search_nlp_models.py`.)
+ *      `backend/lumen/natural_language_processing/search_nlp_models.py`.)
  *
  *   2. Which logical bucket does this model belong to for UI purposes —
  *      icon, modal selection, displayName? (Currently UNREPRESENTED in the
@@ -362,7 +362,7 @@ export function findRegistryModel(modelName: string): EmbeddingModel | null {
  *   • An Alembic migration to backfill existing nulls and add the NOT NULL
  *     constraint.
  *   • Switching the routing branch in
- *     `backend/onyx/natural_language_processing/search_nlp_models.py` from
+ *     `backend/lumen/natural_language_processing/search_nlp_models.py` from
  *     `provider_type is None` to a `cloud_based`-driven check.
  *   • Updating Pydantic models / response schemas so the frontend can read
  *     `provider_type` directly off the model instead of guessing.

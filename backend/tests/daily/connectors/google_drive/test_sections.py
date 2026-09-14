@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
+from lumen.connectors.google_drive.connector import GoogleDriveConnector
 from tests.daily.connectors.google_drive.consts_and_utils import (
     ADMIN_EMAIL,
     SECTIONS_FOLDER_URL,
@@ -17,7 +17,7 @@ from tests.utils.secret_names import TestSecret
     TestSecret.GOOGLE_DRIVE_SERVICE_ACCOUNT_JSON_STR,
 )
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_google_drive_sections(

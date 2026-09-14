@@ -7,9 +7,9 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SkillSharePermission
-from onyx.db.models import Skill, Skill__User, Skill__UserGroup, UserSkillPreference
-from onyx.db.skill import (
+from lumen.db.enums import SkillSharePermission
+from lumen.db.models import Skill, Skill__User, Skill__UserGroup, UserSkillPreference
+from lumen.db.skill import (
     add_new_skill__no_commit,
     enable_new_skill_if_name_available__no_commit,
     list_runtime_skills_for_user,
@@ -18,9 +18,9 @@ from onyx.db.skill import (
     skill_user_states,
     transfer_skill_ownership,
 )
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.skill.response_helpers import skill_response_for_user
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.features.skill.response_helpers import skill_response_for_user
 from tests.external_dependency_unit.craft.db_helpers import (
     make_built_in_skill_row,
     make_external_app,
@@ -213,14 +213,14 @@ def test_replace_skill_shares_names_invalid_group_target(
 ) -> None:
     skill = make_skill(db_session)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         replace_skill_shares(
             skill=skill,
             group_shares={-1: SkillSharePermission.VIEWER},
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "One or more group share targets do not exist."
 
 
@@ -229,14 +229,14 @@ def test_replace_skill_shares_names_invalid_user_target(
 ) -> None:
     skill = make_skill(db_session)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         replace_skill_shares(
             skill=skill,
             user_shares={uuid4(): SkillSharePermission.VIEWER},
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "One or more user share targets do not exist."
 
 
@@ -370,14 +370,14 @@ def test_same_name_skills_switch_atomically_per_user(db_session: Session) -> Non
         if skill.name == name
     } == {second_skill.id}
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         set_skill_enabled_for_user(
             skill_id=second_skill.id,
             enabled=True,
             user=first_user,
             db_session=db_session,
         )
-    assert exc_info.value.error_code == OnyxErrorCode.SKILL_NAME_CONFLICT
+    assert exc_info.value.error_code == LumenErrorCode.SKILL_NAME_CONFLICT
     assert (
         db_session.scalar(
             select(UserSkillPreference.skill_id).where(
@@ -508,14 +508,14 @@ def test_transfer_skill_ownership_rejects_built_in_skill(
         built_in_skill_id=f"built-in-{new_owner.id.hex[:8]}",
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         transfer_skill_ownership(
             skill=skill,
             new_owner_user_id=new_owner.id,
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert skill.author_user_id is None
 
 
@@ -525,12 +525,12 @@ def test_transfer_skill_ownership_rejects_missing_new_owner(
     previous_owner = make_user(db_session)
     skill = make_skill(db_session, author_user_id=previous_owner.id)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         transfer_skill_ownership(
             skill=skill,
             new_owner_user_id=uuid4(),
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "New owner user does not exist."

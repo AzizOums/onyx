@@ -28,21 +28,21 @@ Code changes must consider both multi-tenant and single-tenant deployments. In m
 
 Whenever a new backend route is added that does NOT start with `/api`, it must be explicitly routed in ALL nginx configs:
 
-- `deployment/helm/charts/onyx/templates/nginx-conf.yaml` (Helm/k8s, bundled nginx)
+- `deployment/helm/charts/lumen/templates/nginx-conf.yaml` (Helm/k8s, bundled nginx)
 - `deployment/data/nginx/app.conf.template` (docker-compose dev)
 - `deployment/data/nginx/app.conf.template.prod` (docker-compose prod)
 - `deployment/data/nginx/app.conf.template.no-letsencrypt` (docker-compose no-letsencrypt)
 
 Routes not starting with `/api` are not caught by the existing `^/(api|openapi\.json)` location block and will fall through to `location /`, which proxies to the Next.js web server and returns an HTML 404. In the nginx configs, the new location block must be placed before the `/api` block. Examples of routes that need this treatment: `/scim`, `/mcp`.
 
-The route must ALSO be covered in Helm ingress mode (`ingress.enabled=true`), which does not use the bundled nginx. Add a dedicated ingress template for the route (see `deployment/helm/charts/onyx/templates/ingress-scim.yaml`). `ingress-api.yaml` cannot host it, since that resource only routes `/api` and its resource-wide rewrite annotation strips other prefixes. If the web app owns a sub-path of the route (for example an IdP callback page), carve that sub-path back out to the webserver with `pathType: Exact`, following `ingress-mcp-oauth-callback.yaml`.
+The route must ALSO be covered in Helm ingress mode (`ingress.enabled=true`), which does not use the bundled nginx. Add a dedicated ingress template for the route (see `deployment/helm/charts/lumen/templates/ingress-scim.yaml`). `ingress-api.yaml` cannot host it, since that resource only routes `/api` and its resource-wide rewrite annotation strips other prefixes. If the web app owns a sub-path of the route (for example an IdP callback page), carve that sub-path back out to the webserver with `pathType: Exact`, following `ingress-mcp-oauth-callback.yaml`.
 
 ## Backend API Consumers Beyond the Web App
 
 The backend HTTP API is not consumed only by `web/`. Changing a route path, its request or response model, or its auth requirements is a breaking change for consumers that no frontend build or type check will catch:
 
-- `backend/onyx/mcp_server/` — MCP tools and resources call the API over HTTP, forwarding the caller's bearer token, and parse responses with the backend's own Pydantic models. A renamed or removed field breaks them at runtime, not at build time.
-- `terraform-provider-onyx/internal/client/` — a Go client with hand-written request and response structs. It depends heavily on **admin** routes (`/admin/api-key`, `/admin/persona`, `/manage/admin/connector`, `/manage/admin/cc-pair`, `/manage/admin/document-set`, `/manage/admin/user-group`) as well as non-admin ones like `/persona`. "This is only an admin endpoint" is not a reason to treat a change as safe.
+- `backend/lumen/mcp_server/` — MCP tools and resources call the API over HTTP, forwarding the caller's bearer token, and parse responses with the backend's own Pydantic models. A renamed or removed field breaks them at runtime, not at build time.
+- `terraform-provider-lumen/internal/client/` — a Go client with hand-written request and response structs. It depends heavily on **admin** routes (`/admin/api-key`, `/admin/persona`, `/manage/admin/connector`, `/manage/admin/cc-pair`, `/manage/admin/document-set`, `/manage/admin/user-group`) as well as non-admin ones like `/persona`. "This is only an admin endpoint" is not a reason to treat a change as safe.
 - `mobile/` and `desktop/`.
 - External customers calling the API directly with a Personal Access Token or API key.
 
@@ -50,15 +50,15 @@ When a change touches a route or a model it returns, check whether these consume
 
 Routes tagged `PUBLIC_API_TAGS` are a published contract. `backend/scripts/transform_openapi_for_docs.py` filters on the `public` tag to build the customer-facing API documentation, so those paths, parameters and response fields are visible to customers and should only change additively.
 
-Any route intended to be reachable programmatically must declare an auth marker: either `Depends(require_permission(...))` or `dependencies=[Depends(scope_exempt)]`. `_scoped_pat_permitted_on_route` in `backend/onyx/auth/users.py` fails closed — a route whose auth dependency carries neither marker rejects scoped Personal Access Tokens with `INSUFFICIENT_PERMISSIONS`, while still working with a session cookie or an unscoped token. This is easy to miss, because the web app only ever authenticates with a session.
+Any route intended to be reachable programmatically must declare an auth marker: either `Depends(require_permission(...))` or `dependencies=[Depends(scope_exempt)]`. `_scoped_pat_permitted_on_route` in `backend/lumen/auth/users.py` fails closed — a route whose auth dependency carries neither marker rejects scoped Personal Access Tokens with `INSUFFICIENT_PERMISSIONS`, while still working with a session cookie or an unscoped token. This is easy to miss, because the web app only ever authenticates with a session.
 
 ## Full vs Lite Deployments
 
-Code changes must consider both regular Onyx deployments and Onyx lite deployments. Lite deployments disable the vector DB, Redis, model servers, and background workers by default, use PostgreSQL-backed cache/auth/file storage, and rely on the API server to handle background work. Do not assume those services are available unless the code path is explicitly limited to full deployments.
+Code changes must consider both regular Lumen deployments and Lumen lite deployments. Lite deployments disable the vector DB, Redis, model servers, and background workers by default, use PostgreSQL-backed cache/auth/file storage, and rely on the API server to handle background work. Do not assume those services are available unless the code path is explicitly limited to full deployments.
 
 ## LLM Call Tagging — Always Use LLMFlow Registry
 
-Every LLM, embedding, rerank, image-generation, voice (STT/TTS), and intent-classification call must open a generation span tagged with a value from the `LLMFlow` registry in `backend/onyx/tracing/flows.py`. Use `llm_generation_span(llm=..., flow=LLMFlow.X, ...)` for calls going through an `LLM` subclass, or `traced_llm_call(flow=LLMFlow.X, model=..., provider=..., ...)` for direct provider SDK / `litellm` / model_server HTTP calls that bypass the `LLM` abstraction. Never pass raw strings to `flow=` — add a new `LLMFlow` enum value first. Flow tags name the operation (e.g. `IMAGE_EDIT`, `RERANK`), not the provider; provider goes in `model_config["model_provider"]`. The auto-wrap fallback emits `LLMFlow.UNTAGGED_INVOKE` / `UNTAGGED_STREAM` for missing instrumentation — those sentinels are a signal to fix the call site, not a substitute for explicit tagging.
+Every LLM, embedding, rerank, image-generation, voice (STT/TTS), and intent-classification call must open a generation span tagged with a value from the `LLMFlow` registry in `backend/lumen/tracing/flows.py`. Use `llm_generation_span(llm=..., flow=LLMFlow.X, ...)` for calls going through an `LLM` subclass, or `traced_llm_call(flow=LLMFlow.X, model=..., provider=..., ...)` for direct provider SDK / `litellm` / model_server HTTP calls that bypass the `LLM` abstraction. Never pass raw strings to `flow=` — add a new `LLMFlow` enum value first. Flow tags name the operation (e.g. `IMAGE_EDIT`, `RERANK`), not the provider; provider goes in `model_config["model_provider"]`. The auto-wrap fallback emits `LLMFlow.UNTAGGED_INVOKE` / `UNTAGGED_STREAM` for missing instrumentation — those sentinels are a signal to fix the call site, not a substitute for explicit tagging.
 
 ## SWR Cache Keys — Always Use SWR_KEYS Registry
 

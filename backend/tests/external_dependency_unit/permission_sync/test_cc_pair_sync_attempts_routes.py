@@ -3,10 +3,10 @@
 Covers:
 
 * The new ``get_relevant_external_group_sync_attempts_for_cc_pair`` helper
-  in ``onyx.db.permission_sync_attempt`` — including the source-wide query
+  in ``lumen.db.permission_sync_attempt`` — including the source-wide query
   used for cc-pair-agnostic sources (Confluence, Jira).
 * The migrated ``GET /admin/cc-pair/{id}/permission-sync-attempts`` route,
-  now wrapped in ``CCPairSyncAttemptsResponse`` and raising ``OnyxError``.
+  now wrapped in ``CCPairSyncAttemptsResponse`` and raising ``LumenError``.
 * The new ``GET /admin/cc-pair/{id}/external-group-sync-attempts`` route.
 
 We invoke the FastAPI route functions directly with a constructed admin
@@ -22,27 +22,27 @@ from datetime import datetime, timezone
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import InputType
-from onyx.db.enums import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import InputType
+from lumen.db.enums import (
     AccessType,
     ConnectorCredentialPairStatus,
     PermissionSyncStatus,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     Connector,
     ConnectorCredentialPair,
     Credential,
     User,
 )
-from onyx.db.permission_sync_attempt import (
+from lumen.db.permission_sync_attempt import (
     create_doc_permission_sync_attempt,
     create_external_group_sync_attempt,
     get_relevant_external_group_sync_attempts_for_cc_pair,
 )
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.documents.cc_pair import (
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.documents.cc_pair import (
     get_cc_pair_external_group_sync_attempts,
     get_cc_pair_permission_sync_attempts,
 )
@@ -199,7 +199,7 @@ class TestGetCcPairPermissionSyncAttemptsRoute:
     def test_raises_not_found_for_unknown_cc_pair(self, db_session: Session) -> None:
         admin = _admin_user(db_session)
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(LumenError) as exc_info:
             get_cc_pair_permission_sync_attempts(
                 cc_pair_id=999_999,
                 page_num=0,
@@ -208,7 +208,7 @@ class TestGetCcPairPermissionSyncAttemptsRoute:
                 db_session=db_session,
             )
 
-        assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+        assert exc_info.value.error_code == LumenErrorCode.NOT_FOUND
 
     def test_applicable_false_when_source_does_not_require_doc_sync(
         self,
@@ -320,7 +320,7 @@ class TestGetCcPairExternalGroupSyncAttemptsRoute:
     def test_raises_not_found_for_unknown_cc_pair(self, db_session: Session) -> None:
         admin = _admin_user(db_session)
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(LumenError) as exc_info:
             get_cc_pair_external_group_sync_attempts(
                 cc_pair_id=999_999,
                 page_num=0,
@@ -329,7 +329,7 @@ class TestGetCcPairExternalGroupSyncAttemptsRoute:
                 db_session=db_session,
             )
 
-        assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+        assert exc_info.value.error_code == LumenErrorCode.NOT_FOUND
 
     def test_applicable_false_when_source_has_no_group_sync(
         self,

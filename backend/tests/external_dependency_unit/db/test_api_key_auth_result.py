@@ -1,14 +1,14 @@
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.auth.api_key import hash_api_key
-from onyx.db.api_key import fetch_api_key_auth_result, insert_api_key, remove_api_key
-from onyx.db.engine.async_sql_engine import (
+from lumen.auth.api_key import hash_api_key
+from lumen.db.api_key import fetch_api_key_auth_result, insert_api_key, remove_api_key
+from lumen.db.engine.async_sql_engine import (
     get_async_session_context_manager,
     reset_sqlalchemy_async_engine,
 )
-from onyx.db.enums import AccountType
-from onyx.server.api_key.models import APIKeyArgs
+from lumen.db.enums import AccountType
+from lumen.server.api_key.models import APIKeyArgs
 
 
 @pytest.mark.asyncio

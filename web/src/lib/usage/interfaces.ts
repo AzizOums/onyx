@@ -10,7 +10,7 @@ export interface UserAnalytics {
   date: string;
 }
 
-export interface OnyxBotAnalytics {
+export interface LumenBotAnalytics {
   total_queries: number;
   auto_resolved: number;
   date: string;

@@ -5,16 +5,16 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
-from onyx.db.enums import MCPAuthenticationType
-from onyx.mcp_server.api import create_mcp_fastapi_app
-from onyx.mcp_server.auth import OnyxTokenVerifier
-from onyx.mcp_server.tools import search
-from onyx.server.features.mcp.oauth import MCPReauthenticationRequired
-from onyx.server.metrics import mcp_client, metrics_auth
-from onyx.server.metrics.mcp_common import MCPToolCallStatus
-from onyx.server.metrics.mcp_server import MCPAuthResult, MCPServerToolName
-from onyx.server.query_and_chat.placement import Placement
-from onyx.tools.tool_implementations.mcp.mcp_tool import MCPTool
+from lumen.db.enums import MCPAuthenticationType
+from lumen.mcp_server.api import create_mcp_fastapi_app
+from lumen.mcp_server.auth import LumenTokenVerifier
+from lumen.mcp_server.tools import search
+from lumen.server.features.mcp.oauth import MCPReauthenticationRequired
+from lumen.server.metrics import mcp_client, metrics_auth
+from lumen.server.metrics.mcp_common import MCPToolCallStatus
+from lumen.server.metrics.mcp_server import MCPAuthResult, MCPServerToolName
+from lumen.server.query_and_chat.placement import Placement
+from lumen.tools.tool_implementations.mcp.mcp_tool import MCPTool
 
 
 def _mcp_tool(
@@ -39,11 +39,11 @@ def test_client_records_success_once() -> None:
     tool = _mcp_tool()
     with (
         patch(
-            "onyx.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
+            "lumen.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
             return_value={"ok": True},
         ),
         patch(
-            "onyx.tools.tool_implementations.mcp.mcp_tool."
+            "lumen.tools.tool_implementations.mcp.mcp_tool."
             "record_mcp_client_tool_outcome"
         ) as record,
     ):
@@ -56,7 +56,7 @@ def test_client_records_success_once() -> None:
 def test_client_records_missing_credentials_as_auth_error() -> None:
     tool = _mcp_tool(MCPAuthenticationType.API_TOKEN)
     with patch(
-        "onyx.tools.tool_implementations.mcp.mcp_tool.record_mcp_client_tool_outcome"
+        "lumen.tools.tool_implementations.mcp.mcp_tool.record_mcp_client_tool_outcome"
     ) as record:
         tool.run(Placement(turn_index=0))
 
@@ -68,11 +68,11 @@ def test_client_records_reauthentication_required_as_auth_error() -> None:
     tool = _mcp_tool()
     with (
         patch(
-            "onyx.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
+            "lumen.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
             side_effect=MCPReauthenticationRequired(),
         ),
         patch(
-            "onyx.tools.tool_implementations.mcp.mcp_tool."
+            "lumen.tools.tool_implementations.mcp.mcp_tool."
             "record_mcp_client_tool_outcome"
         ) as record,
     ):
@@ -92,11 +92,11 @@ def test_client_records_post_call_failure_once() -> None:
             side_effect=[RuntimeError("emit failed"), None],
         ),
         patch(
-            "onyx.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
+            "lumen.tools.tool_implementations.mcp.mcp_tool.call_mcp_tool",
             return_value={"ok": True},
         ),
         patch(
-            "onyx.tools.tool_implementations.mcp.mcp_tool."
+            "lumen.tools.tool_implementations.mcp.mcp_tool."
             "record_mcp_client_tool_outcome"
         ) as record,
     ):
@@ -172,10 +172,10 @@ def test_auth_verifier_records_success() -> None:
     client = MagicMock()
     client.get = AsyncMock(return_value=MagicMock(status_code=200))
     with (
-        patch("onyx.mcp_server.auth.get_http_client", return_value=client),
-        patch("onyx.mcp_server.auth.record_mcp_auth_result") as record,
+        patch("lumen.mcp_server.auth.get_http_client", return_value=client),
+        patch("lumen.mcp_server.auth.record_mcp_auth_result") as record,
     ):
-        token = asyncio.run(OnyxTokenVerifier().verify_token("token"))
+        token = asyncio.run(LumenTokenVerifier().verify_token("token"))
 
     assert token is not None
     record.assert_called_once_with(MCPAuthResult.SUCCESS)
@@ -185,18 +185,18 @@ def test_auth_verifier_records_rejection_and_backend_error() -> None:
     client = MagicMock()
     client.get = AsyncMock(return_value=MagicMock(status_code=401))
     with (
-        patch("onyx.mcp_server.auth.get_http_client", return_value=client),
-        patch("onyx.mcp_server.auth.record_mcp_auth_result") as record,
+        patch("lumen.mcp_server.auth.get_http_client", return_value=client),
+        patch("lumen.mcp_server.auth.record_mcp_auth_result") as record,
     ):
-        assert asyncio.run(OnyxTokenVerifier().verify_token("token")) is None
+        assert asyncio.run(LumenTokenVerifier().verify_token("token")) is None
     record.assert_called_once_with(MCPAuthResult.REJECTED)
 
     client.get = AsyncMock(side_effect=RuntimeError("offline"))
     with (
-        patch("onyx.mcp_server.auth.get_http_client", return_value=client),
-        patch("onyx.mcp_server.auth.record_mcp_auth_result") as record,
+        patch("lumen.mcp_server.auth.get_http_client", return_value=client),
+        patch("lumen.mcp_server.auth.record_mcp_auth_result") as record,
     ):
-        assert asyncio.run(OnyxTokenVerifier().verify_token("token")) is None
+        assert asyncio.run(LumenTokenVerifier().verify_token("token")) is None
     record.assert_called_once_with(MCPAuthResult.ERROR)
 
 
@@ -214,4 +214,4 @@ def test_mcp_metrics_endpoint_uses_shared_bearer_auth(
     )
 
     assert response.status_code == 200
-    assert "onyx_mcp_server_auth_total" in response.text
+    assert "lumen_mcp_server_auth_total" in response.text

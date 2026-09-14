@@ -2,7 +2,7 @@
  * Page Object Model for the Admin Appearance / Theme page (/admin/theme).
  *
  * Encapsulates locators and interactions for the custom help link and
- * hide-onyx-branding controls so specs stay declarative. Existing tests in
+ * hide-lumen-branding controls so specs stay declarative. Existing tests in
  * `appearance_theme_settings.spec.ts` still use inline locators; new tests
  * should drive the page through this class.
  */
@@ -55,11 +55,11 @@ export class AppearanceThemePage {
       '[data-label="custom-help-link-label-input"]'
     );
     this.hideBrandingToggle = page.locator(
-      '[data-label="hide-onyx-branding-toggle"]'
+      '[data-label="hide-lumen-branding-toggle"]'
     );
     this.saveButton = page.getByRole("button", { name: "Apply Changes" });
 
-    this.userDropdownTrigger = page.locator("#onyx-user-dropdown");
+    this.userDropdownTrigger = page.locator("#lumen-user-dropdown");
   }
 
   /**
@@ -167,21 +167,21 @@ export class AppearanceThemePage {
 
   /**
    * Locator for the Logo's tagline, scoped exactly so it doesn't also match
-   * the toggle's helper text on the same page ("Remove 'powered by Onyx'
-   * and other Onyx branding..."). `getByText` is case-insensitive +
+   * the toggle's helper text on the same page ("Remove 'powered by Lumen'
+   * and other Lumen branding..."). `getByText` is case-insensitive +
    * substring by default; `exact: true` makes it strict equality on the
    * element's full text content.
    */
-  private get poweredByOnyxTagline(): Locator {
-    return this.page.getByText("Powered by Onyx", { exact: true });
+  private get poweredByLumenTagline(): Locator {
+    return this.page.getByText("Powered by Lumen", { exact: true });
   }
 
-  async expectPoweredByOnyxVisible() {
-    await expect(this.poweredByOnyxTagline).toBeVisible({ timeout: 5_000 });
+  async expectPoweredByLumenVisible() {
+    await expect(this.poweredByLumenTagline).toBeVisible({ timeout: 5_000 });
   }
 
-  async expectPoweredByOnyxAbsent() {
-    await expect(this.poweredByOnyxTagline).toHaveCount(0, { timeout: 5_000 });
+  async expectPoweredByLumenAbsent() {
+    await expect(this.poweredByLumenTagline).toHaveCount(0, { timeout: 5_000 });
   }
 
   // ---------------------------------------------------------------------------

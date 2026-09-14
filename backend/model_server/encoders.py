@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 from fastapi import APIRouter, HTTPException, Request
 
 from model_server.utils import simple_log_function_time
-from onyx.utils.logger import setup_logger
+from lumen.utils.logger import setup_logger
 from shared_configs.configs import DEFAULT_DOCUMENT_ENCODER_MODEL
 from shared_configs.enums import EmbedTextType
 from shared_configs.model_server_models import Embedding, EmbedRequest, EmbedResponse

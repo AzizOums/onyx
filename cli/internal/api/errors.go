@@ -2,13 +2,13 @@ package api
 
 import "fmt"
 
-// OnyxAPIError is returned when an Onyx API call fails.
-type OnyxAPIError struct {
+// LumenAPIError is returned when an Lumen API call fails.
+type LumenAPIError struct {
 	StatusCode int
 	Detail     string
 }
 
-func (e *OnyxAPIError) Error() string {
+func (e *LumenAPIError) Error() string {
 	return fmt.Sprintf("HTTP %d: %s", e.StatusCode, e.Detail)
 }
 

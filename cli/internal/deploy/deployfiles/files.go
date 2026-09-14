@@ -1,7 +1,7 @@
-// Package deployfiles provides the deployment files onyx-cli ships for the
+// Package deployfiles provides the deployment files lumen-cli ships for the
 // guided docker compose install, embedded into the binary.
 //
-// The copies under embedded/ are synced from deployment/ in the onyx repo by
+// The copies under embedded/ are synced from deployment/ in the lumen repo by
 // `ods generate-compose --write` (tools/ods); TestEmbeddedFilesMatchSource
 // fails when they drift.
 package deployfiles
@@ -18,7 +18,7 @@ var embeddedFS embed.FS
 type File struct {
 	// EmbedPath is the file's path inside the embedded FS.
 	EmbedPath string
-	// RepoPath is the file's path in the onyx repo, used when fetching the
+	// RepoPath is the file's path in the lumen repo, used when fetching the
 	// version matching a pinned release tag from raw.githubusercontent.com.
 	RepoPath string
 	// DestRel is the file's destination relative to the install root, using
@@ -45,9 +45,9 @@ var (
 		Mode:      0644,
 	}
 	LiteOverlay = File{
-		EmbedPath: "embedded/docker_compose/docker-compose.onyx-lite.yml",
-		RepoPath:  "deployment/docker_compose/docker-compose.onyx-lite.yml",
-		DestRel:   "deployment/docker-compose.onyx-lite.yml",
+		EmbedPath: "embedded/docker_compose/docker-compose.lumen-lite.yml",
+		RepoPath:  "deployment/docker_compose/docker-compose.lumen-lite.yml",
+		DestRel:   "deployment/docker-compose.lumen-lite.yml",
 		Mode:      0644,
 	}
 	CraftOverlay = File{

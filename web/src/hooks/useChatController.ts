@@ -31,7 +31,7 @@ import {
 import { MinimalAgent } from "@/lib/agents/types";
 import { SEARCH_PARAM_NAMES } from "@/app/app/services/searchParams";
 import { SEARCH_TOOL_ID } from "@/lib/tools/constants";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { LumenDocument } from "@/lib/search/interfaces";
 import { LlmDescriptor, LlmManager } from "@/lib/hooks";
 import {
   BackendMessage,
@@ -123,7 +123,7 @@ interface UseChatControllerProps {
   activeAgent: MinimalAgent | undefined;
   availableAgents: MinimalAgent[];
   existingChatSessionId: string | null;
-  selectedDocuments: OnyxDocument[];
+  selectedDocuments: LumenDocument[];
   searchParams: ReadonlyURLSearchParams;
   resetInputBar: () => void;
 }
@@ -815,7 +815,7 @@ export default function useChatController({
         selectedDocuments.length > 0
           ? RetrievalType.SelectedDocs
           : RetrievalType.None;
-      let documents: OnyxDocument[] = selectedDocuments;
+      let documents: LumenDocument[] = selectedDocuments;
       let citations: CitationMap = {};
       let aiMessageImages: FileDescriptor[] | null = null;
       let error: string | null = null;
@@ -841,7 +841,7 @@ export default function useChatController({
       const packetsPerModel: Packet[][] = isMultiModel
         ? Array.from({ length: numModels }, () => [])
         : [];
-      const documentsPerModel: OnyxDocument[][] = isMultiModel
+      const documentsPerModel: LumenDocument[][] = isMultiModel
         ? Array.from({ length: numModels }, () => [])
         : [];
       const citationsPerModel: CitationMap[] = isMultiModel

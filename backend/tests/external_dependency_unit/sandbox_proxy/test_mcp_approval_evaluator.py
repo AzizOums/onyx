@@ -17,23 +17,23 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     EndpointPolicy,
     GatedAppKind,
     MCPAuthenticationPerformer,
     MCPAuthenticationType,
     MCPTransport,
 )
-from onyx.db.gated_app import (
+from lumen.db.gated_app import (
     get_or_create_gated_app_id,
     replace_action_policies__no_commit,
 )
-from onyx.db.mcp import (
+from lumen.db.mcp import (
     create_mcp_server__no_commit,
     update_mcp_server__no_commit,
 )
-from onyx.db.models import MCPServer
-from onyx.sandbox_proxy.request_evaluator import (
+from lumen.db.models import MCPServer
+from lumen.sandbox_proxy.request_evaluator import (
     MCP_UNCLASSIFIABLE_ACTION_TYPE,
     McpRequestEvaluator,
 )
@@ -269,7 +269,7 @@ def test_evaluator_failure_after_attribution_denies(
     user = create_test_user(db_session, "mcp_eval_crash")
     server = craft_server()
 
-    import onyx.sandbox_proxy.request_evaluator as re_mod
+    import lumen.sandbox_proxy.request_evaluator as re_mod
 
     def _boom(*_args: Any, **_kwargs: Any) -> None:
         raise RuntimeError("policy lookup failed")

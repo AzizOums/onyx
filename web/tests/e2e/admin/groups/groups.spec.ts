@@ -4,11 +4,11 @@
  * Tests the full groups management page — list, create, edit, delete.
  *
  * Uses the GroupsAdminPage POM for all interactions. Groups are created via
- * OnyxApiClient for setup and cleaned up in afterAll/afterEach.
+ * LumenApiClient for setup and cleaned up in afterAll/afterEach.
  */
 
 import { test, expect } from "./fixtures";
-import type { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import type { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import type { Browser } from "@playwright/test";
 
 // ---------------------------------------------------------------------------
@@ -29,14 +29,14 @@ async function softCleanup(fn: () => Promise<unknown>): Promise<void> {
  */
 async function withApiContext(
   browser: Browser,
-  fn: (api: OnyxApiClient) => Promise<void>
+  fn: (api: LumenApiClient) => Promise<void>
 ): Promise<void> {
   const context = await browser.newContext({
     storageState: "admin_auth.json",
   });
   try {
-    const { OnyxApiClient } = await import("@tests/e2e/utils/onyxApiClient");
-    const api = new OnyxApiClient(context.request);
+    const { LumenApiClient } = await import("@tests/e2e/utils/lumenApiClient");
+    const api = new LumenApiClient(context.request);
     await fn(api);
   } finally {
     await context.close();
@@ -278,8 +278,8 @@ test.describe("Groups page — sync @lite", () => {
       storageState: "admin_auth.json",
     });
     try {
-      const { OnyxApiClient } = await import("@tests/e2e/utils/onyxApiClient");
-      const client = new OnyxApiClient(context.request);
+      const { LumenApiClient } = await import("@tests/e2e/utils/lumenApiClient");
+      const client = new LumenApiClient(context.request);
       const vectorDbEnabled = await client.isVectorDbEnabled();
       test.skip(
         vectorDbEnabled,

@@ -5,7 +5,7 @@ import os
 
 import pytest
 
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
+from lumen.connectors.google_drive.connector import GoogleDriveConnector
 from tests.daily.connectors.google_drive.conftest import build_credentials
 from tests.daily.connectors.google_drive.consts_and_utils import (
     ADMIN_EMAIL,

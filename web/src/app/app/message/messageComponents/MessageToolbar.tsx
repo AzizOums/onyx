@@ -4,7 +4,7 @@ import React, { RefObject, useState, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Packet, StreamingCitation } from "@/app/app/services/streamingModels";
 import { FeedbackType, Message } from "@/app/app/interfaces";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { LumenDocument } from "@/lib/search/interfaces";
 import { TooltipGroup } from "@/components/tooltip/CustomTooltip";
 import {
   useChatSessionStore,
@@ -39,7 +39,7 @@ import { getModelIcon } from "@/lib/languageModels";
 
 interface SouurcesTagWrapperProps {
   citations: StreamingCitation[];
-  documentMap: Map<string, OnyxDocument>;
+  documentMap: Map<string, LumenDocument>;
   nodeId: number;
   selectedMessageForDocDisplay: number | null;
   documentSidebarVisible: boolean;
@@ -125,7 +125,7 @@ export interface MessageToolbarProps {
 
   // Citations
   citations: StreamingCitation[];
-  documentMap: Map<string, OnyxDocument>;
+  documentMap: Map<string, LumenDocument>;
 }
 
 export default function MessageToolbar({

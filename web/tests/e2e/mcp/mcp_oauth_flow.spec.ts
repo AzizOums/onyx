@@ -3,7 +3,7 @@ import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import type { Page } from "@playwright/test";
 import { loginAs, loginAsWorkerUser, apiLogin } from "@tests/e2e/utils/auth";
 import { ensureOnboardingComplete } from "@tests/e2e/utils/chatActions";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import {
   startMcpOauthServer,
   McpServerProcess,
@@ -69,7 +69,7 @@ async function verifySessionUser(
 }
 
 async function waitForUserRecord(
-  client: OnyxApiClient,
+  client: LumenApiClient,
   email: string,
   timeoutMs = 10_000
 ): Promise<{ id: string }> {
@@ -198,7 +198,7 @@ test.describe("MCP OAuth flows", () => {
     const adminContext = await browser.newContext({
       storageState: "admin_auth.json",
     });
-    const adminClient = new OnyxApiClient(adminContext.request);
+    const adminClient = new LumenApiClient(adminContext.request);
 
     try {
       const existingServers = await adminClient.listMcpServers();
@@ -263,7 +263,7 @@ test.describe("MCP OAuth flows", () => {
     const adminContext = await browser.newContext({
       storageState: "admin_auth.json",
     });
-    const adminClient = new OnyxApiClient(adminContext.request);
+    const adminClient = new LumenApiClient(adminContext.request);
 
     if (adminArtifacts?.agentId) {
       await adminClient.deleteAgent(adminArtifacts.agentId);
@@ -301,7 +301,7 @@ test.describe("MCP OAuth flows", () => {
       email: TEST_ADMIN_CREDENTIALS.email,
       isAdmin: true,
     });
-    const adminClient = new OnyxApiClient(page.request);
+    const adminClient = new LumenApiClient(page.request);
 
     const oauthFlow = new McpOAuthFlow(page, oauthConfig());
     const serverName = `PW MCP Admin ${Date.now()}`;
@@ -409,7 +409,7 @@ test.describe("MCP OAuth flows", () => {
       email: curatorCredentials!.email,
       isAdmin: false,
     });
-    const curatorClient = new OnyxApiClient(page.request);
+    const curatorClient = new LumenApiClient(page.request);
 
     const oauthFlow = new McpOAuthFlow(page, oauthConfig());
     const serverName = `PW MCP Curator ${Date.now()}`;
@@ -454,7 +454,7 @@ test.describe("MCP OAuth flows", () => {
 
       await page.goto(`/app?agentId=${agentId}`, { waitUntil: "load" });
       // The curator is a freshly-registered user, so dismiss the "What should
-      // Onyx call you?" onboarding modal before driving the chat UI (the admin
+      // Lumen call you?" onboarding modal before driving the chat UI (the admin
       // and worker users are already onboarded via global-setup).
       await ensureOnboardingComplete(page);
 

@@ -11,7 +11,7 @@ Covers:
 import io
 import time
 
-from onyx.db.enums import UserFileStatus
+from lumen.db.enums import UserFileStatus
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.chat import ChatSessionManager

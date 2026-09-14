@@ -88,7 +88,7 @@ interface UpdateExternalAppBody {
 }
 
 /**
- * Partial update of any app (PATCH /admin/apps/{id}). For Onyx-managed built-ins
+ * Partial update of any app (PATCH /admin/apps/{id}). For Lumen-managed built-ins
  * the gateway-config fields are ignored server-side (only policies
  * apply).
  */

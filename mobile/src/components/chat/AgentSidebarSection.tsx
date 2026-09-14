@@ -6,7 +6,7 @@ import { AgentAvatar } from "@/components/avatars/AgentAvatar";
 import { SidebarLayouts, SidebarTab, useSidebar } from "@/components/sidebar";
 import { buildAgentRail, MinimalAgent } from "@/chat/agents";
 import { useSelectAgent } from "@/hooks/useLiveAgent";
-import SvgOnyxOctagon from "@/icons/onyx-octagon";
+import SvgLumenOctagon from "@/icons/lumen-octagon";
 
 // Sidebar "Agents" rail: pinned agents + the active agent, then a gallery link. Tap = new chat.
 export function AgentSidebarSection() {
@@ -52,7 +52,7 @@ export function AgentSidebarSection() {
           {agent.name}
         </SidebarTab>
       ))}
-      <SidebarTab icon={SvgOnyxOctagon} onPress={openGallery}>
+      <SidebarTab icon={SvgLumenOctagon} onPress={openGallery}>
         {rail.length === 0 ? "Explore agents" : "More agents"}
       </SidebarTab>
     </SidebarLayouts.Section>

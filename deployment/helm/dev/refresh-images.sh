@@ -11,10 +11,10 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
-CLUSTER_NAME="${CLUSTER_NAME:-onyx-dev}"
-BACKEND_IMAGE="${BACKEND_IMAGE:-onyxdotapp/onyx-backend:dev}"
-SANDBOX_IMAGE="${SANDBOX_IMAGE:-onyxdotapp/sandbox:dev}"
-SANDBOX_IMAGE_DIR="$REPO_ROOT/backend/onyx/server/features/build/sandbox/image"
+CLUSTER_NAME="${CLUSTER_NAME:-lumen-dev}"
+BACKEND_IMAGE="${BACKEND_IMAGE:-lumendotapp/lumen-backend:dev}"
+SANDBOX_IMAGE="${SANDBOX_IMAGE:-lumendotapp/sandbox:dev}"
+SANDBOX_IMAGE_DIR="$REPO_ROOT/backend/lumen/server/features/build/sandbox/image"
 
 # docker's .Created is always UTC; strip Z + fractional seconds, then parse
 # with GNU date (-d) or BSD date (-j -f).
@@ -38,7 +38,7 @@ check_staleness() {
     stale=1
   fi
   local podtemplate_image
-  podtemplate_image=$(kubectl get podtemplate sandbox-pod -n onyx-sandboxes \
+  podtemplate_image=$(kubectl get podtemplate sandbox-pod -n lumen-sandboxes \
     -o jsonpath='{.template.spec.containers[0].image}' 2>/dev/null || echo "unknown")
   echo "sandbox PodTemplate image:  $podtemplate_image"
   return "$stale"
@@ -58,11 +58,11 @@ docker build -t "$SANDBOX_IMAGE" "$SANDBOX_IMAGE_DIR"
 kind load docker-image "$SANDBOX_IMAGE" --name "$CLUSTER_NAME"
 
 echo "==> pointing sandbox PodTemplate at $SANDBOX_IMAGE"
-kubectl patch podtemplate sandbox-pod -n onyx-sandboxes --type=json \
+kubectl patch podtemplate sandbox-pod -n lumen-sandboxes --type=json \
   -p "[{\"op\":\"replace\",\"path\":\"/template/spec/containers/0/image\",\"value\":\"$SANDBOX_IMAGE\"}]"
 
 echo "==> restarting sandbox-proxy + api-server onto the new backend image"
-kubectl rollout restart deploy/onyx-sandbox-proxy deploy/onyx-api-server -n onyx
-kubectl rollout status deploy/onyx-sandbox-proxy -n onyx --timeout=180s
+kubectl rollout restart deploy/lumen-sandbox-proxy deploy/lumen-api-server -n lumen
+kubectl rollout status deploy/lumen-sandbox-proxy -n lumen --timeout=180s
 
 echo "==> done. Existing sandbox pods keep their old image until recycled."

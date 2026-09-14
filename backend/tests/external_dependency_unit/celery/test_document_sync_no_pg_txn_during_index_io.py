@@ -26,12 +26,12 @@ import pytest
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import QueuePool
 
-from onyx.background.celery.tasks.shared.RetryDocumentIndex import RetryDocumentIndex
-from onyx.background.celery.tasks.vespa import tasks as vespa_tasks
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from onyx.db.models import Document as DbDocument
-from onyx.document_index.interfaces_new import SecondaryIndexDocumentMissingError
-from onyx.kg.models import KGStage
+from lumen.background.celery.tasks.shared.RetryDocumentIndex import RetryDocumentIndex
+from lumen.background.celery.tasks.vespa import tasks as vespa_tasks
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from lumen.db.models import Document as DbDocument
+from lumen.document_index.interfaces_new import SecondaryIndexDocumentMissingError
+from lumen.kg.models import KGStage
 from shared_configs.configs import (
     POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE as TEST_TENANT_ID,
 )

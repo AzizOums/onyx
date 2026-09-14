@@ -107,7 +107,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
 }
 
 # azure.extensions is a dynamic parameter, so this needs no restart. Without it
-# CREATE EXTENSION fails for every extension, including the ones Onyx's
+# CREATE EXTENSION fails for every extension, including the ones Lumen's
 # migrations run on first start.
 resource "azurerm_postgresql_flexible_server_configuration" "azure_extensions" {
   count = length(var.allowed_extensions) > 0 ? 1 : 0

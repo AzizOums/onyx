@@ -13,18 +13,18 @@ import pytest
 from kubernetes import client
 from sqlalchemy.orm import Session
 
-from onyx.cache.factory import get_cache_backend
-from onyx.configs.constants import NotificationType
-from onyx.db.enums import (
+from lumen.cache.factory import get_cache_backend
+from lumen.configs.constants import NotificationType
+from lumen.db.enums import (
     ApprovalDecision,
     BuildSessionStatus,
     EndpointPolicy,
     ExternalAppType,
 )
-from onyx.db.models import ActionApproval, BuildSession, Notification
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.sandbox_proxy.approval_cache import pop_announcement
-from onyx.server.features.build.configs import (
+from lumen.db.models import ActionApproval, BuildSession, Notification
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.sandbox_proxy.approval_cache import pop_announcement
+from lumen.server.features.build.configs import (
     SANDBOX_APPROVAL_WAIT_TIMEOUT_SECONDS,
     SANDBOX_BACKEND,
     SANDBOX_NAMESPACE,
@@ -32,8 +32,8 @@ from onyx.server.features.build.configs import (
     SANDBOX_PROXY_PORT,
     SandboxBackend,
 )
-from onyx.server.features.build.external_apps.models import ExternalAppAdminResponse
-from onyx.utils.logger import setup_logger
+from lumen.server.features.build.external_apps.models import ExternalAppAdminResponse
+from lumen.utils.logger import setup_logger
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client as http_client
@@ -747,7 +747,7 @@ def test_post_decision_after_proxy_claimed_expired_returns_conflict(
         ApprovalDecision.REJECTED,
     )
     assert response.status_code == 409
-    assert response.json()["error_code"] == OnyxErrorCode.CONFLICT.code, (
+    assert response.json()["error_code"] == LumenErrorCode.CONFLICT.code, (
         f"expected CONFLICT, got {response.text}"
     )
 

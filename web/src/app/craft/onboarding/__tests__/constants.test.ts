@@ -225,7 +225,7 @@ describe("isCraftRecommendedModel", () => {
 describe("resolveSessionLlmSelection", () => {
   it("decodes a qualified gateway model without losing slashes", () => {
     expect(
-      resolveSessionLlmSelection("onyx", "7/anthropic/claude-sonnet", [
+      resolveSessionLlmSelection("lumen", "7/anthropic/claude-sonnet", [
         provider("bedrock", [model("anthropic/claude-sonnet")], 7),
       ])
     ).toEqual({
@@ -238,7 +238,7 @@ describe("resolveSessionLlmSelection", () => {
 
   it("rejects a stored model that is no longer visible", () => {
     expect(
-      resolveSessionLlmSelection("onyx", "7/hidden", [
+      resolveSessionLlmSelection("lumen", "7/hidden", [
         provider("bedrock", [model("hidden", { visible: false })], 7),
       ])
     ).toBeNull();

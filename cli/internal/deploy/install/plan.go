@@ -3,8 +3,8 @@ package install
 import (
 	"runtime"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/release"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/release"
 )
 
 // printPlan renders --dry-run: what an install would do, with no side

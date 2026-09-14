@@ -98,7 +98,7 @@ function AuthErrorContent({ message: rawMessage }: AuthErrorContentProps) {
                 t.rich("error.cloudSupportPrompt.text", {
                   link: (chunks) => (
                     <a
-                      href="mailto:support@onyx.app"
+                      href="mailto:support@lumen.app"
                       className="text-action-selection-05"
                     >
                       {chunks}

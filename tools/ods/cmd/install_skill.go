@@ -9,15 +9,15 @@ import (
 	"strings"
 
 	"github.com/charlievieth/fastwalk"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/paths"
 	"github.com/spf13/cobra"
 )
 
 const (
-	defaultSkillSource = ".claude/skills/onyx-llm-context"
+	defaultSkillSource = ".claude/skills/lumen-llm-context"
 	claudeSkillsDir    = ".claude/skills"
 	claudeMDFile       = ".claude/CLAUDE.md"
-	llmContextCloneURL = "https://github.com/onyx-dot-app/onyx-llm-context.git"
+	llmContextCloneURL = "https://github.com/lumen-dot-app/lumen-llm-context.git"
 )
 
 
@@ -30,15 +30,15 @@ func NewInstallSkillCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "install-skill",
-		Short: "Install onyx-llm-context skills for Claude Code",
-		Long: `Install skills from onyx-llm-context into Claude Code.
+		Short: "Install lumen-llm-context skills for Claude Code",
+		Long: `Install skills from lumen-llm-context into Claude Code.
 
 Enforced skills (enforced/) are added as @imports in .claude/CLAUDE.md (project-scoped, git-ignored).
 Manual skills (skills/) are symlinked into ~/.claude/skills/ and invoked via /skill-name.
 
-By default, looks for onyx-llm-context at ~/.claude/skills/onyx-llm-context.`,
+By default, looks for lumen-llm-context at ~/.claude/skills/lumen-llm-context.`,
 		Example: `  ods install-skill --clone
-  ods install-skill --source /path/to/onyx-llm-context
+  ods install-skill --source /path/to/lumen-llm-context
   ods install-skill --copy`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if source == "" {
@@ -51,7 +51,7 @@ By default, looks for onyx-llm-context at ~/.claude/skills/onyx-llm-context.`,
 
 			if _, err := os.Stat(source); os.IsNotExist(err) {
 				if !cloneRepo {
-					return fmt.Errorf("onyx-llm-context not found at %s\n  Re-run with --clone to fetch it automatically", source)
+					return fmt.Errorf("lumen-llm-context not found at %s\n  Re-run with --clone to fetch it automatically", source)
 				}
 				_, _ = fmt.Fprintf(cmd.OutOrStdout(), "Cloning %s → %s\n", llmContextCloneURL, source)
 				gitCmd := exec.Command("git", "clone", llmContextCloneURL, source)
@@ -76,9 +76,9 @@ By default, looks for onyx-llm-context at ~/.claude/skills/onyx-llm-context.`,
 		},
 	}
 
-	cmd.Flags().StringVar(&source, "source", "", "Path to onyx-llm-context (default: ~/.claude/skills/onyx-llm-context)")
+	cmd.Flags().StringVar(&source, "source", "", "Path to lumen-llm-context (default: ~/.claude/skills/lumen-llm-context)")
 	cmd.Flags().BoolVar(&copyMode, "copy", false, "Copy files instead of symlinking")
-	cmd.Flags().BoolVar(&cloneRepo, "clone", false, fmt.Sprintf("Clone onyx-llm-context from %s if not already present", llmContextCloneURL))
+	cmd.Flags().BoolVar(&cloneRepo, "clone", false, fmt.Sprintf("Clone lumen-llm-context from %s if not already present", llmContextCloneURL))
 
 	return cmd
 }

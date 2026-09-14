@@ -1,0 +1,200 @@
+import functools
+import importlib
+import inspect
+from typing import Any, TypeVar
+
+from lumen.configs.app_configs import (
+    API_SERVER_HOST,
+    API_SERVER_PROTOCOL,
+    API_SERVER_URL_OVERRIDE_FOR_HTTP_REQUESTS,
+    APP_API_PREFIX,
+    APP_PORT,
+    DEV_MODE,
+)
+from lumen.utils.logger import setup_logger
+
+logger = setup_logger()
+
+
+class LumenVersion:
+    """Edition marker.
+
+    This build is stripped down to Community Edition only: the ``ee/`` source
+    tree has been removed and ``set_is_ee_based_on_env_variable()`` (the only
+    runtime entry point) never enables EE. The flag itself remains functional
+    so tests can exercise both code paths; ``fetch_versioned_implementation``
+    falls back to the CE module when an EE implementation is missing.
+    """
+
+    def __init__(self) -> None:
+        self._is_ee = False
+
+    def set_ee(self) -> None:
+        self._is_ee = True
+
+    def unset_ee(self) -> None:
+        self._is_ee = False
+
+    def is_ee_version(self) -> bool:
+        return self._is_ee
+
+
+global_version = LumenVersion()
+
+
+def set_is_ee_based_on_env_variable() -> None:
+    """No-op: this build ships Community Edition only."""
+    return
+
+
+@functools.lru_cache(maxsize=128)
+def fetch_versioned_implementation(module: str, attribute: str) -> Any:
+    """Fetches a versioned implementation of a specified attribute.
+
+    When EE is flagged on (tests only in this build), the ``ee.``-prefixed
+    module is tried first; if it is absent the CE implementation is used as
+    the fallback.
+
+    Args:
+        module (str): The name of the module from which to fetch the attribute.
+        attribute (str): The name of the attribute to fetch from the module.
+
+    Returns:
+        Any: The fetched implementation of the attribute.
+    """
+    logger.debug("Fetching versioned implementation for %s.%s", module, attribute)
+    is_ee = global_version.is_ee_version()
+
+    module_full = f"ee.{module}" if is_ee else module
+    try:
+        return getattr(  # ods: ignore[getattr]
+            importlib.import_module(module_full), attribute
+        )
+    except ModuleNotFoundError as e:
+        if is_ee and "ee." in str(e):
+            # EE module not shipped in this build: fall back to the CE version.
+            logger.warning(
+                "EE implementation for %s.%s not available; using CE fallback",
+                module,
+                attribute,
+            )
+            return getattr(  # ods: ignore[getattr]
+                importlib.import_module(module), attribute
+            )
+        raise
+
+
+T = TypeVar("T")
+
+
+def fetch_versioned_implementation_with_fallback(
+    module: str, attribute: str, fallback: T
+) -> T:
+    """
+    Attempts to fetch a versioned implementation of a specified attribute from a given module.
+    If the attempt fails (e.g., due to an import error or missing attribute), the function logs
+    a warning and returns the provided fallback implementation.
+
+    Args:
+        module (str): The name of the module from which to fetch the attribute.
+        attribute (str): The name of the attribute to fetch from the module.
+        fallback (T): The fallback implementation to return if fetching the attribute fails.
+
+    Returns:
+        T: The fetched implementation if successful, otherwise the provided fallback.
+    """
+    try:
+        return fetch_versioned_implementation(module, attribute)
+    except Exception:
+        return fallback
+
+
+def noop_fallback(*args: Any, **kwargs: Any) -> None:
+    """
+    A no-op (no operation) fallback function that accepts any arguments but does nothing.
+    This is often used as a default or placeholder callback function.
+
+    Args:
+        *args (Any): Positional arguments, which are ignored.
+        **kwargs (Any): Keyword arguments, which are ignored.
+
+    Returns:
+        None
+    """
+
+
+def _make_noop_callable(noop_return_value: Any) -> Any:
+    """Wrap ``noop_return_value`` so the returned object is callable and
+    resolves to that value when invoked (async-aware)."""
+    if inspect.iscoroutinefunction(noop_return_value):
+
+        async def async_noop(*args: Any, **kwargs: Any) -> Any:
+            return await noop_return_value(*args, **kwargs)
+
+        return async_noop
+
+    def sync_noop(*args: Any, **kwargs: Any) -> Any:  # noqa: ARG001
+        return noop_return_value
+
+    return sync_noop
+
+
+def fetch_ee_implementation_or_noop(
+    module: str, attribute: str, noop_return_value: Any = None
+) -> Any:
+    """
+    Fetches an EE implementation if EE is enabled, otherwise returns a no-op function.
+    Raises an exception if EE is enabled but the fetch fails.
+
+    Args:
+        module (str): The name of the module from which to fetch the attribute.
+        attribute (str): The name of the attribute to fetch from the module.
+
+    Returns:
+        Any: The fetched EE implementation if successful and EE is enabled, otherwise a no-op function.
+
+    Raises:
+        Exception: If EE is enabled but the fetch fails.
+    """
+    if not global_version.is_ee_version():
+        return _make_noop_callable(noop_return_value)
+    try:
+        return fetch_versioned_implementation(module, attribute)
+    except ModuleNotFoundError as e:
+        # The ee/ source tree is not shipped in this build: treat a missing EE
+        # module the same as EE being disabled and fall back to the noop.
+        if "No module named" in str(e) and "ee" in str(e):
+            logger.warning(
+                "EE implementation for %s.%s not shipped; using noop fallback",
+                module,
+                attribute,
+            )
+            return _make_noop_callable(noop_return_value)
+        logger.error(
+            "Failed to fetch implementation for %s.%s: %s", module, attribute, e
+        )
+        raise
+    except Exception as e:
+        logger.error(
+            "Failed to fetch implementation for %s.%s: %s", module, attribute, e
+        )
+        raise
+
+
+def build_api_server_url_for_http_requests(
+    respect_env_override_if_set: bool = False,
+) -> str:
+    """
+    Builds the API server URL for HTTP requests.
+    """
+    if DEV_MODE:
+        url = f"http://127.0.0.1:{APP_PORT}"
+    elif respect_env_override_if_set and API_SERVER_URL_OVERRIDE_FOR_HTTP_REQUESTS:
+        url = API_SERVER_URL_OVERRIDE_FOR_HTTP_REQUESTS.rstrip("/")
+    else:
+        url = f"{API_SERVER_PROTOCOL}://{API_SERVER_HOST}:{APP_PORT}"
+
+    if APP_API_PREFIX:
+        url += f"/{APP_API_PREFIX.strip('/')}"
+
+    return url

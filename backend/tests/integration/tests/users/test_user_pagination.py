@@ -1,5 +1,5 @@
-from onyx.db.enums import AccountType
-from onyx.server.models import FullUserSnapshot
+from lumen.db.enums import AccountType
+from lumen.server.models import FullUserSnapshot
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.user import UserManager
@@ -174,7 +174,7 @@ def test_user_pagination_edge_cases(reset: None) -> None:  # noqa: ARG001
 
     # Case-insensitive substring match — users were created with lowercase prefix;
     # uppercase query should still match via the backend's ilike('%q%') filter
-    # (onyx/db/users.py:_get_accepted_user_where_clause).
+    # (lumen/db/users.py:_get_accepted_user_where_clause).
     case_insensitive = UserManager.get_user_page(
         page_num=0,
         page_size=10,

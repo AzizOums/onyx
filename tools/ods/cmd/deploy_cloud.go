@@ -6,9 +6,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/release"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/git"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/prompt"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/release"
 )
 
 // DeployCloudOptions holds options for the deploy cloud command.
@@ -166,10 +166,10 @@ func deployCloud(opts *DeployCloudOptions) (string, error) {
 // build runs regardless, so failures only warn.
 func announceCloudRun(tag string) {
 	log.Info("Looking up the deployment run...")
-	run, err := waitForNewRun(onyxRepo, deploymentWorkflowFile, "push", tag, 0)
+	run, err := waitForNewRun(lumenRepo, deploymentWorkflowFile, "push", tag, 0)
 	if err != nil {
 		log.Warnf("Could not find the deployment run for %s: %v", tag, err)
-		log.Warnf("Find it at https://github.com/%s/actions/workflows/%s", onyxRepo, deploymentWorkflowFile)
+		log.Warnf("Find it at https://github.com/%s/actions/workflows/%s", lumenRepo, deploymentWorkflowFile)
 		return
 	}
 	log.Infof("Deployment run: %s", run.URL)

@@ -4,8 +4,11 @@ export const HOST_URL = process.env.WEB_DOMAIN || "http://localhost:3000";
 
 export const INTERNAL_URL = process.env.INTERNAL_URL || "http://localhost:8080";
 
-// Documentation URLs
-export const DOCS_BASE_URL = "https://docs.onyx.app";
+// Documentation URLs. This build ships no hosted documentation: point
+// NEXT_PUBLIC_DOCS_BASE_URL at your own site to turn the in-app doc links on.
+// While it is empty, `HAS_DOCS` is false and doc links are hidden.
+export const DOCS_BASE_URL = process.env.NEXT_PUBLIC_DOCS_BASE_URL || "";
+export const HAS_DOCS = DOCS_BASE_URL.length > 0;
 export const DOCS_ADMINS_PATH = `${DOCS_BASE_URL}/admins`;
 
 export const MCP_INTERNAL_URL =

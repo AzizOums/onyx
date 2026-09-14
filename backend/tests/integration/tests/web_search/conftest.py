@@ -9,5 +9,5 @@ from tests.integration.common_utils.playwright_browser import (
 
 @pytest.fixture(scope="session", autouse=True)
 def _install_playwright() -> None:
-    """These tests exercise OnyxWebCrawler's Playwright fallback."""
+    """These tests exercise LumenWebCrawler's Playwright fallback."""
     install_chromium_headless_shell()

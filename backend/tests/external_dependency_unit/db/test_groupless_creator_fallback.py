@@ -12,12 +12,12 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import FederatedConnectorSource
-from onyx.db.connector_credential_pair import (
+from lumen.configs.constants import FederatedConnectorSource
+from lumen.db.connector_credential_pair import (
     get_connector_credential_pair_from_id_for_user,
     user_owns_groupless_cc_pair,
 )
-from onyx.db.document_set import (
+from lumen.db.document_set import (
     filter_document_set_ids_by_user_access,
     filter_document_set_names_by_user_access,
     get_document_set_by_id_for_user,
@@ -25,8 +25,8 @@ from onyx.db.document_set import (
     update_document_set,
     user_owns_groupless_document_set,
 )
-from onyx.db.enums import AccessType
-from onyx.db.models import (
+from lumen.db.enums import AccessType
+from lumen.db.models import (
     DocumentSet,
     DocumentSet__UserGroup,
     FederatedConnector,
@@ -35,8 +35,8 @@ from onyx.db.models import (
     UserGroup,
     UserGroup__ConnectorCredentialPair,
 )
-from onyx.server.documents.cc_pair import _get_readable_cc_pair
-from onyx.server.features.document_set.models import (
+from lumen.server.documents.cc_pair import _get_readable_cc_pair
+from lumen.server.features.document_set.models import (
     DocumentSetCreationRequest,
     DocumentSetUpdateRequest,
     FederatedConnectorConfig,

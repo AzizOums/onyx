@@ -7,12 +7,12 @@ from __future__ import annotations
 
 import os
 
-from onyx_client.chat_user import OnyxChatUser
+from lumen_client.chat_user import LumenChatUser
 
 
-class MultiToolUser(OnyxChatUser):
+class MultiToolUser(LumenChatUser):
     abstract = False
     weight = 8
 
     scenario_prefix: str = "multitool"
-    mock_model: str | None = os.environ.get("ONYX_MULTITOOL_MODEL", "mock-tools3")
+    mock_model: str | None = os.environ.get("LUMEN_MULTITOOL_MODEL", "mock-tools3")

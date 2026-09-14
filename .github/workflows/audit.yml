@@ -60,7 +60,7 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: uv run --no-sync --with onyx-devtools ods audit --fail-on=critical
+        run: uv run --no-sync --with lumen-devtools ods audit --fail-on=critical
 
       - name: Run audit (SARIF report)
         if: github.event_name != 'pull_request'
@@ -69,7 +69,7 @@ jobs:
         # Don't fail the report job on findings; the SARIF upload surfaces them.
         # SARIF goes to stdout (the uploaded file); the text report goes to stderr
         # so the run's findings are also readable in the log.
-        run: uv run --no-sync --with onyx-devtools ods audit --format=sarif,text > audit.sarif || true
+        run: uv run --no-sync --with lumen-devtools ods audit --format=sarif,text > audit.sarif || true
 
       - name: Upload SARIF file
         if: github.event_name != 'pull_request'

@@ -11,7 +11,7 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.llm import (
+from lumen.db.llm import (
     fetch_default_craft_model,
     fetch_existing_llm_provider,
     remove_llm_provider,
@@ -19,8 +19,8 @@ from onyx.db.llm import (
     update_no_default_craft_provider,
     upsert_llm_provider,
 )
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.manage.llm.models import (
+from lumen.llm.constants import LlmProviderNames
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     LLMProviderView,
     ModelConfigurationUpsertRequest,

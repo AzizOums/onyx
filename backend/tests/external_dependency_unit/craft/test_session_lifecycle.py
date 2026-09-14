@@ -17,52 +17,52 @@ import pytest
 from fastapi_users.password import PasswordHelper
 from sqlalchemy.orm import Query, Session
 
-from onyx.configs.constants import FileOrigin, MessageType
-from onyx.db.enums import (
+from lumen.configs.constants import FileOrigin, MessageType
+from lumen.db.enums import (
     AccountType,
     ArtifactType,
     BuildSessionStatus,
     SandboxStatus,
     SessionOrigin,
 )
-from onyx.db.models import Artifact, BuildMessage, BuildSession, Sandbox, Snapshot, User
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.file_store.file_store import get_default_file_store
-from onyx.redis.redis_pool import get_redis_client
-from onyx.server.features.build.db.build_session import (
+from lumen.db.models import Artifact, BuildMessage, BuildSession, Sandbox, Snapshot, User
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.file_store.file_store import get_default_file_store
+from lumen.redis.redis_pool import get_redis_client
+from lumen.server.features.build.db.build_session import (
     get_user_build_sessions,
     reserve_nextjs_port__no_commit,
     session_runtime_stale,
 )
-from onyx.server.features.build.db.sandbox import get_sandbox_by_user_id
-from onyx.server.features.build.sandbox.models import SandboxInfo
-from onyx.server.features.build.sandbox.user_library import (
+from lumen.server.features.build.db.sandbox import get_sandbox_by_user_id
+from lumen.server.features.build.sandbox.models import SandboxInfo
+from lumen.server.features.build.sandbox.user_library import (
     USER_LIBRARY_MOUNT_PATH,
     build_user_library_fileset,
 )
-from onyx.server.features.build.sandbox.util.mcp_config import (
+from lumen.server.features.build.sandbox.util.mcp_config import (
     craft_mcp_fingerprint,
     resolve_craft_mcp_servers,
 )
-from onyx.server.features.build.session import locks as session_locks
-from onyx.server.features.build.session.api import (
+from lumen.server.features.build.session import locks as session_locks
+from lumen.server.features.build.session.api import (
     reload_session_skills,
     restore_session,
 )
-from onyx.server.features.build.session.locks import (
+from lumen.server.features.build.session.locks import (
     SessionCreationLockAcquisitionError,
     get_session_creation_lock,
     session_creation_lock,
 )
-from onyx.server.features.build.session.manager import SessionManager
-from onyx.server.features.build.session.sandbox_lifecycle import (
+from lumen.server.features.build.session.manager import SessionManager
+from lumen.server.features.build.session.sandbox_lifecycle import (
     ManagedContentPayload,
     push_managed_content,
     record_managed_content_hashes__no_commit,
     refresh_mcp_config_hashes_for_users,
 )
-from onyx.skills.push import compute_skill_runtime_hash
+from lumen.skills.push import compute_skill_runtime_hash
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.common.craft.stubs import StubSandboxManager
 
@@ -530,7 +530,7 @@ class TestReloadSessionSkills:
         db_session.add(session_row)
         db_session.commit()
         monkeypatch.setattr(
-            "onyx.server.features.build.session.manager.get_sandbox_manager",
+            "lumen.server.features.build.session.manager.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
         stub_sandbox_manager.regenerate_session_config_silent = True
@@ -574,14 +574,14 @@ class TestReloadSessionSkills:
         db_session.commit()
         stub_sandbox_manager.prompt_slot_returns = False
         monkeypatch.setattr(
-            "onyx.server.features.build.session.manager.get_sandbox_manager",
+            "lumen.server.features.build.session.manager.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(LumenError) as exc_info:
             reload_session_skills(session_row.id, test_user, db_session)
 
-        assert exc_info.value.error_code == OnyxErrorCode.CONFLICT
+        assert exc_info.value.error_code == LumenErrorCode.CONFLICT
         db_session.refresh(session_row)
         assert session_runtime_stale(session_row, sandbox_row)
         assert stub_sandbox_manager.dispose_opencode_instance_count == 0
@@ -708,12 +708,12 @@ class TestDeleteSession:
         stub_sandbox_manager.supports_opencode_history_persistence = True
         stub_sandbox_manager.prompt_slot_returns = False
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(LumenError) as exc_info:
             session_manager_with_stub.delete_session(
                 session_id=session_row.id, user_id=test_user.id
             )
 
-        assert exc_info.value.error_code == OnyxErrorCode.CONFLICT
+        assert exc_info.value.error_code == LumenErrorCode.CONFLICT
         assert stub_sandbox_manager.delete_opencode_session_count == 0
         assert stub_sandbox_manager.create_opencode_history_snapshot_count == 0
         assert stub_sandbox_manager.cleanup_session_workspace_count == 0
@@ -1007,11 +1007,11 @@ class TestPortAllocator:
         # Narrow the search range to [50000, 50004) so the test stays fast and
         # uses high ports unlikely to clash with anything on the test host.
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
+            "lumen.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
             50000,
         )
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
+            "lumen.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
             50004,
         )
 
@@ -1047,11 +1047,11 @@ class TestPortAllocator:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
+            "lumen.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
             50100,
         )
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
+            "lumen.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
             50103,
         )
 
@@ -1074,9 +1074,9 @@ class TestPortAllocator:
         db_session.add(target)
         db_session.commit()
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(LumenError) as exc_info:
             reserve_nextjs_port__no_commit(db_session, target)
-        assert exc_info.value.error_code == OnyxErrorCode.SERVICE_UNAVAILABLE
+        assert exc_info.value.error_code == LumenErrorCode.SERVICE_UNAVAILABLE
 
     def test_nextjs_port_uniqueness_is_scoped_per_user(
         self,
@@ -1087,11 +1087,11 @@ class TestPortAllocator:
         # Ports only collide within one user's sandbox: another user holding
         # the sole port in the range must not block this user's allocation.
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
+            "lumen.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
             50250,
         )
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
+            "lumen.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
             50251,
         )
 
@@ -1138,11 +1138,11 @@ class TestPortAllocator:
         # reservation must roll back just that attempt and take the next
         # port instead of failing.
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
+            "lumen.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_START",
             50200,
         )
         monkeypatch.setattr(
-            "onyx.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
+            "lumen.server.features.build.db.build_session.SANDBOX_NEXTJS_PORT_END",
             50204,
         )
 
@@ -1279,7 +1279,7 @@ class TestRestoreSession:
 
         # Patch the import site used by ``restore_session``.
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "lumen.server.features.build.session.api.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
@@ -1336,7 +1336,7 @@ class TestRestoreSession:
         stub_sandbox_manager.write_sandbox_file_silent = True
 
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "lumen.server.features.build.session.api.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
@@ -1376,7 +1376,7 @@ class TestRestoreSession:
             == USER_LIBRARY_MOUNT_PATH
         )
 
-    def test_restore_preserves_port_exhaustion_onyx_error(
+    def test_restore_preserves_port_exhaustion_lumen_error(
         self,
         db_session: Session,
         test_user: User,
@@ -1400,15 +1400,15 @@ class TestRestoreSession:
         stub_sandbox_manager.session_workspace_exists_returns = False
 
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "lumen.server.features.build.session.api.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
         def _raise_port_exhausted(
             _db_session: Session, _build_session: BuildSession
         ) -> int:
-            raise OnyxError(
-                OnyxErrorCode.SERVICE_UNAVAILABLE,
+            raise LumenError(
+                LumenErrorCode.SERVICE_UNAVAILABLE,
                 "No available ports in configured range",
             )
 
@@ -1416,19 +1416,19 @@ class TestRestoreSession:
         # both rebuild the workspace through ``ensure_session_ready``, so the
         # endpoint no longer reserves it itself.
         monkeypatch.setattr(
-            "onyx.server.features.build.session.session_ready."
+            "lumen.server.features.build.session.session_ready."
             "reserve_nextjs_port__no_commit",
             _raise_port_exhausted,
         )
 
-        with pytest.raises(OnyxError) as exc_info:
+        with pytest.raises(LumenError) as exc_info:
             restore_session(
                 session_id=idle_session.id,
                 user=test_user,
                 db_session=db_session,
             )
 
-        assert exc_info.value.error_code == OnyxErrorCode.SERVICE_UNAVAILABLE
+        assert exc_info.value.error_code == LumenErrorCode.SERVICE_UNAVAILABLE
 
 
 # =============================================================================

@@ -1,7 +1,7 @@
 """Integration tests for the READ_AGENT_ANALYTICS permission gate.
 
-Covers the per-agent analytics routes in ``backend/ee/onyx/server/analytics/api.py``.
-Org-wide analytics (``/analytics/admin/query|user|onyxbot``) stay FULL_ADMIN and are
+Covers the per-agent analytics routes in ``backend/ee/lumen/server/analytics/api.py``.
+Org-wide analytics (``/analytics/admin/query|user|lumenbot``) stay FULL_ADMIN and are
 not this permission's business.
 
 Routes are ``ScopeEndpoint``s because each is built from a concrete agent, but the
@@ -14,7 +14,7 @@ from typing import Any
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.managers.persona import PersonaManager
 from tests.integration.common_utils.test_models import (
     DATestAPIKey,
@@ -160,7 +160,7 @@ def test_manage_agents_holder_reads_any_agent(
 
 @pytest.mark.parametrize(
     "path",
-    ["/analytics/admin/query", "/analytics/admin/user", "/analytics/admin/onyxbot"],
+    ["/analytics/admin/query", "/analytics/admin/user", "/analytics/admin/lumenbot"],
 )
 def test_org_wide_analytics_stays_admin_only(
     path: str,

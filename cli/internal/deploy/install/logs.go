@@ -3,8 +3,8 @@ package install
 import (
 	"context"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/paths"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/paths"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
 )
 
 // LogOptions carries the flags of `deploy logs`, which are passed through to
@@ -28,7 +28,7 @@ func RunLogs(ctx context.Context, deps Deps, opts Options, logOpts LogOptions) e
 func (in *installer) runLogs(ctx context.Context, l LogOptions) error {
 	in.root = paths.Resolve(in.opts.Dir)
 	if !paths.IsInstall(in.root.Dir) {
-		in.infof("No Onyx install found at %s", in.root.Dir)
+		in.infof("No Lumen install found at %s", in.root.Dir)
 		for _, alt := range in.root.Ambiguous {
 			in.infof("(another install exists at %s — pass --dir to read its logs)", alt)
 		}

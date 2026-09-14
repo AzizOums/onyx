@@ -6,25 +6,25 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ExternalAppType, SkillSharePermission
-from onyx.db.external_app import (
+from lumen.db.enums import ExternalAppType, SkillSharePermission
+from lumen.db.external_app import (
     associate_custom_skill_with_external_app__no_commit,
     create_external_app,
     get_external_app_by_skill_id,
     get_skills_for_external_app,
     replace_custom_skill_associations__no_commit,
 )
-from onyx.db.models import Skill, User, UserSkillPreference
-from onyx.db.skill import set_skill_public_permission
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.file_store.file_store import get_default_file_store
-from onyx.server.features.build.external_apps.api import (
+from lumen.db.models import Skill, User, UserSkillPreference
+from lumen.db.skill import set_skill_public_permission
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.file_store.file_store import get_default_file_store
+from lumen.server.features.build.external_apps.api import (
     update_external_app_admin,
 )
-from onyx.server.features.build.external_apps.models import UpdateExternalAppRequest
-from onyx.server.features.skill.api import create_custom_skill_from_editor
-from onyx.skills.ingest import delete_bundle_blob
+from lumen.server.features.build.external_apps.models import UpdateExternalAppRequest
+from lumen.server.features.skill.api import create_custom_skill_from_editor
+from lumen.skills.ingest import delete_bundle_blob
 from tests.external_dependency_unit.craft.db_helpers import (
     make_built_in_skill_row,
     make_external_app,
@@ -97,21 +97,21 @@ def test_associate_rejects_built_in_and_already_associated_skills(
         skill_id=custom.id,
     )
 
-    with pytest.raises(OnyxError) as built_in_error:
+    with pytest.raises(LumenError) as built_in_error:
         associate_custom_skill_with_external_app__no_commit(
             db_session,
             external_app_id=first_app_id,
             skill_id=built_in.id,
         )
-    assert built_in_error.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert built_in_error.value.error_code == LumenErrorCode.INVALID_INPUT
 
-    with pytest.raises(OnyxError) as duplicate_error:
+    with pytest.raises(LumenError) as duplicate_error:
         associate_custom_skill_with_external_app__no_commit(
             db_session,
             external_app_id=second_app_id,
             skill_id=custom.id,
         )
-    assert duplicate_error.value.error_code == OnyxErrorCode.DUPLICATE_RESOURCE
+    assert duplicate_error.value.error_code == LumenErrorCode.DUPLICATE_RESOURCE
     dependency = get_external_app_by_skill_id(db_session, custom.id)
     assert dependency is not None
     assert dependency.id == first_app_id
@@ -130,14 +130,14 @@ def test_associate_rejects_a_second_skill_with_the_same_name(
         skill_id=associated.id,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         associate_custom_skill_with_external_app__no_commit(
             db_session,
             external_app_id=app_id,
             skill_id=conflicting.id,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.SKILL_NAME_CONFLICT
+    assert exc_info.value.error_code == LumenErrorCode.SKILL_NAME_CONFLICT
     assert get_external_app_by_skill_id(db_session, conflicting.id) is None
     assert conflicting.public_permission is None
     assert get_skills_for_external_app(db_session, app_id) == [associated]
@@ -152,14 +152,14 @@ def test_associate_rejects_an_invalid_skill_without_promoting_it(
     invalid.is_valid = False
     db_session.flush()
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         associate_custom_skill_with_external_app__no_commit(
             db_session,
             external_app_id=app_id,
             skill_id=invalid.id,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert get_external_app_by_skill_id(db_session, invalid.id) is None
     assert invalid.public_permission is None
 
@@ -178,14 +178,14 @@ def test_replace_rejects_same_named_skills_without_mutating_associations(
         skill_id=original.id,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         replace_custom_skill_associations__no_commit(
             db_session,
             external_app_id=app_id,
             skill_ids=[first.id, second.id],
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.SKILL_NAME_CONFLICT
+    assert exc_info.value.error_code == LumenErrorCode.SKILL_NAME_CONFLICT
     assert get_skills_for_external_app(db_session, app_id) == [original]
     assert first.public_permission is None
     assert second.public_permission is None
@@ -206,14 +206,14 @@ def test_replace_rejects_an_invalid_skill_without_mutating_associations(
     )
     db_session.flush()
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         replace_custom_skill_associations__no_commit(
             db_session,
             external_app_id=app_id,
             skill_ids=[invalid.id],
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert get_skills_for_external_app(db_session, app_id) == [original]
     assert invalid.public_permission is None
 
@@ -315,7 +315,7 @@ def test_app_update_batches_associations_into_one_sandbox_refresh(
     app_id = _make_app(db_session)
     pushed_user_sets: list[set[UUID]] = []
     monkeypatch.setattr(
-        "onyx.server.features.build.external_apps.api.push_skills_for_users",
+        "lumen.server.features.build.external_apps.api.push_skills_for_users",
         lambda user_ids, _db: pushed_user_sets.append(user_ids),
     )
 
@@ -397,7 +397,7 @@ def test_editor_app_context_requires_an_admin_before_writing_skill_content(
     app_id = _make_app(db_session)
     skill_ids_before = set(db_session.scalars(select(Skill.id)))
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         create_custom_skill_from_editor(
             name=f"unauthorized-{uuid4().hex[:8]}",
             description="Should not be created.",
@@ -407,5 +407,5 @@ def test_editor_app_context_requires_an_admin_before_writing_skill_content(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INSUFFICIENT_PERMISSIONS
+    assert exc_info.value.error_code == LumenErrorCode.INSUFFICIENT_PERMISSIONS
     assert set(db_session.scalars(select(Skill.id))) == skill_ids_before

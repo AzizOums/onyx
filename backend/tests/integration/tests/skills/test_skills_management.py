@@ -5,8 +5,8 @@ from uuid import UUID, uuid4
 import httpx
 import pytest
 
-from onyx.db.enums import SkillAccessLevel, SkillSharePermission
-from onyx.server.features.skill.models import (
+from lumen.db.enums import SkillAccessLevel, SkillSharePermission
+from lumen.server.features.skill.models import (
     SkillPatchRequest,
     SkillResponse,
     SkillUserShareRequest,

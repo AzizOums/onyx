@@ -24,13 +24,13 @@ from pytest_alembic.tests import (
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
-from onyx.configs.app_configs import (
+from lumen.configs.app_configs import (
     POSTGRES_HOST,
     POSTGRES_PASSWORD,
     POSTGRES_PORT,
     POSTGRES_USER,
 )
-from onyx.db.engine.sql_engine import SYNC_DB_API, build_connection_string
+from lumen.db.engine.sql_engine import SYNC_DB_API, build_connection_string
 
 
 @pytest.fixture

@@ -2,8 +2,8 @@ import io
 import mimetypes
 from typing import IO, List, Tuple, cast
 
-from onyx.file_store.models import FileDescriptor
-from onyx.server.documents.models import FileUploadResponse
+from lumen.file_store.models import FileDescriptor
+from lumen.server.documents.models import FileUploadResponse
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser

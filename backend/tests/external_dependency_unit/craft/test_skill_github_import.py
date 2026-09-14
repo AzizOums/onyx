@@ -8,12 +8,12 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.models import Skill, User, UserSkillPreference
-from onyx.file_store.file_store import get_default_file_store
-from onyx.server.features.skill.api import import_github_skills
-from onyx.server.features.skill.models import GitHubSkillsImportRequest
-from onyx.skills.bundle import build_skill_md
-from onyx.skills.models import GitHubRepository, GitHubSkillBundle
+from lumen.db.models import Skill, User, UserSkillPreference
+from lumen.file_store.file_store import get_default_file_store
+from lumen.server.features.skill.api import import_github_skills
+from lumen.server.features.skill.models import GitHubSkillsImportRequest
+from lumen.skills.bundle import build_skill_md
+from lumen.skills.models import GitHubRepository, GitHubSkillBundle
 from tests.external_dependency_unit.craft.db_helpers import make_skill
 
 _REVISION = "a" * 40
@@ -75,11 +75,11 @@ def test_import_creates_conflicting_skills_disabled_without_blocking_others(
             name="pptx",
             description="Presentations",
             bundle_bytes=None,
-            unavailable_reason="A built-in Onyx skill already uses this name.",
+            unavailable_reason="A built-in Lumen skill already uses this name.",
         ),
     ]
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.fetch_github_skill_bundles",
+        "lumen.server.features.skill.api.fetch_github_skill_bundles",
         lambda *_args, **_kwargs: (
             GitHubRepository(
                 owner="owner",
@@ -90,12 +90,12 @@ def test_import_creates_conflicting_skills_disabled_without_blocking_others(
         ),
     )
     monkeypatch.setattr(
-        "onyx.server.features.skill.api._github_authorization_header",
+        "lumen.server.features.skill.api._github_authorization_header",
         lambda *_args: None,
     )
     pushed_user_ids: list[set[UUID]] = []
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.push_skills_for_users",
+        "lumen.server.features.skill.api.push_skills_for_users",
         lambda user_ids, _db: pushed_user_ids.append(user_ids),
     )
 
@@ -119,7 +119,7 @@ def test_import_creates_conflicting_skills_disabled_without_blocking_others(
     assert imported_by_name[unique_name].skill.enabled is True
     assert imported_by_name[unique_name].disabled_reason is None
     assert [(item.name, item.reason) for item in response.not_imported] == [
-        ("pptx", "A built-in Onyx skill already uses this name.")
+        ("pptx", "A built-in Lumen skill already uses this name.")
     ]
     assert pushed_user_ids == [{test_user.id}]
 
@@ -166,7 +166,7 @@ def test_import_enables_only_first_new_skill_with_each_name(
         ),
     ]
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.fetch_github_skill_bundles",
+        "lumen.server.features.skill.api.fetch_github_skill_bundles",
         lambda *_args, **_kwargs: (
             GitHubRepository(
                 owner="owner",
@@ -177,11 +177,11 @@ def test_import_enables_only_first_new_skill_with_each_name(
         ),
     )
     monkeypatch.setattr(
-        "onyx.server.features.skill.api._github_authorization_header",
+        "lumen.server.features.skill.api._github_authorization_header",
         lambda *_args: None,
     )
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.push_skills_for_users",
+        "lumen.server.features.skill.api.push_skills_for_users",
         lambda *_args: None,
     )
 

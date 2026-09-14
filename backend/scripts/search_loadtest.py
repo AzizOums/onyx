@@ -1,5 +1,5 @@
 """
-Load test for the Onyx search flow (/api/search/send-search-message).
+Load test for the Lumen search flow (/api/search/send-search-message).
 
 Usage:
     source .venv/bin/activate
@@ -20,7 +20,7 @@ from pathlib import Path
 import httpx
 from pydantic import BaseModel
 
-from onyx.configs.constants import DocumentSource
+from lumen.configs.constants import DocumentSource
 
 DEFAULT_TEST_QUERIES = [
     "onboarding checklist",
@@ -218,10 +218,10 @@ def load_token(args: argparse.Namespace) -> str:
         return args.token.strip()
     if args.token_file:
         return Path(os.path.expanduser(args.token_file)).read_text().strip()
-    env = os.environ.get("ONYX_ACCESS_TOKEN")
+    env = os.environ.get("LUMEN_ACCESS_TOKEN")
     if env:
         return env.strip()
-    raise SystemExit("Provide --token, --token-file, or ONYX_ACCESS_TOKEN env var.")
+    raise SystemExit("Provide --token, --token-file, or LUMEN_ACCESS_TOKEN env var.")
 
 
 def load_source_types(args: argparse.Namespace) -> set[DocumentSource] | None:
@@ -269,7 +269,7 @@ def run(args: argparse.Namespace) -> None:
     token = load_token(args)
     queries = load_queries_and_source_types(args)
     base_url = args.url.rstrip("/")
-    # Accept either the bare host (https://st-dev.onyx.app) or one ending in
+    # Accept either the bare host (https://st-dev.lumen.app) or one ending in
     # /api.
     api_root = base_url if base_url.endswith("/api") else base_url + "/api"
     search_url = f"{api_root}/search"
@@ -335,19 +335,19 @@ def run(args: argparse.Namespace) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="A load test tool for the Onyx search endpoint."
+        description="A load test tool for the Lumen search endpoint."
     )
     parser.add_argument(
-        "--url", required=True, help="Onyx base URL, e.g. https://cloud.onyx.app"
+        "--url", required=True, help="Lumen base URL, e.g. https://cloud.lumen.app"
     )
     parser.add_argument(
         "--token",
-        help="Bearer token (onyx_pat_...). Or use --token-file / $ONYX_ACCESS_TOKEN.",
+        help="Bearer token (lumen_pat_...). Or use --token-file / $LUMEN_ACCESS_TOKEN.",
     )
     parser.add_argument(
         "-f",
         "--token-file",
-        help="Path to a file containing a bearer token. Or use --token / $ONYX_ACCESS_TOKEN.",
+        help="Path to a file containing a bearer token. Or use --token / $LUMEN_ACCESS_TOKEN.",
     )
     parser.add_argument(
         "-c",

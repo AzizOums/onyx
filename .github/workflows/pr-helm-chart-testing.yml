@@ -85,19 +85,19 @@ jobs:
         run: |
           echo "=== Adding Helm repositories ==="
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo add vespa https://onyx-dot-app.github.io/vespa-helm-charts
+          helm repo add vespa https://lumen-dot-app.github.io/vespa-helm-charts
           helm repo add opensearch https://opensearch-project.github.io/helm-charts
           helm repo add cloudnative-pg https://cloudnative-pg.github.io/charts
           helm repo add ot-container-kit https://ot-container-kit.github.io/helm-charts
           helm repo add minio https://charts.min.io/
-          helm repo add code-interpreter https://onyx-dot-app.github.io/python-sandbox/
+          helm repo add code-interpreter https://lumen-dot-app.github.io/python-sandbox/
           helm repo update
 
       - name: Verify CNPG CRDs are in sync
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          helm dependency build deployment/helm/charts/onyx
-          deployment/helm/charts/onyx/scripts/check-cnpg-crds.sh
+          helm dependency build deployment/helm/charts/lumen
+          deployment/helm/charts/lumen/scripts/check-cnpg-crds.sh
 
       - name: Pre-pull required images
         if: steps.list-changed.outputs.changed == 'true'
@@ -109,7 +109,7 @@ jobs:
           IMAGES=(
             "ghcr.io/cloudnative-pg/cloudnative-pg:1.27.0"
             "quay.io/opstree/redis:v7.0.15"
-            "docker.io/onyxdotapp/onyx-web-server:latest"
+            "docker.io/lumendotapp/lumen-web-server:latest"
           )
 
           for image in "${IMAGES[@]}"; do
@@ -122,13 +122,13 @@ jobs:
           done
 
           echo "=== Images loaded into Kind cluster ==="
-          docker exec "$KIND_CLUSTER"-control-plane crictl images | grep -E "(cloudnative-pg|redis|onyx)" || echo "Some images may still be loading..."
+          docker exec "$KIND_CLUSTER"-control-plane crictl images | grep -E "(cloudnative-pg|redis|lumen)" || echo "Some images may still be loading..."
 
       - name: Validate chart dependencies
         if: steps.list-changed.outputs.changed == 'true'
         run: |
           echo "=== Validating chart dependencies ==="
-          cd deployment/helm/charts/onyx
+          cd deployment/helm/charts/lumen
           helm dependency update
           # objectstorage ships no defaults (fail closed), so lint must set placeholders.
           helm lint . \

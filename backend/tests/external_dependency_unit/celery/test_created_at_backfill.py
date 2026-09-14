@@ -15,17 +15,17 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.celery_utils import extract_ids_from_runnable_connector
-from onyx.connectors.interfaces import (
+from lumen.background.celery.celery_utils import extract_ids_from_runnable_connector
+from lumen.connectors.interfaces import (
     GenerateSlimDocumentOutput,
     SecondsSinceUnixEpoch,
     SlimConnector,
 )
-from onyx.connectors.models import HierarchyNode, SlimDocument
-from onyx.db.document import backfill_docs_created_at__no_commit
-from onyx.db.models import Document as DbDocument
-from onyx.indexing.indexing_heartbeat import IndexingHeartbeatInterface
-from onyx.kg.models import KGStage
+from lumen.connectors.models import HierarchyNode, SlimDocument
+from lumen.db.document import backfill_docs_created_at__no_commit
+from lumen.db.models import Document as DbDocument
+from lumen.indexing.indexing_heartbeat import IndexingHeartbeatInterface
+from lumen.kg.models import KGStage
 
 _CREATED_AT = datetime(2021, 6, 1, tzinfo=timezone.utc)
 

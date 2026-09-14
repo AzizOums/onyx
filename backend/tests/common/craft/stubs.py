@@ -56,11 +56,11 @@ from collections.abc import Callable, Generator, Iterable, Sequence
 from typing import Any, cast
 from uuid import UUID
 
-from onyx.server.features.build.sandbox.base import SandboxEvent, SandboxManager
-from onyx.server.features.build.sandbox.image.sandbox_daemon.contract import (
+from lumen.server.features.build.sandbox.base import SandboxEvent, SandboxManager
+from lumen.server.features.build.sandbox.image.sandbox_daemon.contract import (
     OutputsManifestResponse,
 )
-from onyx.server.features.build.sandbox.models import (
+from lumen.server.features.build.sandbox.models import (
     CraftLLMProviderConfig,
     CraftMCPServerConfig,
     FileSet,
@@ -69,7 +69,7 @@ from onyx.server.features.build.sandbox.models import (
     SandboxInfo,
     SnapshotResult,
 )
-from onyx.server.features.build.sandbox.serve_transport import (
+from lumen.server.features.build.sandbox.serve_transport import (
     PromptSlot,
     ServeConnectionInfo,
 )
@@ -291,7 +291,7 @@ class StubSandboxManager(SandboxManager):
         sandbox_id: UUID,
         user_id: UUID,
         tenant_id: str,
-        onyx_pat: str | None,
+        lumen_pat: str | None,
         provisioning_attempt_number: int,
     ) -> SandboxInfo:
         self.provision_count += 1
@@ -299,7 +299,7 @@ class StubSandboxManager(SandboxManager):
             "sandbox_id": sandbox_id,
             "user_id": user_id,
             "tenant_id": tenant_id,
-            "onyx_pat": onyx_pat,
+            "lumen_pat": lumen_pat,
             "provisioning_attempt_number": provisioning_attempt_number,
         }
         if self.provision_returns is None:

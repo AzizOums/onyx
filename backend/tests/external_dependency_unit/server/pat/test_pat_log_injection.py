@@ -9,8 +9,8 @@ from unittest.mock import patch
 
 from sqlalchemy.orm import Session
 
-from onyx.server.pat.api import create_token
-from onyx.server.pat.models import CreateTokenRequest
+from lumen.server.pat.api import create_token
+from lumen.server.pat.models import CreateTokenRequest
 from tests.external_dependency_unit.conftest import create_test_user
 
 
@@ -18,7 +18,7 @@ def test_create_token_escapes_name_in_logs(db_session: Session) -> None:
     user = create_test_user(db_session, "pat-user")
     request = CreateTokenRequest(name="legit\nINJECTED admin deleted tenant")
 
-    with patch("onyx.server.pat.api.logger") as mock_logger:
+    with patch("lumen.server.pat.api.logger") as mock_logger:
         create_token(request=request, user=user, db_session=db_session)
 
     mock_logger.info.assert_called_once()

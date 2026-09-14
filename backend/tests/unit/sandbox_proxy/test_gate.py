@@ -27,29 +27,29 @@ from mitmproxy.proxy import server_hooks
 from redis.exceptions import RedisError
 from sqlalchemy.orm import Session
 
-from onyx.cache.interface import CacheBackend
-from onyx.db.enums import (
+from lumen.cache.interface import CacheBackend
+from lumen.db.enums import (
     ApprovalDecidedVia,
     ApprovalDecision,
     EndpointPolicy,
     GatedAppKind,
 )
-from onyx.external_apps.matching.engine import (
+from lumen.external_apps.matching.engine import (
     AllMatchedActions,
     GatedTarget,
     MatchedAction,
 )
-from onyx.sandbox_proxy.addons import gate
-from onyx.sandbox_proxy.addons.gate import GateAddon, ParkedApprovals
-from onyx.sandbox_proxy.credential_injection import (
+from lumen.sandbox_proxy.addons import gate
+from lumen.sandbox_proxy.addons.gate import GateAddon, ParkedApprovals
+from lumen.sandbox_proxy.credential_injection import (
     CredentialInjectionDispatcher,
     CredentialResolver,
     CredentialUnavailableError,
     InjectionOutcome,
 )
-from onyx.sandbox_proxy.errors import SandboxProxyError
-from onyx.sandbox_proxy.identity import ResolvedSandbox, SessionContext
-from onyx.sandbox_proxy.request_evaluator import RequestEvaluator
+from lumen.sandbox_proxy.errors import SandboxProxyError
+from lumen.sandbox_proxy.identity import ResolvedSandbox, SessionContext
+from lumen.sandbox_proxy.request_evaluator import RequestEvaluator
 from tests.unit.sandbox_proxy.conftest import (
     RecordingCredentialResolver,
     StubResolver,
@@ -329,7 +329,7 @@ async def test_resolve_and_match_off_catalog_pass_through_is_not_logged(
     )
     flow = make_flow(host="registry.npmjs.org", proxy_auth=_basic_auth(_TAG_UUID))
 
-    with caplog.at_level(logging.DEBUG, logger="onyx.utils.logger"):
+    with caplog.at_level(logging.DEBUG, logger="lumen.utils.logger"):
         result = await addon._resolve_and_match(flow)
 
     assert result is None

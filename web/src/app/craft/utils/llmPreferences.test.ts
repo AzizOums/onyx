@@ -105,7 +105,7 @@ describe("getPreferredLlmSelection", () => {
       provider("anthropic", [model("claude-opus-5", { craft: true })], 1),
     ];
     for (const raw of ["not json", "null", '"gpt-4o"', "42"]) {
-      window.localStorage.setItem(`onyx:craftLlmSelection:${USER}`, raw);
+      window.localStorage.setItem(`lumen:craftLlmSelection:${USER}`, raw);
       expect(getPreferredLlmSelection(USER, providers)?.modelName).toBe(
         "claude-opus-5"
       );

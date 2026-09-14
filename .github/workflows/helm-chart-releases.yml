@@ -1,10 +1,10 @@
-name: Release Onyx Helm Charts
+name: Release Lumen Helm Charts
 
 # Publishes the chart three ways from one packaged tarball:
-#   1. a GitHub release (`helm/onyx-<version>`) that carries the .tgz asset,
+#   1. a GitHub release (`helm/lumen-<version>`) that carries the .tgz asset,
 #   2. an index.yaml entry on gh-pages pointing at that asset, which keeps
-#      `helm repo add onyx https://onyx-dot-app.github.io/onyx` working,
-#   3. an OCI artifact at ghcr.io/onyx-dot-app/charts/onyx for `helm install
+#      `helm repo add lumen https://lumen-dot-app.github.io/lumen` working,
+#   3. an OCI artifact at ghcr.io/lumen-dot-app/charts/lumen for `helm install
 #      oci://...` users.
 #
 # Tarballs are deliberately NOT committed to gh-pages. `helm package` is not
@@ -28,13 +28,13 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # `onyx-cnpg-crds` is intentionally not published. The parent chart consumes
-  # it as `file://../onyx-cnpg-crds` and `helm package` vendors it into the onyx
+  # `lumen-cnpg-crds` is intentionally not published. The parent chart consumes
+  # it as `file://../lumen-cnpg-crds` and `helm package` vendors it into the lumen
   # tarball, so a standalone release would have no consumer.
-  CHART_DIR: deployment/helm/charts/onyx
+  CHART_DIR: deployment/helm/charts/lumen
   # cr requires this exact directory name (`cr upload --package-path`).
   PACKAGE_DIR: .cr-release-packages
-  OCI_REPOSITORY: oci://ghcr.io/onyx-dot-app/charts
+  OCI_REPOSITORY: oci://ghcr.io/lumen-dot-app/charts
 
 jobs:
   release:
@@ -69,12 +69,12 @@ jobs:
       - name: Add required Helm repositories
         run: |
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-          helm repo add onyx-vespa https://onyx-dot-app.github.io/vespa-helm-charts
+          helm repo add lumen-vespa https://lumen-dot-app.github.io/vespa-helm-charts
           helm repo add opensearch https://opensearch-project.github.io/helm-charts
           helm repo add cloudnative-pg https://cloudnative-pg.github.io/charts
           helm repo add ot-container-kit https://ot-container-kit.github.io/helm-charts
           helm repo add minio https://charts.min.io/
-          helm repo add code-interpreter https://onyx-dot-app.github.io/python-sandbox/
+          helm repo add code-interpreter https://lumen-dot-app.github.io/python-sandbox/
           helm repo update
 
       # Packaged here rather than by chart-releaser so the release, the
@@ -90,14 +90,14 @@ jobs:
           # Derive the version from the artifact helm just wrote rather than by
           # parsing Chart.yaml, so the release, the index entry and the OCI tag
           # can never disagree with the file being uploaded.
-          package="$(find "${PACKAGE_DIR}" -name 'onyx-*.tgz' -print -quit)"
+          package="$(find "${PACKAGE_DIR}" -name 'lumen-*.tgz' -print -quit)"
           [ -n "$package" ] || { echo "helm package produced no tarball" >&2; exit 1; }
           version="$(basename "$package" .tgz)"
-          version="${version#onyx-}"
+          version="${version#lumen-}"
 
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "package=${package}" >> "$GITHUB_OUTPUT"
-          echo "Packaged onyx ${version} -> ${package}"
+          echo "Packaged lumen ${version} -> ${package}"
 
       - name: Publish GitHub release and gh-pages index
         # HEAD of main, one commit past v1.7.0. v1.7.0 reads `latest_tag` after
@@ -138,8 +138,8 @@ jobs:
           set -euo pipefail
           # `helm push` overwrites an existing tag, so guard it explicitly to
           # keep re-runs from republishing a version under new digests.
-          if helm show chart "${OCI_REPOSITORY}/onyx" --version "${CHART_VERSION}" >/dev/null 2>&1; then
-            echo "onyx ${CHART_VERSION} already present in ${OCI_REPOSITORY}, skipping"
+          if helm show chart "${OCI_REPOSITORY}/lumen" --version "${CHART_VERSION}" >/dev/null 2>&1; then
+            echo "lumen ${CHART_VERSION} already present in ${OCI_REPOSITORY}, skipping"
             exit 0
           fi
           helm push "${CHART_PACKAGE}" "${OCI_REPOSITORY}"

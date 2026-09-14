@@ -1,4 +1,4 @@
-// Package release implements Onyx's release tag policy: how cloud, stable,
+// Package release implements Lumen's release tag policy: how cloud, stable,
 // and beta tags are named, sequenced, and anchored to release branches, plus
 // validation of existing tags against that policy. Commands under cmd/ stay
 // thin cobra wiring over this package.
@@ -14,7 +14,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/git"
 )
 
 // bareSemverRe matches a bare X.Y.Z version (no leading v). Leading zeroes are

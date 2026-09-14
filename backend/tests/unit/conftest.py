@@ -8,7 +8,7 @@ from collections.abc import Generator
 
 import pytest
 
-from onyx.utils.variable_functionality import (
+from lumen.utils.variable_functionality import (
     fetch_versioned_implementation,
     global_version,
 )
@@ -18,7 +18,7 @@ from onyx.utils.variable_functionality import (
 def _reset_leaked_ee_state() -> Generator[None, None, None]:
     """Undoes EE state leaked into the process by import side effects.
 
-    ``set_is_ee_based_on_env_variable()`` runs at module level in ``onyx.main``
+    ``set_is_ee_based_on_env_variable()`` runs at module level in ``lumen.main``
     and every ``background/celery/versioned_apps`` module, and flips the
     process-global EE flag whenever license enforcement is on (its default). A
     unit test whose import chain reaches one of those modules therefore silently

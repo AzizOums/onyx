@@ -3,8 +3,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from onyx.connectors.google_drive.connector import GoogleDriveConnector
-from onyx.connectors.models import Document, TextSection
+from lumen.connectors.google_drive.connector import GoogleDriveConnector
+from lumen.connectors.models import Document, TextSection
 from tests.daily.connectors.google_drive.consts_and_utils import (
     ADMIN_EMAIL,
     RESOURCE_KEY_SHORTCUT_TARGET_DOC_ID,
@@ -48,7 +48,7 @@ def _doc_id_suffix(doc: Document) -> str:
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_shared_folder_shortcuts_resolve_files_and_folders(

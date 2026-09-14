@@ -1,8 +1,8 @@
 import os
 from datetime import datetime, timezone
 
-from onyx.connectors.models import InputType
-from onyx.server.documents.models import DocumentSource
+from lumen.connectors.models import InputType
+from lumen.server.documents.models import DocumentSource
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.user import UserManager
 from tests.integration.common_utils.test_models import DATestUser

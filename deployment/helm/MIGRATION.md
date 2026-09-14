@@ -1,6 +1,6 @@
 # Chart migration guide
 
-Breaking changes between Onyx Helm chart versions and what to do about them.
+Breaking changes between Lumen Helm chart versions and what to do about them.
 
 ## chart 0.4.x → 0.5.x
 
@@ -8,7 +8,7 @@ Breaking changes between Onyx Helm chart versions and what to do about them.
 
 Chart 0.5.0 removed the bundled `charts/vespa/` subchart. Earlier chart
 versions installed Vespa as a `da-vespa` StatefulSet alongside the rest of
-Onyx; the api-server connected to it on `localhost:19071` (Vespa application
+Lumen; the api-server connected to it on `localhost:19071` (Vespa application
 deploy port) and the chart-managed PV held the indexed corpus.
 
 The 0.5.x line assumes you are running Vespa **outside** the chart — either
@@ -39,10 +39,10 @@ time and fails fast with a clear message instead of silently breaking. See
    deployment outside this chart, whichever fits your operational model.
 2. **Re-index is automatic.** Vespa data does not roundtrip directly
    between releases (chunk schemas have changed over time anyway). No
-   manual action here; Onyx connectors will reindex on their own once
+   manual action here; Lumen connectors will reindex on their own once
    the api-server can reach the new endpoint (after the upgrade in
    step 5).
-3. **Update your values** to point Onyx at the external Vespa endpoint
+3. **Update your values** to point Lumen at the external Vespa endpoint
    (the api-server respects `VESPA_HOST` / `VESPA_PORT` env vars; set
    them through your `configMap:` block).
 4. **Delete the old StatefulSet** once you no longer need it. The PV
@@ -64,14 +64,14 @@ or disable the check entirely with `legacyVespaCheck.enabled: false`.
 ### `celery-worker-scheduled-tasks` deployment
 
 Chart 0.5.x added a `celery-worker-scheduled-tasks` Deployment that runs
-the `onyx.background.celery.versioned_apps.scheduled_tasks` celery app.
-That app exists only in `onyxdotapp/onyx-backend` images cut after the
+the `lumen.background.celery.versioned_apps.scheduled_tasks` celery app.
+That app exists only in `lumendotapp/lumen-backend` images cut after the
 "scheduled tasks v1" change. If you upgrade the chart without bumping the
 backend image, the deployment will crash-loop with:
 
 ```
 Error: Unable to load celery application.
-The module onyx.background.celery.versioned_apps.scheduled_tasks was not
+The module lumen.background.celery.versioned_apps.scheduled_tasks was not
 found.
 ```
 
@@ -83,5 +83,5 @@ celery_worker_scheduled_tasks:
   replicaCount: 0
 ```
 
-The scheduled-tasks worker is only required if you use Onyx's craft /
+The scheduled-tasks worker is only required if you use Lumen's craft /
 sandbox feature; otherwise it is safe to leave disabled.

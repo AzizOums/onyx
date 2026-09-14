@@ -13,9 +13,9 @@ from unittest.mock import MagicMock, patch
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.chat.incognito import incognito_allowed_for_user
-from onyx.db.models import User, User__UserGroup, UserGroup
-from onyx.server.security.models import IncognitoAvailability
+from lumen.chat.incognito import incognito_allowed_for_user
+from lumen.db.models import User, User__UserGroup, UserGroup
+from lumen.server.security.models import IncognitoAvailability
 from tests.external_dependency_unit.conftest import create_test_user, delete_test_user
 
 GROUP_NAME_PREFIX = "incognito-avail-"
@@ -56,11 +56,11 @@ def _workspace(
     settings = MagicMock(incognito_availability=mode)
     with (
         patch(
-            "onyx.chat.incognito.incognito_context_available",
+            "lumen.chat.incognito.incognito_context_available",
             return_value=store_available,
         ),
-        patch("onyx.chat.incognito.get_security_settings", return_value=settings),
-        patch("onyx.chat.incognito.load_effective_uncached", return_value=settings),
+        patch("lumen.chat.incognito.get_security_settings", return_value=settings),
+        patch("lumen.chat.incognito.load_effective_uncached", return_value=settings),
     ):
         yield
 
@@ -111,15 +111,15 @@ def test_enforcement_reads_past_the_settings_cache(
     """Cache invalidation is process-local, so a second api_server would keep
     authorizing against a revoked setting for the cache TTL."""
     with (
-        patch("onyx.chat.incognito.incognito_context_available", return_value=True),
+        patch("lumen.chat.incognito.incognito_context_available", return_value=True),
         patch(
-            "onyx.chat.incognito.get_security_settings",
+            "lumen.chat.incognito.get_security_settings",
             return_value=MagicMock(
                 incognito_availability=IncognitoAvailability.EVERYONE
             ),
         ),
         patch(
-            "onyx.chat.incognito.load_effective_uncached",
+            "lumen.chat.incognito.load_effective_uncached",
             return_value=MagicMock(incognito_availability=IncognitoAvailability.OFF),
         ),
     ):

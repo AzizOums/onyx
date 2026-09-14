@@ -21,13 +21,13 @@ from docker import DockerClient
 from docker.errors import APIError, NotFound
 from docker.models.containers import Container
 
-from onyx.sandbox_proxy.identity_docker import (
+from lumen.sandbox_proxy.identity_docker import (
     DockerEventsLookup,
     _identity_from_container,
 )
 
 _DOCKER_SOCKET = os.environ.get("SANDBOX_DOCKER_SOCKET", "/var/run/docker.sock")
-_TEST_NETWORK = "onyx-craft-sandbox-test"
+_TEST_NETWORK = "lumen-craft-sandbox-test"
 _BUSYBOX_IMAGE = "busybox:1.36"
 
 
@@ -86,9 +86,9 @@ def _run_sandbox_labeled(
         detach=True,
         network=network,
         labels={
-            "onyx.app/component": "craft-sandbox",
-            "onyx.app/sandbox-id": str(sandbox_id),
-            "onyx.app/tenant-id": tenant_id,
+            "lumen.app/component": "craft-sandbox",
+            "lumen.app/sandbox-id": str(sandbox_id),
+            "lumen.app/tenant-id": tenant_id,
         },
         name=name or f"craft-sandbox-test-{str(sandbox_id)[:8]}",
     )

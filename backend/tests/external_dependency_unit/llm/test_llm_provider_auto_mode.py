@@ -13,8 +13,8 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import LLMModelFlowType
-from onyx.db.llm import (
+from lumen.db.enums import LLMModelFlowType
+from lumen.db.llm import (
     fetch_auto_mode_providers,
     fetch_default_llm_model,
     fetch_existing_llm_provider,
@@ -24,18 +24,18 @@ from onyx.db.llm import (
     sync_auto_mode_models,
     update_default_provider,
 )
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.interfaces import LLM
-from onyx.llm.well_known_providers.auto_update_models import (
+from lumen.llm.constants import LlmProviderNames
+from lumen.llm.interfaces import LLM
+from lumen.llm.well_known_providers.auto_update_models import (
     LLMProviderRecommendation,
     LLMRecommendations,
 )
-from onyx.llm.well_known_providers.models import SimpleKnownModel
-from onyx.server.manage.llm.api import put_llm_provider
-from onyx.server.manage.llm.api import (
+from lumen.llm.well_known_providers.models import SimpleKnownModel
+from lumen.server.manage.llm.api import put_llm_provider
+from lumen.server.manage.llm.api import (
     test_default_provider as run_test_default_provider,
 )
-from onyx.server.manage.llm.models import (
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )
@@ -127,7 +127,7 @@ class TestAutoModeSyncFeature:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 # Step 1-2: Upload provider with auto mode on and no model configs
@@ -226,7 +226,7 @@ class TestAutoModeSyncFeature:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 # Upload an OpenAI provider with auto mode
@@ -336,7 +336,7 @@ class TestAutoModeSyncFeature:
 
             # Step 2: Update provider to enable auto mode
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 put_llm_provider(
@@ -415,7 +415,7 @@ class TestAutoModeSyncFeature:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 # Upload an OpenAI provider (not in config)
@@ -522,7 +522,7 @@ class TestAutoModeSyncFeature:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 # Step 1: Create provider 1 (OpenAI) with auto mode
@@ -549,7 +549,7 @@ class TestAutoModeSyncFeature:
             update_default_provider(provider_1.id, provider_1_default_model, db_session)
 
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=mock_recommendations,
             ):
                 # Step 2: Create provider 2 (Anthropic) with auto mode
@@ -592,7 +592,7 @@ class TestAutoModeSyncFeature:
 
             # Step 6: Run test_default_provider and verify it uses provider 2's model
             with patch(
-                "onyx.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
+                "lumen.server.manage.llm.api.test_llm", side_effect=mock_test_llm_capture
             ):
                 run_test_default_provider(_=_create_mock_admin())
 
@@ -756,7 +756,7 @@ class TestAutoModeTransitionsAndResync:
 
             # Step 2: Transition to auto mode
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=auto_config,
             ):
                 put_llm_provider(
@@ -817,7 +817,7 @@ class TestAutoModeTransitionsAndResync:
         try:
             # Step 1: Create in auto mode
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=initial_config,
             ):
                 put_llm_provider(
@@ -915,7 +915,7 @@ class TestAutoModeTransitionsAndResync:
         try:
             # Step 1: Create with config v1
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=config_v1,
             ):
                 put_llm_provider(
@@ -984,7 +984,7 @@ class TestAutoModeTransitionsAndResync:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=config,
             ):
                 put_llm_provider(
@@ -1080,7 +1080,7 @@ class TestAutoModeTransitionsAndResync:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=config_v1,
             ):
                 put_llm_provider(
@@ -1181,7 +1181,7 @@ class TestAutoModeTransitionsAndResync:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=config_v1,
             ):
                 put_llm_provider(
@@ -1266,7 +1266,7 @@ class TestAutoModeTransitionsAndResync:
 
         try:
             with patch(
-                "onyx.server.manage.llm.api.fetch_llm_recommendations_from_github",
+                "lumen.server.manage.llm.api.fetch_llm_recommendations_from_github",
                 return_value=config,
             ):
                 put_llm_provider(

@@ -1,53 +1,53 @@
-# Onyx CLI
+# Lumen CLI
 
-[![Release CLI](https://github.com/onyx-dot-app/onyx/actions/workflows/release-cli.yml/badge.svg)](https://github.com/onyx-dot-app/onyx/actions/workflows/release-cli.yml)
-[![PyPI](https://img.shields.io/pypi/v/onyx-cli.svg)](https://pypi.org/project/onyx-cli/)
+[![Release CLI](https://github.com/lumen-dot-app/lumen/actions/workflows/release-cli.yml/badge.svg)](https://github.com/lumen-dot-app/lumen/actions/workflows/release-cli.yml)
+[![PyPI](https://img.shields.io/pypi/v/lumen-cli.svg)](https://pypi.org/project/lumen-cli/)
 
-A CLI for querying enterprise knowledge from [Onyx](https://github.com/onyx-dot-app/onyx). Includes an interactive chat TUI for humans and non-interactive commands for AI agents and scripts.
+A CLI for querying enterprise knowledge from [Lumen](https://github.com/lumen-dot-app/lumen). Includes an interactive chat TUI for humans and non-interactive commands for AI agents and scripts.
 
 ## Installation
 
 ```shell
-pip install onyx-cli
+pip install lumen-cli
 ```
 
 Or with uv:
 
 ```shell
-uv pip install onyx-cli
+uv pip install lumen-cli
 ```
 
 Standalone binaries for Linux, macOS, and Windows (amd64/arm64) are also attached
-to each [`cli/v*` GitHub release](https://github.com/onyx-dot-app/onyx/releases?q=cli%2Fv).
+to each [`cli/v*` GitHub release](https://github.com/lumen-dot-app/lumen/releases?q=cli%2Fv).
 
 ## Setup
 
 Run the interactive chat TUI — on first launch it will guide you through setup:
 
 ```shell
-onyx-cli chat
+lumen-cli chat
 ```
 
-This prompts for your Onyx server URL and personal access token (PAT), tests the connection, and saves config to `~/.config/onyx-cli/config.json` (or `$XDG_CONFIG_HOME/onyx-cli/config.json` if set). To reconfigure later, use the `/configure` command inside the TUI.
+This prompts for your Lumen server URL and personal access token (PAT), tests the connection, and saves config to `~/.config/lumen-cli/config.json` (or `$XDG_CONFIG_HOME/lumen-cli/config.json` if set). To reconfigure later, use the `/configure` command inside the TUI.
 
 Environment variables override config file values:
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `ONYX_SERVER_URL` | No | Server origin or already-prefixed API base (default: `https://cloud.onyx.app`) |
-| `ONYX_API_PREFIX` | No | API path prefix (default: `/api`); set to empty for direct backend access |
-| `ONYX_PAT` | No | Personal access token for authentication (required if no config file) |
-| `ONYX_PERSONA_ID` | No | Default agent/persona ID |
-| `ONYX_STREAM_MARKDOWN` | No | Enable/disable progressive markdown rendering (true/false) |
-| `ONYX_SSH_HOST_KEY` | No | Path to SSH host key for `serve` command |
+| `LUMEN_SERVER_URL` | No | Server origin or already-prefixed API base (default: `https://cloud.lumen.app`) |
+| `LUMEN_API_PREFIX` | No | API path prefix (default: `/api`); set to empty for direct backend access |
+| `LUMEN_PAT` | No | Personal access token for authentication (required if no config file) |
+| `LUMEN_PERSONA_ID` | No | Default agent/persona ID |
+| `LUMEN_STREAM_MARKDOWN` | No | Enable/disable progressive markdown rendering (true/false) |
+| `LUMEN_SSH_HOST_KEY` | No | Path to SSH host key for `serve` command |
 
 ## Usage
 
 ### Interactive chat
 
 ```shell
-onyx-cli chat
-onyx-cli chat --no-stream-markdown
+lumen-cli chat
+lumen-cli chat --no-stream-markdown
 ```
 
 | Flag | Description |
@@ -57,9 +57,9 @@ onyx-cli chat --no-stream-markdown
 ### One-shot question
 
 ```shell
-onyx-cli ask "What is our company's PTO policy?"
-onyx-cli ask --agent-id 5 "Summarize this topic"
-onyx-cli ask --json "Hello"
+lumen-cli ask "What is our company's PTO policy?"
+lumen-cli ask --agent-id 5 "Summarize this topic"
+lumen-cli ask --json "Hello"
 ```
 
 | Flag | Description |
@@ -73,15 +73,15 @@ onyx-cli ask --json "Hello"
 ### List agents
 
 ```shell
-onyx-cli agents
-onyx-cli agents --json
+lumen-cli agents
+lumen-cli agents --json
 ```
 
 ### Serve over SSH
 
 ```shell
 # Start a public SSH endpoint for the CLI TUI
-onyx-cli serve --host 0.0.0.0 --port 2222
+lumen-cli serve --host 0.0.0.0 --port 2222
 
 # Connect as a client
 ssh your-host -p 2222
@@ -89,15 +89,15 @@ ssh your-host -p 2222
 
 Clients can either:
 - paste a personal access token (PAT) at the login prompt, or
-- skip the prompt by sending `ONYX_PAT` over SSH:
+- skip the prompt by sending `LUMEN_PAT` over SSH:
 
 ```shell
-export ONYX_PAT=your-pat
-ssh -o SendEnv=ONYX_PAT your-host -p 2222
+export LUMEN_PAT=your-pat
+ssh -o SendEnv=LUMEN_PAT your-host -p 2222
 ```
 
 Useful hardening flags:
-- `--host-key` (default `~/.config/onyx-cli/host_ed25519`)
+- `--host-key` (default `~/.config/lumen-cli/host_ed25519`)
 - `--idle-timeout` (default `15m`)
 - `--max-session-timeout` (default `8h`)
 - `--rate-limit-per-minute` (default `20`)
@@ -112,9 +112,9 @@ Useful hardening flags:
 | `ask` | Agent / Script | Ask a question and print the answer to stdout |
 | `agents` | Agent / Script | List available agents (ID, name, description) |
 | `validate-config` | Agent / Script | Check CLI configuration and server connectivity |
-| `install-skill` | Agent / Script | Install the Onyx CLI agent skill file |
+| `install-skill` | Agent / Script | Install the Lumen CLI agent skill file |
 | `experiments` | Agent / Script | List experimental features and their status |
-| `serve` | Interactive | Serve the Onyx TUI over SSH |
+| `serve` | Interactive | Serve the Lumen TUI over SSH |
 
 ### Global Flags
 
@@ -125,7 +125,7 @@ Useful hardening flags:
 
 ## Agent / Non-Interactive Use
 
-When called without a TTY (e.g., by an AI agent or piped into another command), onyx-cli adjusts its behavior:
+When called without a TTY (e.g., by an AI agent or piped into another command), lumen-cli adjusts its behavior:
 
 - **No subcommand**: prints help and exits 0 (instead of launching the TUI)
 - **Results to stdout**, progress/errors to stderr
@@ -135,11 +135,11 @@ When called without a TTY (e.g., by an AI agent or piped into another command), 
 
 ### Configuration
 
-If a human has already run `onyx-cli chat` (which includes first-time setup), the CLI works out of the box — no additional setup needed. Environment variables can override the config file or serve as an alternative when no config file exists:
+If a human has already run `lumen-cli chat` (which includes first-time setup), the CLI works out of the box — no additional setup needed. Environment variables can override the config file or serve as an alternative when no config file exists:
 
 ```shell
-export ONYX_SERVER_URL="https://your-onyx-server.com"
-export ONYX_PAT="your-pat"
+export LUMEN_SERVER_URL="https://your-lumen-server.com"
+export LUMEN_PAT="your-pat"
 ```
 
 ### Exit Codes
@@ -162,10 +162,10 @@ export ONYX_PAT="your-pat"
 Install the bundled SKILL.md so AI coding agents can discover the CLI:
 
 ```shell
-onyx-cli install-skill
-onyx-cli install-skill --global
-onyx-cli install-skill --copy
-onyx-cli install-skill --agent claude-code
+lumen-cli install-skill
+lumen-cli install-skill --global
+lumen-cli install-skill --copy
+lumen-cli install-skill --agent claude-code
 ```
 
 | Flag | Description |
@@ -186,7 +186,7 @@ onyx-cli install-skill --agent claude-code
 | `/configure` | Re-run connection setup |
 | `/connectors` | Open connectors in browser |
 | `/settings` | Open settings in browser |
-| `/quit` | Exit Onyx CLI |
+| `/quit` | Exit Lumen CLI |
 
 ## Keyboard Shortcuts
 
@@ -205,7 +205,7 @@ Requires [Go 1.24+](https://go.dev/dl/).
 
 ```shell
 cd cli
-go build -o onyx-cli .
+go build -o lumen-cli .
 ```
 
 ## Development
@@ -215,7 +215,7 @@ go build -o onyx-cli .
 go test ./...
 
 # Build
-go build -o onyx-cli .
+go build -o lumen-cli .
 
 # Lint
 golangci-lint run ./...
@@ -223,7 +223,7 @@ golangci-lint run ./...
 
 ## Publishing to PyPI
 
-The CLI is distributed as a Python package via [PyPI](https://pypi.org/project/onyx-cli/). The build system uses [hatchling](https://hatch.pypa.io/) with [manygo](https://github.com/nicholasgasior/manygo) to cross-compile Go binaries into platform-specific wheels.
+The CLI is distributed as a Python package via [PyPI](https://pypi.org/project/lumen-cli/). The build system uses [hatchling](https://hatch.pypa.io/) with [manygo](https://github.com/nicholasgasior/manygo) to cross-compile Go binaries into platform-specific wheels.
 
 ### CI release (recommended)
 
@@ -264,7 +264,7 @@ GOOS=linux GOARCH=amd64 uv build --wheel
 
 # Build a musllinux-tagged Linux wheel for Alpine/musl environments
 GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
-  ONYX_CLI_WHEEL_PLATFORM_TAG=musllinux_1_2_x86_64 \
+  LUMEN_CLI_WHEEL_PLATFORM_TAG=musllinux_1_2_x86_64 \
   uv build --wheel
 
 # Upload to PyPI

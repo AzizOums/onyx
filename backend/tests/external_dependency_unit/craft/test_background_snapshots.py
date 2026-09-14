@@ -23,14 +23,14 @@ import pytest
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.build import tasks as tasks_module
-from onyx.background.celery.tasks.build.tasks import cleanup_idle_sandboxes_task
-from onyx.configs.constants import OnyxRedisLocks
-from onyx.db.enums import BuildSessionStatus, SandboxStatus
-from onyx.db.models import BuildSession, Sandbox, Snapshot, User
-from onyx.redis.redis_pool import get_redis_client
-from onyx.server.features.build.sandbox.models import SnapshotResult
-from onyx.server.features.build.session import (
+from lumen.background.celery.tasks.build import tasks as tasks_module
+from lumen.background.celery.tasks.build.tasks import cleanup_idle_sandboxes_task
+from lumen.configs.constants import LumenRedisLocks
+from lumen.db.enums import BuildSessionStatus, SandboxStatus
+from lumen.db.models import BuildSession, Sandbox, Snapshot, User
+from lumen.redis.redis_pool import get_redis_client
+from lumen.server.features.build.sandbox.models import SnapshotResult
+from lumen.server.features.build.session import (
     sandbox_lifecycle as sandbox_lifecycle_module,
 )
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
@@ -95,11 +95,11 @@ def _quiesce_leaked_sandboxes(db_session: Session) -> None:
 def _isolated_redis_lock() -> Generator[None, None, None]:
     """Make sure the sweep beat lock is free before + after."""
     redis_client = get_redis_client(tenant_id=POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE)
-    redis_client.delete(OnyxRedisLocks.CLEANUP_IDLE_SANDBOXES_BEAT_LOCK)
+    redis_client.delete(LumenRedisLocks.CLEANUP_IDLE_SANDBOXES_BEAT_LOCK)
     try:
         yield
     finally:
-        redis_client.delete(OnyxRedisLocks.CLEANUP_IDLE_SANDBOXES_BEAT_LOCK)
+        redis_client.delete(LumenRedisLocks.CLEANUP_IDLE_SANDBOXES_BEAT_LOCK)
 
 
 def _make_session(db_session: Session, user: User) -> BuildSession:

@@ -10,12 +10,12 @@ from uuid import uuid4
 
 from sqlalchemy import select
 
-from onyx.cache.interface import TTL_KEY_NOT_FOUND, TTL_NO_EXPIRY
-from onyx.cache.postgres_backend import (
+from lumen.cache.interface import TTL_KEY_NOT_FOUND, TTL_NO_EXPIRY
+from lumen.cache.postgres_backend import (
     PostgresCacheBackend,
     cleanup_expired_cache_entries,
 )
-from onyx.db.models import CacheStore
+from lumen.db.models import CacheStore
 
 
 def _key() -> str:
@@ -236,7 +236,7 @@ class TestList:
 
 class TestCleanup:
     def test_removes_expired_rows(self, pg_cache: PostgresCacheBackend) -> None:
-        from onyx.db.engine.sql_engine import get_session_with_current_tenant
+        from lumen.db.engine.sql_engine import get_session_with_current_tenant
 
         k = _key()
         pg_cache.set(k, b"stale", ex=1)

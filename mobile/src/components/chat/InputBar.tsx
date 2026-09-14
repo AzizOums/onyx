@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { View, type TextStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { textPresets } from "@onyx-ai/shared/native";
+import { textPresets } from "@lumen-ai/shared/native";
 
 import { useRecentFiles } from "@/hooks/useRecentFiles";
 import { FileCard } from "@/components/chat/FileCard";
@@ -95,7 +95,7 @@ export function InputBar({
         <ComposerInput
           value={value}
           onChangeText={onChangeText}
-          placeholder="Message Onyx…"
+          placeholder="Message Lumen…"
           placeholderClassName="text-text-02"
           multiline
           className="px-12 pb-8 pt-12 text-text-04"

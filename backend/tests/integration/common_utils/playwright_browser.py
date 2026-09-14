@@ -1,6 +1,6 @@
 """Chromium download for the suites that crawl the web.
 
-Two suites launch Playwright: `tests/web_search` (OnyxWebCrawler's fallback)
+Two suites launch Playwright: `tests/web_search` (LumenWebCrawler's fallback)
 and `tests/pruning` (the WEB connector). Every other suite must not pay the
 download, so each of those two opts in from its own conftest.
 """

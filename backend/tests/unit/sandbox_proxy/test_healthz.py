@@ -5,8 +5,8 @@ from http.server import HTTPServer
 
 import pytest
 
-from onyx.sandbox_proxy.identity import SandboxIPLookup
-from onyx.sandbox_proxy.server import _build_healthz_handler, _Readiness
+from lumen.sandbox_proxy.identity import SandboxIPLookup
+from lumen.sandbox_proxy.server import _build_healthz_handler, _Readiness
 
 
 class _FakeLookup(SandboxIPLookup):

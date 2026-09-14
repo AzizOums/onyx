@@ -3,11 +3,11 @@ from datetime import datetime, timedelta, timezone
 
 import httpx
 
-from onyx.configs.app_configs import POLL_CONNECTOR_OFFSET
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.mock_connector.connector import MockConnectorCheckpoint
-from onyx.connectors.models import InputType
-from onyx.db.enums import IndexingStatus
+from lumen.configs.app_configs import POLL_CONNECTOR_OFFSET
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.mock_connector.connector import MockConnectorCheckpoint
+from lumen.connectors.models import InputType
+from lumen.db.enums import IndexingStatus
 from tests.integration.common_utils.constants import (
     MOCK_CONNECTOR_SERVER_HOST,
     MOCK_CONNECTOR_SERVER_PORT,

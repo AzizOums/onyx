@@ -15,22 +15,22 @@ from fastapi_users.password import PasswordHelper
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import FileOrigin
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from onyx.db.enums import (
+from lumen.configs.constants import FileOrigin
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from lumen.db.enums import (
     AccountType,
     BuildSessionStatus,
     SandboxStatus,
     SkillSharePermission,
 )
-from onyx.db.llm import (
+from lumen.db.llm import (
     fetch_default_llm_model,
     fetch_existing_llm_provider,
     remove_llm_provider,
     update_default_provider,
     upsert_llm_provider,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     BuildSession,
     Sandbox,
     Skill,
@@ -38,12 +38,12 @@ from onyx.db.models import (
     User,
     UserGroup,
 )
-from onyx.file_store.file_store import get_default_file_store
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.features.build.db.sandbox import create_sandbox__no_commit
-from onyx.server.features.build.session import llm_config
-from onyx.server.features.build.session.manager import SessionManager
-from onyx.server.manage.llm.models import (
+from lumen.file_store.file_store import get_default_file_store
+from lumen.llm.constants import LlmProviderNames
+from lumen.server.features.build.db.sandbox import create_sandbox__no_commit
+from lumen.server.features.build.session import llm_config
+from lumen.server.features.build.session.manager import SessionManager
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )
@@ -132,10 +132,10 @@ def _seed_default_llm_provider() -> Generator[None, None, None]:
 
 
 @pytest.fixture(autouse=True)
-def _set_onyx_server_url(monkeypatch: pytest.MonkeyPatch) -> None:
-    # build_onyx_gateway_config returns None (and provisioning raises) without
+def _set_lumen_server_url(monkeypatch: pytest.MonkeyPatch) -> None:
+    # build_lumen_gateway_config returns None (and provisioning raises) without
     # a server URL; the CI env doesn't set one for this suite.
-    monkeypatch.setattr(llm_config, "ONYX_SERVER_URL", "http://api-server:8080")
+    monkeypatch.setattr(llm_config, "LUMEN_SERVER_URL", "http://api-server:8080")
 
 
 @pytest.fixture(scope="function")
@@ -363,11 +363,11 @@ def session_manager_with_stub(
 ) -> SessionManager:
     """``SessionManager`` bound to the stub sandbox backend (patches both lookup sites)."""
     monkeypatch.setattr(
-        "onyx.server.features.build.session.manager.get_sandbox_manager",
+        "lumen.server.features.build.session.manager.get_sandbox_manager",
         lambda: stub_sandbox_manager,
     )
     monkeypatch.setattr(
-        "onyx.server.features.build.sandbox.factory._sandbox_manager_instance",
+        "lumen.server.features.build.sandbox.factory._sandbox_manager_instance",
         stub_sandbox_manager,
     )
     sm = SessionManager(db_session)

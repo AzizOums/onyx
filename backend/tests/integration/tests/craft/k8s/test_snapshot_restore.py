@@ -14,18 +14,18 @@ import pytest
 from kubernetes import client
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import FileOrigin
-from onyx.file_store.file_store import get_default_file_store
-from onyx.server.features.build.configs import (
+from lumen.configs.constants import FileOrigin
+from lumen.file_store.file_store import get_default_file_store
+from lumen.server.features.build.configs import (
     SANDBOX_BACKEND,
     SANDBOX_NAMESPACE,
     SandboxBackend,
 )
-from onyx.server.features.build.db.sandbox import create_snapshot__no_commit
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from lumen.server.features.build.db.sandbox import create_snapshot__no_commit
+from lumen.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
-from onyx.server.features.build.sandbox.snapshot_manager import SNAPSHOT_FILE_TYPE
+from lumen.server.features.build.sandbox.snapshot_manager import SNAPSHOT_FILE_TYPE
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.common.craft.payloads import default_llm_config
 from tests.integration.common_utils.managers.build_session import BuildSessionManager

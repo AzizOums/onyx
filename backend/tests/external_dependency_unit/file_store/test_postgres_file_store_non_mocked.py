@@ -15,19 +15,19 @@ import psycopg2
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import FileOrigin
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.file_content import (
+from lumen.configs.constants import FileOrigin
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.file_content import (
     get_file_content_by_file_id,
     get_file_content_by_file_id_optional,
 )
-from onyx.file_store.postgres_file_store import (
+from lumen.file_store.postgres_file_store import (
     POSTGRES_BUCKET_SENTINEL,
     PostgresBackedFileStore,
     _get_raw_connection,
     _read_large_object,
 )
-from onyx.utils.logger import setup_logger
+from lumen.utils.logger import setup_logger
 
 logger = setup_logger()
 

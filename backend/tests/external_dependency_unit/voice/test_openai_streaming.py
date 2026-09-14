@@ -10,7 +10,7 @@ import struct
 
 import pytest
 
-from onyx.voice.providers.openai import (
+from lumen.voice.providers.openai import (
     OPENAI_REALTIME_STT_MODEL,
     OpenAIStreamingTranscriber,
     OpenAIVoiceProvider,

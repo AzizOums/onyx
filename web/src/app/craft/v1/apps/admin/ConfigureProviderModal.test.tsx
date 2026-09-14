@@ -94,7 +94,7 @@ const APP: ExternalAppAdminResponse = {
   associated_skills: [
     { id: "custom-skill", name: "slack-workflow", is_valid: true },
   ],
-  is_onyx_managed: false,
+  is_lumen_managed: false,
 };
 
 function renderExistingProvider(onClose = jest.fn()) {

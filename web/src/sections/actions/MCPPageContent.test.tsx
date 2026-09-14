@@ -9,7 +9,7 @@ const mockRouterReplace = jest.fn();
 const mockToastSuccess = jest.fn();
 const mockToastError = jest.fn();
 
-// Regression for onyx-dot-app/onyx#14346: the OAuth return URL
+// Regression for lumen-dot-app/lumen#14346: the OAuth return URL
 // (?server_id=N&trigger_fetch=true) must start exactly one tool fetch.
 const mockSearchParams = new URLSearchParams({
   server_id: "7",

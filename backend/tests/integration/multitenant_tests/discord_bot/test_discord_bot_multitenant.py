@@ -8,10 +8,10 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.db.discord_bot import get_guild_config_by_registration_key, register_guild
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.onyxbot.discord.cache import DiscordCacheManager
-from onyx.server.manage.discord_bot.utils import (
+from lumen.db.discord_bot import get_guild_config_by_registration_key, register_guild
+from lumen.db.engine.sql_engine import get_session_with_tenant
+from lumen.lumenbot.discord.cache import DiscordCacheManager
+from lumen.server.manage.discord_bot.utils import (
     REGISTRATION_KEY_PREFIX,
     generate_discord_registration_key,
     parse_discord_registration_key,

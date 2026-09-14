@@ -13,7 +13,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from onyx.db.enums import IndexReclaimStatus
+from lumen.db.enums import IndexReclaimStatus
 
 # revision identifiers, used by Alembic.
 revision = "b3f1c9a27d84"

@@ -12,8 +12,8 @@ import (
 
 	"github.com/charmbracelet/x/ansi"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
 )
 
 func TestStopNothingInstalled(t *testing.T) {
@@ -47,7 +47,7 @@ func TestStopAutoDetectsOverlays(t *testing.T) {
 	if stop == "" {
 		t.Fatal("compose stop never ran")
 	}
-	if !strings.Contains(stop, "-f docker-compose.onyx-lite.yml") {
+	if !strings.Contains(stop, "-f docker-compose.lumen-lite.yml") {
 		t.Errorf("lite overlay not auto-detected: %s", stop)
 	}
 }
@@ -90,8 +90,8 @@ func TestUninstallForceRemovesEverything(t *testing.T) {
 	}
 }
 
-// --dir, ONYX_DEPLOYMENT_DIR and INSTALL_PREFIX name the deletion root
-// freely, so a path that isn't recognizably an Onyx deployment must not be
+// --dir, LUMEN_DEPLOYMENT_DIR and INSTALL_PREFIX name the deletion root
+// freely, so a path that isn't recognizably an Lumen deployment must not be
 // handed to RemoveAll.
 func TestUninstallRefusesUnrecognizedDir(t *testing.T) {
 	isolateEnv(t)
@@ -103,7 +103,7 @@ func TestUninstallRefusesUnrecognizedDir(t *testing.T) {
 
 	deps := testDeps(t, &fakeRunner{handler: healthyDockerHandler}, notFoundServer(t))
 	err := RunUninstall(context.Background(), deps, Options{Dir: root, Force: true})
-	if err == nil || !strings.Contains(err.Error(), "doesn't look like an Onyx deployment") {
+	if err == nil || !strings.Contains(err.Error(), "doesn't look like an Lumen deployment") {
 		t.Fatalf("err = %v, want a refusal", err)
 	}
 	if _, statErr := os.Stat(keep); statErr != nil {
@@ -233,9 +233,9 @@ func TestStatusHealthyAndDrift(t *testing.T) {
 	root := installFixture(t, runner, "v4.2.0")
 
 	// nginx (a stock image, listed first like the real deployment) must not
-	// be mistaken for the running Onyx version.
-	psOut := "onyx-nginx-1\tnginx:1.25.5-alpine\tUp 2 hours\t0.0.0.0:3000->80/tcp\n" +
-		"onyx-api_server-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 2 hours (healthy)\t\n"
+	// be mistaken for the running Lumen version.
+	psOut := "lumen-nginx-1\tnginx:1.25.5-alpine\tUp 2 hours\t0.0.0.0:3000->80/tcp\n" +
+		"lumen-api_server-1\tlumendotapp/lumen-backend:v4.2.0\tUp 2 hours (healthy)\t\n"
 	statusRunner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		if strings.Contains(argv(c), "ps -a") {
 			return dockercmd.Result{Stdout: psOut}, nil
@@ -296,8 +296,8 @@ func TestStatusJSON(t *testing.T) {
 	runner := &fakeRunner{handler: healthyDockerHandler}
 	root := installFixture(t, runner, "v4.2.0")
 
-	psOut := "onyx-nginx-1\tnginx:1.25.5-alpine\tUp 1 minute\t0.0.0.0:3000->80/tcp\n" +
-		"onyx-api_server-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 1 minute (healthy)\t\n"
+	psOut := "lumen-nginx-1\tnginx:1.25.5-alpine\tUp 1 minute\t0.0.0.0:3000->80/tcp\n" +
+		"lumen-api_server-1\tlumendotapp/lumen-backend:v4.2.0\tUp 1 minute (healthy)\t\n"
 	statusRunner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		if strings.Contains(argv(c), "ps -a") {
 			return dockercmd.Result{Stdout: psOut}, nil
@@ -379,9 +379,9 @@ func TestStatusExplainsCrashLoop(t *testing.T) {
 	runner := &fakeRunner{handler: healthyDockerHandler}
 	root := installFixture(t, runner, "v4.2.0")
 
-	psOut := "onyx-nginx-1\tnginx:1.25.5-alpine\tUp 2 hours\t0.0.0.0:3000->80/tcp\tnginx\n" +
-		"onyx-api_server-1\tonyxdotapp/onyx-backend:v4.2.0\tRestarting (255) 13 seconds ago\t\tapi_server\n"
-	inspectOut := `{"name":"/onyx-api_server-1","restarts":18,"exit":255,"oom":false,"error":"","health":null}`
+	psOut := "lumen-nginx-1\tnginx:1.25.5-alpine\tUp 2 hours\t0.0.0.0:3000->80/tcp\tnginx\n" +
+		"lumen-api_server-1\tlumendotapp/lumen-backend:v4.2.0\tRestarting (255) 13 seconds ago\t\tapi_server\n"
+	inspectOut := `{"name":"/lumen-api_server-1","restarts":18,"exit":255,"oom":false,"error":"","health":null}`
 	statusRunner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		switch {
 		case strings.Contains(argv(c), "ps -a"):
@@ -406,7 +406,7 @@ func TestStatusExplainsCrashLoop(t *testing.T) {
 		// The hint names the compose service, which is what logs takes, not
 		// the container that happens to run it — and repeats the --dir this
 		// run was given, so it works verbatim.
-		"onyx-cli deploy logs --dir " + strconv.Quote(root) + " api_server\n",
+		"lumen-cli deploy logs --dir " + strconv.Quote(root) + " api_server\n",
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("output missing %q:\n%s", want, out)
@@ -429,11 +429,11 @@ func TestStatusExplainsEveryContainerItCounted(t *testing.T) {
 	runner := &fakeRunner{handler: healthyDockerHandler}
 	root := installFixture(t, runner, "v4.2.0")
 
-	psOut := "onyx-nginx-1\tnginx:1.25.5-alpine\tCreated\t\tnginx\n" +
-		"onyx-api_server-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 2 hours (healthy)\t\tapi_server\n" +
-		"onyx-code-interpreter-1\tonyxdotapp/onyx-backend:v4.2.0\tExited (0) 6 seconds ago\t\tcode-interpreter\n"
-	inspectOut := `{"name":"/onyx-nginx-1","restarts":0,"exit":0,"oom":false,"error":"","health":null}` + "\n" +
-		`{"name":"/onyx-code-interpreter-1","restarts":0,"exit":0,"oom":false,"error":"","health":null}`
+	psOut := "lumen-nginx-1\tnginx:1.25.5-alpine\tCreated\t\tnginx\n" +
+		"lumen-api_server-1\tlumendotapp/lumen-backend:v4.2.0\tUp 2 hours (healthy)\t\tapi_server\n" +
+		"lumen-code-interpreter-1\tlumendotapp/lumen-backend:v4.2.0\tExited (0) 6 seconds ago\t\tcode-interpreter\n"
+	inspectOut := `{"name":"/lumen-nginx-1","restarts":0,"exit":0,"oom":false,"error":"","health":null}` + "\n" +
+		`{"name":"/lumen-code-interpreter-1","restarts":0,"exit":0,"oom":false,"error":"","health":null}`
 	statusRunner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		switch {
 		case strings.Contains(argv(c), "ps -a"):
@@ -476,9 +476,9 @@ func TestStatusCatchesCrashLoopBetweenRestarts(t *testing.T) {
 	runner := &fakeRunner{handler: healthyDockerHandler}
 	root := installFixture(t, runner, "v4.2.0")
 
-	psOut := "onyx-nginx-1\tnginx:1.25.5-alpine\tUp 2 hours\t0.0.0.0:3000->80/tcp\tnginx\n" +
-		"onyx-api_server-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 2 seconds (health: starting)\t\tapi_server\n"
-	inspectOut := `{"name":"/onyx-api_server-1","restarts":9,"exit":255,"oom":false,"error":"","health":null}`
+	psOut := "lumen-nginx-1\tnginx:1.25.5-alpine\tUp 2 hours\t0.0.0.0:3000->80/tcp\tnginx\n" +
+		"lumen-api_server-1\tlumendotapp/lumen-backend:v4.2.0\tUp 2 seconds (health: starting)\t\tapi_server\n"
+	inspectOut := `{"name":"/lumen-api_server-1","restarts":9,"exit":255,"oom":false,"error":"","health":null}`
 	statusRunner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		switch {
 		case strings.Contains(argv(c), "ps -a"):
@@ -523,9 +523,9 @@ func TestStatusCatchesCrashLoopWithoutHealthCheck(t *testing.T) {
 	runner := &fakeRunner{handler: healthyDockerHandler}
 	root := installFixture(t, runner, "v4.2.0")
 
-	psOut := "onyx-api_server-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 2 hours (healthy)\t0.0.0.0:3000->80/tcp\tapi_server\n" +
-		"onyx-background-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 2 seconds\t\tbackground\n"
-	inspectOut := `{"name":"/onyx-background-1","restarts":12,"exit":1,"oom":false,"error":"","health":null}`
+	psOut := "lumen-api_server-1\tlumendotapp/lumen-backend:v4.2.0\tUp 2 hours (healthy)\t0.0.0.0:3000->80/tcp\tapi_server\n" +
+		"lumen-background-1\tlumendotapp/lumen-backend:v4.2.0\tUp 2 seconds\t\tbackground\n"
+	inspectOut := `{"name":"/lumen-background-1","restarts":12,"exit":1,"oom":false,"error":"","health":null}`
 	statusRunner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		switch {
 		case strings.Contains(argv(c), "ps -a"):
@@ -567,14 +567,14 @@ func TestStatusForgivesOldRestartsOnceServing(t *testing.T) {
 	runner := &fakeRunner{handler: healthyDockerHandler}
 	root := installFixture(t, runner, "v4.2.0")
 
-	psOut := "onyx-api_server-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 2 hours (healthy)\t0.0.0.0:3000->80/tcp\tapi_server\n" +
-		"onyx-background-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 3 hours\t\tbackground\n"
+	psOut := "lumen-api_server-1\tlumendotapp/lumen-backend:v4.2.0\tUp 2 hours (healthy)\t0.0.0.0:3000->80/tcp\tapi_server\n" +
+		"lumen-background-1\tlumendotapp/lumen-backend:v4.2.0\tUp 3 hours\t\tbackground\n"
 	statusRunner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		switch {
 		case strings.Contains(argv(c), "ps -a"):
 			return dockercmd.Result{Stdout: psOut}, nil
 		case strings.Contains(argv(c), "inspect"):
-			return dockercmd.Result{Stdout: `{"name":"/onyx-background-1","restarts":12,"exit":1,"oom":false,"error":"","health":null}`}, nil
+			return dockercmd.Result{Stdout: `{"name":"/lumen-background-1","restarts":12,"exit":1,"oom":false,"error":"","health":null}`}, nil
 		}
 		return healthyDockerHandler(c)
 	}}
@@ -596,9 +596,9 @@ func TestStatusReportsServicesStillStarting(t *testing.T) {
 	runner := &fakeRunner{handler: healthyDockerHandler}
 	root := installFixture(t, runner, "v4.2.0")
 
-	psOut := "onyx-nginx-1\tnginx:1.25.5-alpine\tUp 3 seconds\t0.0.0.0:3000->80/tcp\tnginx\n" +
-		"onyx-api_server-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 3 seconds (health: starting)\t\tapi_server\n"
-	inspectOut := `{"name":"/onyx-api_server-1","restarts":0,"exit":0,"oom":false,"error":"",` +
+	psOut := "lumen-nginx-1\tnginx:1.25.5-alpine\tUp 3 seconds\t0.0.0.0:3000->80/tcp\tnginx\n" +
+		"lumen-api_server-1\tlumendotapp/lumen-backend:v4.2.0\tUp 3 seconds (health: starting)\t\tapi_server\n"
+	inspectOut := `{"name":"/lumen-api_server-1","restarts":0,"exit":0,"oom":false,"error":"",` +
 		`"health":{"Status":"starting","FailingStreak":1,"Log":[{"ExitCode":1,"Output":"connection refused"}]}}`
 	statusRunner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		switch {
@@ -620,7 +620,7 @@ func TestStatusReportsServicesStillStarting(t *testing.T) {
 	for _, want := range []string{
 		"1 of 2 services are still starting",
 		// Nothing to explain yet, so the hint follows the logs instead.
-		"Follow along: onyx-cli deploy logs -f --dir " + strconv.Quote(root) + " api_server\n",
+		"Follow along: lumen-cli deploy logs -f --dir " + strconv.Quote(root) + " api_server\n",
 	} {
 		if !strings.Contains(out, want) {
 			t.Errorf("output missing %q:\n%s", want, out)
@@ -642,20 +642,20 @@ func TestFailureHintHighlightsTheCommand(t *testing.T) {
 	deps.IOS.IsStdoutTTY = true
 	in := newInstaller(deps, Options{})
 	in.explainFailures([]Service{{
-		Name:      "onyx-api_server-1",
+		Name:      "lumen-api_server-1",
 		Service:   "api_server",
 		Status:    "Restarting (255) 13 seconds ago",
 		Diagnosis: "is crash-looping",
 	}})
 
 	out := outBuf(deps).String()
-	if !strings.Contains(out, in.paint.Accent("onyx-cli deploy logs api_server")) {
+	if !strings.Contains(out, in.paint.Accent("lumen-cli deploy logs api_server")) {
 		t.Errorf("the command to run isn't highlighted:\n%q", out)
 	}
 	if strings.Contains(out, in.paint.Accent("See why")) {
 		t.Errorf("the label is highlighted too, so nothing stands out:\n%q", out)
 	}
-	if plain := ansi.Strip(out); !strings.Contains(plain, "See why: onyx-cli deploy logs api_server\n") {
+	if plain := ansi.Strip(out); !strings.Contains(plain, "See why: lumen-cli deploy logs api_server\n") {
 		t.Errorf("styling changed the text:\n%q", plain)
 	}
 }
@@ -682,7 +682,7 @@ func TestLogsRunsAgainstTheDetectedOverlays(t *testing.T) {
 	if logs == "" {
 		t.Fatal("compose logs never ran")
 	}
-	for _, want := range []string{"-f docker-compose.onyx-lite.yml", "logs --tail 200 api_server"} {
+	for _, want := range []string{"-f docker-compose.lumen-lite.yml", "logs --tail 200 api_server"} {
 		if !strings.Contains(logs, want) {
 			t.Errorf("compose logs missing %q: %s", want, logs)
 		}

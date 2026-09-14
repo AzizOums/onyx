@@ -4,10 +4,10 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SandboxStatus
-from onyx.db.models import OAuthAccount, User
-from onyx.db.skill import affected_user_ids_for_skill
-from onyx.server.features.build.db.sandbox import get_sandbox_user_map
+from lumen.db.enums import SandboxStatus
+from lumen.db.models import OAuthAccount, User
+from lumen.db.skill import affected_user_ids_for_skill
+from lumen.server.features.build.db.sandbox import get_sandbox_user_map
 from tests.external_dependency_unit.craft.db_helpers import (
     add_user_to_group,
     make_group,

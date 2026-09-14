@@ -9,15 +9,15 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/config"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/prompt"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/config"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/paths"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/prompt"
 )
 
 const (
 	// The repo whose deployment.yml builds images on tag pushes, shared by the
 	// deploy and release commands.
-	onyxRepo               = "onyx-dot-app/onyx"
+	lumenRepo               = "lumen-dot-app/lumen"
 	deploymentWorkflowFile = "deployment.yml"
 
 	// Polling configuration shared by the deploy subcommands. The "discover"

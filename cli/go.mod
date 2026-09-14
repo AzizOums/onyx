@@ -1,4 +1,4 @@
-module github.com/onyx-dot-app/onyx/cli
+module github.com/lumen-dot-app/lumen/cli
 
 go 1.26.5
 

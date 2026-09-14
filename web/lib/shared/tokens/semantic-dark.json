@@ -205,15 +205,15 @@
       "type": "color"
     },
     "theme-primary-06": {
-      "value": "{onyx-chrome-00}",
+      "value": "{lumen-chrome-00}",
       "type": "color"
     },
     "theme-primary-05": {
-      "value": "{onyx-chrome-10}",
+      "value": "{lumen-chrome-10}",
       "type": "color"
     },
     "theme-primary-04": {
-      "value": "{onyx-chrome-20}",
+      "value": "{lumen-chrome-20}",
       "type": "color"
     },
     "theme-gradient-05": {

@@ -11,8 +11,8 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - "backend/onyx/prompts/filter_extration.py"
-      - "backend/onyx/secondary_llm_flows/source_filter.py"
+      - "backend/lumen/prompts/filter_extration.py"
+      - "backend/lumen/secondary_llm_flows/source_filter.py"
       - "backend/tests/evals/connector_filter_eval/**"
       - ".github/workflows/pr-connector-filter-eval.yml"
   workflow_dispatch:

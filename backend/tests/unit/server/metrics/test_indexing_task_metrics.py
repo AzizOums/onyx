@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from onyx.server.metrics.indexing_task_metrics import (
+from lumen.server.metrics.indexing_task_metrics import (
     INDEXING_TASK_COMPLETED,
     INDEXING_TASK_DURATION,
     INDEXING_TASK_STARTED,
@@ -41,9 +41,9 @@ def _mock_db_lookup(
     mock_cc_pair.name = name
     mock_cc_pair.connector.source.value = source
 
-    session_patch = patch("onyx.db.engine.sql_engine.get_session_with_tenant")
+    session_patch = patch("lumen.db.engine.sql_engine.get_session_with_tenant")
     cc_pair_patch = patch(
-        "onyx.db.connector_credential_pair.get_connector_credential_pair_from_id",
+        "lumen.db.connector_credential_pair.get_connector_credential_pair_from_id",
         return_value=mock_cc_pair,
     )
     return session_patch, cc_pair_patch
@@ -119,7 +119,7 @@ class TestIndexingTaskPrerun:
 
         with (
             patch(
-                "onyx.server.metrics.indexing_task_metrics._resolve_connector"
+                "lumen.server.metrics.indexing_task_metrics._resolve_connector"
             ) as mock_resolve,
         ):
             mock_resolve.return_value = ConnectorInfo(
@@ -135,7 +135,7 @@ class TestIndexingTaskPrerun:
     def test_missing_cc_pair_returns_unknown(self) -> None:
         """When _resolve_connector can't find the cc_pair, uses 'unknown'."""
         with patch(
-            "onyx.server.metrics.indexing_task_metrics._resolve_connector"
+            "lumen.server.metrics.indexing_task_metrics._resolve_connector"
         ) as mock_resolve:
             mock_resolve.return_value = ConnectorInfo(source="unknown", name="unknown")
 
@@ -153,7 +153,7 @@ class TestIndexingTaskPrerun:
 
     def test_db_error_does_not_crash(self) -> None:
         with patch(
-            "onyx.server.metrics.indexing_task_metrics._resolve_connector",
+            "lumen.server.metrics.indexing_task_metrics._resolve_connector",
             side_effect=Exception("DB down"),
         ):
             task = _make_task("connector_doc_fetching_task")
@@ -256,14 +256,14 @@ class TestResolveConnector:
     def test_failed_lookup_not_cached(self) -> None:
         """When DB lookup returns None, result should NOT be cached."""
         with (
-            patch("onyx.db.engine.sql_engine.get_session_with_tenant"),
+            patch("lumen.db.engine.sql_engine.get_session_with_tenant"),
             patch(
-                "onyx.db.connector_credential_pair"
+                "lumen.db.connector_credential_pair"
                 ".get_connector_credential_pair_from_id",
                 return_value=None,
             ),
         ):
-            from onyx.server.metrics.indexing_task_metrics import _resolve_connector
+            from lumen.server.metrics.indexing_task_metrics import _resolve_connector
 
             result = _resolve_connector(999, "test-tenant")
             assert result.source == "unknown"
@@ -273,10 +273,10 @@ class TestResolveConnector:
     def test_exception_not_cached(self) -> None:
         """When DB lookup raises, result should NOT be cached."""
         with patch(
-            "onyx.db.engine.sql_engine.get_session_with_tenant",
+            "lumen.db.engine.sql_engine.get_session_with_tenant",
             side_effect=Exception("DB down"),
         ):
-            from onyx.server.metrics.indexing_task_metrics import _resolve_connector
+            from lumen.server.metrics.indexing_task_metrics import _resolve_connector
 
             result = _resolve_connector(888, "test-tenant")
             assert result.source == "unknown"
@@ -289,14 +289,14 @@ class TestResolveConnector:
         mock_cc_pair.connector.source.value = "google_drive"
 
         with (
-            patch("onyx.db.engine.sql_engine.get_session_with_tenant"),
+            patch("lumen.db.engine.sql_engine.get_session_with_tenant"),
             patch(
-                "onyx.db.connector_credential_pair"
+                "lumen.db.connector_credential_pair"
                 ".get_connector_credential_pair_from_id",
                 return_value=mock_cc_pair,
             ),
         ):
-            from onyx.server.metrics.indexing_task_metrics import _resolve_connector
+            from lumen.server.metrics.indexing_task_metrics import _resolve_connector
 
             result = _resolve_connector(777, "test-tenant")
             assert result.source == "google_drive"
@@ -309,10 +309,10 @@ class TestResolveConnector:
         UndefinedTable: public.connector_credential_pair errors that fired
         when callbacks ran outside tenant context."""
         with patch(
-            "onyx.db.engine.sql_engine.get_session_with_tenant",
+            "lumen.db.engine.sql_engine.get_session_with_tenant",
             side_effect=AssertionError("DB should not be touched"),
         ):
-            from onyx.server.metrics.indexing_task_metrics import _resolve_connector
+            from lumen.server.metrics.indexing_task_metrics import _resolve_connector
 
             assert _resolve_connector(1, "unknown").source == "unknown"
             assert _resolve_connector(2, "").source == "unknown"

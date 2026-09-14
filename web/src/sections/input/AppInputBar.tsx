@@ -15,7 +15,7 @@ import usePromptShortcuts from "@/hooks/usePromptShortcuts";
 import { useContentEditable } from "@/hooks/useContentEditable";
 import useFilter from "@/hooks/useFilter";
 import { useAvailableSources } from "@/lib/connectors/hooks";
-import { MinimalOnyxDocument } from "@/lib/search/interfaces";
+import { MinimalLumenDocument } from "@/lib/search/interfaces";
 import { ChatState, MAX_QUEUED_MESSAGES } from "@/app/app/interfaces";
 import { useQueuedMessageNavigation } from "@/hooks/useQueuedMessageNavigation";
 import type { ToolConfigurationHandle } from "@/lib/tools/hooks";
@@ -93,7 +93,7 @@ export interface AppInputBarProps {
 
   handleFileUpload: (files: File[]) => void;
   deepResearchEnabled: boolean;
-  setPresentingDocument?: (document: MinimalOnyxDocument) => void;
+  setPresentingDocument?: (document: MinimalLumenDocument) => void;
   toggleDeepResearch: () => void;
   isMultiModelActive?: boolean;
   disabled: boolean;
@@ -367,12 +367,12 @@ const AppInputBar = React.memo(
     // A file isn't queryable until indexing completes, so gate send on it.
     const hasIndexingFiles = currentIndexingFiles.length > 0;
 
-    // Convert ProjectFile to MinimalOnyxDocument format for viewing
+    // Convert ProjectFile to MinimalLumenDocument format for viewing
     const handleFileClick = useCallback(
       (file: ProjectFile) => {
         if (!setPresentingDocument) return;
 
-        const documentForViewer: MinimalOnyxDocument = {
+        const documentForViewer: MinimalLumenDocument = {
           document_id: `project_file__${file.file_id}`,
           semantic_identifier: file.name,
         };
@@ -566,7 +566,7 @@ const AppInputBar = React.memo(
       const isProjectWorkflow = isLoadingProjects || activeProject !== null;
 
       // TODO(@yuhong): Re-enable Deep Research in Projects workflow once it is fully supported.
-      // https://linear.app/onyx-app/issue/ENG-3818/re-enable-deep-research-in-projects
+      // https://linear.app/lumen-app/issue/ENG-3818/re-enable-deep-research-in-projects
       return (
         !isProjectWorkflow &&
         deepResearchGloballyEnabled &&
@@ -792,7 +792,7 @@ const AppInputBar = React.memo(
                 ? t("appInputBar.sendButton.processingFilesTooltip")
                 : undefined
             }
-            id="onyx-chat-input-send-button"
+            id="lumen-chat-input-send-button"
             icon={
               isClassifying
                 ? SvgSimpleLoader
@@ -837,7 +837,7 @@ const AppInputBar = React.memo(
         <Disabled disabled={disabled} allowClick>
           <div
             ref={containerRef}
-            id="onyx-chat-input"
+            id="lumen-chat-input"
             className={cn(
               "relative w-full flex flex-col shadow-box-01 bg-background-neutral-00 rounded-16"
               // # Note (from @raunakab):
@@ -915,7 +915,7 @@ const AppInputBar = React.memo(
                   >
                     <div
                       ref={inputRef}
-                      id="onyx-chat-input-textbox"
+                      id="lumen-chat-input-textbox"
                       role="textbox"
                       aria-label={t("appInputBar.input.ariaLabel")}
                       contentEditable={!disabled}
@@ -1053,7 +1053,7 @@ const AppInputBar = React.memo(
                   />
                   <Button
                     disabled={!message || isClassifying || hasUploadingFiles}
-                    id="onyx-chat-input-send-button"
+                    id="lumen-chat-input-send-button"
                     icon={isClassifying ? SvgSimpleLoader : SvgSearch}
                     onClick={() => {
                       if (chatState == "streaming") {

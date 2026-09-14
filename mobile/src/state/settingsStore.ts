@@ -5,7 +5,7 @@ import { create } from "zustand";
 
 import { appStorage } from "@/state/storage";
 
-const AUTO_SCROLL_ENABLED_KEY = "onyx.settings.auto_scroll_enabled";
+const AUTO_SCROLL_ENABLED_KEY = "lumen.settings.auto_scroll_enabled";
 
 function readAutoScrollEnabled(): boolean {
   // Default ON (unset key): following the latest turn while streaming is the expected chat default.

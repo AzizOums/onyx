@@ -8,9 +8,9 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import PersonaSharePermission
-from onyx.db.models import DocumentSet, Persona, User
-from onyx.db.persona import upsert_persona
+from lumen.db.enums import PersonaSharePermission
+from lumen.db.models import DocumentSet, Persona, User
+from lumen.db.persona import upsert_persona
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.external_dependency_unit.db.agent_sharing_helpers import (
     create_test_persona,

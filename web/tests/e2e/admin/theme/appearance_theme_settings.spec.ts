@@ -89,9 +89,9 @@ test.describe("Appearance Theme Settings @exclusive", () => {
       await helpLinkLabelInput.clear();
     }
 
-    // Disable hide-onyx-branding toggle if enabled
+    // Disable hide-lumen-branding toggle if enabled
     const hideBrandingToggle = page.locator(
-      '[data-label="hide-onyx-branding-toggle"]'
+      '[data-label="hide-lumen-branding-toggle"]'
     );
     if (
       await hideBrandingToggle.isVisible({ timeout: 1000 }).catch(() => false)
@@ -313,12 +313,12 @@ test.describe("Appearance Theme Settings @exclusive", () => {
     await themePage.clearCustomHelpLinkLabel();
   });
 
-  test("Hide Onyx Branding toggle removes the 'Powered by Onyx' tagline", async ({
+  test("Hide Lumen Branding toggle removes the 'Powered by Lumen' tagline", async ({
     page,
   }) => {
     const themePage = new AppearanceThemePage(page);
 
-    // The sidebar's "Powered by Onyx" tagline only renders alongside an
+    // The sidebar's "Powered by Lumen" tagline only renders alongside an
     // application name (the Logo's logo_and_name fall-through path), so
     // first set a name and save a baseline that we can then assert against.
     await themePage.setApplicationName(TEST_VALUES.applicationName);
@@ -328,7 +328,7 @@ test.describe("Appearance Theme Settings @exclusive", () => {
     await themePage.reloadAndWaitForForm();
 
     // Sanity: tagline now visible alongside the application name
-    await themePage.expectPoweredByOnyxVisible();
+    await themePage.expectPoweredByLumenVisible();
 
     await themePage.toggleHideBranding();
 
@@ -339,6 +339,6 @@ test.describe("Appearance Theme Settings @exclusive", () => {
     // Reload to read the persisted setting fresh — the sidebar then re-
     // renders the Logo without the tagline.
     await themePage.reloadAndWaitForForm();
-    await themePage.expectPoweredByOnyxAbsent();
+    await themePage.expectPoweredByLumenAbsent();
   });
 });

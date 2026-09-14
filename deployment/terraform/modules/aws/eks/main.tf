@@ -36,7 +36,7 @@ locals {
       min_size       = 1
       max_size       = 1
       labels = {
-        "onyx.app/gpu" = "true"
+        "lumen.app/gpu" = "true"
       }
       taints = [
         {
@@ -62,7 +62,7 @@ locals {
   } : {}
 
   # Optional dedicated Craft sandbox node group. Sandbox pods pin here
-  # via nodeSelector onyx.app/workload=sandbox + toleration of the workload taint.
+  # via nodeSelector lumen.app/workload=sandbox + toleration of the workload taint.
   # IMDSv2 hop-limit 1 blocks sandboxed containers from the node metadata service.
   # The root disk is sized via craft_sandbox_node_disk_size_gb so ephemeral-storage
   # stops being the binding scheduling dimension (each sandbox pod reserves ~5.5Gi
@@ -75,7 +75,7 @@ locals {
       max_size       = var.craft_sandbox_node_max_size
       desired_size   = var.craft_sandbox_node_desired_size
       labels = {
-        "onyx.app/workload" = "sandbox"
+        "lumen.app/workload" = "sandbox"
       }
       taints = [
         {
@@ -199,7 +199,7 @@ module "eks" {
 
 # NVIDIA device plugin: advertises nvidia.com/gpu on the GPU nodes so the
 # embedding model pod can request it. Tolerates the GPU taint and only runs on
-# nodes labeled onyx.app/gpu=true. Only created when the GPU node group exists.
+# nodes labeled lumen.app/gpu=true. Only created when the GPU node group exists.
 resource "helm_release" "nvidia_device_plugin" {
   count = var.enable_gpu_node ? 1 : 0
 
@@ -216,7 +216,7 @@ resource "helm_release" "nvidia_device_plugin" {
   values = [<<-YAML
     affinity: null
     nodeSelector:
-      onyx.app/gpu: "true"
+      lumen.app/gpu: "true"
     tolerations:
       - key: nvidia.com/gpu
         operator: Exists
@@ -302,12 +302,12 @@ module "eks_blueprints_addons" {
 # AZ-locked volume never triggers a node in that AZ. NOTE: if these objects
 # were already created by hand on the cluster, import them before the first
 # apply:
-#   terraform import '...kubernetes_cluster_role.cluster_autoscaler_volumeattachments' onyx-cluster-autoscaler-volumeattachments
-#   terraform import '...kubernetes_cluster_role_binding.cluster_autoscaler_volumeattachments' onyx-cluster-autoscaler-volumeattachments
+#   terraform import '...kubernetes_cluster_role.cluster_autoscaler_volumeattachments' lumen-cluster-autoscaler-volumeattachments
+#   terraform import '...kubernetes_cluster_role_binding.cluster_autoscaler_volumeattachments' lumen-cluster-autoscaler-volumeattachments
 resource "kubernetes_cluster_role" "cluster_autoscaler_volumeattachments" {
   metadata {
-    name   = "onyx-cluster-autoscaler-volumeattachments"
-    labels = { "app.kubernetes.io/managed-by" = "onyx-infra" }
+    name   = "lumen-cluster-autoscaler-volumeattachments"
+    labels = { "app.kubernetes.io/managed-by" = "lumen-infra" }
   }
 
   rule {
@@ -321,8 +321,8 @@ resource "kubernetes_cluster_role" "cluster_autoscaler_volumeattachments" {
 
 resource "kubernetes_cluster_role_binding" "cluster_autoscaler_volumeattachments" {
   metadata {
-    name   = "onyx-cluster-autoscaler-volumeattachments"
-    labels = { "app.kubernetes.io/managed-by" = "onyx-infra" }
+    name   = "lumen-cluster-autoscaler-volumeattachments"
+    labels = { "app.kubernetes.io/managed-by" = "lumen-infra" }
   }
 
   role_ref {

@@ -1,6 +1,6 @@
-# Onyx Mobile — Getting Started (Environment Setup)
+# Lumen Mobile — Getting Started (Environment Setup)
 
-One-time setup of the platform tools needed to build Onyx on a Mac. **This doc is setup only** —
+One-time setup of the platform tools needed to build Lumen on a Mac. **This doc is setup only** —
 once the tools below are installed, see [`README.md`](./README.md) to install deps and run the app.
 
 > macOS only (iOS needs Xcode). **The JDK and NDK are Android-only** — iOS uses neither.

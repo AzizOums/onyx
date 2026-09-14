@@ -15,17 +15,17 @@ This file provides guidance to AI agents when working with code in this reposito
   `TestPassword123!` (the admin user created by the playwright global setup — see
   `web/tests/e2e/constants.ts`). If it doesn't exist yet, register it via the signup page; the first user
   registered automatically becomes admin. The app can be accessed at `http://localhost:3000`.
-- You should assume that all Onyx services are running. To verify, you can check the `backend/log` directory to
+- You should assume that all Lumen services are running. To verify, you can check the `backend/log` directory to
   make sure we see logs coming out from the relevant service.
 - To connect to the Postgres database, use:
   `PGPASSWORD="${POSTGRES_PASSWORD:-password}" psql -h "${POSTGRES_HOST:-localhost}" -U postgres -c "<SQL>"`.
   This works on a host checkout and inside the devcontainer. If no `psql` client is available, fall back to
-  `docker exec onyx-relational_db-1 psql -U postgres -c "<SQL>"` (no `-it` — agent shells have no TTY).
+  `docker exec lumen-relational_db-1 psql -U postgres -c "<SQL>"` (no `-it` — agent shells have no TTY).
 - When making calls to the backend, always go through the frontend. E.g. make a call to `http://localhost:3000/api/persona` not `http://localhost:8080/api/persona`
 
 ## Project Overview
 
-**Onyx** (formerly Danswer) is an open-source Gen-AI and Enterprise Search platform that connects to company documents, apps, and people. It features a modular architecture with both Community Edition (MIT licensed) and Enterprise Edition offerings.
+**Lumen** (formerly Danswer) is an open-source Gen-AI and Enterprise Search platform that connects to company documents, apps, and people. It features a modular architecture with both Community Edition (MIT licensed) and Enterprise Edition offerings.
 
 ### Technology Stack
 
@@ -41,7 +41,7 @@ This file provides guidance to AI agents when working with code in this reposito
 Each sub-project has its own agents file with the standards for that area — read it before working
 there:
 
-- `backend/` — FastAPI app + Celery workers. `onyx/` is the Community Edition core, `ee/` mirrors its
+- `backend/` — FastAPI app + Celery workers. `lumen/` is the Community Edition core, `ee/` mirrors its
   layout for Enterprise features, `alembic/` holds migrations, `tests/` the test suites. Standards
   (Celery, migrations, testing, error handling, LLM tracing): `backend/AGENTS.md`.
 - `web/` — Next.js frontend. Standards (also cover `desktop/`, the Tauri shell): `web/AGENTS.md`.
@@ -87,7 +87,7 @@ and deeper detail in `backend/tests/README.md`. Prefer integration tests over th
 ## Logs
 
 When (1) writing integration tests or (2) doing live tests (e.g. curl / playwright) you can get access
-to logs via the `backend/log/<service_name>_debug.log` file. All Onyx services (api_server, web_server, celery_X)
+to logs via the `backend/log/<service_name>_debug.log` file. All Lumen services (api_server, web_server, celery_X)
 will be tailing their logs to this file.
 
 ## Security Considerations

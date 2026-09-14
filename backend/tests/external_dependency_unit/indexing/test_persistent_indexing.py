@@ -23,16 +23,16 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing.run_docfetching import run_docfetching_entrypoint
-from onyx.configs.constants import DocumentSource
-from onyx.connectors import factory as connector_factory
-from onyx.connectors.interfaces import (
+from lumen.background.indexing.run_docfetching import run_docfetching_entrypoint
+from lumen.configs.constants import DocumentSource
+from lumen.connectors import factory as connector_factory
+from lumen.connectors.interfaces import (
     CheckpointedConnector,
     CheckpointOutput,
     GenerateSlimDocumentOutput,
     SecondsSinceUnixEpoch,
 )
-from onyx.connectors.models import (
+from lumen.connectors.models import (
     ConnectorCheckpoint,
     ConnectorFailure,
     Document,
@@ -40,9 +40,9 @@ from onyx.connectors.models import (
     InputType,
     TextSection,
 )
-from onyx.db.enums import EmbeddingPrecision, IndexingStatus, IndexModelStatus
-from onyx.db.index_attempt import get_index_attempt, get_index_attempt_errors
-from onyx.db.models import IndexAttempt, IndexAttemptError, SearchSettings
+from lumen.db.enums import EmbeddingPrecision, IndexingStatus, IndexModelStatus
+from lumen.db.index_attempt import get_index_attempt, get_index_attempt_errors
+from lumen.db.models import IndexAttempt, IndexAttemptError, SearchSettings
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
@@ -193,7 +193,7 @@ def _teardown_attempt(
         SearchSettings.id == search_settings_id
     ).delete(synchronize_session="fetch")
     db_session.commit()
-    from onyx.db.models import ConnectorCredentialPair
+    from lumen.db.models import ConnectorCredentialPair
 
     cc_pair = (
         db_session.query(ConnectorCredentialPair)
@@ -277,7 +277,7 @@ def test_unhandled_exception_persistent_mode_still_marks_failed(
     context to isolate the failing item, so silently advancing would risk
     skipping source data. Operators must triage by fixing the connector."""
     monkeypatch.setattr(
-        "onyx.background.indexing.run_docfetching.PERSISTENT_INDEXING", True
+        "lumen.background.indexing.run_docfetching.PERSISTENT_INDEXING", True
     )
 
     cc_pair_id, search_settings_id, attempt_id = _seed_attempt(db_session)
@@ -320,7 +320,7 @@ def test_threshold_disabled_in_persistent_mode(
     never aborts the attempt. Without the flag, the same flood would
     raise from `_check_failure_threshold` and mark the attempt FAILED."""
     monkeypatch.setattr(
-        "onyx.background.indexing.run_docfetching.PERSISTENT_INDEXING", True
+        "lumen.background.indexing.run_docfetching.PERSISTENT_INDEXING", True
     )
 
     cc_pair_id, search_settings_id, attempt_id = _seed_attempt(db_session)

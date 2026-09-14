@@ -25,27 +25,27 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.access.models import DocumentAccess
-from onyx.background.celery.tasks.user_file_processing.tasks import (
+from lumen.access.models import DocumentAccess
+from lumen.background.celery.tasks.user_file_processing.tasks import (
     _process_user_file_with_indexing,
     _supply_user_file_to_secondary,
     check_for_user_file_project_sync,
     process_single_user_file_project_sync,
     user_file_project_sync_lock_key,
 )
-from onyx.db.enums import UserFileStatus
-from onyx.db.models import Persona, Persona__UserFile, User, UserFile
-from onyx.db.persona import upsert_persona
-from onyx.document_index.interfaces_new import (
+from lumen.db.enums import UserFileStatus
+from lumen.db.models import Persona, Persona__UserFile, User, UserFile
+from lumen.db.persona import upsert_persona
+from lumen.document_index.interfaces_new import (
     MetadataUpdateRequest,
     SecondaryIndexDocumentMissingError,
 )
-from onyx.indexing.adapters.user_file_indexing_adapter import (
+from lumen.indexing.adapters.user_file_indexing_adapter import (
     UserFileChunkEnricher,
     UserFileIndexingAdapter,
 )
-from onyx.indexing.indexing_pipeline import IndexingPipelineResult
-from onyx.redis.redis_pool import get_redis_client
+from lumen.indexing.indexing_pipeline import IndexingPipelineResult
+from lumen.redis.redis_pool import get_redis_client
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.external_dependency_unit.indexing_helpers import make_doc
@@ -117,7 +117,7 @@ def _link_file_to_persona(
     db_session.commit()
 
 
-_PATCH_QUEUE_DEPTH = "onyx.background.celery.tasks.user_file_processing.tasks.get_user_file_project_sync_queue_depth"
+_PATCH_QUEUE_DEPTH = "lumen.background.celery.tasks.user_file_processing.tasks.get_user_file_project_sync_queue_depth"
 
 
 @contextmanager
@@ -133,7 +133,7 @@ def _patch_task_app(task: Any, mock_app: MagicMock) -> Generator[None, None, Non
         ),
         patch(_PATCH_QUEUE_DEPTH, return_value=0),
         patch(
-            "onyx.background.celery.tasks.user_file_processing.tasks.celery_get_broker_client",
+            "lumen.background.celery.tasks.user_file_processing.tasks.celery_get_broker_client",
             return_value=MagicMock(),
         ),
     ):
@@ -248,29 +248,29 @@ class TestCheckSweepIncludesPersonaSync:
 # ---------------------------------------------------------------------------
 
 _PATCH_GET_SETTINGS = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.get_active_search_settings"
+    "lumen.background.celery.tasks.user_file_processing.tasks.get_active_search_settings"
 )
 _PATCH_GET_INDICES = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.get_all_document_indices"
+    "lumen.background.celery.tasks.user_file_processing.tasks.get_all_document_indices"
 )
 _PATCH_HTTPX_INIT = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.httpx_init_vespa_pool"
+    "lumen.background.celery.tasks.user_file_processing.tasks.httpx_init_vespa_pool"
 )
 _PATCH_DISABLE_VDB = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.DISABLE_VECTOR_DB"
+    "lumen.background.celery.tasks.user_file_processing.tasks.DISABLE_VECTOR_DB"
 )
-_PATCH_ACTIVE_SECONDARY = "onyx.background.celery.tasks.user_file_processing.tasks.active_secondary_port_target"
-_PATCH_SUPPLY = "onyx.background.celery.tasks.user_file_processing.tasks._supply_user_file_to_secondary"
-_PATCH_INDEX_SECONDARY = "onyx.background.celery.tasks.user_file_processing.tasks._index_user_file_to_secondary"
+_PATCH_ACTIVE_SECONDARY = "lumen.background.celery.tasks.user_file_processing.tasks.active_secondary_port_target"
+_PATCH_SUPPLY = "lumen.background.celery.tasks.user_file_processing.tasks._supply_user_file_to_secondary"
+_PATCH_INDEX_SECONDARY = "lumen.background.celery.tasks.user_file_processing.tasks._index_user_file_to_secondary"
 _PATCH_LOAD_DOCS = (
-    "onyx.background.celery.tasks.user_file_processing.tasks._load_user_file_documents"
+    "lumen.background.celery.tasks.user_file_processing.tasks._load_user_file_documents"
 )
-_PATCH_GET_SETTINGS_LIST = "onyx.background.celery.tasks.user_file_processing.tasks.get_active_search_settings_list"
+_PATCH_GET_SETTINGS_LIST = "lumen.background.celery.tasks.user_file_processing.tasks.get_active_search_settings_list"
 _PATCH_EMBEDDER = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.DefaultIndexingEmbedder"
+    "lumen.background.celery.tasks.user_file_processing.tasks.DefaultIndexingEmbedder"
 )
 _PATCH_RUN_PIPELINE = (
-    "onyx.background.celery.tasks.user_file_processing.tasks.run_indexing_pipeline"
+    "lumen.background.celery.tasks.user_file_processing.tasks.run_indexing_pipeline"
 )
 
 
@@ -360,7 +360,7 @@ class TestSyncTaskWritesPersonaIds:
         tenant_context: None,  # noqa: ARG002
     ) -> None:
         """A file linked to both a project and a persona gets both IDs."""
-        from onyx.db.models import Project__UserFile, UserProject
+        from lumen.db.models import Project__UserFile, UserProject
 
         user = create_test_user(db_session, "sync_both")
         uf = _create_completed_user_file(

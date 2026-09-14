@@ -14,24 +14,24 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import MessageType
-from onyx.db.models import BuildMessage, BuildSession, Sandbox, User
-from onyx.server.features.build.db.build_session import (
+from lumen.configs.constants import MessageType
+from lumen.db.models import BuildMessage, BuildSession, Sandbox, User
+from lumen.server.features.build.db.build_session import (
     create_message,
     get_session_messages,
     upsert_agent_plan,
 )
-from onyx.server.features.build.db.sandbox import get_sandbox_by_user_id
-from onyx.server.features.build.sandbox.event_schema import (
+from lumen.server.features.build.db.sandbox import get_sandbox_by_user_id
+from lumen.server.features.build.sandbox.event_schema import (
     AgentMessageChunk,
     AgentThoughtChunk,
     PromptResponse,
     ToolCallProgress,
     ToolCallStart,
 )
-from onyx.server.features.build.sandbox.sse import SSEKeepalive
-from onyx.server.features.build.session.manager import SessionManager
-from onyx.server.features.build.session.streaming import BuildStreamingState
+from lumen.server.features.build.sandbox.sse import SSEKeepalive
+from lumen.server.features.build.session.manager import SessionManager
+from lumen.server.features.build.session.streaming import BuildStreamingState
 from tests.common.craft.stubs import StubSandboxManager
 
 

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/ui"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/ui"
 )
 
 // checklistSink collects what a tracker would push to the wizard.
@@ -117,19 +117,19 @@ func TestPullProgressReportsDownloadedBytes(t *testing.T) {
 // be turned back into something readable before it is shown as scrollback.
 func TestFailureTailRendersEvents(t *testing.T) {
 	captured := strings.Join([]string{
-		`{"id":"Container onyx-api_server-1","status":"Starting"}`,
+		`{"id":"Container lumen-api_server-1","status":"Starting"}`,
 		`{"id":"9d8e18e5f8e4","parent_id":"backend","text":"Downloading","current":5,"total":50}`,
 		`{"dry-run":false}`,
-		`{"tail":true,"text":"container onyx-api_server-1 is unhealthy"}`,
+		`{"tail":true,"text":"container lumen-api_server-1 is unhealthy"}`,
 		`Error response from daemon: no such image`,
 		``,
 	}, "\n")
 
 	got := failureTail(captured, 10)
 	want := []string{
-		"Container onyx-api_server-1 Starting",
+		"Container lumen-api_server-1 Starting",
 		"9d8e18e5f8e4 Downloading",
-		"container onyx-api_server-1 is unhealthy",
+		"container lumen-api_server-1 is unhealthy",
 		"Error response from daemon: no such image",
 	}
 	if strings.Join(got, "|") != strings.Join(want, "|") {
@@ -149,17 +149,17 @@ func TestFailureTailRendersEvents(t *testing.T) {
 func TestStartProgressSeparatesStoppingFromStarting(t *testing.T) {
 	var sink checklistSink
 	services, extra := sink.hooks()
-	p := newStartProgress(services, extra, true, "onyx")
+	p := newStartProgress(services, extra, true, "lumen")
 
 	for _, line := range []string{
-		`{"id":"Network onyx_default","status":"Created"}`,
-		`{"id":"Container onyx-relational_db-1","status":"Running"}`,
-		`{"id":"Container onyx-api_server-1","status":"Recreate"}`,
-		`{"id":"Container onyx-api_server-1","status":"Recreated"}`,
-		`{"id":"Container onyx-api_server-1","status":"Starting"}`,
-		`{"id":"Container onyx-api_server-1","status":"Started"}`,
-		`{"id":"Container onyx-relational_db-1","status":"Waiting"}`,
-		`{"id":"Container onyx-relational_db-1","status":"Healthy"}`,
+		`{"id":"Network lumen_default","status":"Created"}`,
+		`{"id":"Container lumen-relational_db-1","status":"Running"}`,
+		`{"id":"Container lumen-api_server-1","status":"Recreate"}`,
+		`{"id":"Container lumen-api_server-1","status":"Recreated"}`,
+		`{"id":"Container lumen-api_server-1","status":"Starting"}`,
+		`{"id":"Container lumen-api_server-1","status":"Started"}`,
+		`{"id":"Container lumen-relational_db-1","status":"Waiting"}`,
+		`{"id":"Container lumen-relational_db-1","status":"Healthy"}`,
 	} {
 		p.line(line)
 	}
@@ -179,15 +179,15 @@ func TestStartProgressSeparatesStoppingFromStarting(t *testing.T) {
 func TestStartProgressBacksOffOnceComposeSpeaks(t *testing.T) {
 	var sink checklistSink
 	services, extra := sink.hooks()
-	p := newStartProgress(services, extra, true, "onyx")
+	p := newStartProgress(services, extra, true, "lumen")
 
 	// Networks and volumes are not the rollout: until a container is named,
 	// the checklist is still empty and the poll is what fills it.
-	p.line(`{"id":"Network onyx_default","status":"Created"}`)
+	p.line(`{"id":"Network lumen_default","status":"Created"}`)
 	if p.reporting() {
 		t.Error("a network event is not a per-service report")
 	}
-	p.line(`{"id":"Container onyx-api_server-1","status":"Starting"}`)
+	p.line(`{"id":"Container lumen-api_server-1","status":"Starting"}`)
 	if !p.reporting() {
 		t.Error("a container event should hand the checklist to the event stream")
 	}
@@ -219,13 +219,13 @@ func TestWatchRowsTellsReplacedFromPending(t *testing.T) {
 			"inference_model": "dddd4444",
 		},
 		recreate: true,
-		project:  "onyx",
+		project:  "lumen",
 	}
 	// background's container is gone from the list: it is between the two.
 	ps := strings.Join([]string{
-		"onyx-relational_db-1\tcccc3333\tUp 2 hours (healthy)",
-		"onyx-api_server-1\t9999eeee\tUp 4 seconds (health: starting)",
-		"onyx-inference_model-1\t8888ffff\tUp 30 seconds (healthy)",
+		"lumen-relational_db-1\tcccc3333\tUp 2 hours (healthy)",
+		"lumen-api_server-1\t9999eeee\tUp 4 seconds (health: starting)",
+		"lumen-inference_model-1\t8888ffff\tUp 30 seconds (healthy)",
 	}, "\n")
 
 	rows, ready := watchRows(ps, w)
@@ -251,10 +251,10 @@ func TestWatchRowsTellsReplacedFromPending(t *testing.T) {
 func TestStartProgressPlainLines(t *testing.T) {
 	var sink checklistSink
 	services, extra := sink.hooks()
-	p := newStartProgress(services, extra, false, "onyx")
+	p := newStartProgress(services, extra, false, "lumen")
 	w := &lineWriter{emit: p.line}
-	if _, err := w.Write([]byte(" Volume \"onyx_db_volume\"  Created\n Container onyx-cache-1  Recreate\n" +
-		" Container onyx-cache-1  Recreated\n Container onyx-cache-1  Started\n")); err != nil {
+	if _, err := w.Write([]byte(" Volume \"lumen_db_volume\"  Created\n Container lumen-cache-1  Recreate\n" +
+		" Container lumen-cache-1  Recreated\n Container lumen-cache-1  Started\n")); err != nil {
 		t.Fatal(err)
 	}
 

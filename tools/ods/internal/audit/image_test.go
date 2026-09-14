@@ -8,7 +8,7 @@ import (
 )
 
 func TestImageFindingsFromResults(t *testing.T) {
-	const ref = "docker.io/onyxdotapp/onyx-backend:v1.2.3"
+	const ref = "docker.io/lumendotapp/lumen-backend:v1.2.3"
 	res := models.VulnerabilityResults{
 		Results: []models.PackageSource{
 			{

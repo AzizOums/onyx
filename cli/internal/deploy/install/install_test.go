@@ -13,10 +13,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/release"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/state"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/release"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/state"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
 )
 
 // fakeRunner scripts every external command RunInstall issues. The installer
@@ -44,7 +44,7 @@ func argv(c dockercmd.Command) string {
 }
 
 // healthyDockerHandler answers like a host with docker + compose plugin, a
-// running daemon, and no Onyx containers.
+// running daemon, and no Lumen containers.
 func healthyDockerHandler(c dockercmd.Command) (dockercmd.Result, error) {
 	a := argv(c)
 	switch {
@@ -180,7 +180,7 @@ func TestCancelledComposePhaseIsNotReportedAsFailure(t *testing.T) {
 
 func isolateEnv(t *testing.T) {
 	t.Helper()
-	t.Setenv("ONYX_DEPLOYMENT_DIR", "")
+	t.Setenv("LUMEN_DEPLOYMENT_DIR", "")
 	t.Setenv("INSTALL_PREFIX", "")
 	t.Setenv("SANDBOX_DOCKER_NETWORK", "")
 }
@@ -205,7 +205,7 @@ func TestRunInstallFreshLiteNoPrompt(t *testing.T) {
 	// Files: base set + lite overlay from the embedded copies.
 	for _, rel := range []string{
 		"deployment/docker-compose.yml",
-		"deployment/docker-compose.onyx-lite.yml",
+		"deployment/docker-compose.lumen-lite.yml",
 		"deployment/env.template",
 		"deployment/.env",
 		"README.md",
@@ -270,7 +270,7 @@ func TestRunInstallFreshLiteNoPrompt(t *testing.T) {
 	}
 	a := argv(*up)
 	for _, want := range []string{
-		"-f docker-compose.yml", "-f docker-compose.onyx-lite.yml",
+		"-f docker-compose.yml", "-f docker-compose.lumen-lite.yml",
 		"--pull always", "--force-recreate",
 	} {
 		if !strings.Contains(a, want) {
@@ -297,7 +297,7 @@ func TestRunInstallPinnedTagFetchesConfigs(t *testing.T) {
 	isolateEnv(t)
 	shimDockerOnPath(t)
 	runner := &fakeRunner{handler: healthyDockerHandler}
-	fetched := "# fetched-from-tag\nname: onyx\n"
+	fetched := "# fetched-from-tag\nname: lumen\n"
 	deps := testDeps(t, runner, rawServer(t, fetched))
 	root := t.TempDir()
 
@@ -377,7 +377,7 @@ func TestRerunRefusesWhileRunning(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected refusal while services are running")
 	}
-	if !strings.Contains(err.Error(), "--force") || !strings.Contains(err.Error(), "onyx-cli deploy stop") {
+	if !strings.Contains(err.Error(), "--force") || !strings.Contains(err.Error(), "lumen-cli deploy stop") {
 		t.Errorf("guard error must carry both remedies: %v", err)
 	}
 }
@@ -560,7 +560,7 @@ func TestUserEditedFileKeptWithoutForce(t *testing.T) {
 	// Hand-edit the compose file, then re-run (non-interactive, no --force):
 	// the edit must survive and a warning must be printed.
 	composePath := filepath.Join(root, "deployment", "docker-compose.yml")
-	edited := "# my custom compose\nname: onyx\n"
+	edited := "# my custom compose\nname: lumen\n"
 	if err := os.WriteFile(composePath, []byte(edited), 0644); err != nil {
 		t.Fatal(err)
 	}
@@ -598,7 +598,7 @@ func TestUserEditedFileOverwrittenWithForceAndBackedUp(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	upstream := "# upstream v2\nname: onyx\n"
+	upstream := "# upstream v2\nname: lumen\n"
 	deps2 := testDeps(t, runner, rawServer(t, upstream))
 	if err := RunInstall(context.Background(), deps2, Options{NoPrompt: true, Dir: root, NoWait: true, Force: true, Tag: "v9.0.0"}); err != nil {
 		t.Fatalf("forced re-run: %v\noutput:\n%s", err, outBuf(deps2).String())
@@ -815,7 +815,7 @@ func TestInstallRestoresStandardFileStoreWhenLeavingLite(t *testing.T) {
 	if got := Var(envStr, "FILE_STORE_BACKEND"); got != "s3" {
 		t.Errorf("FILE_STORE_BACKEND = %q, want s3", got)
 	}
-	if _, statErr := os.Stat(filepath.Join(root, "deployment", "docker-compose.onyx-lite.yml")); !os.IsNotExist(statErr) {
+	if _, statErr := os.Stat(filepath.Join(root, "deployment", "docker-compose.lumen-lite.yml")); !os.IsNotExist(statErr) {
 		t.Error("lite overlay still on disk after switching to standard")
 	}
 }
@@ -847,7 +847,7 @@ func TestInstallModeSwitchKeepsUserProfiles(t *testing.T) {
 	if err := m.Save(root); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.Remove(filepath.Join(root, "deployment", "docker-compose.onyx-lite.yml")); err != nil {
+	if err := os.Remove(filepath.Join(root, "deployment", "docker-compose.lumen-lite.yml")); err != nil {
 		t.Fatal(err)
 	}
 
@@ -881,7 +881,7 @@ func TestInstallModeSwitchKeepsUserProfiles(t *testing.T) {
 func TestInstallMissingFileAtRefDoesNotDisableFetching(t *testing.T) {
 	isolateEnv(t)
 	shimDockerOnPath(t)
-	const upstream = "# compose at v4.2.0\nname: onyx\n"
+	const upstream = "# compose at v4.2.0\nname: lumen\n"
 	raw := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodHead {
 			return

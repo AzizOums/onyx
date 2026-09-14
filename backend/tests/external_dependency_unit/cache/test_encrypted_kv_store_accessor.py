@@ -5,14 +5,14 @@ from collections.abc import Generator
 import pytest
 from sqlalchemy import delete
 
-from onyx.db.encrypted_kv_store import (
+from lumen.db.encrypted_kv_store import (
     delete_encrypted_kv,
     load_encrypted_kv,
     upsert_encrypted_kv,
 )
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.models import EncryptedKeyValueStore
-from onyx.key_value_store.interface import KvKeyNotFoundError
+from lumen.db.engine.sql_engine import get_session_with_tenant
+from lumen.db.models import EncryptedKeyValueStore
+from lumen.key_value_store.interface import KvKeyNotFoundError
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 
 TEST_KEY = "test_encrypted_kv_accessor_key"

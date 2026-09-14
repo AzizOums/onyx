@@ -12,8 +12,8 @@ import asyncio
 
 import httpx
 
-from onyx.auth.mobile_sso.code_store import store_sso_code
-from onyx.auth.users import generate_pkce_pair
+from lumen.auth.mobile_sso.code_store import store_sso_code
+from lumen.auth.users import generate_pkce_pair
 from tests.integration.common_utils.constants import API_SERVER_URL, GENERAL_HEADERS
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser

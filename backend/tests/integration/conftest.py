@@ -33,31 +33,31 @@ def load_env_vars(env_file: str = ".env") -> None:
         print(f"File {env_file} not found")
 
 
-# Env must be in place before any onyx.* / shared_configs imports below pull
+# Env must be in place before any lumen.* / shared_configs imports below pull
 # in module-level constants that read os.environ once.
 load_env_vars()
 
 from fastapi.testclient import TestClient  # noqa: E402
 
-# Import `onyx.main` BEFORE calling fetch_versioned_implementation ourselves.
-# onyx.main's module body (line 706) already calls fetch_versioned_implementation
+# Import `lumen.main` BEFORE calling fetch_versioned_implementation ourselves.
+# lumen.main's module body (line 706) already calls fetch_versioned_implementation
 # under set_is_ee_based_on_env_variable(). If our fixture is the first to invoke
 # the dispatcher, the recursion goes:
-#   fixture -> fetch_versioned_implementation -> import ee.onyx.main
-#     -> ee.onyx.main line 53 `from onyx.main import get_application`
-#     -> onyx.main line 706 calls fetch_versioned_implementation again
-#     -> tries to import ee.onyx.main (mid-init), AttributeError on get_application.
-# Letting onyx.main load first means ee.onyx.main's back-reference to
-# onyx.main.get_application (defined at line 429, before line 706) resolves cleanly.
-import onyx.main  # noqa: E402, F401
-from onyx.background.celery.apps.client import celery_app  # noqa: E402
-from onyx.configs.constants import DocumentSource  # noqa: E402
-from onyx.db.engine.sql_engine import (  # noqa: E402
+#   fixture -> fetch_versioned_implementation -> import ee.lumen.main
+#     -> ee.lumen.main line 53 `from lumen.main import get_application`
+#     -> lumen.main line 706 calls fetch_versioned_implementation again
+#     -> tries to import ee.lumen.main (mid-init), AttributeError on get_application.
+# Letting lumen.main load first means ee.lumen.main's back-reference to
+# lumen.main.get_application (defined at line 429, before line 706) resolves cleanly.
+import lumen.main  # noqa: E402, F401
+from lumen.background.celery.apps.client import celery_app  # noqa: E402
+from lumen.configs.constants import DocumentSource  # noqa: E402
+from lumen.db.engine.sql_engine import (  # noqa: E402
     SqlEngine,
     get_session_with_current_tenant,
 )
-from onyx.db.search_settings import get_current_search_settings  # noqa: E402
-from onyx.utils.variable_functionality import (  # noqa: E402
+from lumen.db.search_settings import get_current_search_settings  # noqa: E402
+from lumen.utils.variable_functionality import (  # noqa: E402
     fetch_versioned_implementation,
 )
 from shared_configs.configs import MULTI_TENANT  # noqa: E402
@@ -105,7 +105,7 @@ DocumentBuilderType = Callable[[list[str]], list[SimpleTestDocument]]
 @pytest.fixture(scope="session", autouse=True)
 def _run_migrations() -> None:
     # Alembic must run before SqlEngine.init_engine / app lifespan so the
-    # schema exists when setup_onyx() queries it. Mirrors the script's
+    # schema exists when setup_lumen() queries it. Mirrors the script's
     # `alembic upgrade head` / `alembic -n schema_private upgrade head`
     # branch on MULTI_TENANT.
     from alembic import command
@@ -189,7 +189,7 @@ def _start_celery_workers(
     # config nor any monkey-patches from this conftest, so it dispatches via
     # the broker. Without real consumers, those tasks pile up forever and
     # every wait_for_indexing_completion / pruning / export test times out.
-    # Onyx-lite has no vector DB / indexing pipeline, so spawning the fleet
+    # Lumen-lite has no vector DB / indexing pipeline, so spawning the fleet
     # there is pure overhead.
     if os.getenv("DISABLE_VECTOR_DB", "false").lower() == "true":
         yield None
@@ -198,7 +198,7 @@ def _start_celery_workers(
     log_dir = os.path.join(BACKEND_DIR, "log")
     os.makedirs(log_dir, exist_ok=True)
 
-    # onyx isn't installed into the venv, and celery keeps the cwd on
+    # lumen isn't installed into the venv, and celery keeps the cwd on
     # sys.path only transiently while importing the app (cwd_in_path). The
     # indexing pipeline's spawn-context children (SimpleJobClient) inherit
     # the worker's sys.path, so without a persistent entry they die with
@@ -223,7 +223,7 @@ def _start_celery_workers(
         cmd = [
             "celery",
             "-A",
-            f"onyx.background.celery.versioned_apps.{app_name}",
+            f"lumen.background.celery.versioned_apps.{app_name}",
             "worker",
             f"--hostname={app_name}@%n",
             "-Q",
@@ -253,7 +253,7 @@ def _start_celery_workers(
         [
             "celery",
             "-A",
-            "onyx.background.celery.versioned_apps.beat",
+            "lumen.background.celery.versioned_apps.beat",
             "beat",
             "--loglevel=info",
         ],
@@ -296,20 +296,20 @@ def _test_client(
     _start_celery_workers: None,  # noqa: ARG001
 ) -> Generator[TestClient, None, None]:
     # In-process api_server. Use the versioned dispatcher so MT / EE
-    # builds get ee.onyx.main.get_application — that's the one that
+    # builds get ee.lumen.main.get_application — that's the one that
     # registers add_api_server_tenant_id_middleware (required to populate
     # CURRENT_TENANT_ID_CONTEXTVAR from the auth cookie in cloud mode).
-    # `set_is_ee_based_on_env_variable()` already ran at onyx.main module
+    # `set_is_ee_based_on_env_variable()` already ran at lumen.main module
     # load above; the dispatcher hits the lru_cache and resolves to the
     # right implementation.
     # Patch setup_prometheus_metrics to avoid "Duplicated timeseries" if
     # get_application() is ever called more than once in the same process.
     # Use TestClient as a context manager so the real lifespan runs
-    # (setup_onyx / file store init / pool metrics).
+    # (setup_lumen / file store init / pool metrics).
     get_application = fetch_versioned_implementation(
-        module="onyx.main", attribute="get_application"
+        module="lumen.main", attribute="get_application"
     )
-    with patch("onyx.main.setup_prometheus_metrics"):
+    with patch("lumen.main.setup_prometheus_metrics"):
         app = get_application()
     with TestClient(app) as test_client:
         http_client.set_test_client(test_client)

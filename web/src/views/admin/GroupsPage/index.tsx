@@ -4,6 +4,7 @@ import type { Route } from "next";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { docsHref } from "@/lib/docs";
 import useSWR from "swr";
 import { SvgExternalLink, SvgUsers, SvgSimpleLoader } from "@opal/icons";
 import { Button, MessageCard } from "@opal/components";
@@ -22,6 +23,9 @@ import SvgNoResult from "@opal/illustrations/no-result";
 
 function GroupsPage() {
   const t = useTranslations("admin.groups");
+  const permissionsDocsUrl = docsHref(
+    "/admins/permissions/whats_changing"
+  );
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useUser();
@@ -60,18 +64,16 @@ function GroupsPage() {
             title={t("permissionsChanged.title")}
             description={t("permissionsChanged.description")}
             rightChildren={
-              <Button
-                icon={SvgExternalLink}
-                onClick={() =>
-                  window.open(
-                    "https://docs.onyx.app/admins/permissions/whats_changing",
-                    "_blank",
-                    "noopener,noreferrer"
-                  )
-                }
-              >
-                {t("permissionsChanged.learnMore.label")}
-              </Button>
+              permissionsDocsUrl ? (
+                <Button
+                  icon={SvgExternalLink}
+                  onClick={() =>
+                    window.open(permissionsDocsUrl, "_blank", "noopener,noreferrer")
+                  }
+                >
+                  {t("permissionsChanged.learnMore.label")}
+                </Button>
+              ) : undefined
             }
           />
         </SettingsLayouts.Header>

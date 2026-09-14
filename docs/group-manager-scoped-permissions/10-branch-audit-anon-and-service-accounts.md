@@ -12,7 +12,7 @@ reproduced CRITICAL privilege escalation** unrelated to anonymous access — see
 > **Status (2026-08-17, updated):** The CRITICAL finding (§3.3) is **fixed** — `0ad792f85e`
 > (`_assert_no_privilege_amplification`), committed by a parallel session that read this doc while it was
 > still being written. Independently re-verified against the current worktree by calling
-> `add_users_to_user_group` directly (bypassing the HTTP layer): raises `OnyxError(INSUFFICIENT_PERMISSIONS)`
+> `add_users_to_user_group` directly (bypassing the HTTP layer): raises `LumenError(INSUFFICIENT_PERMISSIONS)`
 > and leaves the attacker's `effective_permissions` unchanged. The original live HTTP repro in §3.3 succeeded
 > only because it ran against a stale `api_server` process (started before the fix commit, no `--reload`) —
 > **restart the api_server before re-testing any of these findings against a live server.**
@@ -25,7 +25,7 @@ reproduced CRITICAL privilege escalation** unrelated to anonymous access — see
 >
 > Additionally fixed **in this session**: `GET /admin/index-attempt/{id}/stage-metrics` was missing
 > `allow_scope=True` at GATE 1 despite its own GATE 2 already scoping correctly
-> (`backend/onyx/server/documents/cc_pair.py`) — a scoped manager who could read the sibling
+> (`backend/lumen/server/documents/cc_pair.py`) — a scoped manager who could read the sibling
 > `index-attempts` list was wrongly 403'd here. Fixed + covered by two new integration tests in
 > `test_group_manager_resources.py` (`test_manager_reads_stage_metrics_of_managed_cc_pair`,
 > `test_manager_cannot_read_stage_metrics_of_unmanaged_cc_pair`). **Left unstaged, not committed** — the
@@ -55,16 +55,16 @@ Main already had the permission-token core (`require_permission`, `IMPLIED_PERMI
 entirely:
 
 - `User__UserGroup.is_manager` (per-membership edge) + cached `User.is_group_manager`
-  (`backend/onyx/db/models.py`), written by `recompute_user_permissions__no_commit`
-  (`backend/onyx/db/permissions.py:52-150`).
-- `has_permission(user, perm) -> GLOBAL | SCOPED | NONE` (`backend/onyx/auth/permissions.py:296-310`).
+  (`backend/lumen/db/models.py`), written by `recompute_user_permissions__no_commit`
+  (`backend/lumen/db/permissions.py:52-150`).
+- `has_permission(user, perm) -> GLOBAL | SCOPED | NONE` (`backend/lumen/auth/permissions.py:296-310`).
   Two-gate model: GATE 1 (`allow_scope=True` on `require_permission`) lets a SCOPED manager *reach* a
   route; GATE 2 (`assert_within_scope` / `assert_manages_group` / a managed-scope read clause) must
-  confine them, or every resource leaks. `backend/onyx/auth/scoped_permissions.py` is the primitive layer.
+  confine them, or every resource leaks. `backend/lumen/auth/scoped_permissions.py` is the primitive layer.
 - Read-side capability projection: `permissions{}` maps stamped on DTOs
-  (`backend/onyx/auth/permission_projection.py`), affordance-only, never an authz input.
-- `UserRole` is now a nullable tombstone (`backend/onyx/db/models.py:333`, migration
-  `c8e316473aaa_make_user_role_nullable.py`) and is read nowhere in `backend/onyx` or `backend/ee`.
+  (`backend/lumen/auth/permission_projection.py`), affordance-only, never an authz input.
+- `UserRole` is now a nullable tombstone (`backend/lumen/db/models.py:333`, migration
+  `c8e316473aaa_make_user_role_nullable.py`) and is read nowhere in `backend/lumen` or `backend/ee`.
   `GET /get-user-role` and `PATCH /manage/set-user-role` are deleted (both 404 live).
 - Only two migrations: `is_manager`/`is_group_manager` (with a CURATOR/GLOBAL_CURATOR → `is_manager`
   backfill) and the role-nullable migration. **No migration touches `permission_grant` rows.**
@@ -104,7 +104,7 @@ Three real anonymous-adjacent findings did survive verification — all low/info
 anonymous visitor can read or write:
 
 - **LOW — Anonymous visitors are stamped `edit: true` / `share: true` on every public listed agent.**
-  `backend/onyx/db/persona.py:116-121`'s anonymous carve-out sits *above* the `get_editable` split at
+  `backend/lumen/db/persona.py:116-121`'s anonymous carve-out sits *above* the `get_editable` split at
   `:130`, so it returns the same `is_public AND is_listed` clause for both edit and view queries.
   `stamp_persona_permissions` (`persona.py:539-588`) then marks every such agent editable/shareable in
   the `GET /persona` and `GET /agents` responses, and `AgentCard.tsx:103,115` renders Edit/Share buttons
@@ -114,14 +114,14 @@ anonymous visitor can read or write:
   single-agent GET and the share PATCH both reject anonymous — so this is a UI dead-end, not a data leak.
   Fix: move the anonymous return inside the `get_editable` branch in `_add_user_filters`.
 - **LOW — `GET /me` for the anonymous user under-reports its own permissions.**
-  `fetch_anonymous_user_info` (`backend/onyx/auth/anonymous_user.py:50-61`) builds `UserInfo` without
+  `fetch_anonymous_user_info` (`backend/lumen/auth/anonymous_user.py:50-61`) builds `UserInfo` without
   passing `effective_permissions`/`admin_capabilities`, so the anonymous `/me` response reports `[]` for
   both while the in-process `User` object actually resolves `["basic"]` → the full BASIC bundle. Nothing
   client-side gates on those fields for anonymous today, so this is currently cosmetic — but it is a
   latent trap for the next feature that checks `permissions.includes(...)` before rendering a chat
   affordance. Fix: pass `effective_permissions=["basic", ...]` (or the resolved set) into the `UserInfo`
   constructor.
-- **INFO — `document_set._add_user_filters` and `ee/onyx/db/token_limit.py`'s anonymous carve-outs were
+- **INFO — `document_set._add_user_filters` and `ee/lumen/db/token_limit.py`'s anonymous carve-outs were
   deleted without replacement**, and now fail closed (empty result) for anonymous on the editable path.
   Currently unreachable (no anonymous-facing route calls the editable path), recorded for completeness.
 
@@ -132,9 +132,9 @@ anonymous visitor can read or write:
 ### 3.1 The requested spec
 
 Creation with `group_ids: []` succeeds. `account_derived_permissions()`
-(`backend/onyx/db/permissions.py:40-49`) is the single mechanism that keeps a groupless service account
+(`backend/lumen/db/permissions.py:40-49`) is the single mechanism that keeps a groupless service account
 usable at all — it hands it `write:chat` (which implies `read:chat`) purely because it's a
-`SERVICE_ACCOUNT` with zero group memberships. `is_limited_user` (`backend/onyx/db/users.py:44-60`) is
+`SERVICE_ACCOUNT` with zero group memberships. `is_limited_user` (`backend/lumen/db/users.py:44-60`) is
 **not** triggered, so the key authenticates normally.
 
 Live-probed against a running deployment:
@@ -142,7 +142,7 @@ Live-probed against a running deployment:
 | Route class | Result |
 |---|---|
 | `GET /me`, `POST /chat/create-chat-session`, `GET /chat/get-user-chat-sessions` | **200** |
-| `/settings`, `/tool`, `/manage/document-set`, `/manage/users`, `/onyx-api/ingestion`, `POST /user/pats` | **403** `INSUFFICIENT_PERMISSIONS` |
+| `/settings`, `/tool`, `/manage/document-set`, `/manage/users`, `/lumen-api/ingestion`, `POST /user/pats` | **403** `INSUFFICIENT_PERMISSIONS` |
 
 This mirrors main's `role=LIMITED` service account (`role_derived_permissions` keyed on `UserRole.LIMITED`
 → now keyed on "service account in no group") — same chat-only capability, same shape, different
@@ -151,8 +151,8 @@ mechanism. **Not a regression** for the groupless case itself.
 ### 3.2 Sharp edges around it (verified)
 
 - **MEDIUM — A rename-only `PATCH /admin/api-key/{id}` silently strips every group.**
-  `APIKeyArgs.group_ids` defaults to `[]` (`backend/onyx/server/api_key/models.py`); `update_api_key`
-  (`backend/onyx/db/api_key.py:172-205`) always calls `set_user_groups__no_commit` with whatever
+  `APIKeyArgs.group_ids` defaults to `[]` (`backend/lumen/server/api_key/models.py`); `update_api_key`
+  (`backend/lumen/db/api_key.py:172-205`) always calls `set_user_groups__no_commit` with whatever
   `group_ids` the client sent. A client that omits the field to do a pure name-change (main's contract,
   where `role` had no bearing on a rename) now demotes the key from admin/basic to chat-only. The web UI
   always resends current groups, so only direct API callers hit this — but the blast radius is worse than
@@ -165,8 +165,8 @@ mechanism. **Not a regression** for the groupless case itself.
   keys to the `BASIC` role, which included `read:search`, `generate:image`, `use:llm_gateway`. This is a
   genuine CE regression, not an artifact of the groupless case being intentionally narrow.
 - **LOW — `is_limited_user`'s `SERVICE_ACCOUNT` branch is now dead code.** Every group (including any
-  admin-created one) auto-grants `BASIC_ACCESS` on creation (`ee/onyx/db/user_group.py:509`,
-  `ee/onyx/db/scim.py:998`), and `basic` is non-toggleable — so a service account with ≥1 group can never
+  admin-created one) auto-grants `BASIC_ACCESS` on creation (`ee/lumen/db/user_group.py:509`,
+  `ee/lumen/db/scim.py:998`), and `basic` is non-toggleable — so a service account with ≥1 group can never
   have empty `effective_permissions`. The `not user.effective_permissions` check only ever fires for the
   zero-group case, which is already handled by `account_derived_permissions`. Docstring says "no group
   membership" as the trigger; code says "and permissions ended up empty," which given the auto-grant is
@@ -176,21 +176,21 @@ mechanism. **Not a regression** for the groupless case itself.
   intermediate tier between "groupless → chat-only" and "any group → full basic". Worth a product
   decision, not a bug.
 - **LOW — `set_user_groups__no_commit` deletes and re-inserts `User__UserGroup` rows wholesale**
-  (`backend/onyx/db/users.py:796-798`), which strips any `is_manager` edge. A service account made a
+  (`backend/lumen/db/users.py:796-798`), which strips any `is_manager` edge. A service account made a
   group manager loses that status silently the next time its key is edited (rename, group change) via
   `update_api_key`. SCIM's group-sync path already diffs instead of delete-all for this reason
-  (`ee/onyx/db/scim.py`); `set_user_groups__no_commit` should do the same.
+  (`ee/lumen/db/scim.py`); `set_user_groups__no_commit` should do the same.
 
 ### 3.3 CRITICAL — unrelated to either question, found and live-confirmed during the sweep
 
 **A user holding only the delegatable `MANAGE_USER_GROUPS` permission (not full admin) can add themself
 to the seeded Admin group and become a full admin.**
 
-`assert_manages_group` → `manages_group` (`backend/onyx/auth/scoped_permissions.py:108-127`)
+`assert_manages_group` → `manages_group` (`backend/lumen/auth/scoped_permissions.py:108-127`)
 short-circuits `True` for **any** GLOBAL `MANAGE_USER_GROUPS` holder against **any** `group_id`, including
 the seeded Admin default group — no `is_default` guard, no `FULL_ADMIN_PANEL_ACCESS` requirement. This is
-the GATE 2 for `POST /admin/user-group/{id}/add-users` (`backend/ee/onyx/server/user_group/api.py:304-323`
-→ `add_users_to_user_group`, `backend/ee/onyx/db/user_group.py:561-604`) and for
+the GATE 2 for `POST /admin/user-group/{id}/add-users` (`backend/ee/lumen/server/user_group/api.py:304-323`
+→ `add_users_to_user_group`, `backend/ee/lumen/db/user_group.py:561-604`) and for
 `PATCH /admin/user-group/{id}` (`api.py:280-301` → `update_user_group`, `user_group.py:696`). Sibling
 routes (`rename`, `delete`) *do* carry an explicit `is_default` check (`api.py:236,334`) — this one
 doesn't.
@@ -203,7 +203,7 @@ correctly got 403 on the identical call — the hole is exclusively in the GLOBA
 
 The prior review (`08-security-review-must-fix.md`, finding #4) fixed the equivalent hole for *scoped*
 managers by excluding default groups from `scoped_group_ids_subquery`
-(`backend/onyx/db/scoped_permissions.py:20-34`). That fix never touches `manages_group`'s GLOBAL
+(`backend/lumen/db/scoped_permissions.py:20-34`). That fix never touches `manages_group`'s GLOBAL
 short-circuit, so a GLOBAL `manage:user_groups` delegate — someone an admin intended to hand only "Manage
 Groups," per the registry description "Add and update user groups" — bypasses it completely.
 
@@ -218,18 +218,18 @@ edit that touches a default group.
 **HIGH**
 
 - **EE: every non-admin loses agent creation and deletion of their own agents.** `POST /persona` /
-  `DELETE /persona/{id}` moved `basic` → `add:agents` (`backend/onyx/server/features/persona/api.py`), but
+  `DELETE /persona/{id}` moved `basic` → `add:agents` (`backend/lumen/server/features/persona/api.py`), but
   no migration ever grants `add:agents` — the only two migrations that write `permission_grant` seed
   `admin`/`basic` only (`977e834c1427_seed_default_groups.py:22-25`,
   `b4b7e1028dfd_grant_basic_to_existing_groups.py:47`). `CE_UNGATED_PERMISSIONS` covers Community Edition
-  (`backend/onyx/auth/permissions.py:105-109`), but EE has no equivalent — every existing EE deployment's
+  (`backend/lumen/auth/permissions.py:105-109`), but EE has no equivalent — every existing EE deployment's
   non-admins lose agent creation on upgrade until an admin manually grants "Create Agents" per group.
 - **Community Edition: no remaining mechanism to promote or demote an admin.** `PATCH /manage/set-user-role`
   is deleted; the only replacement (adding a user to the Admin group via
-  `POST /manage/admin/user-group/{id}/add-users`) is registered only by `ee/onyx/main.py` — absent in CE
+  `POST /manage/admin/user-group/{id}/add-users`) is registered only by `ee/lumen/main.py` — absent in CE
   builds. The lone CE admin is permanently whoever registered first.
 - **`MANAGE_LLMS` now implies `READ_USERS`, and `GET /manage/users` has `allow_scope=True` with no GATE 2**
-  (`backend/onyx/server/manage/users.py:357-371` — the handler calls `get_all_users()` unfiltered and
+  (`backend/lumen/server/manage/users.py:357-371` — the handler calls `get_all_users()` unfiltered and
   discards the user as `_`). An "LLM manager" delegate — a much narrower grant than "manage groups" —
   gets the entire org user directory plus the pending-invite list as a side effect. Same missing-GATE-2
   route was independently flagged by two hunters.
@@ -248,7 +248,7 @@ doc-set shared into their own managed group; `DELETE /admin/credential/{id}` mov
 migration silently demoting `GLOBAL_CURATOR`/`CURATOR` users whose group membership doesn't map cleanly;
 an agent owner losing analytics on their own agent (route needs `READ_AGENT_ANALYTICS` with no
 `allow_scope`); a connector detail page rendering admin-only buttons to a manager; agent-create UI gating
-on the wrong permission set; the four `/onyx-api/ingestion` routes losing curator-level access entirely;
+on the wrong permission set; the four `/lumen-api/ingestion` routes losing curator-level access entirely;
 managers losing the ability to create PUBLIC (not just private) resources that CURATOR/GLOBAL_CURATOR
 could; a `get_llm_for_persona` call site checking `FULL_ADMIN_PANEL_ACCESS` where every sibling checks
 `MANAGE_LLMS`; confirmation that leaving `request.state.token_scopes` unset for API-key auth is

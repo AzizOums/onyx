@@ -10,11 +10,11 @@ import json
 
 import pytest
 
-from onyx.auth.mobile_sso.code_store import consume_sso_code, store_sso_code
-from onyx.auth.pkce import compute_s256_challenge
-from onyx.auth.users import generate_pkce_pair
-from onyx.configs.app_configs import MOBILE_SSO_CODE_PREFIX, MOBILE_SSO_CODE_TTL_SECONDS
-from onyx.redis.redis_pool import get_async_redis_connection
+from lumen.auth.mobile_sso.code_store import consume_sso_code, store_sso_code
+from lumen.auth.pkce import compute_s256_challenge
+from lumen.auth.users import generate_pkce_pair
+from lumen.configs.app_configs import MOBILE_SSO_CODE_PREFIX, MOBILE_SSO_CODE_TTL_SECONDS
+from lumen.redis.redis_pool import get_async_redis_connection
 
 
 @pytest.mark.asyncio
@@ -69,7 +69,7 @@ async def test_store_sets_bounded_ttl() -> None:
 @pytest.mark.asyncio
 async def test_code_expires_after_ttl(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
-        "onyx.auth.mobile_sso.code_store.MOBILE_SSO_CODE_TTL_SECONDS", 1
+        "lumen.auth.mobile_sso.code_store.MOBILE_SSO_CODE_TTL_SECONDS", 1
     )
     verifier, challenge = generate_pkce_pair()
     code = await store_sso_code("tok_expiry", challenge)

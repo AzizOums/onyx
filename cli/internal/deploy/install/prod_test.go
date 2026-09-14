@@ -8,9 +8,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/deployfiles"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/state"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/deployfiles"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/state"
 )
 
 // prodFixture lays out an adoptable prod deployment: the standalone
@@ -28,7 +28,7 @@ func prodFixture(t *testing.T, tag string) string {
 		t.Fatal(err)
 	}
 	for name, content := range map[string]string{
-		"docker-compose.prod.yml": "name: onyx\nservices: {}\n",
+		"docker-compose.prod.yml": "name: lumen\nservices: {}\n",
 		".env":                    "IMAGE_TAG=" + tag + "\nAUTH_TYPE=google_oauth\n",
 		".env.nginx":              "DOMAIN=demo.example.com\nEMAIL=ops@example.com\n",
 	} {
@@ -175,7 +175,7 @@ func TestStatusUsesRecordedProjectAndDomain(t *testing.T) {
 
 	runner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		if strings.Contains(argv(c), "ps -a") {
-			return dockercmd.Result{Stdout: "danswer-stack-api_server-1\tonyxdotapp/onyx-backend:v4.2.0\tUp 2 hours (healthy)\t80->80/tcp\tapi_server\n"}, nil
+			return dockercmd.Result{Stdout: "danswer-stack-api_server-1\tlumendotapp/lumen-backend:v4.2.0\tUp 2 hours (healthy)\t80->80/tcp\tapi_server\n"}, nil
 		}
 		return healthyDockerHandler(c)
 	}}
@@ -210,7 +210,7 @@ func TestStatusUsesRecordedProjectAndDomain(t *testing.T) {
 // needed) and rides the recorded project, like it does for lite overlays.
 func TestStopAutoDetectsProd(t *testing.T) {
 	root := prodFixture(t, "v4.2.0")
-	m := &state.Manifest{InstalledTag: "v4.2.0", Mode: state.ModeProd, Project: "onyx-stack"}
+	m := &state.Manifest{InstalledTag: "v4.2.0", Mode: state.ModeProd, Project: "lumen-stack"}
 	if err := m.Save(root); err != nil {
 		t.Fatal(err)
 	}
@@ -236,7 +236,7 @@ func TestStopAutoDetectsProd(t *testing.T) {
 	if strings.Contains(stop, "-f docker-compose.yml") {
 		t.Errorf("prod runs standalone — the base file must not ride along: %s", stop)
 	}
-	if !strings.Contains(stop, "-p onyx-stack") {
+	if !strings.Contains(stop, "-p lumen-stack") {
 		t.Errorf("recorded project not used: %s", stop)
 	}
 }

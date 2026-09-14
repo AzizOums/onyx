@@ -19,18 +19,18 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from onyx.access.models import ExternalAccess
-from onyx.background.celery.celery_utils import extract_ids_from_runnable_connector
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.interfaces import (
+from lumen.access.models import ExternalAccess
+from lumen.background.celery.celery_utils import extract_ids_from_runnable_connector
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.interfaces import (
     GenerateSlimDocumentOutput,
     SecondsSinceUnixEpoch,
     SlimConnectorWithPermSync,
 )
-from onyx.connectors.models import HierarchyNode as PydanticHierarchyNode
-from onyx.connectors.models import InputType, SlimDocument
-from onyx.db.enums import AccessType, ConnectorCredentialPairStatus, HierarchyNodeType
-from onyx.db.hierarchy import (
+from lumen.connectors.models import HierarchyNode as PydanticHierarchyNode
+from lumen.connectors.models import InputType, SlimDocument
+from lumen.db.enums import AccessType, ConnectorCredentialPairStatus, HierarchyNodeType
+from lumen.db.hierarchy import (
     delete_orphaned_hierarchy_nodes,
     ensure_source_node_exists,
     get_all_hierarchy_nodes_for_source,
@@ -42,16 +42,16 @@ from onyx.db.hierarchy import (
     upsert_hierarchy_node_cc_pair_entries,
     upsert_hierarchy_nodes_batch,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     Connector,
     ConnectorCredentialPair,
     Credential,
     HierarchyNodeByConnectorCredentialPair,
 )
-from onyx.db.models import Document as DbDocument
-from onyx.db.models import HierarchyNode as DBHierarchyNode
-from onyx.indexing.indexing_heartbeat import IndexingHeartbeatInterface
-from onyx.kg.models import KGStage
+from lumen.db.models import Document as DbDocument
+from lumen.db.models import HierarchyNode as DBHierarchyNode
+from lumen.indexing.indexing_heartbeat import IndexingHeartbeatInterface
+from lumen.kg.models import KGStage
 
 # ---------------------------------------------------------------------------
 # Constants

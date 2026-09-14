@@ -4,8 +4,8 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import PersonaSharePermission
-from onyx.db.models import (
+from lumen.db.enums import PersonaSharePermission
+from lumen.db.models import (
     Persona,
     Persona__User,
     Persona__UserGroup,

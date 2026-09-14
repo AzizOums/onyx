@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 # We would like to import these, but it makes building this so much harder/slower
-# from onyx.connectors.mock_connector.connector import SingleConnectorYield
-# from onyx.connectors.models import ConnectorCheckpoint
+# from lumen.connectors.mock_connector.connector import SingleConnectorYield
+# from lumen.connectors.models import ConnectorCheckpoint
 
 app = FastAPI()
 

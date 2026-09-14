@@ -9,7 +9,9 @@ use std::path::PathBuf;
 use std::sync::{Mutex, RwLock};
 use url::Url;
 
-pub const DEFAULT_SERVER_URL: &str = "https://cloud.onyx.app";
+// This build ships no hosted instance. A local deployment is the default;
+// users point the app at their own server from the settings screen.
+pub const DEFAULT_SERVER_URL: &str = "http://localhost:3000";
 const CONFIG_FILE_NAME: &str = "config.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -25,7 +27,7 @@ pub struct AppConfig {
     #[serde(default)]
     pub hide_window_decorations: bool,
 
-    /// Global shortcut that summons Onyx from any app, in Tauri accelerator
+    /// Global shortcut that summons Lumen from any app, in Tauri accelerator
     /// syntax. Explicit `null` in config.json disables it.
     #[serde(default = "default_summon_shortcut")]
     pub summon_shortcut: Option<String>,
@@ -35,7 +37,7 @@ pub struct AppConfig {
 }
 
 fn default_window_title() -> String {
-    "Onyx".to_string()
+    "Lumen".to_string()
 }
 
 const fn default_show_menu_bar() -> bool {
@@ -75,7 +77,7 @@ impl Default for AppConfig {
 
 /// Get the config directory path
 pub fn get_config_dir() -> Option<PathBuf> {
-    ProjectDirs::from("app", "onyx", "onyx-desktop").map(|dirs| dirs.config_dir().to_path_buf())
+    ProjectDirs::from("app", "lumen", "lumen-desktop").map(|dirs| dirs.config_dir().to_path_buf())
 }
 
 /// Get the full config file path
@@ -98,7 +100,7 @@ pub fn load_config() -> (AppConfig, bool) {
             Ok(config) => (config, true),
             Err(e) => {
                 eprintln!(
-                    "[ONYX ERROR] Failed to parse config file {}: {e}",
+                    "[LUMEN ERROR] Failed to parse config file {}: {e}",
                     config_path.display()
                 );
                 (AppConfig::default(), false)
@@ -106,7 +108,7 @@ pub fn load_config() -> (AppConfig, bool) {
         },
         Err(e) => {
             eprintln!(
-                "[ONYX ERROR] Failed to read config file {}: {e}",
+                "[LUMEN ERROR] Failed to read config file {}: {e}",
                 config_path.display()
             );
             (AppConfig::default(), false)
@@ -245,7 +247,7 @@ mod tests {
 
     #[test]
     fn missing_summon_fields_get_defaults() {
-        let config = parse(r#"{"server_url": "https://cloud.onyx.app"}"#);
+        let config = parse(r#"{"server_url": "https://lumen.example.com"}"#);
         assert_eq!(config.summon_shortcut, default_summon_shortcut());
         assert!(config.summon_shortcut.is_some());
         assert!(config.summon_opens_new_chat);
@@ -253,14 +255,14 @@ mod tests {
 
     #[test]
     fn explicit_null_disables_summon_shortcut() {
-        let config = parse(r#"{"server_url": "https://cloud.onyx.app", "summon_shortcut": null}"#);
+        let config = parse(r#"{"server_url": "https://lumen.example.com", "summon_shortcut": null}"#);
         assert_eq!(config.summon_shortcut, None);
     }
 
     #[test]
     fn custom_summon_settings_are_preserved() {
         let config = parse(
-            r#"{"server_url": "https://cloud.onyx.app", "summon_shortcut": "F19", "summon_opens_new_chat": false}"#,
+            r#"{"server_url": "https://lumen.example.com", "summon_shortcut": "F19", "summon_opens_new_chat": false}"#,
         );
         assert_eq!(config.summon_shortcut.as_deref(), Some("F19"));
         assert!(!config.summon_opens_new_chat);

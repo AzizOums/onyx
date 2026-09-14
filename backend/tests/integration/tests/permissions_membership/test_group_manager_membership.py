@@ -20,11 +20,11 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.auth.permissions import SCOPED_MANAGER_PERMISSIONS_EXPANDED
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import AccessType
-from onyx.db.models import User__UserGroup, UserGroup__ConnectorCredentialPair
-from onyx.db.permissions import recompute_user_permissions__no_commit
+from lumen.auth.permissions import SCOPED_MANAGER_PERMISSIONS_EXPANDED
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import AccessType
+from lumen.db.models import User__UserGroup, UserGroup__ConnectorCredentialPair
+from lumen.db.permissions import recompute_user_permissions__no_commit
 from tests.integration.common_utils.constants import ADMIN_USER_NAME, API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.cc_pair import CCPairManager

@@ -15,15 +15,15 @@ import pytest
 from litellm import completion_cost
 from sqlalchemy.orm import Session
 
-from onyx.llm.model_response import Usage
-from onyx.llm.models import (
+from lumen.llm.model_response import Usage
+from lumen.llm.models import (
     AssistantMessage,
     ChatCompletionMessage,
     SystemMessage,
     UserMessage,
 )
-from onyx.llm.multi_llm import LitellmLLM
-from onyx.llm.prompt_cache.processor import process_with_prompt_cache
+from lumen.llm.multi_llm import LitellmLLM
+from lumen.llm.prompt_cache.processor import process_with_prompt_cache
 
 VERTEX_CREDENTIALS_ENV = "VERTEX_CREDENTIALS"
 VERTEX_LOCATION_ENV = "VERTEX_LOCATION"

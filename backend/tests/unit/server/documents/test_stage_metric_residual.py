@@ -5,8 +5,8 @@ tested without a DB. Covers the residual math, the in-span component set, the
 clamp, and the absent-BATCH_TOTAL case.
 """
 
-from onyx.db.index_attempt_metrics_models import STAGE_SCOPE, IndexAttemptStage
-from onyx.server.documents.models import (
+from lumen.db.index_attempt_metrics_models import STAGE_SCOPE, IndexAttemptStage
+from lumen.server.documents.models import (
     _BATCH_TOTAL_COMPONENT_STAGES,
     IndexAttemptStageMetricSnapshot,
     synthesize_unaccounted,
@@ -119,7 +119,7 @@ def test_residual_uses_component_totals_not_averages() -> None:
 
 
 def test_warn_log_fires_when_components_exceed_total(monkeypatch) -> None:
-    import onyx.server.documents.models as models_module
+    import lumen.server.documents.models as models_module
 
     calls: list[tuple] = []
     monkeypatch.setattr(

@@ -15,14 +15,14 @@ from typing import Any
 import pytest
 import requests
 
-from onyx.db.enums import ExternalAppType
-from onyx.external_apps.providers import hubspot as hubspot_module
-from onyx.external_apps.providers.base import (
+from lumen.db.enums import ExternalAppType
+from lumen.external_apps.providers import hubspot as hubspot_module
+from lumen.external_apps.providers.base import (
     OAuthExternalAppProvider,
     parse_granted_scopes,
 )
-from onyx.external_apps.providers.hubspot import HubspotProvider
-from onyx.external_apps.providers.registry import PROVIDERS
+from lumen.external_apps.providers.hubspot import HubspotProvider
+from lumen.external_apps.providers.registry import PROVIDERS
 
 
 def _oauth_provider(app_type: ExternalAppType) -> OAuthExternalAppProvider:

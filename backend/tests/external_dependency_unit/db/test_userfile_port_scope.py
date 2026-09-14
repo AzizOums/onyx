@@ -13,9 +13,9 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import UserFileStatus
-from onyx.db.models import ConnectorCredentialPair, SearchSettings, User, UserFile
-from onyx.db.port_attempt import (
+from lumen.db.enums import UserFileStatus
+from lumen.db.models import ConnectorCredentialPair, SearchSettings, User, UserFile
+from lumen.db.port_attempt import (
     count_active_port_attempts,
     create_port_attempt,
     get_active_port_attempt,
@@ -28,7 +28,7 @@ from onyx.db.port_attempt import (
     mark_port_succeeded,
     pause_port_attempt,
 )
-from onyx.db.user_file import (
+from lumen.db.user_file import (
     clear_user_file_reconcile_pending,
     count_user_files_reconcile_pending,
     fetch_port_scope_user_ids,

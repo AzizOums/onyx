@@ -1,10 +1,10 @@
 import requests
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import InputType
-from onyx.db.enums import IndexingStatus
-from onyx.server.documents.models import ConnectorBase
-from onyx.utils.retry_wrapper import retry_builder
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import InputType
+from lumen.db.enums import IndexingStatus
+from lumen.server.documents.models import ConnectorBase
+from lumen.utils.retry_wrapper import retry_builder
 from tests.regression.answer_quality.cli_utils import get_api_server_host_port
 
 GENERAL_HEADERS = {"Content-Type": "application/json"}

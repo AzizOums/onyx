@@ -9,11 +9,11 @@ from __future__ import annotations
 
 import pytest
 
-from onyx.db.enums import EndpointPolicy, ExternalAppType
-from onyx.external_apps.matching.request import MatchContext, ProxiedRequest
-from onyx.external_apps.matching.rules import rule_matches
-from onyx.external_apps.providers.hubspot import HubspotAction
-from onyx.external_apps.providers.registry import get_endpoint_catalog
+from lumen.db.enums import EndpointPolicy, ExternalAppType
+from lumen.external_apps.matching.request import MatchContext, ProxiedRequest
+from lumen.external_apps.matching.rules import rule_matches
+from lumen.external_apps.providers.hubspot import HubspotAction
+from lumen.external_apps.providers.registry import get_endpoint_catalog
 
 _CATALOG = get_endpoint_catalog(ExternalAppType.HUBSPOT)
 

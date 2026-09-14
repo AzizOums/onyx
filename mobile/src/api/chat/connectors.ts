@@ -1,6 +1,6 @@
 /*
  * Despite the /manage path, readable by any chat-accessible user, not just admins
- * (backend/onyx/server/documents/connector.py).
+ * (backend/lumen/server/documents/connector.py).
  */
 import { apiFetch } from "@/api/client";
 import type { DocumentSource } from "@/chat/sources";

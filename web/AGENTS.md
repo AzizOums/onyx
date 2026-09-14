@@ -1,6 +1,6 @@
 # Frontend Standards
 
-This file is the single source of truth for frontend coding standards across all Onyx frontend
+This file is the single source of truth for frontend coding standards across all Lumen frontend
 projects (including, but not limited to, `/web`, `/desktop`).
 
 # Components
@@ -296,7 +296,7 @@ export const GitbookIcon = createLogoIcon(gitbookLightIcon, {
 
 **ONLY use icons from the `web/src/icons` directory. Do NOT use icons from `react-icons`, `lucide`, or other external libraries.**
 
-**Reason:** We have a very carefully curated selection of icons that match our Onyx guidelines. We do NOT want to muddy those up with different aesthetic stylings.
+**Reason:** We have a very carefully curated selection of icons that match our Lumen guidelines. We do NOT want to muddy those up with different aesthetic stylings.
 
 ```typescript
 // ✅ Good
@@ -309,7 +309,7 @@ import { FiSearch } from "react-icons/fi";
 ```
 
 **Missing Icons**: If an icon is needed but doesn't exist in the `web/src/icons` directory, import it from Figma using the Figma MCP tool and add it to the icons directory.
-If you need help with this step, reach out to `raunak@onyx.app`.
+If you need help with this step, reach out to `raunak@lumen.app`.
 
 ## 3. Text Rendering
 
@@ -335,7 +335,7 @@ function UserCard({ name }: { name: string }) {
 import { markdown } from "@opal/utils";
 
 <Text font="main-ui-body" color="text-05">
-  {markdown("*Hello*, **world**! Visit [Onyx](https://onyx.app) and run `onyx start`.")}
+  {markdown("*Hello*, **world**! Visit [Lumen](https://lumen.app) and run `lumen start`.")}
 </Text>
 
 // ✅ Good — plain strings are never parsed as markdown
@@ -405,7 +405,7 @@ interface InfoCardProps {
 
 **Heavily avoid raw HTML input components. Always use components from the `web/src/refresh-components` or `web/lib/opal/src` directory.**
 
-**Reason:** We've put in a lot of effort to unify the components that are rendered in the Onyx app. Using raw components breaks the entire UI of the application, and leaves it in a muddier state than before.
+**Reason:** We've put in a lot of effort to unify the components that are rendered in the Lumen app. Using raw components breaks the entire UI of the application, and leaves it in a muddier state than before.
 
 ```typescript
 // ✅ Good
@@ -449,7 +449,7 @@ function ContactForm() {
 - **Theme:** `theme-primary-XX`, `theme-red-XX`, `theme-blue-XX`, etc.
 
 ```typescript
-// ✅ Good - Use custom Onyx color classes
+// ✅ Good - Use custom Lumen color classes
 <div className="bg-background-neutral-01 border border-border-02" />
 <div className="bg-background-tint-02 border border-border-01" />
 <div className="bg-status-success-01" />

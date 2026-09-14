@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/audit"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/audit"
 )
 
 // AuditImageOptions holds options for the `ods audit image` command.
@@ -30,7 +30,7 @@ layer-aware container scanner and matches them against OSV.dev. Accepted
 advisories are suppressed via the same S3 allowlist used by 'ods audit', so a
 release can be unblocked without a code change.
 
-The ref may be a remote image (e.g. docker.io/onyxdotapp/onyx-backend:v1.2.3),
+The ref may be a remote image (e.g. docker.io/lumendotapp/lumen-backend:v1.2.3),
 which is pulled using the ambient Docker credentials.
 
 --format accepts a comma-separated list. Machine formats (json, sarif) write to

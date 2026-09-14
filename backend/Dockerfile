@@ -57,24 +57,24 @@ RUN uv pip install --system --no-cache-dir --no-deps --require-hashes \
 ####################################################################################################
 FROM ${BASE_IMAGE_REGISTRY}/library/python:3.13-slim@sha256:881d80734ee05dca6f7f42dcb080975652a53c7eda9ba1f03bb8da31aa6a6ec2 AS runtime
 
-LABEL com.danswer.maintainer="founders@onyx.app"
-LABEL com.danswer.description="This image is the web/frontend container of Onyx which \
-contains code for both the Community and Enterprise editions of Onyx. If you do not \
+LABEL com.danswer.maintainer="founders@lumen.app"
+LABEL com.danswer.description="This image is the web/frontend container of Lumen which \
+contains code for both the Community and Enterprise editions of Lumen. If you do not \
 have a contract or agreement with DanswerAI, you are not permitted to use the Enterprise \
 Edition features outside of personal development or testing purposes. Please reach out to \
-founders@onyx.app for more information. Please visit https://github.com/onyx-dot-app/onyx"
+founders@lumen.app for more information. Please visit https://github.com/lumen-dot-app/lumen"
 
 # DO_NOT_TRACK is used to disable telemetry for Unstructured
-ENV ONYX_RUNNING_IN_DOCKER="true" \
+ENV LUMEN_RUNNING_IN_DOCKER="true" \
     DO_NOT_TRACK="true" \
     PLAYWRIGHT_BROWSERS_PATH="/app/.cache/ms-playwright"
 
 # Create non-root user for security best practices
-RUN groupadd -g 1001 onyx && \
-    useradd -u 1001 -g onyx -m -s /bin/bash onyx && \
-    mkdir -p /var/log/onyx && \
-    chmod 755 /var/log/onyx && \
-    chown onyx:onyx /var/log/onyx
+RUN groupadd -g 1001 lumen && \
+    useradd -u 1001 -g lumen -m -s /bin/bash lumen && \
+    mkdir -p /var/log/lumen && \
+    chmod 755 /var/log/lumen && \
+    chown lumen:lumen /var/log/lumen
 
 # Install runtime system dependencies only (no build toolchain).
 # zip for Vespa step further down
@@ -118,7 +118,7 @@ COPY --from=builder \
 # launch site in the backend passes headless=True with no channel, so Playwright picks the shell.
 # Remove the flag if a call site ever needs a headed browser or a branded channel.
 #
-# perl-base is part of the base Python Debian image but not needed for Onyx functionality; it is
+# perl-base is part of the base Python Debian image but not needed for Lumen functionality; it is
 # removed for CVE surface reduction (requires --allow-remove-essential). It must be removed AFTER the
 # first `playwright install-deps`, because the font/X11 packages that install-deps pulls in run perl
 # scripts in their dpkg configure step. The second `playwright install-deps` then restores any
@@ -153,31 +153,31 @@ WORKDIR /app
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Set up application files
-COPY --chown=onyx:onyx ./onyx /app/onyx
-COPY --chown=onyx:onyx ./shared_configs /app/shared_configs
-COPY --chown=onyx:onyx ./alembic /app/alembic
-COPY --chown=onyx:onyx ./alembic_tenants /app/alembic_tenants
-COPY --chown=onyx:onyx ./alembic.ini /app/alembic.ini
+COPY --chown=lumen:lumen ./lumen /app/lumen
+COPY --chown=lumen:lumen ./shared_configs /app/shared_configs
+COPY --chown=lumen:lumen ./alembic /app/alembic
+COPY --chown=lumen:lumen ./alembic_tenants /app/alembic_tenants
+COPY --chown=lumen:lumen ./alembic.ini /app/alembic.ini
 COPY supervisord.conf /usr/etc/supervisord.conf
-COPY --chown=onyx:onyx ./static /app/static
-COPY --chown=onyx:onyx ./keys /app/keys
+COPY --chown=lumen:lumen ./static /app/static
+COPY --chown=lumen:lumen ./keys /app/keys
 
 # Escape hatch scripts
-COPY --chown=onyx:onyx ./scripts/debugging /app/scripts/debugging
-COPY --chown=onyx:onyx ./scripts/force_delete_connector_by_id.py /app/scripts/force_delete_connector_by_id.py
-COPY --chown=onyx:onyx ./scripts/supervisord_entrypoint.sh /app/scripts/supervisord_entrypoint.sh
-COPY --chown=onyx:onyx ./scripts/reencrypt_secrets.py /app/scripts/reencrypt_secrets.py
-COPY --chown=onyx:onyx ./scripts/rotate_llm_provider_keys.py /app/scripts/rotate_llm_provider_keys.py
+COPY --chown=lumen:lumen ./scripts/debugging /app/scripts/debugging
+COPY --chown=lumen:lumen ./scripts/force_delete_connector_by_id.py /app/scripts/force_delete_connector_by_id.py
+COPY --chown=lumen:lumen ./scripts/supervisord_entrypoint.sh /app/scripts/supervisord_entrypoint.sh
+COPY --chown=lumen:lumen ./scripts/reencrypt_secrets.py /app/scripts/reencrypt_secrets.py
+COPY --chown=lumen:lumen ./scripts/rotate_llm_provider_keys.py /app/scripts/rotate_llm_provider_keys.py
 RUN chmod +x /app/scripts/supervisord_entrypoint.sh
 
 # Put logo in assets
-COPY --chown=onyx:onyx ./assets /app/assets
+COPY --chown=lumen:lumen ./assets /app/assets
 
 ENV PYTHONPATH=/app
 
-# Default ONYX_VERSION, typically overriden during builds by GitHub Actions.
-ARG ONYX_VERSION=0.0.0-dev
-ENV ONYX_VERSION=${ONYX_VERSION}
+# Default LUMEN_VERSION, typically overriden during builds by GitHub Actions.
+ARG LUMEN_VERSION=0.0.0-dev
+ENV LUMEN_VERSION=${LUMEN_VERSION}
 
 # Use jemalloc instead of glibc malloc to reduce memory fragmentation
 # in long-running Python processes (API server, Celery workers).

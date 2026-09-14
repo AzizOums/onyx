@@ -156,7 +156,7 @@ export default function AccessRestricted() {
               hadLicense: hadPreviousLicense ? "true" : "false",
               billingLink: (chunks) => chunks,
               supportLink: (chunks) => (
-                <a className={linkClassName} href="mailto:support@onyx.app">
+                <a className={linkClassName} href="mailto:support@lumen.app">
                   {chunks}
                 </a>
               ),

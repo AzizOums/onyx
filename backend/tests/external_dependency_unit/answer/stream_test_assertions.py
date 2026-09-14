@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import cast
 
-from onyx.chat.models import AnswerStreamPart, CreateChatSessionID
-from onyx.context.search.models import SearchDoc
-from onyx.server.query_and_chat.models import MessageResponseIDInfo
-from onyx.server.query_and_chat.streaming_models import (
+from lumen.chat.models import AnswerStreamPart, CreateChatSessionID
+from lumen.context.search.models import SearchDoc
+from lumen.server.query_and_chat.models import MessageResponseIDInfo
+from lumen.server.query_and_chat.streaming_models import (
     AgentResponseStart,
     ImageGenerationFinal,
     OpenUrlDocuments,

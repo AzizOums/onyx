@@ -84,7 +84,7 @@ pub fn open_chat_window(app: &AppHandle) {
     });
 }
 
-/// Build a new Onyx window (title, size, platform-specific transparency /
+/// Build a new Lumen window (title, size, platform-specific transparency /
 /// titlebar / background-color quirks, vibrancy, the Alt-menu toggle, and
 /// devtools) and apply current settings to it. The single source of truth
 /// for window creation -- previously duplicated between the menu/tray
@@ -92,7 +92,7 @@ pub fn open_chat_window(app: &AppHandle) {
 /// once (the Windows transparency fix had to be hand-applied to both).
 pub fn build_and_setup_window(app: &AppHandle) -> Result<WebviewWindow, String> {
     let config = app.state::<ConfigState>().config();
-    let window_label = format!("onyx-{}", uuid::Uuid::new_v4());
+    let window_label = format!("lumen-{}", uuid::Uuid::new_v4());
     let url = config
         .server_url
         .parse()
@@ -156,8 +156,16 @@ pub fn trigger_new_window(app: &AppHandle) {
     });
 }
 
+/// Documentation site for this build, set at compile time. None while the fork
+/// publishes no documentation, in which case the docs action does nothing.
+const DOCS_URL: Option<&str> = option_env!("LUMEN_DOCS_URL");
+
 pub fn open_docs(app: &AppHandle) {
-    if !open_in_default_browser("https://docs.onyx.app") {
+    let Some(docs_url) = DOCS_URL else {
+        log_backend_error(app, "No documentation URL is configured for this build");
+        return;
+    };
+    if !open_in_default_browser(docs_url) {
         log_backend_error(app, "Failed to open docs in default browser");
     }
 }
@@ -361,31 +369,31 @@ mod tests {
     #[test]
     fn same_origin_matches_scheme_host_and_port() {
         assert!(same_origin(
-            &url("https://cloud.onyx.app/app"),
-            &url("https://cloud.onyx.app/other")
+            &url("https://lumen.example.com/app"),
+            &url("https://lumen.example.com/other")
         ));
         assert!(!same_origin(
-            &url("https://cloud.onyx.app"),
-            &url("http://cloud.onyx.app")
+            &url("https://lumen.example.com"),
+            &url("http://lumen.example.com")
         ));
         assert!(!same_origin(
-            &url("https://cloud.onyx.app"),
+            &url("https://lumen.example.com"),
             &url("https://example.com")
         ));
         assert!(!same_origin(
-            &url("https://cloud.onyx.app:8443"),
-            &url("https://cloud.onyx.app")
+            &url("https://lumen.example.com:8443"),
+            &url("https://lumen.example.com")
         ));
     }
 
     #[test]
     fn is_chat_session_url_requires_app_path_and_chat_id() {
         assert!(is_chat_session_url(&url(
-            "https://cloud.onyx.app/app?chatId=123"
+            "https://lumen.example.com/app?chatId=123"
         )));
-        assert!(!is_chat_session_url(&url("https://cloud.onyx.app/app")));
+        assert!(!is_chat_session_url(&url("https://lumen.example.com/app")));
         assert!(!is_chat_session_url(&url(
-            "https://cloud.onyx.app/settings?chatId=123"
+            "https://lumen.example.com/settings?chatId=123"
         )));
     }
 
@@ -419,8 +427,8 @@ mod tests {
 
     #[test]
     fn should_open_in_external_browser_only_from_chat_session() {
-        let chat = url("https://cloud.onyx.app/app?chatId=123");
-        let settings = url("https://cloud.onyx.app/settings");
+        let chat = url("https://lumen.example.com/app?chatId=123");
+        let settings = url("https://lumen.example.com/settings");
 
         assert!(should_open_in_external_browser(
             &chat,
@@ -433,7 +441,7 @@ mod tests {
         assert!(should_open_in_external_browser(&chat, &url("tel:12345")));
         assert!(!should_open_in_external_browser(
             &chat,
-            &url("https://cloud.onyx.app/app?chatId=456")
+            &url("https://lumen.example.com/app?chatId=456")
         ));
         assert!(!should_open_in_external_browser(
             &settings,

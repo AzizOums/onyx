@@ -7,13 +7,13 @@ import (
 )
 
 // isolate points HOME/XDG at temp dirs and runs the test from a fresh cwd so
-// legacy ./onyx_data detection is hermetic.
+// legacy ./lumen_data detection is hermetic.
 func isolate(t *testing.T) (cwd, xdg string) {
 	t.Helper()
 	cwd = t.TempDir()
 	xdg = t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", xdg)
-	t.Setenv("ONYX_DEPLOYMENT_DIR", "")
+	t.Setenv("LUMEN_DEPLOYMENT_DIR", "")
 	t.Setenv("INSTALL_PREFIX", "")
 	orig, err := os.Getwd()
 	if err != nil {
@@ -36,14 +36,14 @@ func markInstall(t *testing.T, root string) {
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		t.Fatalf("mkdir: %v", err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, "docker-compose.yml"), []byte("name: onyx\n"), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "docker-compose.yml"), []byte("name: lumen\n"), 0644); err != nil {
 		t.Fatalf("write marker: %v", err)
 	}
 }
 
 func TestResolveFlagWinsOverEverything(t *testing.T) {
 	isolate(t)
-	t.Setenv("ONYX_DEPLOYMENT_DIR", "/elsewhere")
+	t.Setenv("LUMEN_DEPLOYMENT_DIR", "/elsewhere")
 	got := Resolve("/explicit")
 	if got.Dir != "/explicit" || got.Source != SourceFlag {
 		t.Fatalf("got %+v", got)
@@ -52,14 +52,14 @@ func TestResolveFlagWinsOverEverything(t *testing.T) {
 
 func TestResolveEnvPrecedence(t *testing.T) {
 	isolate(t)
-	t.Setenv("ONYX_DEPLOYMENT_DIR", "/deployment-dir")
+	t.Setenv("LUMEN_DEPLOYMENT_DIR", "/deployment-dir")
 	t.Setenv("INSTALL_PREFIX", "/install-prefix")
 	got := Resolve("")
 	if got.Dir != "/deployment-dir" || got.Source != SourceEnvDeploymentDir {
 		t.Fatalf("got %+v", got)
 	}
 
-	t.Setenv("ONYX_DEPLOYMENT_DIR", "")
+	t.Setenv("LUMEN_DEPLOYMENT_DIR", "")
 	got = Resolve("")
 	if got.Dir != "/install-prefix" || got.Source != SourceEnvInstallPrefix {
 		t.Fatalf("got %+v", got)
@@ -69,7 +69,7 @@ func TestResolveEnvPrecedence(t *testing.T) {
 func TestResolveDefaultsToXDGDir(t *testing.T) {
 	_, xdg := isolate(t)
 	got := Resolve("")
-	want := filepath.Join(xdg, "onyx")
+	want := filepath.Join(xdg, "lumen")
 	if got.Dir != want || got.Source != SourceDefault {
 		t.Fatalf("got %+v, want dir %s", got, want)
 	}
@@ -80,9 +80,9 @@ func TestResolveDefaultsToXDGDir(t *testing.T) {
 
 func TestResolvePrefersLegacyInstallInCwd(t *testing.T) {
 	cwd, _ := isolate(t)
-	markInstall(t, filepath.Join(cwd, "onyx_data"))
+	markInstall(t, filepath.Join(cwd, "lumen_data"))
 	got := Resolve("")
-	if got.Dir != "onyx_data" || got.Source != SourceLegacyCwd {
+	if got.Dir != "lumen_data" || got.Source != SourceLegacyCwd {
 		t.Fatalf("got %+v", got)
 	}
 	if len(got.Ambiguous) != 0 {
@@ -92,25 +92,25 @@ func TestResolvePrefersLegacyInstallInCwd(t *testing.T) {
 
 func TestResolveFlagsAmbiguityWhenBothExist(t *testing.T) {
 	cwd, xdg := isolate(t)
-	markInstall(t, filepath.Join(cwd, "onyx_data"))
-	markInstall(t, filepath.Join(xdg, "onyx"))
+	markInstall(t, filepath.Join(cwd, "lumen_data"))
+	markInstall(t, filepath.Join(xdg, "lumen"))
 	got := Resolve("")
 	if got.Source != SourceLegacyCwd {
 		t.Fatalf("got %+v", got)
 	}
-	if len(got.Ambiguous) != 1 || got.Ambiguous[0] != filepath.Join(xdg, "onyx") {
+	if len(got.Ambiguous) != 1 || got.Ambiguous[0] != filepath.Join(xdg, "lumen") {
 		t.Fatalf("ambiguity not reported: %+v", got)
 	}
 }
 
 func TestResolveIgnoresNonInstallLegacyDir(t *testing.T) {
 	cwd, xdg := isolate(t)
-	// A directory named onyx_data without install markers is not adopted.
-	if err := os.MkdirAll(filepath.Join(cwd, "onyx_data"), 0755); err != nil {
+	// A directory named lumen_data without install markers is not adopted.
+	if err := os.MkdirAll(filepath.Join(cwd, "lumen_data"), 0755); err != nil {
 		t.Fatalf("mkdir: %v", err)
 	}
 	got := Resolve("")
-	if got.Source != SourceDefault || got.Dir != filepath.Join(xdg, "onyx") {
+	if got.Source != SourceDefault || got.Dir != filepath.Join(xdg, "lumen") {
 		t.Fatalf("got %+v", got)
 	}
 }
@@ -152,8 +152,8 @@ func TestCheckDeletableRefusesBroadRoots(t *testing.T) {
 	}
 
 	for _, dir := range []string{
-		filepath.Join(home, ".config", "onyx"),
-		filepath.Join(home, "onyx_data"),
+		filepath.Join(home, ".config", "lumen"),
+		filepath.Join(home, "lumen_data"),
 		t.TempDir(),
 	} {
 		if err := CheckDeletable(dir); err != nil {

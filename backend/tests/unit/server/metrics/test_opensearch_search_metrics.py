@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.document_index.opensearch.constants import OpenSearchSearchType
-from onyx.server.metrics.opensearch_search import (
+from lumen.document_index.opensearch.constants import OpenSearchSearchType
+from lumen.server.metrics.opensearch_search import (
     _client_duration,
     _client_server_overhead,
     _search_errors,

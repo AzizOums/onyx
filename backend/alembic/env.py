@@ -1,15 +1,15 @@
-from onyx.db.engine.iam_auth import make_provide_iam_token_async
-from onyx.db.engine.pg_ssl import create_pg_ssl_context
-from onyx.configs.app_configs import USE_IAM_AUTH
-from onyx.configs.app_configs import POSTGRES_HOST
-from onyx.configs.app_configs import POSTGRES_PORT
-from onyx.configs.app_configs import POSTGRES_USER
-from onyx.db.engine.shard_registry import ALEMBIC_TARGET_URL_ATTRIBUTE
-from onyx.db.engine.shard_registry import get_shard_spec
-from onyx.db.engine.shard_registry import validate_shard_name
-from onyx.db.engine.shard_registry import is_sharded
-from onyx.db.engine.sql_engine import build_connection_string
-from onyx.db.engine.tenant_utils import get_tenant_ids_by_shard
+from lumen.db.engine.iam_auth import make_provide_iam_token_async
+from lumen.db.engine.pg_ssl import create_pg_ssl_context
+from lumen.configs.app_configs import USE_IAM_AUTH
+from lumen.configs.app_configs import POSTGRES_HOST
+from lumen.configs.app_configs import POSTGRES_PORT
+from lumen.configs.app_configs import POSTGRES_USER
+from lumen.db.engine.shard_registry import ALEMBIC_TARGET_URL_ATTRIBUTE
+from lumen.db.engine.shard_registry import get_shard_spec
+from lumen.db.engine.shard_registry import validate_shard_name
+from lumen.db.engine.shard_registry import is_sharded
+from lumen.db.engine.sql_engine import build_connection_string
+from lumen.db.engine.tenant_utils import get_tenant_ids_by_shard
 from sqlalchemy import event
 from sqlalchemy import pool
 from sqlalchemy import text
@@ -24,19 +24,19 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio import create_async_engine
-from onyx.configs.constants import SSL_CERT_FILE
+from lumen.configs.constants import SSL_CERT_FILE
 from shared_configs.configs import (
     MULTI_TENANT,
     POSTGRES_DEFAULT_SCHEMA,
     TENANT_ID_PREFIX,
 )
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
-from onyx.db.models import Base
+from lumen.db.models import Base
 from celery.backends.database.session import (
     ResultModelBase,  # ty: ignore[unresolved-import]
 )
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.utils.variable_functionality import set_is_ee_based_on_env_variable
+from lumen.db.engine.sql_engine import SqlEngine
+from lumen.utils.variable_functionality import set_is_ee_based_on_env_variable
 
 # Match the app processes' edition so migrations that use versioned
 # implementations (e.g. encrypt_string_to_bytes) resolve the EE variants.

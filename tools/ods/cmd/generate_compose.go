@@ -10,9 +10,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/composegen"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/deployfilessync"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/composegen"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/deployfilessync"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/paths"
 )
 
 // NewGenerateComposeCommand creates the generate-compose command.
@@ -30,7 +30,7 @@ docker-compose.template.yml instead, then regenerate with:
 
   ods generate-compose --write
 
-The command also syncs the deployment files that onyx-cli embeds via
+The command also syncs the deployment files that lumen-cli embeds via
 go:embed (the generated docker-compose.yml and docker-compose.prod.yml, the
 lite/craft overlays, the env templates, the nginx config, and the
 install-root README) into
@@ -110,7 +110,7 @@ func runGenerateCompose(write bool) {
 		}
 	}
 
-	// Sync the embedded copies for onyx-cli after the variants, so the copy
+	// Sync the embedded copies for lumen-cli after the variants, so the copy
 	// of docker-compose.yml reflects the freshly rendered output.
 	repoRoot, err := paths.GitRoot()
 	if err != nil {

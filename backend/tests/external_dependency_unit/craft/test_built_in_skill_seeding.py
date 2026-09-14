@@ -20,14 +20,14 @@ from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from onyx.db.models import Skill, User
-from onyx.db.skill import (
+from lumen.db.models import Skill, User
+from lumen.db.skill import (
     SkillManagementPolicy,
     fetch_skill,
     list_runtime_skills_for_user,
     list_skills,
 )
-from onyx.skills.built_in import BUILT_IN_SKILLS, BuiltInSkillDefinition
+from lumen.skills.built_in import BUILT_IN_SKILLS, BuiltInSkillDefinition
 from tests.external_dependency_unit.craft.db_helpers import (
     make_built_in_skill_row,
     make_skill,
@@ -126,7 +126,7 @@ class TestAvailabilityGate:
     ) -> None:
         _seed_canonical(db_session)
 
-        monkeypatch.setattr("onyx.skills.built_in.ENABLE_BROWSER", False)
+        monkeypatch.setattr("lumen.skills.built_in.ENABLE_BROWSER", False)
         off = {
             s.built_in_skill_id
             for s in list_runtime_skills_for_user(
@@ -136,7 +136,7 @@ class TestAvailabilityGate:
         }
         assert "browser" not in off
 
-        monkeypatch.setattr("onyx.skills.built_in.ENABLE_BROWSER", True)
+        monkeypatch.setattr("lumen.skills.built_in.ENABLE_BROWSER", True)
         on = {
             s.built_in_skill_id
             for s in list_runtime_skills_for_user(

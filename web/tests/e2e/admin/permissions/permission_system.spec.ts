@@ -2,7 +2,7 @@ import { test, expect, type APIResponse } from "@playwright/test";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import { Permission } from "@/lib/types";
 import { apiLogin, loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 
 const TEST_PASSWORD = "PermissionSystem123!";
 
@@ -33,7 +33,7 @@ test("group permissions apply immediately when a user is added to the group", as
 
   await page.context().clearCookies();
   await loginAs(page, "admin");
-  const adminClient = new OnyxApiClient(page.request);
+  const adminClient = new LumenApiClient(page.request);
 
   const registryResponse = await page.request.get(
     "/api/manage/admin/permissions/registry"
@@ -58,7 +58,7 @@ test("group permissions apply immediately when a user is added to the group", as
     await page.context().clearCookies();
     await apiLogin(page, email, TEST_PASSWORD);
 
-    const userClient = new OnyxApiClient(page.request);
+    const userClient = new LumenApiClient(page.request);
     const permissions = await userClient.getCurrentUserPermissions();
     expect(permissions).toEqual(
       expect.arrayContaining([
@@ -102,7 +102,7 @@ test("group permissions apply immediately when a user is added to the group", as
   } finally {
     await page.context().clearCookies();
     await loginAs(page, "admin");
-    const cleanupClient = new OnyxApiClient(page.request);
+    const cleanupClient = new LumenApiClient(page.request);
 
     if (groupId !== undefined) {
       await softCleanup(() => cleanupClient.deleteUserGroup(groupId!));

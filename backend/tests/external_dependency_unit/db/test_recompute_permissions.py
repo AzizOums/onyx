@@ -5,9 +5,9 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import AccountType
-from onyx.db.models import User__UserGroup, UserGroup
-from onyx.db.permissions import recompute_user_permissions__no_commit
+from lumen.db.enums import AccountType
+from lumen.db.models import User__UserGroup, UserGroup
+from lumen.db.permissions import recompute_user_permissions__no_commit
 from tests.external_dependency_unit.conftest import create_test_user
 
 

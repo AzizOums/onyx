@@ -6,14 +6,14 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import HierarchyNode as PydanticHierarchyNode
-from onyx.connectors.models import InputType
-from onyx.db.connector_credential_pair import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import HierarchyNode as PydanticHierarchyNode
+from lumen.connectors.models import InputType
+from lumen.db.connector_credential_pair import (
     delete_connector_credential_pair__no_commit,
 )
-from onyx.db.enums import AccessType, ConnectorCredentialPairStatus, HierarchyNodeType
-from onyx.db.hierarchy import (
+from lumen.db.enums import AccessType, ConnectorCredentialPairStatus, HierarchyNodeType
+from lumen.db.hierarchy import (
     cleanup_unowned_hierarchy_nodes,
     ensure_source_node_exists,
     get_all_hierarchy_nodes_for_source,
@@ -22,13 +22,13 @@ from onyx.db.hierarchy import (
     upsert_hierarchy_node_cc_pair_entries,
     upsert_hierarchy_nodes_batch,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     Connector,
     ConnectorCredentialPair,
     Credential,
     HierarchyNodeByConnectorCredentialPair,
 )
-from onyx.db.models import HierarchyNode as DBHierarchyNode
+from lumen.db.models import HierarchyNode as DBHierarchyNode
 
 TEST_SOURCE = DocumentSource.GURU
 SHARED_NODE_ID = "shared-folder"

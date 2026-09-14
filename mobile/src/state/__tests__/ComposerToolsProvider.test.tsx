@@ -729,7 +729,7 @@ describe("useComposerToolsState — sources", () => {
      * and lands as switching it back on.
      */
     appStorage.set(
-      "onyx.chat.source_preferences.https://example.test",
+      "lumen.chat.source_preferences.https://example.test",
       JSON.stringify({ sourcePreferences: { notion: false, web: false } }),
     );
     const api = mockApi({

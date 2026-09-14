@@ -32,7 +32,7 @@ function configuredApp(
     enabled: true,
     actions: [],
     associated_skills: [],
-    is_onyx_managed: false,
+    is_lumen_managed: false,
     ...overrides,
   };
 }
@@ -73,9 +73,9 @@ describe("availableBuiltInDescriptors", () => {
     ]);
   });
 
-  it("hides configured Onyx-managed built-ins", () => {
+  it("hides configured Lumen-managed built-ins", () => {
     const available = availableBuiltInDescriptors(ALL_DESCRIPTORS, [
-      configuredApp("GMAIL", { is_onyx_managed: true }),
+      configuredApp("GMAIL", { is_lumen_managed: true }),
     ]);
     expect(available.map((d) => d.app_type)).not.toContain("GMAIL");
   });

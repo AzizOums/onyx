@@ -6,7 +6,7 @@ import { VIDEO_BACKGROUND_SRC } from "@/app/craft/components/video-background/co
 export default function VideoBackground() {
   const { videoBackgroundEnabled } = useBuildContext();
 
-  if (!videoBackgroundEnabled) return null;
+  if (!videoBackgroundEnabled || !VIDEO_BACKGROUND_SRC) return null;
 
   return (
     <div

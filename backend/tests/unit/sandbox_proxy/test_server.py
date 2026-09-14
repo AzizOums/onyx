@@ -2,7 +2,7 @@
 
 import pytest
 
-from onyx.sandbox_proxy import server
+from lumen.sandbox_proxy import server
 
 
 def test_mitm_options_use_custom_upstream_ca_when_configured(

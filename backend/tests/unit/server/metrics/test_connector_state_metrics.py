@@ -8,11 +8,11 @@ from unittest.mock import MagicMock
 import pytest
 from prometheus_client import CollectorRegistry
 
-import onyx.server.metrics.connector_state_metrics as csm
-from onyx.configs.constants import DocumentSource
-from onyx.db.connector_credential_pair import ConnectorStateSnapshot
-from onyx.db.enums import AccessType, ConnectorCredentialPairStatus, IndexingMode
-from onyx.server.metrics.connector_state_metrics import (
+import lumen.server.metrics.connector_state_metrics as csm
+from lumen.configs.constants import DocumentSource
+from lumen.db.connector_credential_pair import ConnectorStateSnapshot
+from lumen.db.enums import AccessType, ConnectorCredentialPairStatus, IndexingMode
+from lumen.server.metrics.connector_state_metrics import (
     ConnectorStateMetricsCollector,
     _enum_label,
     _to_unix_ts,
@@ -76,7 +76,7 @@ def test_collect_reports_failure_when_db_unavailable() -> None:
         collector._executor.shutdown(wait=True)
 
     assert [family.name for family in families] == [
-        "onyx_connector_state_collection_success"
+        "lumen_connector_state_collection_success"
     ]
     assert families[0].samples[0].value == 0.0
 
@@ -100,58 +100,58 @@ def test_collect_maps_snapshot_to_metrics(monkeypatch: pytest.MonkeyPatch) -> No
         collector._executor.shutdown(wait=True)
     connector_labels = {"source": "google_drive", "cc_pair_id": "42"}
 
-    assert _sample_value(families["onyx_connector_state_collection_success"], {}) == 1.0
+    assert _sample_value(families["lumen_connector_state_collection_success"], {}) == 1.0
     assert (
         _sample_value(
-            families["onyx_connector_last_successful_index_timestamp_seconds"],
+            families["lumen_connector_last_successful_index_timestamp_seconds"],
             connector_labels,
         )
         == datetime(2026, 7, 11, 12, tzinfo=timezone.utc).timestamp()
     )
     assert (
         _sample_value(
-            families["onyx_connector_last_pruned_timestamp_seconds"],
+            families["lumen_connector_last_pruned_timestamp_seconds"],
             connector_labels,
         )
         == 0.0
     )
     assert (
         _sample_value(
-            families["onyx_connector_repeated_error_state"],
+            families["lumen_connector_repeated_error_state"],
             connector_labels,
         )
         == 1.0
     )
     assert (
         _sample_value(
-            families["onyx_connector_status"],
+            families["lumen_connector_status"],
             {**connector_labels, "status": "ACTIVE"},
         )
         == 1.0
     )
     assert (
         _sample_value(
-            families["onyx_connector_status"],
+            families["lumen_connector_status"],
             {**connector_labels, "status": "UNKNOWN"},
         )
         == 0.0
     )
     assert (
         _sample_value(
-            families["onyx_connector_count"],
+            families["lumen_connector_count"],
             {"source": "google_drive", "status": "ACTIVE"},
         )
         == 1.0
     )
     assert (
         _sample_value(
-            families["onyx_connector_document_count"],
+            families["lumen_connector_document_count"],
             {"source": "google_drive"},
         )
         == 17.0
     )
 
-    info_labels = families["onyx_connector"].samples[0].labels
+    info_labels = families["lumen_connector"].samples[0].labels
     assert info_labels == {
         "cc_pair_id": "42",
         "connector_name": "Engineering Drive",
@@ -211,7 +211,7 @@ def test_describe_does_not_query_database(monkeypatch: pytest.MonkeyPatch) -> No
         collector._executor.shutdown(wait=True)
 
     assert len(families) == 13
-    assert families[0].name == "onyx_connector_state_collection_success"
+    assert families[0].name == "lumen_connector_state_collection_success"
     collect_fresh.assert_not_called()
 
 

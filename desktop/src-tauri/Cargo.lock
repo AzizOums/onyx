@@ -2092,6 +2092,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
 
 [[package]]
+name = "lumen"
+version = "0.0.0-dev"
+dependencies = [
+ "clap",
+ "directories",
+ "gtk",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-global-shortcut",
+ "tauri-plugin-shell",
+ "tauri-plugin-window-state",
+ "tokio",
+ "url",
+ "uuid",
+ "window-vibrancy 0.7.1",
+]
+
+[[package]]
 name = "mac"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2491,27 +2512,6 @@ name = "once_cell_polyfill"
 version = "1.70.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe"
-
-[[package]]
-name = "onyx"
-version = "0.0.0-dev"
-dependencies = [
- "clap",
- "directories",
- "gtk",
- "reqwest",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-global-shortcut",
- "tauri-plugin-shell",
- "tauri-plugin-window-state",
- "tokio",
- "url",
- "uuid",
- "window-vibrancy 0.7.1",
-]
 
 [[package]]
 name = "open"

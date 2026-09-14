@@ -6,9 +6,9 @@ from unittest.mock import MagicMock, patch
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.llm import update_default_provider, upsert_llm_provider
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.manage.llm.models import (
+from lumen.db.llm import update_default_provider, upsert_llm_provider
+from lumen.llm.constants import LlmProviderNames
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )
@@ -68,7 +68,7 @@ def mock_nlp_embeddings_post() -> Iterator[None]:
         return resp
 
     with patch(
-        "onyx.natural_language_processing.search_nlp_models.requests.post",
+        "lumen.natural_language_processing.search_nlp_models.requests.post",
         side_effect=_mock_post,
     ):
         yield
@@ -78,7 +78,7 @@ def mock_nlp_embeddings_post() -> Iterator[None]:
 def mock_gpu_status() -> Iterator[None]:
     """Avoid hitting model server for GPU status checks."""
     with patch(
-        "onyx.utils.gpu_utils._get_gpu_status_from_model_server", return_value=False
+        "lumen.utils.gpu_utils._get_gpu_status_from_model_server", return_value=False
     ):
         yield
 
@@ -87,7 +87,7 @@ def mock_gpu_status() -> Iterator[None]:
 def mock_vespa_query() -> Iterator[None]:
     """Stub Vespa query to a safe empty response to avoid CI flakiness."""
     with patch(
-        "onyx.document_index.vespa.vespa_document_index.query_vespa", return_value=[]
+        "lumen.document_index.vespa.vespa_document_index.query_vespa", return_value=[]
     ):
         yield
 
@@ -108,7 +108,7 @@ def mock_file_store() -> Iterator[None]:
     mock_store.initialize.return_value = None
 
     with patch(
-        "onyx.file_store.utils.get_default_file_store",
+        "lumen.file_store.utils.get_default_file_store",
         return_value=mock_store,
     ):
         yield

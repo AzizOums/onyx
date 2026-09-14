@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import SvgOnyxLogo from "@/icons/onyx-logo";
+import SvgLumenLogo from "@/icons/lumen-logo";
 
 interface AuthScreenShellProps {
   title: string;
@@ -32,7 +32,7 @@ export function AuthScreenShell({
         >
           <View className="rounded-16 border border-border-01 bg-background-neutral-01 p-24 shadow-sm">
             <Icon
-              as={SvgOnyxLogo}
+              as={SvgLumenLogo}
               size={44}
               className="text-theme-primary-05"
             />

@@ -6,19 +6,19 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
-	"github.com/onyx-dot-app/onyx/cli/internal/testutil"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/testutil"
 )
 
 func TestDeployInstallDryRun(t *testing.T) {
-	t.Setenv("ONYX_DEPLOYMENT_DIR", "")
+	t.Setenv("LUMEN_DEPLOYMENT_DIR", "")
 	t.Setenv("INSTALL_PREFIX", "")
 	ios, out, _ := testutil.TestIOStreams()
 	cmd := newDeployInstallCmd(ios)
 	cmd.SilenceErrors = true
 	cmd.SilenceUsage = true
 	// --tag skips the release lookup, so a dry run stays fully offline.
-	cmd.SetArgs([]string{"--dry-run", "--tag", "v1.2.3", "--dir", filepath.Join(t.TempDir(), "onyx")})
+	cmd.SetArgs([]string{"--dry-run", "--tag", "v1.2.3", "--dir", filepath.Join(t.TempDir(), "lumen")})
 
 	if err := cmd.Execute(); err != nil {
 		t.Fatalf("Execute: %v", err)
@@ -33,8 +33,8 @@ func TestDeployInstallDryRun(t *testing.T) {
 
 func TestDeployInstallLegacyFlagsRedirect(t *testing.T) {
 	cases := map[string]string{
-		"--shutdown":    "onyx-cli deploy stop",
-		"--delete-data": "onyx-cli deploy uninstall",
+		"--shutdown":    "lumen-cli deploy stop",
+		"--delete-data": "lumen-cli deploy uninstall",
 	}
 	for flag, want := range cases {
 		ios, _, _ := testutil.TestIOStreams()
@@ -68,10 +68,10 @@ func TestDeployInstallRejectsLiteWithCraft(t *testing.T) {
 	}
 }
 
-func TestInstallOnyxIsAnAlias(t *testing.T) {
+func TestInstallLumenIsAnAlias(t *testing.T) {
 	ios, _, _ := testutil.TestIOStreams()
-	alias := newInstallOnyxCmd(ios)
-	if alias.Use != "install-onyx" {
+	alias := newInstallLumenCmd(ios)
+	if alias.Use != "install-lumen" {
 		t.Fatalf("Use = %q", alias.Use)
 	}
 	// Same flag surface as deploy install.

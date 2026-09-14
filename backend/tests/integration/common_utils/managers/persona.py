@@ -1,6 +1,6 @@
 from uuid import UUID, uuid4
 
-from onyx.server.features.persona.models import (
+from lumen.server.features.persona.models import (
     FullPersonaSnapshot,
     PersonaUpsertRequest,
 )

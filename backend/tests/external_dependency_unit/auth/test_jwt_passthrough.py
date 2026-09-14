@@ -3,7 +3,7 @@ External-IdP JWT passthrough tests (JWT_PUBLIC_KEY_URL): a real HTTP endpoint
 serves the verification key (JWKS and PEM), RS256 bearer tokens flow through
 the production _check_for_saml_and_jwt path against real Postgres.
 
-This is deployed customer surface (gateways / Entra minting JWTs for Onyx
+This is deployed customer surface (gateways / Entra minting JWTs for Lumen
 APIs) with no other functional coverage — these tests lock in existing-user
 login, JIT provisioning, wrong-key rejection, expiry, and key rotation.
 """
@@ -24,11 +24,11 @@ from jwt.algorithms import RSAAlgorithm  # ty: ignore[possibly-missing-import]
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-import onyx.auth.jwt as jwt_module
-import onyx.auth.users as users_module
-from onyx.db.engine.async_sql_engine import get_async_session_context_manager
-from onyx.db.models import User
-from onyx.server.security.store import _build_env_defaults
+import lumen.auth.jwt as jwt_module
+import lumen.auth.users as users_module
+from lumen.db.engine.async_sql_engine import get_async_session_context_manager
+from lumen.db.models import User
+from lumen.server.security.store import _build_env_defaults
 from tests.external_dependency_unit.conftest import create_test_user
 
 

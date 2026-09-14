@@ -14,7 +14,7 @@
 #   deployment/helm/dev/craft-down.sh --keep-cluster
 #
 # Flags:
-#   --cluster-name <name>   kind cluster name (default: onyx-dev)
+#   --cluster-name <name>   kind cluster name (default: lumen-dev)
 #   --keep-cluster          uninstall helm but preserve the kind cluster
 #                           and its PVCs (passthrough to k8s-down.sh)
 #   --remove-images         also `docker rmi` the locally-built sandbox and
@@ -76,7 +76,7 @@ echo "==> tearing down kind cluster + helm release (k8s-down.sh) ..."
 
 if [[ "$REMOVE_IMAGES" -eq 1 ]]; then
   echo "==> removing locally-built dev images ..."
-  docker rmi onyxdotapp/sandbox:dev onyxdotapp/onyx-backend:dev 2>/dev/null || true
+  docker rmi lumendotapp/sandbox:dev lumendotapp/lumen-backend:dev 2>/dev/null || true
 fi
 
 # ---- 4. next steps ----

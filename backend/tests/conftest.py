@@ -4,7 +4,7 @@ from collections.abc import Generator
 
 import pytest
 
-from onyx.utils.variable_functionality import (
+from lumen.utils.variable_functionality import (
     fetch_versioned_implementation,
     global_version,
 )

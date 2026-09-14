@@ -3,11 +3,11 @@ from datetime import datetime, timedelta, timezone
 
 import httpx
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.mock_connector.connector import MockConnectorCheckpoint
-from onyx.connectors.models import ConnectorFailure, EntityFailure, InputType
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import IndexingStatus
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.mock_connector.connector import MockConnectorCheckpoint
+from lumen.connectors.models import ConnectorFailure, EntityFailure, InputType
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import IndexingStatus
 from tests.integration.common_utils.constants import (
     MOCK_CONNECTOR_SERVER_HOST,
     MOCK_CONNECTOR_SERVER_PORT,

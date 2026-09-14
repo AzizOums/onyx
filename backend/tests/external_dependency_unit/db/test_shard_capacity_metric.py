@@ -14,12 +14,12 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.exc import OperationalError
 
-from onyx.db.engine import shard_registry, shard_routing, tenant_utils
-from onyx.db.engine.shard_registry import get_engine_for_shard
-from onyx.db.engine.shard_routing import invalidate_shard_cache
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.server.metrics import shard_capacity
-from onyx.server.metrics.shard_capacity import ShardCapacityCollector
+from lumen.db.engine import shard_registry, shard_routing, tenant_utils
+from lumen.db.engine.shard_registry import get_engine_for_shard
+from lumen.db.engine.shard_routing import invalidate_shard_cache
+from lumen.db.engine.sql_engine import SqlEngine
+from lumen.server.metrics import shard_capacity
+from lumen.server.metrics.shard_capacity import ShardCapacityCollector
 from tests.external_dependency_unit.db.shard_test_utils import (
     DEFAULT_SHARD,
     create_schema,
@@ -45,9 +45,9 @@ def two_shards(
     SqlEngine.init_engine(pool_size=5, max_overflow=2)
 
     shards_json = f'{{"{SECOND_SHARD}": {{"db": "{second_database}"}}}}'
-    monkeypatch.setattr(shard_registry, "ONYX_DB_SHARDS_JSON", shards_json)
-    monkeypatch.setattr(shard_registry, "ONYX_DB_DEFAULT_SHARD", DEFAULT_SHARD)
-    monkeypatch.setattr(shard_registry, "ONYX_DB_CATALOG_SHARD", DEFAULT_SHARD)
+    monkeypatch.setattr(shard_registry, "LUMEN_DB_SHARDS_JSON", shards_json)
+    monkeypatch.setattr(shard_registry, "LUMEN_DB_DEFAULT_SHARD", DEFAULT_SHARD)
+    monkeypatch.setattr(shard_registry, "LUMEN_DB_CATALOG_SHARD", DEFAULT_SHARD)
     monkeypatch.setattr(shard_routing, "MULTI_TENANT", True)
     monkeypatch.setattr(shard_capacity, "MULTI_TENANT", True)
     # Enumeration short-circuits to a single fake tenant outside multi-tenant mode.

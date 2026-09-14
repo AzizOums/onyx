@@ -16,18 +16,18 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource, FileOrigin
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType, ConnectorCredentialPairStatus
-from onyx.db.file_record import delete_filerecord_by_file_id, upsert_filerecord
-from onyx.db.models import (
+from lumen.configs.constants import DocumentSource, FileOrigin
+from lumen.connectors.models import InputType
+from lumen.db.enums import AccessType, ConnectorCredentialPairStatus
+from lumen.db.file_record import delete_filerecord_by_file_id, upsert_filerecord
+from lumen.db.models import (
     Connector,
     ConnectorCredentialPair,
     Credential,
     FileRecord,
 )
-from onyx.file_store.file_store import FILE_SIZE_MISSING_SENTINEL
-from onyx.server.documents.connector import list_connector_files
+from lumen.file_store.file_store import FILE_SIZE_MISSING_SENTINEL
+from lumen.server.documents.connector import list_connector_files
 from tests.external_dependency_unit.conftest import create_test_user
 
 
@@ -177,7 +177,7 @@ def test_list_connector_files_degrades_to_basic_info_on_lookup_failure(
         raise RuntimeError("simulated record-lookup failure")
 
     monkeypatch.setattr(
-        "onyx.server.documents.connector.get_filerecords_by_file_ids", _boom
+        "lumen.server.documents.connector.get_filerecords_by_file_ids", _boom
     )
 
     try:
@@ -263,7 +263,7 @@ def test_list_connector_files_backfills_legacy_sizes(
             return 777
 
     monkeypatch.setattr(
-        "onyx.server.documents.connector.get_default_file_store",
+        "lumen.server.documents.connector.get_default_file_store",
         lambda: _StubStore(),
     )
 
@@ -356,7 +356,7 @@ def test_list_connector_files_marks_missing_blobs_terminally(
             raise FileNotFoundError("object gone")
 
     monkeypatch.setattr(
-        "onyx.server.documents.connector.get_default_file_store",
+        "lumen.server.documents.connector.get_default_file_store",
         lambda: _MissingStore(),
     )
 

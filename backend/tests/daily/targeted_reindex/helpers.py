@@ -12,16 +12,16 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.google_utils.shared_constants import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.google_utils.shared_constants import (
     DB_CREDENTIALS_AUTHENTICATION_METHOD,
     DB_CREDENTIALS_DICT_SERVICE_ACCOUNT_KEY,
     DB_CREDENTIALS_PRIMARY_ADMIN_KEY,
     GoogleOAuthAuthenticationMethod,
 )
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType, ConnectorCredentialPairStatus, IndexingStatus
-from onyx.db.models import (
+from lumen.connectors.models import InputType
+from lumen.db.enums import AccessType, ConnectorCredentialPairStatus, IndexingStatus
+from lumen.db.models import (
     Connector,
     ConnectorCredentialPair,
     Credential,
@@ -30,9 +30,9 @@ from onyx.db.models import (
     TargetedReindexJob,
     TargetedReindexJobTarget,
 )
-from onyx.db.search_settings import get_current_search_settings
+from lumen.db.search_settings import get_current_search_settings
 
-_ADMIN_EMAIL = "admin@onyx-test.com"
+_ADMIN_EMAIL = "admin@lumen-test.com"
 
 
 def _parse_credentials(env_str: str) -> dict[str, Any]:

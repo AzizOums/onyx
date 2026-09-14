@@ -22,9 +22,9 @@ import psycopg2.errors
 from sqlalchemy import func, select, text
 from sqlalchemy.exc import ProgrammingError
 
-from onyx.configs.constants import MessageType
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_tenant
-from onyx.db.models import BuildSession, ChatMessage
+from lumen.configs.constants import MessageType
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_tenant
+from lumen.db.models import BuildSession, ChatMessage
 
 
 def check_tenant_activity(tenant_id: str) -> dict:

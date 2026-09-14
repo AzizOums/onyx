@@ -15,13 +15,13 @@ import pytest
 from opensearchpy import ConflictError, NotFoundError
 from opensearchpy.helpers import BulkIndexError
 
-import onyx.document_index.opensearch.client as client_module
-from onyx.access.models import DocumentAccess
-from onyx.access.utils import prefix_user_email
-from onyx.configs.constants import DocumentSource
-from onyx.context.search.models import IndexFilters, TimeRange
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.client import (
+import lumen.document_index.opensearch.client as client_module
+from lumen.access.models import DocumentAccess
+from lumen.access.utils import prefix_user_email
+from lumen.configs.constants import DocumentSource
+from lumen.context.search.models import IndexFilters, TimeRange
+from lumen.document_index.interfaces_new import TenantState
+from lumen.document_index.opensearch.client import (
     OpenSearchDocumentMissingError,
     OpenSearchIndexClient,
     OpenSearchIndexError,
@@ -29,20 +29,20 @@ from onyx.document_index.opensearch.client import (
     OpenSearchUpdateError,
     wait_for_opensearch_with_timeout,
 )
-from onyx.document_index.opensearch.constants import (
+from lumen.document_index.opensearch.constants import (
     DEFAULT_MAX_CHUNK_SIZE,
     HybridSearchNormalizationPipeline,
     HybridSearchSubqueryConfiguration,
     OpenSearchSearchType,
 )
-from onyx.document_index.opensearch.index_reclaim import (
+from lumen.document_index.opensearch.index_reclaim import (
     ReclaimOutcome,
     reclaim_index_data,
 )
-from onyx.document_index.opensearch.opensearch_document_index import (
+from lumen.document_index.opensearch.opensearch_document_index import (
     generate_opensearch_filtered_access_control_list,
 )
-from onyx.document_index.opensearch.schema import (
+from lumen.document_index.opensearch.schema import (
     ACCESS_CONTROL_LIST_FIELD_NAME,
     CONTENT_FIELD_NAME,
     TENANT_ID_FIELD_NAME,
@@ -51,7 +51,7 @@ from onyx.document_index.opensearch.schema import (
     DocumentSchema,
     get_opensearch_doc_chunk_id,
 )
-from onyx.document_index.opensearch.search import (
+from lumen.document_index.opensearch.search import (
     DocumentQuery,
     get_min_max_normalization_pipeline_name_and_config,
     get_normalization_pipeline_name_and_config,
@@ -77,7 +77,7 @@ def _patch_global_tenant_state(monkeypatch: pytest.MonkeyPatch, state: bool) -> 
         state: The intended state of MULTI_TENANT.
     """
     monkeypatch.setattr("shared_configs.configs.MULTI_TENANT", state)
-    monkeypatch.setattr("onyx.document_index.opensearch.schema.MULTI_TENANT", state)
+    monkeypatch.setattr("lumen.document_index.opensearch.schema.MULTI_TENANT", state)
 
 
 def _patch_hybrid_search_subquery_configuration(
@@ -94,11 +94,11 @@ def _patch_hybrid_search_subquery_configuration(
             HYBRID_SEARCH_SUBQUERY_CONFIGURATION.
     """
     monkeypatch.setattr(
-        "onyx.document_index.opensearch.constants.HYBRID_SEARCH_SUBQUERY_CONFIGURATION",
+        "lumen.document_index.opensearch.constants.HYBRID_SEARCH_SUBQUERY_CONFIGURATION",
         configuration,
     )
     monkeypatch.setattr(
-        "onyx.document_index.opensearch.search.HYBRID_SEARCH_SUBQUERY_CONFIGURATION",
+        "lumen.document_index.opensearch.search.HYBRID_SEARCH_SUBQUERY_CONFIGURATION",
         configuration,
     )
 
@@ -111,11 +111,11 @@ def _patch_hybrid_search_normalization_pipeline(
     test file.
     """
     monkeypatch.setattr(
-        "onyx.document_index.opensearch.constants.HYBRID_SEARCH_NORMALIZATION_PIPELINE",
+        "lumen.document_index.opensearch.constants.HYBRID_SEARCH_NORMALIZATION_PIPELINE",
         pipeline,
     )
     monkeypatch.setattr(
-        "onyx.document_index.opensearch.search.HYBRID_SEARCH_NORMALIZATION_PIPELINE",
+        "lumen.document_index.opensearch.search.HYBRID_SEARCH_NORMALIZATION_PIPELINE",
         pipeline,
     )
 
@@ -128,11 +128,11 @@ def _patch_opensearch_match_highlights_disabled(
     test file.
     """
     monkeypatch.setattr(
-        "onyx.configs.app_configs.OPENSEARCH_MATCH_HIGHLIGHTS_DISABLED",
+        "lumen.configs.app_configs.OPENSEARCH_MATCH_HIGHLIGHTS_DISABLED",
         disabled,
     )
     monkeypatch.setattr(
-        "onyx.document_index.opensearch.search.OPENSEARCH_MATCH_HIGHLIGHTS_DISABLED",
+        "lumen.document_index.opensearch.search.OPENSEARCH_MATCH_HIGHLIGHTS_DISABLED",
         disabled,
     )
 
@@ -3323,7 +3323,7 @@ class TestIndexReclaimPrimitive:
         INCOMPLETE until the last batch, then COMPLETE (the whale guard)."""
         self._create_mt_index(test_client, monkeypatch)
         monkeypatch.setattr(
-            "onyx.document_index.opensearch.index_reclaim.OLD_INDEX_RECLAIM_DELETE_BATCH_SIZE",
+            "lumen.document_index.opensearch.index_reclaim.OLD_INDEX_RECLAIM_DELETE_BATCH_SIZE",
             2,
         )
         ts = TenantState(tenant_id=f"tenant_{uuid.uuid4().hex}", multitenant=True)

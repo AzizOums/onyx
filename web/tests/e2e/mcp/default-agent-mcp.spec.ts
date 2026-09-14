@@ -6,7 +6,7 @@ import {
   deleteGrantGroups,
 } from "@tests/e2e/utils/grantPermissions";
 import { ensureOnboardingComplete } from "@tests/e2e/utils/chatActions";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import {
   startMcpApiKeyServer,
   McpServerProcess,
@@ -63,7 +63,7 @@ test.describe("Default Agent MCP Integration", () => {
     const adminContext = await browser.newContext({
       storageState: "admin_auth.json",
     });
-    const adminClient = new OnyxApiClient(adminContext.request);
+    const adminClient = new LumenApiClient(adminContext.request);
 
     createdProviderId = await adminClient.ensurePublicProvider();
 
@@ -111,7 +111,7 @@ test.describe("Default Agent MCP Integration", () => {
     const adminContext = await browser.newContext({
       storageState: "admin_auth.json",
     });
-    const adminClient = new OnyxApiClient(adminContext.request);
+    const adminClient = new LumenApiClient(adminContext.request);
 
     if (createdProviderId !== null) {
       await adminClient.deleteProvider(createdProviderId);
@@ -219,7 +219,7 @@ test.describe("Default Agent MCP Integration", () => {
     await editor.enableFirstMcpTool(serverId);
     const agentId = await editor.create();
 
-    const client = new OnyxApiClient(page.request);
+    const client = new LumenApiClient(page.request);
     const assistant = await client.getAssistant(agentId);
     expect(
       assistant.tools.some((tool) => tool.mcp_server_id === serverId)

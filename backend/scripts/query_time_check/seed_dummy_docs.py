@@ -12,16 +12,16 @@ Then run test_query_times.py to test query times.
 import random
 from datetime import datetime
 
-from onyx.access.models import DocumentAccess
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import Document
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.search_settings import get_current_search_settings
-from onyx.document_index.document_index_utils import get_multipass_config
-from onyx.document_index.interfaces_new import IndexingMetadata, TenantState
-from onyx.document_index.vespa.vespa_document_index import VespaDocumentIndex
-from onyx.indexing.models import ChunkEmbedding, DocMetadataAwareIndexChunk, IndexChunk
-from onyx.utils.timing import log_function_time
+from lumen.access.models import DocumentAccess
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import Document
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.search_settings import get_current_search_settings
+from lumen.document_index.document_index_utils import get_multipass_config
+from lumen.document_index.interfaces_new import IndexingMetadata, TenantState
+from lumen.document_index.vespa.vespa_document_index import VespaDocumentIndex
+from lumen.indexing.models import ChunkEmbedding, DocMetadataAwareIndexChunk, IndexChunk
+from lumen.utils.timing import log_function_time
 from shared_configs.configs import MULTI_TENANT, POSTGRES_DEFAULT_SCHEMA
 from shared_configs.model_server_models import Embedding
 

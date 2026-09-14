@@ -9,9 +9,9 @@ from __future__ import annotations
 
 import pytest
 
-from onyx.db.enums import EndpointPolicy, ExternalAppType
-from onyx.external_apps.providers import registry
-from onyx.external_apps.providers.actions import (
+from lumen.db.enums import EndpointPolicy, ExternalAppType
+from lumen.external_apps.providers import registry
+from lumen.external_apps.providers.actions import (
     EndpointSpec,
     ExternalAppAction,
     RestRoute,

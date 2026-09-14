@@ -16,11 +16,11 @@ import {
 // user id, reads fall back to defaults and writes are dropped.
 
 function llmSelectionKey(userId: string): string {
-  return `onyx:craftLlmSelection:${userId}`;
+  return `lumen:craftLlmSelection:${userId}`;
 }
 
 function recommendedOnlyKey(userId: string): string {
-  return `onyx:craftRecommendedModelsOnly:${userId}`;
+  return `lumen:craftRecommendedModelsOnly:${userId}`;
 }
 
 export function getStoredRecommendedModelsOnly(

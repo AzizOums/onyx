@@ -4,11 +4,11 @@ from datetime import datetime, timezone
 
 import pytest
 
-from onyx.connectors.models import InputType
-from onyx.db.document import get_documents_for_cc_pair
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import AccessType
-from onyx.server.documents.models import DocumentSource
+from lumen.connectors.models import InputType
+from lumen.db.document import get_documents_for_cc_pair
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import AccessType
+from lumen.server.documents.models import DocumentSource
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.connector import ConnectorManager
 from tests.integration.common_utils.managers.credential import CredentialManager
@@ -21,7 +21,7 @@ from tests.integration.common_utils.vespa import vespa_fixture
 TEST_FILES_BASE = "tests/integration/tests/indexing/file_connector/test_files"
 TEST_META_ZIP_PATH = f"{TEST_FILES_BASE}/with_meta.zip"
 TEST_NO_META_ZIP_PATH = f"{TEST_FILES_BASE}/without_meta.zip"
-TEST_METADATA_FILE = f"{TEST_FILES_BASE}/.onyx_metadata.json"
+TEST_METADATA_FILE = f"{TEST_FILES_BASE}/.lumen_metadata.json"
 
 
 @pytest.mark.parametrize(
@@ -102,7 +102,7 @@ def test_zip_metadata_handling(
     with get_session_with_current_tenant() as db_session:
         documents = get_documents_for_cc_pair(db_session, cc_pair.id)
 
-    # Expected metadata from the .onyx_metadata.json file
+    # Expected metadata from the .lumen_metadata.json file
     with open(TEST_METADATA_FILE, "r") as f:
         expected_metadata = json.load(f)
 

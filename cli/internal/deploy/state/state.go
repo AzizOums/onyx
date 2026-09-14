@@ -20,7 +20,7 @@ const FileName = "install-state.json"
 
 // pristineDirName holds the as-written copies of managed files, keyed by
 // their DestRel paths, inside the install root.
-const pristineDirName = ".onyx-cli-pristine"
+const pristineDirName = ".lumen-cli-pristine"
 
 // SchemaVersion is the current manifest schema.
 const SchemaVersion = 1
@@ -86,7 +86,7 @@ func Load(installRoot string) (*Manifest, error) {
 		return nil, fmt.Errorf("failed to parse %s: %w", FileName, err)
 	}
 	if m.SchemaVersion > SchemaVersion {
-		return nil, fmt.Errorf("%s has schema version %d, written by a newer onyx-cli — upgrade the CLI",
+		return nil, fmt.Errorf("%s has schema version %d, written by a newer lumen-cli — upgrade the CLI",
 			FileName, m.SchemaVersion)
 	}
 	return &m, nil

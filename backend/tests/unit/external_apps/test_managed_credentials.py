@@ -1,27 +1,27 @@
-"""Each Onyx-managed provider resolves its Onyx-owned credentials from the
+"""Each Lumen-managed provider resolves its Lumen-owned credentials from the
 per-field ``managed_org_credentials`` values
-(``OnyxManagedExtApp.configured_managed_credentials``)."""
+(``LumenManagedExtApp.configured_managed_credentials``)."""
 
 from __future__ import annotations
 
 import pytest
 
-from onyx.db.enums import ExternalAppType
-from onyx.external_apps.providers.base import OnyxManagedExtApp
-from onyx.external_apps.providers.registry import PROVIDERS, get_onyx_managed_provider
+from lumen.db.enums import ExternalAppType
+from lumen.external_apps.providers.base import LumenManagedExtApp
+from lumen.external_apps.providers.registry import PROVIDERS, get_lumen_managed_provider
 
 
-def _gmail() -> OnyxManagedExtApp:
-    provider = get_onyx_managed_provider(ExternalAppType.GMAIL)
+def _gmail() -> LumenManagedExtApp:
+    provider = get_lumen_managed_provider(ExternalAppType.GMAIL)
     assert provider is not None
     return provider
 
 
 def test_managed_credential_keys_match_required_fields() -> None:
-    """Each Onyx-managed provider maps exactly its required credential fields.
+    """Each Lumen-managed provider maps exactly its required credential fields.
     (Also enforced at class-definition time in ExternalAppProvider.__init_subclass__;
     this pins it as an explicit, readable invariant.)"""
-    managed = [p for p in PROVIDERS.values() if isinstance(p, OnyxManagedExtApp)]
+    managed = [p for p in PROVIDERS.values() if isinstance(p, LumenManagedExtApp)]
     assert managed  # sanity: at least one managed provider exists
     for provider in managed:
         required = {

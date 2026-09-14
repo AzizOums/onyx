@@ -5,19 +5,19 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from onyx.chat.emitter import Emitter
-from onyx.server.query_and_chat.placement import Placement
-from onyx.server.query_and_chat.session_loading import create_memory_packets
-from onyx.server.query_and_chat.streaming_models import (
+from lumen.chat.emitter import Emitter
+from lumen.server.query_and_chat.placement import Placement
+from lumen.server.query_and_chat.session_loading import create_memory_packets
+from lumen.server.query_and_chat.streaming_models import (
     MemoryToolDelta,
     MemoryToolStart,
     SectionEnd,
 )
-from onyx.tools.tool_implementations.memory.memory_tool import (
+from lumen.tools.tool_implementations.memory.memory_tool import (
     MemoryTool,
     MemoryToolOverrideKwargs,
 )
-from onyx.tools.tool_implementations.memory.models import MemoryToolResponse
+from lumen.tools.tool_implementations.memory.models import MemoryToolResponse
 
 
 @pytest.fixture
@@ -86,7 +86,7 @@ class TestMemoryToolEmitStart:
 
 
 class TestMemoryToolRun:
-    @patch("onyx.tools.tool_implementations.memory.memory_tool.process_memory_update")
+    @patch("lumen.tools.tool_implementations.memory.memory_tool.process_memory_update")
     def test_run_emits_delta_for_add_operation(
         self,
         mock_process: MagicMock,
@@ -110,7 +110,7 @@ class TestMemoryToolRun:
         assert packet.obj.memory_id is None
         assert packet.obj.index is None
 
-    @patch("onyx.tools.tool_implementations.memory.memory_tool.process_memory_update")
+    @patch("lumen.tools.tool_implementations.memory.memory_tool.process_memory_update")
     def test_run_emits_delta_for_update_operation(
         self,
         mock_process: MagicMock,
@@ -134,7 +134,7 @@ class TestMemoryToolRun:
         assert packet.obj.memory_id is None
         assert packet.obj.index == 0
 
-    @patch("onyx.tools.tool_implementations.memory.memory_tool.process_memory_update")
+    @patch("lumen.tools.tool_implementations.memory.memory_tool.process_memory_update")
     def test_run_returns_tool_response_with_rich_response(
         self,
         mock_process: MagicMock,

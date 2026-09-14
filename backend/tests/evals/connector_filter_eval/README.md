@@ -1,8 +1,8 @@
 # Connector-filter extraction eval (CI regression gate)
 
 Scored regression eval for the source-scope filter extraction
-(`decide_search_scope` in `onyx/secondary_llm_flows/source_filter.py`, driven by
-`SOURCE_SCOPE_DECISION_PROMPT` in `onyx/prompts/filter_extration.py`).
+(`decide_search_scope` in `lumen/secondary_llm_flows/source_filter.py`, driven by
+`SOURCE_SCOPE_DECISION_PROMPT` in `lumen/prompts/filter_extration.py`).
 
 `test_filter_extraction_regression.py` runs every eval question in
 `scope_eval_cases.py` directly through `decide_search_scope` (real LLM, no
@@ -27,8 +27,8 @@ The dataset covers the behaviors the prompt is responsible for:
 ## When it runs
 
 CI runs this via `.github/workflows/pr-connector-filter-eval.yml`, which
-triggers ONLY when `onyx/prompts/filter_extration.py`,
-`onyx/secondary_llm_flows/source_filter.py`, or this suite changes — a prompt
+triggers ONLY when `lumen/prompts/filter_extration.py`,
+`lumen/secondary_llm_flows/source_filter.py`, or this suite changes — a prompt
 tweak gets scored against the full dataset before it merges, and no other PR
 pays for the LLM calls. The suite lives under `tests/evals` (not
 `tests/external_dependency_unit`) so the External Dependency Unit Tests CI
@@ -47,7 +47,7 @@ RUN_CONNECTOR_FILTER_EVAL=1 \
 ```
 
 Requires Postgres/Redis up. `EVAL_LLM_PROVIDER` is the provider's *configured
-name* in Onyx (e.g. `"DevEnvPresetOpenAI"`), not the slug `"openai"`; when the
+name* in Lumen (e.g. `"DevEnvPresetOpenAI"`), not the slug `"openai"`; when the
 env vars are unset the tenant default provider is used. In CI (fresh database,
 no provider configured) the conftest auto-provisions an OpenAI provider from
 `OPENAI_API_KEY` using `gpt-5-mini`. Use the cheap tiers for real calls: OpenAI

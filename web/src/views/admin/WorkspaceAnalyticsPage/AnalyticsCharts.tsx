@@ -1,6 +1,6 @@
 import { useLocale, useTranslations } from "next-intl";
 import {
-  useOnyxBotAnalytics,
+  useLumenBotAnalytics,
   useQueryAnalytics,
   useUserAnalytics,
 } from "@/lib/usage/hooks";
@@ -91,9 +91,9 @@ export function FeedbackChart({ timeRange }: TimeRangeProps) {
 
 export function SlackChannelChart({ timeRange }: TimeRangeProps) {
   const t = useTranslations("admin.analytics");
-  const { data, isLoading, error } = useOnyxBotAnalytics(timeRange);
+  const { data, isLoading, error } = useLumenBotAnalytics(timeRange);
 
-  useLoggedChartError("OnyxBot", error);
+  useLoggedChartError("LumenBot", error);
 
   return (
     <AnalyticsChart

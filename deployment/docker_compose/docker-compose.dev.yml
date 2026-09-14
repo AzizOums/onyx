@@ -16,14 +16,14 @@
 #   export COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml
 #   docker compose up -d --wait
 #
-# Or let onyx-cli manage the deployment with this overlay stacked on:
-#   onyx-cli deploy install --dev
+# Or let lumen-cli manage the deployment with this overlay stacked on:
+#   lumen-cli deploy install --dev
 
 services:
   api_server:
     # Building through this overlay produces the dev image variant (runtime + debugging
     # tools such as vim/psql/curl), matching the published -dev tag suffix. CI is
-    # unaffected: it injects prebuilt images via ONYX_BACKEND_IMAGE and never builds
+    # unaffected: it injects prebuilt images via LUMEN_BACKEND_IMAGE and never builds
     # through compose.
     build:
       target: dev
@@ -47,7 +47,7 @@ services:
     healthcheck:
       start_interval: 1s
 
-  # Uncomment the block below to enable the MCP server for Onyx.
+  # Uncomment the block below to enable the MCP server for Lumen.
   # mcp_server:
   #   ports:
   #     - "8090:8090"

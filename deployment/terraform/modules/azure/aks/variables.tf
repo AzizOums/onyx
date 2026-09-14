@@ -164,14 +164,14 @@ variable "node_pools" {
       min_count = 1
       max_count = 5
     }
-    # Onyx runs its document index in-cluster on Azure, because Azure has no
+    # Lumen runs its document index in-cluster on Azure, because Azure has no
     # managed OpenSearch. This pool is the one the index lands on.
     index = {
       vm_size         = "Standard_E8ds_v5"
       min_count       = 1
       max_count       = 1
       os_disk_size_gb = 512
-      node_labels     = { "onyx.app/workload" = "document-index" }
+      node_labels     = { "lumen.app/workload" = "document-index" }
       node_taints     = ["document-index=true:NoSchedule"]
     }
   }
@@ -291,13 +291,13 @@ variable "storage_role_definition_name" {
 variable "workload_service_account_namespace" {
   type        = string
   description = "Namespace of the service account the workload identity federates to"
-  default     = "onyx"
+  default     = "lumen"
 }
 
 variable "workload_service_account_name" {
   type        = string
   description = "Service account the workload identity federates to. The module creates it, annotated with the identity's client id."
-  default     = "onyx-workload-access"
+  default     = "lumen-workload-access"
 }
 
 variable "additional_workload_service_account_names" {
@@ -332,7 +332,7 @@ variable "create_premium_storage_class" {
 variable "premium_storage_class_name" {
   type        = string
   description = "Name of the storage class the module creates"
-  default     = "onyx-premium"
+  default     = "lumen-premium"
 }
 
 # AKS already ships a class marked default, so marking a second one leaves the

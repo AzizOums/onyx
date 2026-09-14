@@ -13,14 +13,14 @@ from datetime import datetime, timedelta, timezone
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ArtifactType, ReceiptStatus
-from onyx.db.models import ActionReceipt, Artifact, BuildSession
-from onyx.server.features.build.db.artifact import (
+from lumen.db.enums import ArtifactType, ReceiptStatus
+from lumen.db.models import ActionReceipt, Artifact, BuildSession
+from lumen.server.features.build.db.artifact import (
     get_session_artifacts,
     mark_artifact_deleted,
     upsert_artifact,
 )
-from onyx.server.features.build.db.receipt import (
+from lumen.server.features.build.db.receipt import (
     finalize_receipt,
     get_session_receipts,
     insert_pending_receipt,

@@ -16,7 +16,7 @@ import { useOnboarding } from "@/app/craft/onboarding/BuildOnboardingProvider";
 
 /**
  * Inline provider setup shown on the craft welcome page when an admin has no
- * provider configured. Craft routes every provider through the Onyx gateway,
+ * provider configured. Craft routes every provider through the Lumen gateway,
  * so the whole catalog is offered; the common providers just sort first.
  * Clicking a card opens the shared provider-specific modal (hosted by
  * BuildOnboardingProvider).

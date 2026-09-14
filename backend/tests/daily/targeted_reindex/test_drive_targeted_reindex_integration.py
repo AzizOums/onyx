@@ -27,13 +27,13 @@ import os
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.docprocessing.targeted_reindex_task import (
+from lumen.background.celery.tasks.docprocessing.targeted_reindex_task import (
     run_targeted_reindex,
 )
-from onyx.db.enums import IndexingStatus
-from onyx.db.models import Document as DBDocument
-from onyx.db.models import IndexAttemptError
-from onyx.db.targeted_reindex import (
+from lumen.db.enums import IndexingStatus
+from lumen.db.models import Document as DBDocument
+from lumen.db.models import IndexAttemptError
+from lumen.db.targeted_reindex import (
     create_targeted_reindex_job,
     get_targeted_reindex_job,
     resolve_error_ids_to_targets,

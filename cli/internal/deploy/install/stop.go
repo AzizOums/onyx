@@ -3,9 +3,9 @@ package install
 import (
 	"context"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/paths"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/paths"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
 )
 
 // RunStop implements `deploy stop` (install.sh --shutdown): pause the
@@ -18,7 +18,7 @@ func RunStop(ctx context.Context, deps Deps, opts Options) error {
 func (in *installer) runStop(ctx context.Context) error {
 	in.root = paths.Resolve(in.opts.Dir)
 	if !in.hasComposeFile() {
-		in.warnf("No Onyx deployment found at %s. Nothing to shut down.", in.root.Dir)
+		in.warnf("No Lumen deployment found at %s. Nothing to shut down.", in.root.Dir)
 		return nil
 	}
 	in.resolveProjectFromDisk()
@@ -27,7 +27,7 @@ func (in *installer) runStop(ctx context.Context) error {
 		return err
 	}
 
-	in.infof("Stopping Onyx containers...")
+	in.infof("Stopping Lumen containers...")
 	// Overlays are auto-detected from disk so users don't need to remember
 	// which flags they installed with; HOST_PORT/IMAGE_TAG fall back to safe
 	// defaults because compose only needs them to resolve the file, not to
@@ -38,9 +38,9 @@ func (in *installer) runStop(ctx context.Context) error {
 		in.errorf("Failed to stop containers")
 		return exitcodes.Newf(exitcodes.General, "docker compose stop failed: %v", err)
 	}
-	in.successf("Onyx containers stopped (paused)")
+	in.successf("Lumen containers stopped (paused)")
 	in.plainf("")
-	in.infof("Start them again with: %s", in.paint.Accent("onyx-cli deploy install"))
+	in.infof("Start them again with: %s", in.paint.Accent("lumen-cli deploy install"))
 	return nil
 }
 

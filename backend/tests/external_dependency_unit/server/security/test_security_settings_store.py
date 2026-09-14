@@ -10,14 +10,14 @@ from pydantic import ValidationError
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import SecuritySettings as SecuritySettingsRow
-from onyx.server.security import store as security_store
-from onyx.server.security.models import (
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.models import SecuritySettings as SecuritySettingsRow
+from lumen.server.security import store as security_store
+from lumen.server.security.models import (
     IncognitoAvailability,
     SecuritySettingsOverrides,
 )
-from onyx.server.security.store import (
+from lumen.server.security.store import (
     _build_env_defaults,
     _install_cache_for_test,
     apply_patch,

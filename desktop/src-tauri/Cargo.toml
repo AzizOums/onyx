@@ -1,13 +1,13 @@
 [package]
-name = "onyx"
+name = "lumen"
 version = "0.0.0-dev"
-description = "Lightweight desktop app for Onyx Cloud"
+description = "Lightweight desktop app for Lumen Cloud"
 authors = ["you"]
 edition = "2021"
 license = "MIT"
-repository = "https://github.com/onyx-dot-app/onyx"
+repository = "https://github.com/lumen-dot-app/lumen"
 readme = "../README.md"
-keywords = ["desktop", "tauri", "onyx"]
+keywords = ["desktop", "tauri", "lumen"]
 categories = ["gui"]
 publish = false
 

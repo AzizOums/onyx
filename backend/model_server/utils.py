@@ -8,7 +8,7 @@ from typing import Any, TypeVar, cast
 import torch
 
 from model_server.constants import GPUStatus
-from onyx.utils.logger import setup_logger
+from lumen.utils.logger import setup_logger
 
 logger = setup_logger()
 

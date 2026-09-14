@@ -84,7 +84,7 @@ Every manager action passes **two** independent checks. The first lets them *rea
   └──────────────────────────────────────────────────────────────────────────┘
         │
         ▼
-  write commits  (or OnyxError FORBIDDEN)
+  write commits  (or LumenError FORBIDDEN)
 ```
 
 **Why two gates and not one?** The route gate is cheap and coarse — it answers "could this user *ever* do this?"
@@ -126,7 +126,7 @@ The gate therefore loads the resource's **current** groups in the same transacti
 3. **Inside the DB write**, `assert_within_scope` re-reads the cc_pair's current groups, checks
    `current ∪ requested ⊆ get_scoped_groups(Alice)`, checks `access_type != PUBLIC` (PRIVATE or SYNC).
    Pass → write; fail →
-   `OnyxError(INSUFFICIENT_PERMISSIONS)`, transaction rolls back.
+   `LumenError(INSUFFICIENT_PERMISSIONS)`, transaction rolls back.
 
 ### Membership path (Alice adds Bob to Engineering)
 1. Route gate `has_permission(MANAGE_USER_GROUPS)` → passes.

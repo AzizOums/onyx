@@ -271,7 +271,7 @@
         },
         "placeholder": "Sélectionner une méthode",
         "ptOauth": {
-          "description": "Transférez le jeton d'accès OAuth utilisé par l'utilisateur pour s'authentifier auprès de Onyx.",
+          "description": "Transférez le jeton d'accès OAuth utilisé par l'utilisateur pour s'authentifier auprès de Lumen.",
           "label": "Transfert OAuth"
         },
         "required": "Le type d'authentification est obligatoire"
@@ -310,11 +310,11 @@
         "title": "Aucune authentification pour ce serveur MCP"
       },
       "oauthInfo": {
-        "discovery": "L'ID client et le secret sont facultatifs. Pendant la découverte automatique, Onyx utilise un Client ID Metadata Document (CIMD) quand il est pris en charge, sinon il revient à l'enregistrement dynamique de client (DCR).",
-        "manualRegistration": "Si votre serveur ne prend en charge aucune des deux méthodes, enregistrez d'abord votre instance Onyx auprès du fournisseur du serveur. Accordez à Onyx les portées nécessaires à vos actions."
+        "discovery": "L'ID client et le secret sont facultatifs. Pendant la découverte automatique, Lumen utilise un Client ID Metadata Document (CIMD) quand il est pris en charge, sinon il revient à l'enregistrement dynamique de client (DCR).",
+        "manualRegistration": "Si votre serveur ne prend en charge aucune des deux méthodes, enregistrez d'abord votre instance Lumen auprès du fournisseur du serveur. Accordez à Lumen les portées nécessaires à vos actions."
       },
       "passThroughNotice": {
-        "description": "Onyx transférera le jeton d'accès OAuth de l'utilisateur directement au serveur, dans un en-tête Authorization. Assurez-vous que le serveur prend en charge l'authentification avec le même fournisseur.",
+        "description": "Lumen transférera le jeton d'accès OAuth de l'utilisateur directement au serveur, dans un en-tête Authorization. Assurez-vous que le serveur prend en charge l'authentification avec le même fournisseur.",
         "title": "Utilisez le transfert pour les services qui partagent le même fournisseur d'identité."
       },
       "providerMode": {
@@ -468,7 +468,7 @@
         },
         "placeholder": "Sélectionner une méthode",
         "ptOauth": {
-          "description": "Transférez le jeton d'accès OAuth utilisé par l'utilisateur pour s'authentifier auprès de Onyx.",
+          "description": "Transférez le jeton d'accès OAuth utilisé par l'utilisateur pour s'authentifier auprès de Lumen.",
           "label": "Transfert OAuth"
         },
         "required": "La méthode d'authentification est obligatoire"
@@ -516,7 +516,7 @@
         "description": "Le transfert OAuth exige une méthode de connexion compatible OAuth (Google ou OIDC)."
       },
       "passThroughNotice": {
-        "description": "Onyx transférera le jeton d'accès OAuth de l'utilisateur directement au serveur, dans un en-tête Authorization. Assurez-vous que le serveur prend en charge l'authentification avec le même fournisseur.",
+        "description": "Lumen transférera le jeton d'accès OAuth de l'utilisateur directement au serveur, dans un en-tête Authorization. Assurez-vous que le serveur prend en charge l'authentification avec le même fournisseur.",
         "title": "Utilisez le transfert pour les services qui partagent le même fournisseur d'identité."
       },
       "redirectUri": {
@@ -993,7 +993,7 @@
         "title": "Commentaires"
       },
       "page": {
-        "description": "Comprenez comment votre espace de travail utilise Onyx : requêtes, commentaires et agents."
+        "description": "Comprenez comment votre espace de travail utilise Lumen : requêtes, commentaires et agents."
       },
       "reports": {
         "calendar": {
@@ -1060,8 +1060,8 @@
       },
       "slackChannelChart": {
         "description": "Total des requêtes et requêtes résolues automatiquement",
-        "empty": "Aucune activité OnyxBot dans cet espace de travail sur la période sélectionnée.",
-        "error": "Échec de la récupération des données OnyxBot.",
+        "empty": "Aucune activité LumenBot dans cet espace de travail sur la période sélectionnée.",
+        "error": "Échec de la récupération des données LumenBot.",
         "series": {
           "autoResolved": {
             "label": "Résolues automatiquement"
@@ -1085,367 +1085,6 @@
           }
         },
         "title": "Utilisation"
-      }
-    },
-    "billing": {
-      "activatingBanner": {
-        "description": "Votre licence est en cours de traitement. Vous serez redirigé automatiquement vers les détails de facturation après confirmation.",
-        "title": "Votre licence est encore en cours d'activation"
-      },
-      "banners": {
-        "airGapped": {
-          "description": "La gestion de la facturation en ligne est désactivée. Contactez l'assistance pour mettre à jour votre abonnement.",
-          "title": "Déploiement isolé du réseau"
-        },
-        "expired": {
-          "description": "Renouvelez votre abonnement pour rétablir l'accès aux fonctionnalités payantes.",
-          "title": "Votre abonnement a expiré.",
-          "withDate": {
-            "description": "Renouvelez votre abonnement avant le {date} pour rétablir l'accès."
-          },
-          "withDeletion": {
-            "title": "Votre abonnement a expiré. Les données seront supprimées dans {days} jours."
-          }
-        },
-        "expiring": {
-          "description": "Renouvelez votre abonnement avant le {date} pour éviter toute interruption.",
-          "title": "Votre abonnement expire dans {days} jours."
-        },
-        "graceSync": {
-          "title": "Recherche d'une licence renouvelée…"
-        },
-        "stripeError": {
-          "description": "Vérifiez votre connexion Internet ou fournissez une licence manuellement.",
-          "title": "Impossible de se connecter au portail de paiement Stripe."
-        }
-      },
-      "checkout": {
-        "adjustPlan": {
-          "label": "Ajuster le forfait"
-        },
-        "annual": {
-          "label": "Annuel"
-        },
-        "annualBadge": {
-          "label": "Économisez 20 %"
-        },
-        "billingCycle": {
-          "description": "après votre essai gratuit d'un mois",
-          "title": "Cycle de facturation"
-        },
-        "continueToPayment": {
-          "label": "Passer au paiement"
-        },
-        "createSessionFailed": {
-          "error": "Échec de la création de la session de paiement"
-        },
-        "loading": {
-          "label": "Chargement..."
-        },
-        "monthly": {
-          "label": "Mensuel"
-        },
-        "perSeatMonth": {
-          "label": "par place/mois"
-        },
-        "plan": {
-          "title": "Business"
-        },
-        "price": {
-          "label": "{price} $"
-        },
-        "seats": {
-          "description": "{count, plural, one {# place minimum requise pour vos utilisateurs et vos comptes Slack actuels.} other {# places minimum requises pour vos utilisateurs et vos comptes Slack actuels.}}",
-          "title": "Places"
-        },
-        "trialBilling": {
-          "text": "Vous serez facturé le <value>{date}</value> après la fin de votre essai gratuit d'un mois."
-        }
-      },
-      "footer": {
-        "activateLicenseKey": {
-          "label": "Activer la clé de licence"
-        },
-        "billingHelp": {
-          "label": "Aide à la facturation"
-        },
-        "licenseKeyPrompt": {
-          "label": "Vous avez une clé de licence ?"
-        },
-        "updateLicenseKey": {
-          "label": "Mettre à jour la clé de licence"
-        }
-      },
-      "header": {
-        "plansBilling": {
-          "title": "Forfaits et facturation"
-        },
-        "upgradePlan": {
-          "title": "Mettre à niveau le forfait"
-        },
-        "viewPlans": {
-          "title": "Voir les forfaits"
-        }
-      },
-      "info": {
-        "empty": {
-          "message": "Aucune information de facturation disponible."
-        },
-        "loadError": {
-          "message": "Erreur lors du chargement des informations de facturation. Veuillez réessayer plus tard."
-        },
-        "loading": {
-          "label": "Chargement..."
-        },
-        "manageSubscription": {
-          "description": "Consultez votre forfait, mettez à jour le paiement ou modifiez l'abonnement",
-          "title": "Gérer l'abonnement"
-        },
-        "page": {
-          "title": "Informations de facturation"
-        },
-        "portalError": {
-          "message": "Erreur lors de la création de la session du portail client"
-        },
-        "subscriptionDetails": {
-          "title": "Détails de l'abonnement"
-        },
-        "summary": {
-          "billingEnd": {
-            "label": "Fin de facturation"
-          },
-          "billingStart": {
-            "label": "Début de facturation"
-          },
-          "seats": {
-            "label": "Sièges"
-          },
-          "status": {
-            "label": "Statut de l'abonnement"
-          }
-        },
-        "updatedToast": {
-          "message": "Félicitations ! Votre abonnement a été mis à jour avec succès."
-        }
-      },
-      "license": {
-        "activateFailed": {
-          "error": "Échec de l'activation de la licence"
-        },
-        "activateLicense": {
-          "label": "Activer la licence"
-        },
-        "activateSuccess": {
-          "message": "Licence activée avec succès !"
-        },
-        "activateTitle": {
-          "title": "Activer la clé de licence"
-        },
-        "activating": {
-          "label": "Activation..."
-        },
-        "activeUntil": {
-          "label": "Clé de licence active jusqu'au <value>{date}</value>"
-        },
-        "cancel": {
-          "label": "Annuler"
-        },
-        "close": {
-          "label": "Fermer"
-        },
-        "description": "Ajoutez et activez manuellement une licence pour cette instance Onyx.",
-        "emptyKey": {
-          "error": "Saisissez une clé de licence"
-        },
-        "error": {
-          "text": "{error}. <link>Aide à la facturation</link>"
-        },
-        "expired": {
-          "label": "Clé de licence expirée"
-        },
-        "keyField": {
-          "description": "Collez ou joignez le fichier de clé de licence que vous avez reçu d'Onyx.",
-          "title": "Clé de licence"
-        },
-        "updateKey": {
-          "label": "Mettre à jour la clé"
-        },
-        "updateLicense": {
-          "label": "Mettre à jour la licence"
-        },
-        "updateSuccess": {
-          "message": "Licence mise à jour avec succès !"
-        },
-        "updateTitle": {
-          "title": "Mettre à jour la clé de licence"
-        }
-      },
-      "payment": {
-        "card": {
-          "description": "Moyen de paiement",
-          "title": "Visa se terminant par 1234"
-        },
-        "lastPayment": {
-          "description": "Dernier paiement"
-        },
-        "section": {
-          "title": "Paiement"
-        },
-        "update": {
-          "label": "Mettre à jour"
-        },
-        "viewInvoice": {
-          "label": "Voir la facture"
-        }
-      },
-      "plans": {
-        "business": {
-          "button": {
-            "label": "Choisir le forfait Business"
-          },
-          "description": "par place/mois avec facturation annuelle\nou 25 $ par place avec facturation mensuelle",
-          "features": {
-            "apiKeys": "Clés d'API de compte de service",
-            "documentPermissions": "Héritage des autorisations des documents",
-            "encryption": "Chiffrement des secrets",
-            "queryHistory": "Historique des requêtes et tableau de bord d'utilisation",
-            "rbac": "Contrôle d'accès basé sur les rôles (RBAC)",
-            "selfHosting": "Auto-hébergement (facultatif)",
-            "theming": "Thèmes personnalisés"
-          },
-          "featuresPrefix": "Accomplissez plus de travail grâce à l'IA pour votre équipe.",
-          "pricing": "20 $",
-          "title": "Business"
-        },
-        "card": {
-          "ariaLabel": "Carte du forfait {plan}"
-        },
-        "currentPlan": {
-          "label": "Votre forfait actuel"
-        },
-        "enterprise": {
-          "button": {
-            "label": "Contacter le service commercial"
-          },
-          "description": "Tarifs et options de déploiement flexibles\npour les grandes organisations",
-          "features": {
-            "customDeployments": "Déploiements personnalisés",
-            "customRoles": "Rôles et autorisations personnalisés",
-            "hookExtensions": "Extensions de hooks",
-            "regionalProcessing": "Traitement des données par région",
-            "scim": "SCIM / Synchronisation des groupes",
-            "support": "SLA Enterprise et assistance prioritaire",
-            "usageLimits": "Limites d'utilisation configurables",
-            "whiteLabeling": "Marque blanche complète"
-          },
-          "featuresPrefix": "Tout ce qui est inclus dans le forfait Business, plus :",
-          "title": "Enterprise"
-        },
-        "includedInPlan": {
-          "label": "Inclus dans votre forfait"
-        }
-      },
-      "seats": {
-        "belowMinimum": {
-          "error": "Vous ne pouvez pas définir un nombre de places inférieur aux **{minimum}** places actuellement utilisées ou en attente. [Retirez des utilisateurs](/admin/users) avant d'ajuster les places."
-        },
-        "billing": {
-          "added": "{count, plural, one {Vous serez facturé au prorata pour <value>{count}</value> place supplémentaire.} other {Vous serez facturé au prorata pour <value>{count}</value> places supplémentaires.}}",
-          "removed": "{count, plural, one {<value>{count}</value> place sera retirée le <value>{date}</value> (après le cycle de facturation actuel).} other {<value>{count}</value> places seront retirées le <value>{date}</value> (après le cycle de facturation actuel).}}",
-          "unchanged": "Aucun changement pour votre facturation."
-        },
-        "breakdown": {
-          "label": "{used} utilisées • {pending} en attente • {remaining} restantes"
-        },
-        "cancel": {
-          "label": "Annuler"
-        },
-        "confirmChange": {
-          "label": "Confirmer la modification"
-        },
-        "delta": {
-          "added": "{count, plural, one {# place à ajouter} other {# places à ajouter}}",
-          "removed": "{count, plural, one {# place à retirer} other {# places à retirer}}"
-        },
-        "saving": {
-          "label": "Enregistrement..."
-        },
-        "seatsField": {
-          "title": "Places"
-        },
-        "total": {
-          "label": "{count} places"
-        },
-        "updateFailed": {
-          "error": "Échec de la mise à jour des places"
-        },
-        "updateSeats": {
-          "description": "Ajoutez ou retirez des places pour refléter la taille de votre équipe.",
-          "label": "Mettre à jour les places",
-          "title": "Mettre à jour les places"
-        },
-        "viewUsers": {
-          "label": "Voir les utilisateurs"
-        }
-      },
-      "subscription": {
-        "businessPlan": {
-          "name": "Forfait Business"
-        },
-        "connectToStripe": {
-          "label": "Se connecter à Stripe"
-        },
-        "connecting": {
-          "label": "Connexion..."
-        },
-        "enterprisePlan": {
-          "name": "Forfait Enterprise"
-        },
-        "expired": {
-          "subtitle": "Expiré le {date}"
-        },
-        "managePlan": {
-          "label": "Gérer le forfait"
-        },
-        "managedBySales": {
-          "text": "Votre forfait est géré par le service commercial.<br></br><link>Contactez la facturation</link> pour apporter des modifications."
-        },
-        "nextPayment": {
-          "subtitle": "Prochain paiement le {date}"
-        },
-        "syncLicense": {
-          "label": "Synchroniser la licence"
-        },
-        "syncing": {
-          "label": "Synchronisation..."
-        },
-        "trialDays": {
-          "subtitle": "L'essai se termine dans {days} jours. Paiement requis le {date}"
-        },
-        "trialToday": {
-          "subtitle": "L'essai se termine aujourd'hui. Paiement requis le {date}"
-        },
-        "trialTomorrow": {
-          "subtitle": "L'essai se termine demain. Paiement requis le {date}"
-        },
-        "upgradeNow": {
-          "label": "Mettre à niveau maintenant"
-        },
-        "upgrading": {
-          "label": "Mise à niveau..."
-        },
-        "validUntil": {
-          "subtitle": "Valable jusqu'au {date}"
-        },
-        "viewPlanDetails": {
-          "label": "Voir les détails du forfait"
-        }
-      },
-      "toasts": {
-        "endTrialFailed": "Échec de la fin de l'essai",
-        "licenseSyncFailed": "La synchronisation de la licence a échoué",
-        "paymentMethodRequired": "Ajoutez d'abord un moyen de paiement, puis réessayez la mise à niveau.",
-        "syncLicenseFailed": "Échec de la synchronisation de la licence"
       }
     },
     "chatPreferences": {
@@ -1560,10 +1199,7 @@
           "placeholder": "En jours",
           "restoreTooltip": "Rétablir la valeur par défaut"
         },
-        "description": "Indiquez combien de temps Onyx doit conserver les discussions de votre organisation.",
-        "enterprisePlanTag": {
-          "label": "Forfait Enterprise"
-        },
+        "description": "Indiquez combien de temps Lumen doit conserver les discussions de votre organisation.",
         "forever": {
           "label": "Toujours"
         },
@@ -1579,16 +1215,11 @@
           "message": "Les discussions sans activité depuis plus de {days, plural, one {# jour} other {# jours}} seront définitivement supprimées. Cette action est irréversible.",
           "title": "Réduire la conservation des discussions ?"
         },
-        "tierTooltip": "La conservation de l'historique des discussions est une fonctionnalité du forfait Enterprise.",
         "title": "Conserver l'historique des discussions"
       },
       "searchMode": {
-        "businessPlanTag": {
-          "label": "Forfait Business"
-        },
         "description": "Mode d'interface pour la recherche rapide de documents dans toute votre organisation.",
         "noConnectorsTooltip": "Configurez des connecteurs pour utiliser le mode Recherche",
-        "tierTooltip": "Le mode Recherche nécessite le forfait Business ou Enterprise.",
         "title": "Mode Recherche"
       },
       "systemPrompt": {
@@ -1622,7 +1253,7 @@
       },
       "teamContext": {
         "description": "Les utilisateurs peuvent aussi ajouter un contexte individuel dans leurs paramètres personnels.",
-        "placeholder": "Décrivez votre équipe et la façon dont Onyx doit se comporter.",
+        "placeholder": "Décrivez votre équipe et la façon dont Lumen doit se comporter.",
         "title": "Contexte de l'équipe"
       },
       "teamName": {
@@ -1742,7 +1373,7 @@
     "connector": {
       "accessType": {
         "autoSyncOption": {
-          "description": "Nous synchroniserons automatiquement les permissions depuis la source. Un document ne sera consultable dans Onyx que si l'utilisateur effectuant la recherche est autorisé à y accéder dans la source.",
+          "description": "Nous synchroniserons automatiquement les permissions depuis la source. Un document ne sera consultable dans Lumen que si l'utilisateur effectuant la recherche est autorisé à y accéder dans la source.",
           "disabledReason": "La méthode d'authentification de l'identifiant actuel ne prend pas en charge la synchronisation automatique des permissions. Veuillez passer à une méthode d'authentification prise en charge.",
           "name": "Synchronisation automatique des permissions"
         },
@@ -1755,7 +1386,7 @@
           "name": "Privé"
         },
         "publicOption": {
-          "description": "Toute personne disposant d'un compte Onyx peut accéder aux documents importés par ce connecteur",
+          "description": "Toute personne disposant d'un compte Lumen peut accéder aux documents importés par ce connecteur",
           "name": "Public"
         }
       },
@@ -2781,7 +2412,7 @@
         "title": "Aucun utilisateur trouvé"
       },
       "header": {
-        "description": "Contrôlez qui peut utiliser Craft, le créateur d'applications agentiques d'Onyx.",
+        "description": "Contrôlez qui peut utiliser Craft, le créateur d'applications agentiques d'Lumen.",
         "title": "Accès"
       },
       "perUserAccess": {
@@ -2812,7 +2443,7 @@
         }
       },
       "unavailable": {
-        "description": "Craft est activé déploiement par déploiement par Onyx. Contactez votre représentant Onyx pour y accéder.",
+        "description": "Craft est activé déploiement par déploiement par Lumen. Contactez votre représentant Lumen pour y accéder.",
         "title": "Craft n'est pas disponible sur ce déploiement"
       },
       "usersLoadError": {
@@ -2898,7 +2529,7 @@
         "label": "Essayer dans Craft"
       },
       "unavailable": {
-        "description": "Craft est activé déploiement par déploiement par Onyx. Contactez votre représentant Onyx pour y accéder.",
+        "description": "Craft est activé déploiement par déploiement par Lumen. Contactez votre représentant Lumen pour y accéder.",
         "title": "Craft n'est pas disponible sur ce déploiement"
       }
     },
@@ -3042,10 +2673,10 @@
     },
     "customAnalytics": {
       "intro": {
-        "description": "Cela vous permet d'utiliser votre propre outil d'analytique avec Onyx ! Copiez l'extrait Web de votre fournisseur d'analytique dans le champ ci-dessous, et nous commencerons à envoyer des événements d'utilisation."
+        "description": "Cela vous permet d'utiliser votre propre outil d'analytique avec Lumen ! Copiez l'extrait Web de votre fournisseur d'analytique dans le champ ci-dessous, et nous commencerons à envoyer des événements d'utilisation."
       },
       "notEnabled": {
-        "description": "Pour configurer des scripts d'analytique personnalisés, adressez-vous à l'équipe qui a installé Onyx afin de définir la variable d'environnement <i>CUSTOM_ANALYTICS_SECRET_KEY</i>.",
+        "description": "Pour configurer des scripts d'analytique personnalisés, adressez-vous à l'équipe qui a installé Lumen afin de définir la variable d'environnement <i>CUSTOM_ANALYTICS_SECRET_KEY</i>.",
         "title": "L'analytique personnalisée n'est pas activée."
       },
       "script": {
@@ -3054,7 +2685,7 @@
         "label": "Script"
       },
       "secretKey": {
-        "description": "Pour des raisons de sécurité, vous devez fournir une clé secrète pour mettre à jour ce script. Il doit s'agir de la valeur de la variable d'environnement <i>CUSTOM_ANALYTICS_SECRET_KEY</i> définie lors de la configuration initiale d'Onyx.",
+        "description": "Pour des raisons de sécurité, vous devez fournir une clé secrète pour mettre à jour ce script. Il doit s'agir de la valeur de la variable d'environnement <i>CUSTOM_ANALYTICS_SECRET_KEY</i> définie lors de la configuration initiale d'Lumen.",
         "label": "Clé secrète"
       },
       "updateButton": {
@@ -3283,7 +2914,7 @@
       },
       "page": {
         "header": {
-          "description": "Connectez Onyx à vos serveurs Discord. Les utilisateurs peuvent poser des questions directement dans les canaux Discord."
+          "description": "Connectez Lumen à vos serveurs Discord. Les utilisateurs peuvent poser des questions directement dans les canaux Discord."
         }
       },
       "registrationKey": {
@@ -3320,7 +2951,7 @@
           "label": "Supprimer la clé d'API"
         },
         "deleteHint": "Supprimez la clé d'API actuelle avant de la mettre à jour.",
-        "description": "Unstructured extrait et transforme les données complexes de formats comme .pdf, .docx, .png, .pptx, etc. en texte propre qu'Onyx peut ingérer. Fournissez une clé d'API pour activer le traitement des documents par Unstructured.",
+        "description": "Unstructured extrait et transforme les données complexes de formats comme .pdf, .docx, .png, .pptx, etc. en texte propre qu'Lumen peut ingérer. Fournissez une clé d'API pour activer le traitement des documents par Unstructured.",
         "learnMore": "En savoir plus sur Unstructured <link>ici</link>.",
         "note": "<label>Remarque :</label> les documents seront envoyés aux serveurs Unstructured pour traitement.",
         "saveButton": {
@@ -3397,7 +3028,7 @@
         "deleteScheduled": {
           "toast": "Ensemble de documents \"{name}\" planifié pour suppression"
         },
-        "description": "Les **ensembles de documents** vous permettent de regrouper des documents liés logiquement en un seul lot. Vous pouvez ensuite les utiliser comme filtre lors des recherches pour contrôler l'étendue des informations sur lesquelles Onyx effectue ses recherches.",
+        "description": "Les **ensembles de documents** vous permettent de regrouper des documents liés logiquement en un seul lot. Vous pouvez ensuite les utiliser comme filtre lors des recherches pour contrôler l'étendue des informations sur lesquelles Lumen effectue ses recherches.",
         "edit": {
           "header": {
             "title": "Modifier l'ensemble de documents"
@@ -3545,7 +3176,7 @@
         "title": "Exporter les journaux"
       },
       "header": {
-        "description": "Téléchargez une archive zip des fichiers journaux du serveur à joindre à une demande de support Onyx."
+        "description": "Téléchargez une archive zip des fichiers journaux du serveur à joindre à une demande de support Lumen."
       },
       "receipt": {
         "duplicateHost": {
@@ -3660,7 +3291,7 @@
         "noCustomSkills": "aucune compétence personnalisée",
         "orgCredentialsSet": "identifiants de l'organisation définis",
         "perUserCredentials": "identifiants par utilisateur",
-        "providedByOnyx": "fourni par Onyx",
+        "providedByLumen": "fourni par Lumen",
         "tools": "{count, plural, one {# outil} other {# outils}}",
         "upstreamPatterns": "{count, plural, one {# motif en amont} other {# motifs en amont}}"
       },
@@ -3909,7 +3540,7 @@
           "tooltip": "Les embeddings des documents sont en cours de mise à jour à la suite de modifications récentes de ce groupe."
         },
         "systemGroup": {
-          "description": "Onyx gère ce groupe. Il ne contient que des membres, et c'est la seule chose que vous pouvez modifier.",
+          "description": "Lumen gère ce groupe. Il ne contient que des membres, et c'est la seule chose que vous pouvez modifier.",
           "title": "Groupe système"
         },
         "toasts": {
@@ -4022,7 +3653,7 @@
         }
       },
       "permissionsChanged": {
-        "description": "Onyx utilise désormais des autorisations basées sur les groupes. L'accès se configure par groupe : les autorisations d'un utilisateur sont donc la somme de celles de tous ses groupes.",
+        "description": "Lumen utilise désormais des autorisations basées sur les groupes. L'accès se configure par groupe : les autorisations d'un utilisateur sont donc la somme de celles de tous ses groupes.",
         "learnMore": {
           "label": "En savoir plus"
         },
@@ -4085,7 +3716,6 @@
           "placeholder": "Limite de coût",
           "unit": "(USD)"
         },
-        "disabledTooltip": "Les limites de débit de jetons sont disponibles uniquement dans la [version Enterprise d'Onyx](/admin/billing).",
         "section": {
           "description": "Limitez le nombre de jetons que ce groupe peut utiliser sur une période donnée.",
           "title": "Limite de débit de jetons"
@@ -4148,7 +3778,7 @@
       },
       "disconnectModal": {
         "body": {
-          "description": "Onyx cessera d'appeler ce point de terminaison pour le hook ***{name}***. Les requêtes en cours continueront de s'exécuter. Le point de terminaison externe peut conserver les données qui lui ont été envoyées. Vous pourrez reconnecter ce hook plus tard si nécessaire."
+          "description": "Lumen cessera d'appeler ce point de terminaison pour le hook ***{name}***. Les requêtes en cours continueront de s'exécuter. Le point de terminaison externe peut conserver les données qui lui ont été envoyées. Vous pourrez reconnecter ce hook plus tard si nécessaire."
         },
         "deleteNote": {
           "description": "Vous pouvez également supprimer ce hook. La suppression est irréversible."
@@ -4168,7 +3798,7 @@
       },
       "form": {
         "apiKey": {
-          "description": "Onyx utilisera cette clé pour s'authentifier auprès de votre point de terminaison d'API.",
+          "description": "Lumen utilisera cette clé pour s'authentifier auprès de votre point de terminaison d'API.",
           "keepCurrent": {
             "placeholder": "Laissez vide pour conserver la clé actuelle"
           },
@@ -4218,10 +3848,10 @@
           "label": "Enregistrer les modifications"
         },
         "softStrategy": {
-          "description": "Si le point de terminaison renvoie une erreur, Onyx la journalise et poursuit le pipeline normalement, en ignorant le résultat du hook."
+          "description": "Si le point de terminaison renvoie une erreur, Lumen la journalise et poursuit le pipeline normalement, en ignorant le résultat du hook."
         },
         "timeout": {
-          "description": "Durée maximale pendant laquelle Onyx attend la réponse du point de terminaison avant d'appliquer la stratégie d'échec. Doit être supérieure à 0 et au plus {max} secondes.",
+          "description": "Durée maximale pendant laquelle Lumen attend la réponse du point de terminaison avant d'appliquer la stratégie d'échec. Doit être supérieure à 0 et au plus {max} secondes.",
           "revert": {
             "tooltip": "Rétablir la valeur par défaut"
           },
@@ -4286,16 +3916,13 @@
         }
       },
       "page": {
-        "description": "Étendez les pipelines Onyx en enregistrant des points de terminaison d'API externes comme callbacks à des points d'ancrage prédéfinis.",
+        "description": "Étendez les pipelines Lumen en enregistrant des points de terminaison d'API externes comme callbacks à des points d'ancrage prédéfinis.",
         "empty": {
           "title": "Aucun point d'ancrage disponible"
         },
         "emptySearch": {
           "description": "Essayez un autre terme de recherche.",
           "title": "Aucun résultat trouvé"
-        },
-        "enterpriseRequired": {
-          "message": "Les extensions de hooks nécessitent une licence Enterprise."
         },
         "loadHooksFailed": {
           "message": "Échec du chargement des hooks. Veuillez actualiser la page."
@@ -4432,7 +4059,7 @@
           "message": "Échec de la validation de la clé d'API"
         },
         "authMethod": {
-          "idle": "Choisissez comment Onyx doit s'authentifier auprès de Google Vertex AI.",
+          "idle": "Choisissez comment Lumen doit s'authentifier auprès de Google Vertex AI.",
           "label": "Méthode d'authentification",
           "required": "La méthode d'authentification est obligatoire",
           "serviceAccount": {
@@ -4482,7 +4109,7 @@
           "customPlaceholder": "Récupère les modèles du serveur ci-dessus, puis choisis-en un"
         },
         "projectId": {
-          "idle": "Le projet GCP où Vertex AI est activé. Onyx s'authentifie avec le compte de service lié au pod (GKE Workload Identity).",
+          "idle": "Le projet GCP où Vertex AI est activé. Lumen s'authentifie avec le compte de service lié au pod (GKE Workload Identity).",
           "label": "ID du projet GCP",
           "required": "L'ID du projet est obligatoire"
         },
@@ -4582,7 +4209,7 @@
           "title": "Nom du déploiement"
         },
         "modelName": {
-          "description": "Un libellé pour ce modèle dans Onyx. Azure achemine les requêtes par nom de déploiement, ce libellé doit donc seulement être un identifiant unique."
+          "description": "Un libellé pour ce modèle dans Lumen. Azure achemine les requêtes par nom de déploiement, ce libellé doit donc seulement être un identifiant unique."
         },
         "targetUrl": {
           "title": "URL cible"
@@ -4609,7 +4236,7 @@
           "title": "Choisissez comment appliquer ce LLM de récupération contextuelle"
         },
         "default": {
-          "description": "La modification des paramètres d'embedding ou de récupération exige une réindexation complète de tous les documents pour prendre effet. Cela peut prendre **des heures ou des jours** selon la taille du corpus. [En savoir plus](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "La modification des paramètres d'embedding ou de récupération exige une réindexation complète de tous les documents pour prendre effet. Cela peut prendre **des heures ou des jours** selon la taille du corpus.",
           "title": "Les modifications exigent une réindexation complète."
         },
         "orSeparator": {
@@ -4617,7 +4244,7 @@
         }
       },
       "cloudDisabled": {
-        "tooltip": "Ce paramètre est géré par Onyx Cloud."
+        "tooltip": "Ce paramètre est géré par Lumen Cloud."
       },
       "contextualModel": {
         "description": "Ce modèle servira à générer le contexte des segments.",
@@ -4631,9 +4258,9 @@
       },
       "embeddingModel": {
         "cloudManaged": {
-          "title": "Le modèle d'embedding et ses paramètres sont gérés par Onyx Cloud."
+          "title": "Le modèle d'embedding et ses paramètres sont gérés par Lumen Cloud."
         },
-        "description": "Onyx utilise ce modèle pour encoder les documents pour la recherche et la récupération.",
+        "description": "Lumen utilise ce modèle pour encoder les documents pour la recherche et la récupération.",
         "title": "Modèle d'embedding"
       },
       "errorsModal": {
@@ -4681,7 +4308,7 @@
         },
         "modelName": {
           "placeholder": "model-name",
-          "selfHostedDescription": "Onyx se connectera à ce modèle sur votre point de terminaison auto-hébergé.",
+          "selfHostedDescription": "Lumen se connectera à ce modèle sur votre point de terminaison auto-hébergé.",
           "title": "Nom du modèle"
         },
         "normalize": {
@@ -4725,7 +4352,7 @@
           "title": "URL de base de l'API"
         },
         "modelName": {
-          "description": "Onyx se connectera à ce modèle sur votre proxy {provider}."
+          "description": "Lumen se connectera à ce modèle sur votre proxy {provider}."
         }
       },
       "maxImageSize": {
@@ -4941,7 +4568,7 @@
       "wontPortConsentModal": {
         "title": "{count, plural, one {Ce connecteur sera supprimé} other {Ces # connecteurs seront supprimés}}",
         "submit": "Supprimer et réindexer",
-        "description": "{count, plural, one {La réindexation ignore les connecteurs en pause et non valides : celui-ci ne sera donc pas repris dans le nouvel index. Onyx le supprime, ainsi que les documents qu'il a indexés :} other {La réindexation ignore les connecteurs en pause et non valides : ces # ne seront donc pas repris dans le nouvel index. Onyx les supprime, ainsi que les documents qu'ils ont indexés :}}",
+        "description": "{count, plural, one {La réindexation ignore les connecteurs en pause et non valides : celui-ci ne sera donc pas repris dans le nouvel index. Lumen le supprime, ainsi que les documents qu'il a indexés :} other {La réindexation ignore les connecteurs en pause et non valides : ces # ne seront donc pas repris dans le nouvel index. Lumen les supprime, ainsi que les documents qu'ils ont indexés :}}",
         "connector": "{name} — {status}",
         "statusInvalid": "non valide",
         "statusPaused": "en pause",
@@ -5106,7 +4733,7 @@
         "title": "La configuration de nouveaux LLM est temporairement indisponible."
       },
       "defaultModel": {
-        "description": "Ce modèle sera utilisé par défaut par Onyx dans vos discussions.",
+        "description": "Ce modèle sera utilisé par défaut par Lumen dans vos discussions.",
         "title": "Modèle par défaut"
       },
       "deleteModal": {
@@ -5120,7 +4747,7 @@
       },
       "groups": {
         "addProvider": {
-          "description": "Onyx prend en charge les fournisseurs populaires comme les modèles auto-hébergés.",
+          "description": "Lumen prend en charge les fournisseurs populaires comme les modèles auto-hébergés.",
           "title": "Ajouter un fournisseur"
         },
         "gateways": {
@@ -5198,7 +4825,7 @@
               "description": "Pour les environnements hors AWS",
               "label": "Clé d'accès"
             },
-            "description": "Choisissez comment Onyx doit s'authentifier auprès de Bedrock.",
+            "description": "Choisissez comment Lumen doit s'authentifier auprès de Bedrock.",
             "iam": {
               "description": "Recommandé pour les environnements AWS",
               "label": "Rôle IAM de l'environnement"
@@ -5210,7 +4837,7 @@
             "title": "Méthode d'authentification"
           },
           "iamNotice": {
-            "title": "Onyx utilisera le rôle IAM associé à l'environnement dans lequel il s'exécute pour s'authentifier."
+            "title": "Lumen utilisera le rôle IAM associé à l'environnement dans lequel il s'exécute pour s'authentifier."
           },
           "longTermApiKeyField": {
             "placeholder": "Votre clé d'API longue durée",
@@ -5259,7 +4886,7 @@
             "addButton": {
               "label": "Ajouter une ligne"
             },
-            "description": "Ajoutez les propriétés supplémentaires exigées par le fournisseur de modèles. Elles sont transmises à l'appel `completion()` de LiteLLM comme [variables d'environnement](https://docs.litellm.ai/docs/set_keys#environment-variables). Consultez la [documentation](https://docs.onyx.app/admins/ai_models/custom_inference_provider) pour plus d'instructions.",
+            "description": "Ajoutez les propriétés supplémentaires exigées par le fournisseur de modèles. Elles sont transmises à l'appel `completion()` de LiteLLM comme [variables d'environnement](https://docs.litellm.ai/docs/set_keys#environment-variables).",
             "keyInput": {
               "placeholder": "par ex. OPENAI_ORGANIZATION"
             },
@@ -5484,7 +5111,7 @@
         },
         "setup": {
           "apiBaseField": {
-            "containerizedNote": "Quand Onyx s'exécute dans un conteneur, utilisez `host.docker.internal` à la place de `localhost` pour atteindre un service sur votre hôte.",
+            "containerizedNote": "Quand Lumen s'exécute dans un conteneur, utilisez `host.docker.internal` à la place de `localhost` pour atteindre un service sur votre hôte.",
             "title": "URL de base de l'API"
           },
           "apiKeyField": {
@@ -5549,7 +5176,7 @@
         },
         "vertexAi": {
           "authMethodField": {
-            "description": "Choisissez comment Onyx doit s'authentifier auprès de Google Vertex AI.",
+            "description": "Choisissez comment Lumen doit s'authentifier auprès de Google Vertex AI.",
             "serviceAccount": {
               "description": "Téléversez un fichier JSON de clé de compte de service GCP",
               "label": "JSON de compte de service"
@@ -5578,7 +5205,7 @@
             "projectRequired": "L'ID de projet GCP est obligatoire"
           },
           "workloadIdentityNotice": {
-            "title": "Onyx utilisera les identifiants Google Cloud ambiants du pod (via google.auth.default). Assurez-vous que le ServiceAccount Kubernetes est lié à un compte de service GCP qui a accès à Vertex AI."
+            "title": "Lumen utilisera les identifiants Google Cloud ambiants du pod (via google.auth.default). Assurez-vous que le ServiceAccount Kubernetes est lié à un compte de service GCP qui a accès à Vertex AI."
           }
         }
       },
@@ -5645,8 +5272,8 @@
           "responseFallback": "Échec de la demande d'invitation"
         },
         "requestSentBody": "Votre demande d'adhésion a été envoyée. Vous pouvez explorer avec votre propre équipe en attendant qu'un administrateur de {domain} approuve votre demande.",
-        "tryOnyxButton": {
-          "label": "Essayer Onyx en attendant"
+        "tryLumenButton": {
+          "label": "Essayer Lumen en attendant"
         }
       },
       "newTenant": {
@@ -6083,7 +5710,7 @@
       },
       "authentication": {
         "allowedEmailDomains": {
-          "placeholder": "Ajoutez un domaine (ex. onyx.app)",
+          "placeholder": "Ajoutez un domaine (ex. lumen.app)",
           "subDescription": "Les nouveaux utilisateurs peuvent seulement créer un compte avec une adresse e-mail de cette liste de domaines.",
           "title": "Domaines de messagerie autorisés"
         },
@@ -6201,7 +5828,7 @@
     },
     "serviceAccounts": {
       "deleteModal": {
-        "description": "Toute application utilisant la clé d'API du compte *{name}* (`{keyDisplay}`) perdra l'accès à Onyx.",
+        "description": "Toute application utilisant la clé d'API du compte *{name}* (`{keyDisplay}`) perdra l'accès à Lumen.",
         "submit": {
           "label": "Supprimer"
         },
@@ -6248,7 +5875,7 @@
         "cancelButton": {
           "label": "Annuler"
         },
-        "description": "Utilisez la clé d'API du compte de service pour accéder à l'API Onyx par programmation, avec des autorisations de niveau utilisateur. Vous pourrez modifier les détails du compte plus tard.",
+        "description": "Utilisez la clé d'API du compte de service pour accéder à l'API Lumen par programmation, avec des autorisations de niveau utilisateur. Vous pourrez modifier les détails du compte plus tard.",
         "groups": {
           "empty": {
             "description": "Aucun groupe attribué à ce compte de service.",
@@ -6310,7 +5937,7 @@
         }
       },
       "page": {
-        "description": "Utilisez des comptes de service pour accéder à l'API Onyx par programmation.",
+        "description": "Utilisez des comptes de service pour accéder à l'API Lumen par programmation.",
         "error": {
           "description": "Consultez la console pour plus de détails.",
           "title": "Échec du chargement des comptes de service."
@@ -6367,10 +5994,6 @@
         "keyCopied": "Clé d'API copiée dans le presse-papiers.",
         "regenerateFailed": "Échec de la régénération de la clé d'API.",
         "regenerateFailedWithDetail": "Échec de la régénération de la clé d'API : {detail}"
-      },
-      "trialNotice": {
-        "description": "Les comptes d'essai ne comprennent pas l'accès par clé d'API. Achetez un abonnement payant pour débloquer cette fonctionnalité.",
-        "title": "Passez à un forfait payant pour créer des clés d'API."
       }
     },
     "shared": {
@@ -6380,8 +6003,9 @@
         }
       },
       "liteModeNotice": {
-        "description": "Ce déploiement utilise Onyx Lite, qui n'a pas de base de données vectorielle : les connecteurs et l'indexation des documents sont désactivés, et rien n'est indexé. Pour connecter des sources de données et indexer des documents, déployez Onyx en **mode Standard**. Consultez le [guide de déploiement]({docsUrl}) pour commencer.",
-        "title": "L'indexation est indisponible en mode Lite"
+        "description": "Ce déploiement utilise Lumen Lite, qui n'a pas de base de données vectorielle : les connecteurs et l'indexation des documents sont désactivés, et rien n'est indexé. Pour connecter des sources de données et indexer des documents, déployez Lumen en **mode Standard**. Consultez le [guide de déploiement]({docsUrl}) pour commencer.",
+        "title": "L'indexation est indisponible en mode Lite",
+        "descriptionNoDocs": "Ce déploiement utilise Lumen Lite, qui n'a pas de base de données vectorielle : les connecteurs et l'indexation des documents sont désactivés, et rien n'est indexé. Pour connecter des sources de données et indexer des documents, déployez Lumen en **mode Standard**."
       },
       "providerCard": {
         "connectButton": {
@@ -6406,10 +6030,10 @@
     "slackBots": {
       "channelConfig": {
         "createError": {
-          "toast": "Erreur lors de la création de la configuration OnyxBot : {error}"
+          "toast": "Erreur lors de la création de la configuration LumenBot : {error}"
         },
         "updateError": {
-          "toast": "Erreur lors de la mise à jour de la configuration OnyxBot : {error}"
+          "toast": "Erreur lors de la mise à jour de la configuration LumenBot : {error}"
         }
       },
       "channels": {
@@ -6508,7 +6132,7 @@
         },
         "answerValidity": {
           "label": "Répondre uniquement si des citations sont trouvées",
-          "tooltip": "Si activé, OnyxBot ne répond qu'aux questions pour lesquelles le modèle produit des citations"
+          "tooltip": "Si activé, LumenBot ne répond qu'aux questions pour lesquelles le modèle produit des citations"
         },
         "cancelButton": {
           "label": "Annuler"
@@ -6527,16 +6151,16 @@
         },
         "disableDefault": {
           "label": "Désactiver la configuration par défaut",
-          "warning": "Avertissement : si vous désactivez la configuration par défaut, OnyxBot ne répond pas dans les canaux Slack, sauf s'ils sont explicitement configurés. De plus, OnyxBot ne répond pas aux DM."
+          "warning": "Avertissement : si vous désactivez la configuration par défaut, LumenBot ne répond pas dans les canaux Slack, sauf s'ils sont explicitement configurés. De plus, LumenBot ne répond pas aux DM."
         },
         "documentSets": {
           "autoSyncedDisabled": {
-            "tooltip": "Impossible d'utiliser cet ensemble de documents car il contient un connecteur avec des autorisations de synchronisation automatique. Les réponses d'OnyxBot dans ce canal sont visibles par tous les utilisateurs Slack : reproduire les autorisations de l'auteur de la question pourrait donc exposer par inadvertance des informations privées."
+            "tooltip": "Impossible d'utiliser cet ensemble de documents car il contient un connecteur avec des autorisations de synchronisation automatique. Les réponses d'LumenBot dans ce canal sont visibles par tous les utilisateurs Slack : reproduire les autorisations de l'auteur de la question pourrait donc exposer par inadvertance des informations privées."
           },
           "autoSyncedNote": {
             "text": "Ces ensembles de documents ne peuvent pas être joints car ils contiennent des documents synchronisés automatiquement :"
           },
-          "description": "Sélectionnez les ensembles de documents qu'OnyxBot utilisera pour répondre aux questions dans Slack.",
+          "description": "Sélectionnez les ensembles de documents qu'LumenBot utilisera pour répondre aux questions dans Slack.",
           "hideUnselectableButton": {
             "label": "Masquer les ensembles de documents non sélectionnables"
           },
@@ -6561,12 +6185,12 @@
         },
         "isEphemeral": {
           "label": "Répondre à l'utilisateur dans un message privé (éphémère)",
-          "tooltip": "Si activé, OnyxBot répond uniquement à l'utilisateur dans un message privé (éphémère). Si vous avez aussi choisi l'agent 'Recherche' ci-dessus, cette option rend les documents privés de l'utilisateur disponibles pour ses requêtes."
+          "tooltip": "Si activé, LumenBot répond uniquement à l'utilisateur dans un message privé (éphémère). Si vous avez aussi choisi l'agent 'Recherche' ci-dessus, cette option rend les documents privés de l'utilisateur disponibles pour ses requêtes."
         },
         "knowledgeSource": {
           "allPublic": {
             "label": "Toutes les connaissances publiques",
-            "sublabel": "Laissez OnyxBot répondre à partir des informations de tous les connecteurs publics"
+            "sublabel": "Laissez LumenBot répondre à partir des informations de tous les connecteurs publics"
           },
           "documentSets": {
             "label": "Ensembles de documents précis",
@@ -6583,7 +6207,7 @@
           }
         },
         "nonSearchAgent": {
-          "description": "Sélectionnez l'agent sans recherche qu'OnyxBot utilisera pour répondre aux questions dans Slack."
+          "description": "Sélectionnez l'agent sans recherche qu'LumenBot utilisera pour répondre aux questions dans Slack."
         },
         "privacyAlert": {
           "connectors": {
@@ -6594,7 +6218,7 @@
         },
         "questionmarkPrefilter": {
           "label": "Répondre uniquement aux questions",
-          "tooltip": "Si activé, OnyxBot ne répond qu'aux messages qui contiennent un point d'interrogation"
+          "tooltip": "Si activé, LumenBot ne répond qu'aux messages qui contiennent un point d'interrogation"
         },
         "removedDocumentSets": {
           "toast": "Nous avons retiré un ou plusieurs ensembles de documents de votre sélection car ils ne sont plus valides. Veuillez vérifier et mettre à jour votre configuration."
@@ -6604,15 +6228,15 @@
             "tooltip": "Désactivé tant que l'option 'Répondre à l'utilisateur dans un message privé (éphémère)' est active — les réponses éphémères ne ciblent qu'un seul utilisateur."
           },
           "label": "(Facultatif) Répondre à certains utilisateurs / groupes",
-          "subtext": "Si vous en indiquez, seuls ces utilisateurs / groupes peuvent solliciter OnyxBot dans ce canal, et les réponses ne sont visibles que par eux."
+          "subtext": "Si vous en indiquez, seuls ces utilisateurs / groupes peuvent solliciter LumenBot dans ce canal, et les réponses ne sont visibles que par eux."
         },
         "respondTagOnly": {
-          "label": "Répondre uniquement à @OnyxBot",
-          "tooltip": "Si activé, OnyxBot ne répond que lorsqu'il est directement mentionné"
+          "label": "Répondre uniquement à @LumenBot",
+          "tooltip": "Si activé, LumenBot ne répond que lorsqu'il est directement mentionné"
         },
         "respondToBots": {
           "label": "Répondre aux messages des bots",
-          "tooltip": "Si désactivé, OnyxBot ignore toujours les messages des bots"
+          "tooltip": "Si désactivé, LumenBot ignore toujours les messages des bots"
         },
         "responseType": {
           "detailed": {
@@ -6622,10 +6246,10 @@
           "standard": {
             "label": "Standard"
           },
-          "tooltip": "Contrôle le format des réponses d'OnyxBot."
+          "tooltip": "Contrôle le format des réponses d'LumenBot."
         },
         "searchAgent": {
-          "description": "Sélectionnez l'agent avec recherche qu'OnyxBot utilisera pour répondre aux questions dans Slack."
+          "description": "Sélectionnez l'agent avec recherche qu'LumenBot utilisera pour répondre aux questions dans Slack."
         },
         "searchConfig": {
           "section": {
@@ -6634,14 +6258,14 @@
         },
         "showContinueInWebUi": {
           "label": "Afficher le bouton Continuer dans l'interface web",
-          "tooltip": "Si activé, affiche en bas de la réponse un bouton qui permet à l'utilisateur de poursuivre la conversation dans l'interface web Onyx"
+          "tooltip": "Si activé, affiche en bas de la réponse un bouton qui permet à l'utilisateur de poursuivre la conversation dans l'interface web Lumen"
         },
         "stillNeedHelp": {
           "label": "Afficher un bouton \"Toujours besoin d'aide ?\"",
           "section": {
             "prompt": "Configurer le bouton Toujours besoin d'aide"
           },
-          "tooltip": "La réponse d'OnyxBot inclura en bas un bouton qui demande à l'utilisateur s'il a encore besoin d'aide."
+          "tooltip": "La réponse d'LumenBot inclura en bas un bouton qui demande à l'utilisateur s'il a encore besoin d'aide."
         },
         "syncEnabledAgents": {
           "hideButton": {
@@ -6662,17 +6286,17 @@
       },
       "intro": {
         "autoAnswer": {
-          "item": "Configurer OnyxBot pour répondre automatiquement aux questions dans certains canaux."
+          "item": "Configurer LumenBot pour répondre automatiquement aux questions dans certains canaux."
         },
-        "description": "Configurez des bots Slack connectés à Onyx. Une fois la configuration terminée, vous pourrez poser des questions à Onyx directement depuis Slack. Vous pouvez aussi :",
+        "description": "Configurez des bots Slack connectés à Lumen. Une fois la configuration terminée, vous pourrez poser des questions à Lumen directement depuis Slack. Vous pouvez aussi :",
         "directMessage": {
-          "item": "Envoyer un message direct à OnyxBot pour faire une recherche, comme dans l'interface web."
+          "item": "Envoyer un message direct à LumenBot pour faire une recherche, comme dans l'interface web."
         },
         "docsPrompt": {
-          "text": "Suivez le <link>guide</link> de la documentation Onyx pour commencer !"
+          "text": "Suivez le <link>guide</link> de la documentation Lumen pour commencer !"
         },
         "documentSets": {
-          "item": "Choisir les ensembles de documents à partir desquels OnyxBot doit répondre, selon le canal où la question est posée."
+          "item": "Choisir les ensembles de documents à partir desquels LumenBot doit répondre, selon le canal où la question est posée."
         }
       },
       "list": {
@@ -6690,7 +6314,7 @@
       },
       "newChannel": {
         "header": {
-          "title": "Configurer OnyxBot pour un canal Slack"
+          "title": "Configurer LumenBot pour un canal Slack"
         }
       },
       "table": {
@@ -6707,7 +6331,7 @@
           "badge": "Désactivé"
         },
         "empty": {
-          "message": "Ajoutez un nouveau bot Slack pour commencer à discuter avec Onyx !"
+          "message": "Ajoutez un nouveau bot Slack pour commencer à discuter avec Lumen !"
         },
         "enabled": {
           "badge": "Activé"
@@ -6794,8 +6418,7 @@
       "addProvider": {
         "button": {
           "label": "Ajouter un fournisseur"
-        },
-        "gatedTooltip": "L'activation de plusieurs fournisseurs SSO est disponible avec le forfait Business ou Enterprise."
+        }
       },
       "copyRedirectUri": {
         "tooltip": "Copier l'URI de redirection"
@@ -6862,7 +6485,7 @@
           "emailDomainsField": {
             "description": "Seules les adresses e-mail de ces domaines peuvent se connecter via ce fournisseur.",
             "optionalDescription": "Seules les adresses e-mail de ces domaines peuvent se connecter via ce fournisseur. Recommandé, mais vous pouvez laisser vide pour tout autoriser.",
-            "placeholder": "Ajoutez un domaine (par ex. onyx.app)",
+            "placeholder": "Ajoutez un domaine (par ex. lumen.app)",
             "recommendedTitle": "Domaines de messagerie autorisés (recommandé)",
             "title": "Domaines de messagerie autorisés"
           },
@@ -7114,13 +6737,12 @@
         "label": "Avis contextuel lors de la première visite"
       },
       "appName": {
-        "description": "Ce nom apparaîtra dans toute l'application et remplacera \"Onyx\" dans l'interface.",
+        "description": "Ce nom apparaîtra dans toute l'application et remplacera \"Lumen\" dans l'interface.",
         "label": "Nom d'affichage de l'application"
       },
       "branding": {
-        "description": "Supprimez « powered by Onyx » et les autres présences de la marque Onyx dans l'application.",
-        "enterpriseTooltip": "Masquer la marque Onyx est une fonctionnalité du forfait Enterprise.",
-        "label": "Masquer la marque Onyx"
+        "description": "Supprimez « powered by Lumen » et les autres présences de la marque Lumen dans l'application.",
+        "label": "Masquer la marque Lumen"
       },
       "chatFooter": {
         "description": "Ajoutez du contenu markdown pour des avertissements ou des informations supplémentaires.",
@@ -7145,8 +6767,7 @@
         "label": "Message d'accueil"
       },
       "helpLink": {
-        "description": "Ajoutez un lien d'aide personnalisé dans le menu utilisateur en plus de la documentation Onyx.",
-        "enterpriseTooltip": "Le lien d'aide personnalisé est une fonctionnalité du forfait Enterprise.",
+        "description": "Ajoutez un lien d'aide personnalisé dans le menu utilisateur en plus de la documentation Lumen.",
         "label": "Lien d'aide personnalisé"
       },
       "helpLinkLabel": {
@@ -7563,7 +7184,7 @@
         }
       },
       "activateModal": {
-        "description": "<strong>{email}</strong> retrouvera l'accès à Onyx.",
+        "description": "<strong>{email}</strong> retrouvera l'accès à Lumen.",
         "submit": {
           "label": "Activer"
         },
@@ -7573,7 +7194,7 @@
         }
       },
       "cancelInviteModal": {
-        "description": "<strong>{email}</strong> ne pourra plus rejoindre Onyx avec cette invitation.",
+        "description": "<strong>{email}</strong> ne pourra plus rejoindre Lumen avec cette invitation.",
         "submit": {
           "label": "Annuler l'invitation"
         },
@@ -7583,7 +7204,7 @@
         }
       },
       "deactivateModal": {
-        "description": "<strong>{email}</strong> perdra immédiatement l'accès à Onyx. Ses sessions et ses agents seront conservés. Sa place de licence sera libérée. Vous pourrez réactiver ce compte plus tard.",
+        "description": "<strong>{email}</strong> perdra immédiatement l'accès à Lumen. Ses sessions et ses agents seront conservés. Sa place de licence sera libérée. Vous pourrez réactiver ce compte plus tard.",
         "submit": {
           "label": "Désactiver"
         },
@@ -7593,7 +7214,7 @@
         }
       },
       "deleteModal": {
-        "description": "<strong>{email}</strong> sera définitivement retiré de Onyx. Tout son historique de sessions sera supprimé. Cette suppression est irréversible.",
+        "description": "<strong>{email}</strong> sera définitivement retiré de Lumen. Tout son historique de sessions sera supprimé. Cette suppression est irréversible.",
         "submit": {
           "label": "Supprimer"
         },
@@ -7718,7 +7339,7 @@
         "title": "Utilisateurs et demandes"
       },
       "permissionsNotice": {
-        "description": "Onyx utilise désormais des autorisations basées sur les groupes. Les rôles Curator et Global Curator sont remplacés par des autorisations de groupe configurables, avec des gestionnaires par groupe pour une administration limitée à leur périmètre.",
+        "description": "Lumen utilise désormais des autorisations basées sur les groupes. Les rôles Curator et Global Curator sont remplacés par des autorisations de groupe configurables, avec des gestionnaires par groupe pour une administration limitée à leur périmètre.",
         "learnMoreButton": {
           "label": "En savoir plus"
         },
@@ -7957,12 +7578,12 @@
           "placeholder": "p. ex. whisper-1"
         },
         "targetUri": {
-          "description": "Collez le point de terminaison affiché dans le [portail Azure (Keys and Endpoint)]({portalUrl}). Onyx en extrait la région de service vocal. Exemples : `https://westus.api.cognitive.microsoft.com/` ou `https://westus.tts.speech.microsoft.com/`.",
+          "description": "Collez le point de terminaison affiché dans le [portail Azure (Keys and Endpoint)]({portalUrl}). Lumen en extrait la région de service vocal. Exemples : `https://westus.api.cognitive.microsoft.com/` ou `https://westus.tts.speech.microsoft.com/`.",
           "label": "URI cible",
           "required": "L'URI cible est obligatoire"
         },
         "ttsModel": {
-          "description": "Ce modèle sera utilisé par défaut par Onyx pour la synthèse vocale.",
+          "description": "Ce modèle sera utilisé par défaut par Lumen pour la synthèse vocale.",
           "label": "Modèle par défaut",
           "openaiDescription": "Nom du modèle sur votre serveur (texte libre pour les endpoints auto-hébergés).",
           "placeholder": "p. ex. tts-1"
@@ -8034,7 +7655,7 @@
           "message": "{label} déconnecté"
         },
         "fallback": {
-          "description": "Onyx utilisera le robot d'exploration web intégré."
+          "description": "Lumen utilisera le robot d'exploration web intégré."
         },
         "header": {
           "description": "Cette action supprimera les identifiants enregistrés de ce fournisseur.",
@@ -8458,7 +8079,7 @@
           "title": "Amorces de conversation"
         },
         "defaultModel": {
-          "description": "Ce modèle sera utilisé par défaut par Onyx dans vos discussions.",
+          "description": "Ce modèle sera utilisé par défaut par Lumen dans vos discussions.",
           "title": "Modèle par défaut"
         },
         "featured": {
@@ -8559,7 +8180,7 @@
         "label": "Créer une nouvelle organisation"
       },
       "createTeamOption": {
-        "text": "Créer une nouvelle équipe Onyx"
+        "text": "Créer une nouvelle équipe Lumen"
       },
       "differentEmailPrompt": {
         "text": "Vous avez un compte avec une autre adresse e-mail ?"
@@ -8568,10 +8189,10 @@
         "title": "Compte introuvable"
       },
       "inviteOption": {
-        "text": "Être invité dans une équipe Onyx existante"
+        "text": "Être invité dans une équipe Lumen existante"
       },
       "notFound": {
-        "description": "Nous n'avons pas trouvé votre compte dans nos registres. Pour accéder à Onyx, vous devez :"
+        "description": "Nous n'avons pas trouvé votre compte dans nos registres. Pour accéder à Lumen, vous devez :"
       },
       "signInLink": {
         "label": "Se connecter"
@@ -8640,7 +8261,7 @@
         "description": "Restrictions d'accès ou autorisations du compte"
       },
       "cloudSupportPrompt": {
-        "text": "Si le problème persiste, contactez l'équipe Onyx à <link>support@onyx.app</link>"
+        "text": "Si le problème persiste, contactez l'équipe Lumen à <link>support@lumen.app</link>"
       },
       "code": {
         "accessDenied": "Votre fournisseur d'identité a refusé l'accès.",
@@ -8723,7 +8344,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "Remarque : cette fonctionnalité est réservée aux administrateurs @onyx.app"
+        "text": "Remarque : cette fonctionnalité est réservée aux administrateurs @lumen.app"
       },
       "apiKeyField": {
         "label": "Clé d'API",
@@ -8939,7 +8560,7 @@
         "label": "Comment avez-vous entendu parler de nous ?"
       },
       "subtitle": {
-        "text": "Commencez avec Onyx"
+        "text": "Commencez avec Lumen"
       }
     },
     "verifyEmail": {
@@ -9173,7 +8794,7 @@
       },
       "healthBanner": {
         "backendUnavailable": {
-          "description": "S'il s'agit de votre configuration initiale ou si vous venez de mettre à jour votre déploiement Onyx, le backend est probablement encore en cours de démarrage. Attendez une ou deux minutes, puis actualisez la page. Si cela ne fonctionne pas, vérifiez que le backend est configuré ou contactez un administrateur.",
+          "description": "S'il s'agit de votre configuration initiale ou si vous venez de mettre à jour votre déploiement Lumen, le backend est probablement encore en cours de démarrage. Attendez une ou deux minutes, puis actualisez la page. Si cela ne fonctionne pas, vérifiez que le backend est configuré ou contactez un administrateur.",
           "title": "Le backend est actuellement indisponible"
         }
       },
@@ -9278,7 +8899,7 @@
           "placeholder": "Comment puis-je vous aider aujourd'hui ?",
           "queuedPlaceholder": "Appuyez sur la flèche haut pour modifier les messages en attente",
           "searchPlaceholder": "Rechercher dans les sources connectées",
-          "speakingPlaceholder": "Onyx parle..."
+          "speakingPlaceholder": "Lumen parle..."
         },
         "sendButton": {
           "processingFilesTooltip": "En attente de la fin du traitement des fichiers joints"
@@ -9399,7 +9020,7 @@
       },
       "sharedAppInputBar": {
         "input": {
-          "placeholder": "Comment Onyx peut-il vous aider aujourd'hui ?"
+          "placeholder": "Comment Lumen peut-il vous aider aujourd'hui ?"
         },
         "startSessionButton": {
           "label": "Démarrer une nouvelle session"
@@ -10327,7 +9948,7 @@
           "loginButton": {
             "label": "Se connecter"
           },
-          "title": "Bienvenue sur Onyx"
+          "title": "Bienvenue sur Lumen"
         },
         "noResubmitMessage": {
           "toast": "Aucun message envoyé précédemment n'a été trouvé."
@@ -10345,8 +9966,8 @@
           "confirmButton": {
             "label": "Désactiver"
           },
-          "description": "Vous verrez la page de nouvel onglet par défaut de votre navigateur. Vous pouvez la réactiver à tout moment dans les paramètres d'Onyx.",
-          "title": "Désactiver Onyx comme page de nouvel onglet ?"
+          "description": "Vous verrez la page de nouvel onglet par défaut de votre navigateur. Vous pouvez la réactiver à tout moment dans les paramètres d'Lumen.",
+          "title": "Désactiver Lumen comme page de nouvel onglet ?"
         }
       },
       "settingsPanel": {
@@ -10372,7 +9993,7 @@
           "title": "Paramètres"
         },
         "newTabToggle": {
-          "label": "Utiliser Onyx comme page de nouvel onglet"
+          "label": "Utiliser Lumen comme page de nouvel onglet"
         },
         "themeToggle": {
           "tooltip": "{mode, select, light {Passer au thème clair} other {Passer au thème sombre}}"
@@ -10382,8 +10003,8 @@
         "newChatButton": {
           "tooltip": "Nouveau chat"
         },
-        "openInOnyxButton": {
-          "tooltip": "Ouvrir dans Onyx"
+        "openInLumenButton": {
+          "tooltip": "Ouvrir dans Lumen"
         }
       }
     },
@@ -10395,7 +10016,7 @@
         "error": "Vous devez accepter les conditions pour accéder à l'application."
       },
       "header": {
-        "title": "Bienvenue sur Onyx !"
+        "title": "Bienvenue sur Lumen !"
       },
       "logoIcon": {
         "alt": "Logo"
@@ -10753,16 +10374,16 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "Si vous êtes l'administrateur, rendez-vous sur la page <billingLink>Facturation admin</billingLink> pour {hadLicense, select, true {renouveler} other {activer}} votre licence, inscrivez-vous via Stripe ou contactez <supportLink>support@onyx.app</supportLink> pour toute question de facturation."
+          "text": "Si vous êtes l'administrateur, rendez-vous sur la page <billingLink>Facturation admin</billingLink> pour {hadLicense, select, true {renouveler} other {activer}} votre licence, inscrivez-vous via Stripe ou contactez <supportLink>support@lumen.app</supportLink> pour toute question de facturation."
         },
         "heading": {
           "title": "Accès restreint"
         },
         "licenseLapse": {
-          "description": "Votre accès à Onyx a été temporairement suspendu en raison d'une interruption de votre licence."
+          "description": "Votre accès à Lumen a été temporairement suspendu en raison d'une interruption de votre licence."
         },
         "licenseRequired": {
-          "description": "Une licence est requise pour utiliser Onyx. Vos données sont protégées et seront disponibles dès qu'une licence sera activée."
+          "description": "Une licence est requise pour utiliser Lumen. Vos données sont protégées et seront disponibles dès qu'une licence sera activée."
         },
         "logoutButton": {
           "label": "Se déconnecter"
@@ -10774,7 +10395,7 @@
           "description": "Pour commencer, veuillez contacter votre administrateur système afin d'obtenir une licence."
         },
         "renewLicense": {
-          "description": "Pour rétablir votre accès et continuer à utiliser Onyx, veuillez contacter votre administrateur système afin de renouveler votre licence."
+          "description": "Pour rétablir votre accès et continuer à utiliser Lumen, veuillez contacter votre administrateur système afin de renouveler votre licence."
         },
         "resubscribeButton": {
           "label": "Se réabonner",
@@ -10793,10 +10414,10 @@
           "description": "Votre organisation a dépassé le nombre de sièges sous licence ({used} utilisateurs / {seats} sièges). L'accès est restreint jusqu'à ce que le nombre d'utilisateurs soit réduit ou que votre licence soit mise à niveau."
         },
         "subscriptionLapse": {
-          "description": "Votre accès à Onyx a été temporairement suspendu en raison d'une interruption de votre abonnement."
+          "description": "Votre accès à Lumen a été temporairement suspendu en raison d'une interruption de votre abonnement."
         },
         "updatePayment": {
-          "description": "Pour rétablir votre accès et continuer à profiter des fonctionnalités puissantes d'Onyx, veuillez mettre à jour vos informations de paiement."
+          "description": "Pour rétablir votre accès et continuer à profiter des fonctionnalités puissantes d'Lumen, veuillez mettre à jour vos informations de paiement."
         }
       },
       "configError": {
@@ -10804,7 +10425,7 @@
           "text": "Si vous êtes administrateur, consultez notre <docsLink>documentation</docsLink> pour connaître les étapes de configuration. Si vous êtes utilisateur, contactez votre administrateur pour obtenir de l'aide."
         },
         "heading": {
-          "description": "Un problème est survenu lors du chargement de vos paramètres Onyx. Cela peut être dû à un problème de configuration ou à une installation incomplète.",
+          "description": "Un problème est survenu lors du chargement de vos paramètres Lumen. Cela peut être dû à un problème de configuration ou à une installation incomplète.",
           "title": "Nous avons rencontré un problème"
         }
       },
@@ -10813,7 +10434,7 @@
           "description": "Nous nous excusons pour la gêne occasionnée et vous remercions de votre patience."
         },
         "checkBack": {
-          "description": "Onyx est actuellement en maintenance. Veuillez réessayer dans quelques minutes."
+          "description": "Lumen est actuellement en maintenance. Veuillez réessayer dans quelques minutes."
         },
         "heading": {
           "title": "Maintenance en cours"
@@ -11094,7 +10715,7 @@
         "alt": "Logo"
       },
       "poweredBy": {
-        "label": "Propulsé par Onyx"
+        "label": "Propulsé par Lumen"
       }
     },
     "nonSelectableConnectors": {
@@ -11291,8 +10912,8 @@
             "label": "Nom"
           }
         },
-        "managedDescription": "Fourni par Onyx : configurez ce que l'agent peut faire.",
-        "managedNote": "Cette app est fournie par Onyx : les identifiants sont gérés pour vous. Choisissez ci-dessous ce que l'agent peut faire. Les utilisateurs la connectent depuis la page Apps.",
+        "managedDescription": "Fourni par Lumen : configurez ce que l'agent peut faire.",
+        "managedNote": "Cette app est fournie par Lumen : les identifiants sont gérés pour vous. Choisissez ci-dessous ce que l'agent peut faire. Les utilisateurs la connectent depuis la page Apps.",
         "saveButton": "Enregistrer"
       },
       "customApp": {
@@ -11377,14 +10998,14 @@
           "startAuthFailed": "Échec du démarrage de l'autorisation"
         },
         "header": {
-          "description": "Connectez les outils qu'Onyx Craft peut utiliser comme contexte pendant son travail.",
+          "description": "Connectez les outils qu'Lumen Craft peut utiliser comme contexte pendant son travail.",
           "manageButton": "Gérer les apps",
           "searchPlaceholder": "Rechercher des apps...",
           "title": "Apps"
         },
         "kinds": {
           "app": {
-            "blurb": "Intégrations prises en charge directement par Onyx. Chacune inclut des compétences qui apprennent à Craft à l'utiliser : commencez ici.",
+            "blurb": "Intégrations prises en charge directement par Lumen. Chacune inclut des compétences qui apprennent à Craft à l'utiliser : commencez ici.",
             "empty": "Aucune app n'est encore configurée pour votre organisation.",
             "emptyTitle": "Aucune app pour le moment",
             "tabLabel": "Apps · {count}"
@@ -11759,7 +11380,7 @@
       },
       "llmLocked": {
         "backToChatButton": "Retour au chat",
-        "description": "Onyx Craft a besoin d'un fournisseur de modèles, et seuls les administrateurs peuvent en configurer un. Demandez à votre administrateur de connecter Anthropic, OpenAI ou OpenRouter.",
+        "description": "Lumen Craft a besoin d'un fournisseur de modèles, et seuls les administrateurs peuvent en configurer un. Demandez à votre administrateur de connecter Anthropic, OpenAI ou OpenRouter.",
         "title": "Un fournisseur de LLM est requis"
       },
       "llmSetup": {
@@ -11904,7 +11525,7 @@
         "ariaLabel": "Copier le lien"
       },
       "organization": {
-        "description": "Toute personne connectée à votre Onyx peut voir cette application.",
+        "description": "Toute personne connectée à votre Lumen peut voir cette application.",
         "label": "Organisation"
       },
       "private": {
@@ -12440,7 +12061,7 @@
         "placeholder": "Filtrer les fichiers..."
       },
       "processing": {
-        "description": "Onyx traite encore les fichiers que vous avez téléversés. Vous pouvez créer l'agent maintenant, mais il n'aura pas accès à tous les fichiers avant la fin du traitement."
+        "description": "Lumen traite encore les fichiers que vous avez téléversés. Vous pouvez créer l'agent maintenant, mais il n'aura pas accès à tous les fichiers avant la fin du traitement."
       }
     },
     "search": {
@@ -12519,7 +12140,7 @@
         "button": {
           "label": "Recherche web"
         },
-        "description": "Permettez à Onyx de rechercher des informations sur Internet.",
+        "description": "Permettez à Lumen de rechercher des informations sur Internet.",
         "title": "Sélectionnez un fournisseur de recherche web"
       }
     },
@@ -12539,7 +12160,7 @@
         "subtitle": "API compatibles LiteLLM",
         "title": "Fournisseur de LLM personnalisé"
       },
-      "description": "Onyx prend en charge les modèles auto-hébergés et les fournisseurs populaires.",
+      "description": "Lumen prend en charge les modèles auto-hébergés et les fournisseurs populaires.",
       "edit": {
         "ariaLabel": "Modifier les fournisseurs de LLM"
       },
@@ -12559,7 +12180,7 @@
       "input": {
         "placeholder": "Votre nom"
       },
-      "title": "Comment Onyx doit-il vous appeler ?"
+      "title": "Comment Lumen doit-il vous appeler ?"
     },
     "nonAdminStep": {
       "confirmation": {
@@ -12685,7 +12306,7 @@
         "searchPlaceholder": "Rechercher..."
       },
       "revokeModal": {
-        "description": "Toute application utilisant le jeton {name} ({tokenDisplay}) perdra l'accès à Onyx. Cette action est irréversible.",
+        "description": "Toute application utilisant le jeton {name} ({tokenDisplay}) perdra l'accès à Lumen. Cette action est irréversible.",
         "question": "Voulez-vous vraiment révoquer ce jeton ?",
         "submit": "Révoquer",
         "title": "Révoquer le jeton d'accès"
@@ -12713,10 +12334,6 @@
         "copyButton": "Copier le jeton",
         "description": "Enregistrez ce jeton avant de continuer. Il ne sera plus affiché.",
         "title": "Jeton d'accès"
-      },
-      "upsell": {
-        "description": "Les jetons d'accès nécessitent un abonnement payant actif.",
-        "upgradeButton": "Mettre à niveau le forfait"
       }
     },
     "appearance": {
@@ -12751,7 +12368,7 @@
         "title": "Mode d'application par défaut"
       },
       "defaultModel": {
-        "description": "Ce modèle sera utilisé par défaut par Onyx dans vos chats.",
+        "description": "Ce modèle sera utilisé par défaut par Lumen dans vos chats.",
         "title": "Modèle par défaut"
       },
       "defaultReasoningLevel": {
@@ -12776,7 +12393,7 @@
       "connectButton": "Connecter",
       "disconnectModal": {
         "continueNote": "Vous pouvez toujours poursuivre les sessions existantes faisant référence au contenu {name}.",
-        "description": "Onyx ne pourra plus accéder au contenu de votre compte {name} ni le rechercher.",
+        "description": "Lumen ne pourra plus accéder au contenu de votre compte {name} ni le rechercher.",
         "disconnecting": "Déconnexion...",
         "submit": "Déconnecter",
         "title": "Déconnecter *{name}*"
@@ -12823,7 +12440,7 @@
         "copy": "Copier",
         "copyError": "Impossible de copier la valeur."
       },
-      "description": "Connectez des outils externes aux modèles disponibles pour vous dans Onyx.",
+      "description": "Connectez des outils externes aux modèles disponibles pour vous dans Lumen.",
       "guideButton": "Guide",
       "loadError": {
         "description": "Veuillez actualiser la page et réessayer.",
@@ -12886,7 +12503,7 @@
         "maxReached": "Maximum de {count} souvenirs atteint"
       },
       "empty": {
-        "description": "Ajoutez une note personnelle ou un souvenir que Onyx doit retenir.",
+        "description": "Ajoutez une note personnelle ou un souvenir que Lumen doit retenir.",
         "getStarted": "Aucun souvenir pour le moment. Cliquez sur « Ajouter une ligne » pour commencer.",
         "noMatches": "Aucun souvenir ne correspond à votre recherche."
       },
@@ -12897,11 +12514,11 @@
         "label": "{count, plural, one {Ligne} other {Lignes}}"
       },
       "modal": {
-        "description": "Autorisez Onyx à faire référence à ces notes et souvenirs enregistrés dans les chats.",
+        "description": "Autorisez Lumen à faire référence à ces notes et souvenirs enregistrés dans les chats.",
         "searchPlaceholder": "Rechercher..."
       },
       "referenceStoredMemories": {
-        "description": "Autorisez Onyx à faire référence aux souvenirs enregistrés dans les chats.",
+        "description": "Autorisez Lumen à faire référence aux souvenirs enregistrés dans les chats.",
         "title": "Référencer les souvenirs enregistrés"
       },
       "removeLineButton": {
@@ -12913,7 +12530,7 @@
         "saved": "Préférences enregistrées"
       },
       "updateMemories": {
-        "description": "Autorisez Onyx à générer et mettre à jour les souvenirs enregistrés.",
+        "description": "Autorisez Lumen à générer et mettre à jour les souvenirs enregistrés.",
         "title": "Mettre à jour les souvenirs"
       },
       "viewAll": {
@@ -13149,9 +12766,6 @@
         "tracing": {
           "label": "Traçage"
         },
-        "upgradePlan": {
-          "label": "Mettre à niveau le forfait"
-        },
         "usage": {
           "label": "Utilisation"
         },
@@ -13190,12 +12804,6 @@
       }
     },
     "adminSidebar": {
-      "businessOrEnterpriseOnly": {
-        "tooltip": "Cette fonctionnalité est disponible uniquement dans la [version Business ou Enterprise d'Onyx](/admin/billing)."
-      },
-      "enterpriseOnly": {
-        "tooltip": "Cette fonctionnalité est disponible uniquement dans la [version Enterprise d'Onyx](/admin/billing)."
-      },
       "exitAdminPanel": {
         "label": "Quitter le panneau d'administration"
       },
@@ -13735,7 +13343,7 @@
           "title": "Importer depuis GitHub"
         },
         "scratch": {
-          "description": "Rédigez les instructions et ajoutez des fichiers annexes dans Onyx.",
+          "description": "Rédigez les instructions et ajoutez des fichiers annexes dans Lumen.",
           "title": "Partir de zéro"
         },
         "trigger": {

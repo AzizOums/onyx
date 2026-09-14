@@ -1,6 +1,6 @@
 (() => {
-  if (window.__ONYX_CONSOLE_CAPTURE__) return;
-  window.__ONYX_CONSOLE_CAPTURE__ = true;
+  if (window.__LUMEN_CONSOLE_CAPTURE__) return;
+  window.__LUMEN_CONSOLE_CAPTURE__ = true;
 
   const levels = ['log', 'warn', 'error', 'info', 'debug'];
   const originals = {};

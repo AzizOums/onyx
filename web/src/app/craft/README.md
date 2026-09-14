@@ -1,20 +1,20 @@
 <h2 align="center">
-    <a href="https://www.onyx.app/?utm_source=onyx_repo&utm_medium=github&utm_campaign=readme"> <img width="50%" src="https://github.com/onyx-dot-app/onyx/blob/logo/OnyxLogoCropped.jpg?raw=true" /></a>
+    <a href="https://www.lumen.app/?utm_source=lumen_repo&utm_medium=github&utm_campaign=readme"> <img width="50%" src="https://github.com/lumen-dot-app/lumen/blob/logo/LumenLogoCropped.jpg?raw=true" /></a>
 </h2>
 
-<h1 align="center">Onyx Craft</h1>
+<h1 align="center">Lumen Craft</h1>
 
 <p align="center">
   <strong>Build apps, documents, and presentations from your company knowledge</strong>
 </p>
 
 <p align="center">
-  <a href="https://docs.onyx.app/overview/core_features/craft"><img alt="Documentation" src="https://img.shields.io/badge/docs-onyx.app-blue?style=flat-square" /></a>
-  <a href="https://github.com/onyx-dot-app/onyx/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green?style=flat-square" /></a>
+  <a href="https://docs.lumen.app/overview/core_features/craft"><img alt="Documentation" src="https://img.shields.io/badge/docs-lumen.app-blue?style=flat-square" /></a>
+  <a href="https://github.com/lumen-dot-app/lumen/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green?style=flat-square" /></a>
     <a href="https://discord.gg/TDJ59cGV2X" target="_blank" rel="noopener noreferrer">
         <img src="https://img.shields.io/badge/discord-join-blue.svg?logo=discord&logoColor=white" alt="Discord" />
     </a>
-  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/onyx-dot-app/onyx" />
+  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/lumen-dot-app/lumen" />
 </p>
 
 ---
@@ -29,9 +29,9 @@
 
 ## Overview
 
-Onyx Craft is an AI coding agent that creates web applications, documents, presentations, and more using your company's indexed knowledge. Users describe what they want in natural language, and the agent builds artifacts in an isolated sandbox environment with access to documents from connected sources like Linear, Slack, Google Drive, Confluence, and more.
+Lumen Craft is an AI coding agent that creates web applications, documents, presentations, and more using your company's indexed knowledge. Users describe what they want in natural language, and the agent builds artifacts in an isolated sandbox environment with access to documents from connected sources like Linear, Slack, Google Drive, Confluence, and more.
 
-For detailed documentation, visit [our docs](https://docs.onyx.app/overview/core_features/craft).
+For detailed documentation, visit [our docs](https://docs.lumen.app/overview/core_features/craft).
 
 ## Key Features
 
@@ -45,14 +45,14 @@ For detailed documentation, visit [our docs](https://docs.onyx.app/overview/core
 
 ### Requirements
 
-- Onyx deployment with an LLM provider configured (Anthropic, OpenAI, etc.)
+- Lumen deployment with an LLM provider configured (Anthropic, OpenAI, etc.)
 
 ### New Installations
 
-You can install Onyx Craft using our [quickstart script](https://docs.onyx.app/deployment/getting_started/quickstart):
+You can install Lumen Craft using our [quickstart script](https://docs.lumen.app/deployment/getting_started/quickstart):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/onyx-dot-app/onyx/main/deployment/docker_compose/install.sh > install.sh \
+curl -fsSL https://raw.githubusercontent.com/lumen-dot-app/lumen/main/deployment/docker_compose/install.sh > install.sh \
   && chmod +x install.sh \
   && ./install.sh --include-craft
 ```
@@ -62,7 +62,7 @@ This will:
 - Set `ENABLE_CRAFT=true` and `SANDBOX_BACKEND=docker` in the `.env` file
 - Pin `IMAGE_TAG` to the Craft-enabled backend image (Node.js + opencode CLI baked in)
 - Download and layer in the `docker-compose.craft.yml` overlay so api_server / background can talk to the Docker socket
-- Create the dedicated `onyx_craft_sandbox` bridge network used to isolate sandbox containers
+- Create the dedicated `lumen_craft_sandbox` bridge network used to isolate sandbox containers
 
 ### Existing Deployments
 

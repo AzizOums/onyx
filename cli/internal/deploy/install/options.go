@@ -1,5 +1,5 @@
 // Package install orchestrates the deploy lifecycle: install, upgrade, stop,
-// status and uninstall of a docker compose Onyx deployment. It is the Go
+// status and uninstall of a docker compose Lumen deployment. It is the Go
 // replacement for deployment/docker_compose/install.sh.
 package install
 
@@ -7,13 +7,13 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/paths"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/prompt"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/release"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/state"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/ui"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/paths"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/prompt"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/release"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/state"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/ui"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
 )
 
 // Options carries the flags shared across the deploy verbs. Flag names match
@@ -32,7 +32,7 @@ type Options struct {
 	NoWait       bool
 	Dir          string
 	// Project overrides the docker compose project name (default: the one
-	// recorded in the manifest, else "onyx").
+	// recorded in the manifest, else "lumen").
 	Project string
 	Force   bool
 	// AllowDowngrade proceeds when the target version is older than the

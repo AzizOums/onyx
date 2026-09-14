@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { MinimalOnyxDocument } from "@/lib/search/interfaces";
+import { MinimalLumenDocument } from "@/lib/search/interfaces";
 import { Modal } from "@opal/components";
 import Text from "@/refresh-components/texts/Text";
 import { Button } from "@opal/components";
@@ -20,7 +20,7 @@ import { PreviewContext } from "@/sections/modals/PreviewModal/interfaces";
 import { resolveVariant } from "@/sections/modals/PreviewModal/variants";
 
 interface PreviewModalProps {
-  presentingDocument: MinimalOnyxDocument;
+  presentingDocument: MinimalLumenDocument;
   onClose: () => void;
 }
 

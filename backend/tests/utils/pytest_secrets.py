@@ -28,7 +28,7 @@ import pytest
 from tests.utils.aws_secrets import get_secrets
 from tests.utils.secret_names import TestSecret
 
-_NEEDED_SECRETS_KEY = "_onyx_test_secrets_needed"
+_NEEDED_SECRETS_KEY = "_lumen_test_secrets_needed"
 _REDACTED_REPR = "<redacted>"
 
 Key = TypeVar("Key")

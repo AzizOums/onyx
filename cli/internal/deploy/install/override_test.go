@@ -7,9 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/deployfiles"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/paths"
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/state"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/deployfiles"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/paths"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/state"
 )
 
 const overrideBody = "services:\n  nginx:\n    ports: !override []\n"
@@ -94,7 +94,7 @@ func TestInstallStacksComposeOverrideLast(t *testing.T) {
 
 	up := composeArgv(t, runner, "up -d")
 	base := strings.Index(up, "-f docker-compose.yml")
-	lite := strings.Index(up, "-f docker-compose.onyx-lite.yml")
+	lite := strings.Index(up, "-f docker-compose.lumen-lite.yml")
 	dev := strings.Index(up, "-f docker-compose.dev.yml")
 	override := strings.Index(up, "-f docker-compose.override.yml")
 	if base < 0 || lite < 0 || dev < 0 || override < 0 {
@@ -118,7 +118,7 @@ func TestComposeOverrideAutoDetectedAndSurvivesUpgrade(t *testing.T) {
 	path := writeOverride(t, root, "docker-compose.override.yml")
 
 	upgradeRunner := &fakeRunner{handler: healthyDockerHandler}
-	upgradeDeps := testDeps(t, upgradeRunner, rawServer(t, "# compose at v4.2.0\nname: onyx\n"))
+	upgradeDeps := testDeps(t, upgradeRunner, rawServer(t, "# compose at v4.2.0\nname: lumen\n"))
 	if err := RunUpgrade(context.Background(), upgradeDeps, Options{
 		NoPrompt: true, Tag: "v4.2.0", Dir: root, NoWait: true,
 	}); err != nil {
@@ -166,7 +166,7 @@ func TestComposeFileNamesOverride(t *testing.T) {
 			mode: func(in *installer) { in.lite, in.craft = true, true },
 			want: []string{
 				"docker-compose.yml",
-				"docker-compose.onyx-lite.yml",
+				"docker-compose.lumen-lite.yml",
 				"docker-compose.craft.yml",
 				"docker-compose.override.yml",
 			},

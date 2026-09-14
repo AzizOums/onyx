@@ -15,7 +15,7 @@ from fastapi import Request
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.orm import Session
 
-from onyx.auth.session_tokens import (
+from lumen.auth.session_tokens import (
     SESSION_TOKEN_GRACE_PERIOD_SECONDS,
     SessionRejection,
     SessionRejectionReason,
@@ -23,13 +23,13 @@ from onyx.auth.session_tokens import (
     get_session_rejection,
     record_session_rejection,
 )
-from onyx.auth.users import TenantAwareRedisStrategy, UserManager
-from onyx.configs.app_configs import REDIS_AUTH_KEY_PREFIX, SESSION_EXPIRE_TIME_SECONDS
-from onyx.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
-from onyx.db.engine.async_sql_engine import get_async_session_context_manager
-from onyx.db.models import OAuthAccount, User
-from onyx.redis.redis_pool import get_raw_redis_client
-from onyx.server.manage.users import get_current_auth_token_expiry_redis
+from lumen.auth.users import TenantAwareRedisStrategy, UserManager
+from lumen.configs.app_configs import REDIS_AUTH_KEY_PREFIX, SESSION_EXPIRE_TIME_SECONDS
+from lumen.configs.constants import FASTAPI_USERS_AUTH_COOKIE_NAME
+from lumen.db.engine.async_sql_engine import get_async_session_context_manager
+from lumen.db.models import OAuthAccount, User
+from lumen.redis.redis_pool import get_raw_redis_client
+from lumen.server.manage.users import get_current_auth_token_expiry_redis
 from tests.external_dependency_unit.conftest import create_test_user
 
 # Covers the delay between the strategy's SET and the test's TTL read.
@@ -269,7 +269,7 @@ async def test_api_key_shaped_token_miss_not_classified() -> None:
     strategy = TenantAwareRedisStrategy()
     for credential in (
         f"on_{secrets.token_urlsafe()}",
-        f"onyx_pat_{secrets.token_urlsafe()}",
+        f"lumen_pat_{secrets.token_urlsafe()}",
         "header.payload.signature",
     ):
         # Under test.

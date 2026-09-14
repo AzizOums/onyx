@@ -4,20 +4,20 @@ from typing import Any
 import httpx
 import pytest
 
-from onyx.llm.api_surfaces import resolve_api_surface
-from onyx.llm.constants import LlmProviderNames
-from onyx.llm.model_capabilities import (
+from lumen.llm.api_surfaces import resolve_api_surface
+from lumen.llm.constants import LlmProviderNames
+from lumen.llm.model_capabilities import (
     get_max_input_tokens,
     litellm_thinks_model_supports_image_input,
     model_identity_names,
     model_is_reasoning_model,
     supported_reasoning_efforts,
 )
-from onyx.llm.model_name_parser import parse_litellm_model_name
-from onyx.llm.well_known_providers.llm_provider_options import (
+from lumen.llm.model_name_parser import parse_litellm_model_name
+from lumen.llm.well_known_providers.llm_provider_options import (
     fetch_default_model_for_provider,
 )
-from onyx.server.manage.llm.models import ModelConfigurationUpsertRequest
+from lumen.server.manage.llm.models import ModelConfigurationUpsertRequest
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.user import UserManager

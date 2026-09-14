@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import ErrorPageLayout from "@/components/errorPages/ErrorPageLayout";
 import Text from "@/refresh-components/texts/Text";
 import { DOCS_BASE_URL } from "@/lib/constants";
+import { docsChunk } from "@/lib/docs";
 import { SvgAlertCircle } from "@opal/icons";
 
 export default function Error() {
@@ -21,15 +22,9 @@ export default function Error() {
 
       <Text as="p" text03>
         {t.rich("configError.adminHint.text", {
-          docsLink: (chunks) => (
-            <a
-              className="text-action-selection-05"
-              href={`${DOCS_BASE_URL}?utm_source=app&utm_medium=error_page&utm_campaign=config_error`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {chunks}
-            </a>
+          docsLink: docsChunk(
+            "?utm_source=app&utm_medium=error_page&utm_campaign=config_error",
+            "text-action-selection-05"
           ),
         })}
       </Text>

@@ -71,10 +71,10 @@ export default async function Layout({ children }: LayoutProps) {
 
   let dir: HtmlDir = htmlDirForLocale(locale);
   // Dev-only escape hatch so QA can preview either direction without
-  // switching account language: set an "onyx-dir" cookie to "rtl" or
+  // switching account language: set an "lumen-dir" cookie to "rtl" or
   // "ltr" (with path=/) and reload.
   if (process.env.NODE_ENV === "development") {
-    const dirOverride = (await cookies()).get("onyx-dir")?.value;
+    const dirOverride = (await cookies()).get("lumen-dir")?.value;
     if (dirOverride === "rtl" || dirOverride === "ltr") {
       dir = dirOverride;
     }
@@ -115,7 +115,7 @@ export default async function Layout({ children }: LayoutProps) {
             scripts, so this synchronous check sees them; the class then
             persists across client-side navigations. No-op in a browser. */}
         <Script
-          id="onyx-desktop-detector"
+          id="lumen-desktop-detector"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
@@ -123,7 +123,7 @@ export default async function Layout({ children }: LayoutProps) {
                 ('__TAURI_INTERNALS__' in window || '__TAURI__' in window) &&
                 navigator.platform.startsWith('Mac')
               ) {
-                document.documentElement.classList.add('onyx-desktop');
+                document.documentElement.classList.add('lumen-desktop');
               }
             `,
           }}

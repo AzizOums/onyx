@@ -6,7 +6,7 @@ from tenacity import (
     wait_exponential,
 )
 
-from onyx.natural_language_processing.search_nlp_models import EmbeddingModel
+from lumen.natural_language_processing.search_nlp_models import EmbeddingModel
 from shared_configs.enums import EmbedTextType
 from shared_configs.model_server_models import EmbeddingProvider
 from tests.utils.secret_names import TestSecret

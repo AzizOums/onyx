@@ -2,7 +2,7 @@
 
 from unittest.mock import patch
 
-from onyx.server.metrics.embedding import (
+from lumen.server.metrics.embedding import (
     LOCAL_PROVIDER_LABEL,
     PROVIDER_LABEL_NAME,
     TEXT_TYPE_LABEL_NAME,

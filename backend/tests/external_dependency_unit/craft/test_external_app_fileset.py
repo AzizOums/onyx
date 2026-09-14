@@ -17,11 +17,11 @@ from __future__ import annotations
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import EndpointPolicy, ExternalAppType
-from onyx.db.models import Skill, User
-from onyx.external_apps.providers.slack import SlackAction
-from onyx.skills.built_in import SLACK
-from onyx.skills.push import build_skills_fileset_for_user
+from lumen.db.enums import EndpointPolicy, ExternalAppType
+from lumen.db.models import Skill, User
+from lumen.external_apps.providers.slack import SlackAction
+from lumen.skills.built_in import SLACK
+from lumen.skills.push import build_skills_fileset_for_user
 from tests.external_dependency_unit.craft.db_helpers import (
     make_external_app,
     make_user,

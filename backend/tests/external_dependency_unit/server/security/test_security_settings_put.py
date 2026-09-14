@@ -16,22 +16,22 @@ from fastapi import Request
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import KV_PASSWORD_AUTH_ENABLED_KEY
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import SecuritySettings as SecuritySettingsRow
-from onyx.db.models import User
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.key_value_store.factory import get_kv_store
-from onyx.key_value_store.interface import KvKeyNotFoundError
-from onyx.server.security import api as security_api
-from onyx.server.security import store as security_store
-from onyx.server.security.api import (
+from lumen.configs.constants import KV_PASSWORD_AUTH_ENABLED_KEY
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.models import SecuritySettings as SecuritySettingsRow
+from lumen.db.models import User
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.key_value_store.factory import get_kv_store
+from lumen.key_value_store.interface import KvKeyNotFoundError
+from lumen.server.security import api as security_api
+from lumen.server.security import store as security_store
+from lumen.server.security.api import (
     get_pinned_fields_endpoint,
     put_security_settings_endpoint,
 )
-from onyx.server.security.models import SecuritySettingsOverrides
-from onyx.server.security.store import (
+from lumen.server.security.models import SecuritySettingsOverrides
+from lumen.server.security.store import (
     _build_env_defaults,
     _install_cache_for_test,
     invalidate_security_cache,
@@ -135,14 +135,14 @@ def test_put_cross_field_validation_against_effective_state(
 ) -> None:
     """A payload that's individually valid but violates the merged invariant
     (min > max) must be rejected with INVALID_INPUT."""
-    from onyx.configs import app_configs
+    from lumen.configs import app_configs
 
     # Force env max=8 so payload min=10 violates after merge.
     monkeypatch.setattr(app_configs, "PASSWORD_MAX_LENGTH", 8, raising=False)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put({"password_min_length": 10})
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is LumenErrorCode.INVALID_INPUT
 
     assert _load_row_as_dict() is None
 
@@ -157,21 +157,21 @@ def test_put_accepts_password_min_length_zero() -> None:
 
 
 def test_put_extra_field_rejected_as_invalid_input() -> None:
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put({"this_field_does_not_exist": True})
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is LumenErrorCode.INVALID_INPUT
 
 
 def test_put_malformed_json_rejected_as_invalid_input() -> None:
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put(b"{not valid json")
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is LumenErrorCode.INVALID_INPUT
 
 
 def test_put_non_object_body_rejected_as_invalid_input() -> None:
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put(b"[1, 2, 3]")
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is LumenErrorCode.INVALID_INPUT
 
 
 def test_put_single_tenant_allows_operator_locked_fields() -> None:
@@ -183,9 +183,9 @@ def test_put_single_tenant_allows_operator_locked_fields() -> None:
 
 def test_put_rejects_max_length_below_floor() -> None:
     """``password_max_length`` is floored at PASSWORD_MAX_LENGTH_FLOOR."""
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put({"password_max_length": 3})
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is LumenErrorCode.INVALID_INPUT
     assert _load_row_as_dict() is None
 
 
@@ -201,9 +201,9 @@ def test_put_multi_tenant_rejects_operator_locked_field(
     monkeypatch.setattr(security_api, "MULTI_TENANT", True)
     monkeypatch.setattr(security_store, "MULTI_TENANT", True)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put({"password_min_length": 12})
-    assert exc_info.value.error_code is OnyxErrorCode.INSUFFICIENT_PERMISSIONS
+    assert exc_info.value.error_code is LumenErrorCode.INSUFFICIENT_PERMISSIONS
 
     assert _load_row_as_dict() is None
 
@@ -228,9 +228,9 @@ def test_put_multi_tenant_rejects_llm_env_injection_change(
     monkeypatch.setattr(security_api, "MULTI_TENANT", True)
     monkeypatch.setattr(security_store, "MULTI_TENANT", True)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put({"llm_custom_config_env_injection": True})
-    assert exc_info.value.error_code is OnyxErrorCode.INSUFFICIENT_PERMISSIONS
+    assert exc_info.value.error_code is LumenErrorCode.INSUFFICIENT_PERMISSIONS
     assert "llm_custom_config_env_injection" in str(exc_info.value)
 
     assert _load_row_as_dict() is None
@@ -292,7 +292,7 @@ def test_concurrent_puts_under_invariant_pressure_never_corrupt(
     min<=max invariant: the lock serializes them and the post-merge
     validator rejects the loser. Persisted state is never invalid.
     """
-    from onyx.configs import app_configs
+    from lumen.configs import app_configs
 
     # Pin env so natural defaults don't accidentally satisfy a bad ordering.
     monkeypatch.setattr(app_configs, "PASSWORD_MIN_LENGTH", 8, raising=False)
@@ -316,7 +316,7 @@ def test_concurrent_puts_under_invariant_pressure_never_corrupt(
     rejections = [
         e
         for e in errors
-        if isinstance(e, OnyxError) and e.error_code is OnyxErrorCode.INVALID_INPUT
+        if isinstance(e, LumenError) and e.error_code is LumenErrorCode.INVALID_INPUT
     ]
     assert len(rejections) == 1
     assert len(errors) == 1
@@ -381,9 +381,9 @@ def test_put_rejects_disabling_auth_with_no_enabled_provider(
     lock everyone out, so the save is refused and nothing persists."""
     _patch_enabled_providers(monkeypatch, [])
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put({"password_auth_enabled": False})
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is LumenErrorCode.INVALID_INPUT
     assert _load_row_as_dict() is None
     assert _load_password_auth_kv() == "missing"
 
@@ -419,9 +419,9 @@ def test_put_rejects_kill_switch_in_multi_tenant(
     multi-tenant it would silently never enforce, so the write is refused."""
     monkeypatch.setattr(security_api, "MULTI_TENANT", True)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put({"password_auth_enabled": False})
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is LumenErrorCode.INVALID_INPUT
     assert _load_row_as_dict() is None
     assert _load_password_auth_kv() == "missing"
 
@@ -433,9 +433,9 @@ def test_put_rejects_env_pinned_field_while_env_set(
     override the merge would render inert."""
     monkeypatch.setattr(security_store._cfg, "JWT_EXPECTED_AUDIENCE", "env-aud")
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put({"jwt_expected_audience": "db-aud"})
-    assert exc_info.value.error_code is OnyxErrorCode.INSUFFICIENT_PERMISSIONS
+    assert exc_info.value.error_code is LumenErrorCode.INSUFFICIENT_PERMISSIONS
 
 
 def test_put_accepts_env_pinned_field_while_env_unset(
@@ -459,9 +459,9 @@ def test_put_rejects_jwt_key_url_failing_ssrf_policy(
     server's key fetch at itself."""
     monkeypatch.setattr(security_store._cfg, "JWT_PUBLIC_KEY_URL", None)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         _put({"jwt_public_key_url": "https://127.0.0.1/keys"})
-    assert exc_info.value.error_code is OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code is LumenErrorCode.INVALID_INPUT
 
 
 def test_pinned_fields_endpoint_reflects_env(

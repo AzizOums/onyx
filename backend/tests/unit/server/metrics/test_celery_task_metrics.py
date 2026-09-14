@@ -6,8 +6,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from onyx.background.celery.apps.app_base import on_before_task_publish
-from onyx.server.metrics.celery_task_metrics import (
+from lumen.background.celery.apps.app_base import on_before_task_publish
+from lumen.server.metrics.celery_task_metrics import (
     TASK_COMPLETED,
     TASK_DURATION,
     TASK_QUEUE_WAIT,

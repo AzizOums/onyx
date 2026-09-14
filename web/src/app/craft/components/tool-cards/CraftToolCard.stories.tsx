@@ -231,9 +231,9 @@ export const WebFetch: Story = {
       kind: "other",
       toolName: "webfetch",
       title: "Fetching",
-      description: "https://api.github.com/repos/onyx-dot-app/onyx",
+      description: "https://api.github.com/repos/lumen-dot-app/lumen",
       rawOutput:
-        '{\n  "name": "onyx",\n  "full_name": "onyx-dot-app/onyx",\n  "stargazers_count": 12450\n}',
+        '{\n  "name": "lumen",\n  "full_name": "lumen-dot-app/lumen",\n  "stargazers_count": 12450\n}',
     }),
   },
 };

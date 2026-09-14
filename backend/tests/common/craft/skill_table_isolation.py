@@ -7,7 +7,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session, class_mapper
 
-from onyx.db.models import (
+from lumen.db.models import (
     ExternalApp,
     ExternalAppUserCredential,
     GatedActionPolicy,

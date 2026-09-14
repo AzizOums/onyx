@@ -1,8 +1,8 @@
 """seed_craft_documentation_built_in_skill
 
 Seeds the built-in ``craft-documentation`` skill row, which points the agent at
-the official docs at docs.onyx.app so it can answer questions about how Onyx and
-Onyx Craft work. Skill names are no longer unique, so the seed is made idempotent
+the official docs at docs.lumen.app so it can answer questions about how Lumen and
+Lumen Craft work. Skill names are no longer unique, so the seed is made idempotent
 by keying on ``built_in_skill_id``.
 
 Revision ID: c5d9662b3c50
@@ -25,10 +25,10 @@ depends_on = None
 
 _CRAFT_DOCUMENTATION_SKILL_ID = "craft-documentation"
 _CRAFT_DOCUMENTATION_DESCRIPTION = (
-    "Answer questions about how Onyx and Onyx Craft work using the official "
-    "documentation at docs.onyx.app. Use when the user asks what Craft can do, "
+    "Answer questions about how Lumen and Lumen Craft work using the official "
+    "documentation at docs.lumen.app. Use when the user asks what Craft can do, "
     "how a feature works, how to set up skills or apps, or how to deploy, "
-    "configure, or administer Onyx."
+    "configure, or administer Lumen."
 )
 
 _skill_table = sa.table(

@@ -32,7 +32,7 @@ import type { ExternalGroupSyncAttemptSnapshot } from "./types";
  * — a single source-wide group sync run logically applies to every
  * cc-pair sharing the source. See
  * `get_relevant_external_group_sync_attempts_for_cc_pair` in
- * `backend/onyx/db/permission_sync_attempt.py` for the resolution
+ * `backend/lumen/db/permission_sync_attempt.py` for the resolution
  * rules and the multi-instance caveat.
  */
 

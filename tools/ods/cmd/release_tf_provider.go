@@ -7,7 +7,7 @@ import (
 var tfProviderRelease = prefixedTagRelease{
 	tagPrefix: "tf-provider/v",
 	tagGlob:   "tf-provider/*",
-	subject:   "terraform-provider-onyx",
+	subject:   "terraform-provider-lumen",
 	publishes: "release-terraform-provider.yml will mirror it, and the mirror publishes to the Terraform Registry.",
 }
 
@@ -17,15 +17,15 @@ func NewReleaseTFProviderCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "tf-provider",
-		Short: "Cut a new terraform-provider-onyx release by pushing a tf-provider/vX.Y.Z tag",
-		Long: `Cut a new terraform-provider-onyx release by pushing a tf-provider/vX.Y.Z tag.
+		Short: "Cut a new terraform-provider-lumen release by pushing a tf-provider/vX.Y.Z tag",
+		Long: `Cut a new terraform-provider-lumen release by pushing a tf-provider/vX.Y.Z tag.
 
 The tf-provider/v* tags are the source of truth for the version — nothing in
-terraform-provider-onyx/ records it, and the build stamps it from the tag. This
+terraform-provider-lumen/ records it, and the build stamps it from the tag. This
 command reads the latest tf-provider/v* tag, computes the next version, and pushes
 the new tag to origin.
 
-release-terraform-provider.yml then copies terraform-provider-onyx/ to the release
+release-terraform-provider.yml then copies terraform-provider-lumen/ to the release
 mirror as one commit tagged vX.Y.Z, and the mirror's own Publish workflow builds,
 signs and publishes the release the Terraform Registry ingests.
 

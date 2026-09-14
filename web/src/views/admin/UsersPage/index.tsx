@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { docsHref } from "@/lib/docs";
 import { SvgExternalLink, SvgUser, SvgUserPlus } from "@opal/icons";
 import { Button, MessageCard } from "@opal/components";
 import { SettingsLayouts } from "@opal/layouts";
@@ -72,6 +73,9 @@ function UsersContent() {
 
 export default function UsersPage() {
   const t = useTranslations("admin.users");
+  const permissionsDocsUrl = docsHref(
+    "/admins/permissions/whats_changing"
+  );
   const [inviteOpen, setInviteOpen] = useState(false);
 
   return (
@@ -90,18 +94,16 @@ export default function UsersPage() {
           title={t("permissionsNotice.title")}
           description={t("permissionsNotice.description")}
           rightChildren={
-            <Button
-              icon={SvgExternalLink}
-              onClick={() =>
-                window.open(
-                  "https://docs.onyx.app/admins/permissions/whats_changing",
-                  "_blank",
-                  "noopener,noreferrer"
-                )
-              }
-            >
-              {t("permissionsNotice.learnMoreButton.label")}
-            </Button>
+            permissionsDocsUrl ? (
+              <Button
+                icon={SvgExternalLink}
+                onClick={() =>
+                  window.open(permissionsDocsUrl, "_blank", "noopener,noreferrer")
+                }
+              >
+                {t("permissionsNotice.learnMoreButton.label")}
+              </Button>
+            ) : undefined
           }
         />
       </SettingsLayouts.Header>

@@ -15,26 +15,26 @@ from redis.exceptions import RedisError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.cache.factory import get_cache_backend
-from onyx.configs.constants import NotificationType
-from onyx.db.engine.sql_engine import get_session_with_tenant
-from onyx.db.enums import (
+from lumen.cache.factory import get_cache_backend
+from lumen.configs.constants import NotificationType
+from lumen.db.engine.sql_engine import get_session_with_tenant
+from lumen.db.enums import (
     ApprovalDecision,
     BuildSessionStatus,
     EndpointPolicy,
     GatedAppKind,
 )
-from onyx.db.models import ActionApproval, BuildSession, Notification
-from onyx.external_apps.matching.engine import (
+from lumen.db.models import ActionApproval, BuildSession, Notification
+from lumen.external_apps.matching.engine import (
     AllMatchedActions,
     GatedTarget,
     MatchedAction,
 )
-from onyx.sandbox_proxy import approval_cache
-from onyx.sandbox_proxy.addons.gate import GateAddon, _IdentityResolver
-from onyx.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
-from onyx.sandbox_proxy.identity import ResolvedSandbox, SessionContext
-from onyx.sandbox_proxy.request_evaluator import RequestEvaluator
+from lumen.sandbox_proxy import approval_cache
+from lumen.sandbox_proxy.addons.gate import GateAddon, _IdentityResolver
+from lumen.sandbox_proxy.credential_injection import CredentialInjectionDispatcher
+from lumen.sandbox_proxy.identity import ResolvedSandbox, SessionContext
+from lumen.sandbox_proxy.request_evaluator import RequestEvaluator
 from shared_configs.contextvars import POSTGRES_DEFAULT_SCHEMA
 from tests.common.craft.payloads import action_entry
 from tests.external_dependency_unit.conftest import create_test_user

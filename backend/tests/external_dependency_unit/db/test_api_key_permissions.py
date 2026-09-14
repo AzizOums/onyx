@@ -7,14 +7,14 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.api_key import (
+from lumen.db.api_key import (
     insert_api_key,
     regenerate_api_key,
     remove_api_key,
     update_api_key,
 )
-from onyx.db.models import User, UserGroup
-from onyx.server.api_key.models import APIKeyArgs
+from lumen.db.models import User, UserGroup
+from lumen.server.api_key.models import APIKeyArgs
 
 
 def _basic_group_id(db_session: Session) -> int:

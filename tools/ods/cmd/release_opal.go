@@ -7,7 +7,7 @@ import (
 var opalRelease = prefixedTagRelease{
 	tagPrefix: "opal/v",
 	tagGlob:   "opal/*",
-	subject:   "@onyx-ai/opal",
+	subject:   "@lumen-ai/opal",
 	publishes: "release-opal.yml will build and publish to npm.",
 }
 
@@ -17,8 +17,8 @@ func NewReleaseOpalCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "opal",
-		Short: "Cut a new @onyx-ai/opal release by pushing an opal/vX.Y.Z tag",
-		Long: `Cut a new @onyx-ai/opal release by pushing an opal/vX.Y.Z tag.
+		Short: "Cut a new @lumen-ai/opal release by pushing an opal/vX.Y.Z tag",
+		Long: `Cut a new @lumen-ai/opal release by pushing an opal/vX.Y.Z tag.
 
 The opal/v* tags are the source of truth for the version — web/lib/opal/package.json
 stays at 0.0.0 and release-opal.yml sets the published version from the tag. This

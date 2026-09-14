@@ -1,4 +1,4 @@
-<!-- ONYX_METADATA={"link": "https://github.com/onyx-dot-app/onyx/blob/main/web/README.md"} -->
+<!-- LUMEN_METADATA={"link": "https://github.com/lumen-dot-app/lumen/blob/main/web/README.md"} -->
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
@@ -19,7 +19,7 @@ _Note:_ if you are having problems accessing the ^, try setting the `WEB_DOMAIN`
 `http://127.0.0.1:3000` and accessing it there.
 
 > [!TIP]
-> Packages are installed automatically when switching branches after `package.json` changes with [pre-commit](https://github.com/onyx-dot-app/onyx/blob/main/CONTRIBUTING.md#formatting-and-linting) configured.
+> Packages are installed automatically when switching branches after `package.json` changes with [pre-commit](https://github.com/lumen-dot-app/lumen/blob/main/CONTRIBUTING.md#formatting-and-linting) configured.
 
 ### Connecting to a Cloud Backend
 
@@ -28,12 +28,12 @@ create a `.env.local` file in the `web/` directory with the following configurat
 
 ```text
 # Point local dev server to cloud backend
-INTERNAL_URL=https://st-dev.onyx.app/api
+INTERNAL_URL=https://st-dev.lumen.app/api
 
 # Debug auth cookie for authenticating against remote backend
 # This cookie is automatically injected into API requests when in development mode
 # To get this value:
-#   1. Go to https://st-dev.onyx.app (or your target backend URL) and log in
+#   1. Go to https://st-dev.lumen.app (or your target backend URL) and log in
 #   2. Open DevTools (F12) → Application → Cookies → [your backend domain]
 #   3. Find the "fastapiusersauth" cookie and copy its value
 #   4. Paste the value below (without quotes)
@@ -104,4 +104,4 @@ To compare screenshots across CI runs, use:
 ods screenshot-diff compare --project admin
 ```
 
-For more information, see [tools/ods/README.md](https://github.com/onyx-dot-app/onyx/blob/main/tools/ods/README.md#screenshot-diff---visual-regression-testing).
+For more information, see [tools/ods/README.md](https://github.com/lumen-dot-app/lumen/blob/main/tools/ods/README.md#screenshot-diff---visual-regression-testing).

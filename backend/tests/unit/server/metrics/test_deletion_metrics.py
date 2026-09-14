@@ -2,7 +2,7 @@
 
 import pytest
 
-from onyx.server.metrics.deletion_metrics import (
+from lumen.server.metrics.deletion_metrics import (
     DELETION_BLOCKED,
     DELETION_COMPLETED,
     DELETION_FENCE_RESET,

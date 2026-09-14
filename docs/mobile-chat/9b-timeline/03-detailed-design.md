@@ -318,8 +318,8 @@ mobile/src/
 - **PR-3 stream controller / `chatSessionStore`** — records `streamingStartedAt` per assistant node (Important
   Notes §7) for the live timer.
 - **`mobile/src/components/avatars/AgentAvatar`** (PR 5) — reused at `size={24}` in the rail.
-- **`@onyx-ai/shared/native`** — `varsLight/varsDark` + `textPresets` for markdown colors (unchanged pattern).
-- **Backend / DB / API** — **untouched.** Reasoning packets already stream from `backend/onyx/chat/llm_step.py`.
+- **`@lumen-ai/shared/native`** — `varsLight/varsDark` + `textPresets` for markdown colors (unchanged pattern).
+- **Backend / DB / API** — **untouched.** Reasoning packets already stream from `backend/lumen/chat/llm_step.py`.
 
 ## Important notes before implementation
 

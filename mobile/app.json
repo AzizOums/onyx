@@ -1,18 +1,18 @@
 {
   "expo": {
-    "name": "Onyx",
+    "name": "Lumen",
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "onyx",
+    "scheme": "lumen",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "app.onyx.mobile",
+      "bundleIdentifier": "app.lumen.mobile",
       "supportsTablet": false
     },
     "android": {
-      "package": "app.onyx.mobile",
+      "package": "app.lumen.mobile",
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -103,7 +103,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow Onyx to access your photos so you can add them to a project.",
+          "photosPermission": "Allow Lumen to access your photos so you can add them to a project.",
           "microphonePermission": false,
           "cameraPermission": false
         }

@@ -4,7 +4,7 @@ import * as SecureStore from "expo-secure-store";
 
 import { getBaseUrl } from "@/api/config";
 
-const ACCESS_TOKEN_KEY_PREFIX = "onyx.auth.access_token";
+const ACCESS_TOKEN_KEY_PREFIX = "lumen.auth.access_token";
 const SAFE_KEY_CHAR = /^[A-Za-z0-9.-]$/;
 
 // THIS_DEVICE_ONLY keeps the token out of iCloud/backups.

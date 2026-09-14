@@ -7,11 +7,11 @@ from fastapi_users.password import PasswordHelper
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
-from onyx.db.enums import AccountType
-from onyx.db.models import User, User__UserGroup
-from onyx.db.users import assign_user_to_default_groups__no_commit
-from onyx.file_store.file_store import get_default_file_store
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_current_tenant
+from lumen.db.enums import AccountType
+from lumen.db.models import User, User__UserGroup
+from lumen.db.users import assign_user_to_default_groups__no_commit
+from lumen.file_store.file_store import get_default_file_store
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 from tests.external_dependency_unit.full_setup import ensure_full_deployment_setup
@@ -26,11 +26,11 @@ from tests.utils.pytest_secrets import test_secrets as test_secrets
 
 @pytest.fixture
 def audit_stream(caplog: pytest.LogCaptureFixture) -> Generator[None, None, None]:
-    """``onyx.audit`` sets ``propagate=False``, so caplog's root handler never sees
+    """``lumen.audit`` sets ``propagate=False``, so caplog's root handler never sees
     its records; hang caplog's handler below that barrier instead. Not autouse — it
     would feed audit records to tests that capture logs for other reasons.
     """
-    audit_logger = logging.getLogger("onyx.audit")
+    audit_logger = logging.getLogger("lumen.audit")
     audit_logger.addHandler(caplog.handler)
     try:
         yield
@@ -116,7 +116,7 @@ def delete_test_user(db_session: Session, *users: User) -> None:
     """Tear down users created by create_test_user. Clears default-group
     membership first — user__user_group.user_id has no ON DELETE CASCADE, so a
     bare delete(user) raises ForeignKeyViolation. Mirrors the production delete
-    path in onyx.db.users."""
+    path in lumen.db.users."""
     user_ids = [user.id for user in users]
     db_session.execute(
         delete(User__UserGroup).where(User__UserGroup.user_id.in_(user_ids))

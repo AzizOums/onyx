@@ -2,8 +2,8 @@
 // query-cache clear can't touch other persisted state.
 import { createMMKV, type MMKV } from "react-native-mmkv";
 
-export const appStorage: MMKV = createMMKV({ id: "onyx.app" });
-export const queryStorage: MMKV = createMMKV({ id: "onyx.query-cache" });
+export const appStorage: MMKV = createMMKV({ id: "lumen.app" });
+export const queryStorage: MMKV = createMMKV({ id: "lumen.query-cache" });
 
 export function makeMmkvStorage(mmkv: MMKV) {
   return {

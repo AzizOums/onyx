@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/docker"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/docker"
 )
 
 var (
@@ -26,7 +26,7 @@ func NewRootCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "ods ",
-		Short: "Developer utilities for working on onyx.app",
+		Short: "Developer utilities for working on lumen.app",
 		Run:   rootCmd,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			if opts.Debug {

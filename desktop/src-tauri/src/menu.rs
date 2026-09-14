@@ -11,7 +11,7 @@ use tauri::menu::{
 use tauri::tray::{TrayIconBuilder, TrayIconEvent};
 use tauri::{AppHandle, Manager, Wry};
 
-const TRAY_ID: &str = "onyx-tray";
+const TRAY_ID: &str = "lumen-tray";
 const TRAY_ICON_BYTES: &[u8] = include_bytes!("../icons/tray-icon.png");
 // GTK's AboutDialog renders the logo at the image's native size (muda does no
 // scaling), so embed the 128px asset rather than the 256px @2x one.
@@ -86,7 +86,7 @@ fn build_file_menu(app: &AppHandle, menu: &Menu<Wry>) -> tauri::Result<()> {
 
 /// Reload/Back/Forward as View-menu accelerators. These are the chords the
 /// removed global-shortcut set (#7914) wrongly registered system-wide; as
-/// menu accelerators they only fire while an Onyx window has focus.
+/// menu accelerators they only fire while an Lumen window has focus.
 fn build_view_menu(app: &AppHandle, menu: &Menu<Wry>) -> tauri::Result<()> {
     let reload_item = MenuItem::with_id(app, MENU_RELOAD_ID, "Reload", true, Some("CmdOrCtrl+R"))?;
 
@@ -213,7 +213,7 @@ fn build_help_menu(app: &AppHandle, menu: &Menu<Wry>) -> tauri::Result<()> {
     let docs_item = MenuItem::with_id(
         app,
         MENU_OPEN_DOCS_ID,
-        "Onyx Documentation",
+        "Lumen Documentation",
         true,
         None::<&str>,
     )?;
@@ -225,7 +225,7 @@ fn build_help_menu(app: &AppHandle, menu: &Menu<Wry>) -> tauri::Result<()> {
         // Off macOS, `Menu::default` seeds this Help menu with a predefined
         // "About" item (at index 0) whose metadata carries no icon, so the
         // About dialog shows no logo. Rebuild that metadata -- keeping the name,
-        // version, and copyright `Menu::default` set -- with the Onyx icon added.
+        // version, and copyright `Menu::default` set -- with the Lumen icon added.
         // (On macOS the About item lives in the app menu, not Help.)
         #[cfg(not(target_os = "macos"))]
         {
@@ -376,7 +376,7 @@ fn build_tray_menu(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
     let open_app = MenuItem::with_id(
         app,
         TRAY_MENU_OPEN_APP_ID,
-        "Open Onyx",
+        "Open Lumen",
         true,
         open_app_chord.as_deref(),
     )?;
@@ -410,7 +410,7 @@ fn build_tray_menu(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
     )?;
     // Keep it visible/pinned without letting users uncheck (avoids orphaning the tray)
     show_in_menu_bar.set_enabled(false)?;
-    let quit = PredefinedMenuItem::quit(app, Some("Quit Onyx"))?;
+    let quit = PredefinedMenuItem::quit(app, Some("Quit Lumen"))?;
 
     let mut builder = MenuBuilder::new(app).item(&open_app).item(&open_chat);
     if let Some(item) = summon_new_chat.as_ref() {
@@ -473,7 +473,7 @@ fn handle_tray_menu_event(app: &AppHandle, id: &str) {
 }
 
 pub fn setup_tray_icon(app: &AppHandle) -> tauri::Result<()> {
-    let mut builder = TrayIconBuilder::with_id(TRAY_ID).tooltip("Onyx");
+    let mut builder = TrayIconBuilder::with_id(TRAY_ID).tooltip("Lumen");
 
     let tray_icon = Image::from_bytes(TRAY_ICON_BYTES)
         .ok()

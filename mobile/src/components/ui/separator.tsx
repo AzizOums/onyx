@@ -1,4 +1,4 @@
-// Vendored RNR `separator`, reconciled to Onyx tokens (`bg-border` → `bg-border-01`).
+// Vendored RNR `separator`, reconciled to Lumen tokens (`bg-border` → `bg-border-01`).
 import { cn } from "@/lib/utils";
 import * as SeparatorPrimitive from "@rn-primitives/separator";
 

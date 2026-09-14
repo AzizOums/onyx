@@ -2,7 +2,7 @@
 Integration tests for the LLM provider listing cache.
 
 The listing endpoints are memoized in Redis (see
-onyx/server/manage/llm/provider_cache.py) with a long TTL, so mutations that
+lumen/server/manage/llm/provider_cache.py) with a long TTL, so mutations that
 change the payload must invalidate explicitly for edits to show up promptly.
 """
 

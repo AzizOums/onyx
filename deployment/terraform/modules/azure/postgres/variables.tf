@@ -278,7 +278,7 @@ variable "zone" {
 
 # RDS lets a user CREATE EXTENSION for most extensions without preparation.
 # Azure refuses unless the extension is allow-listed on the server first, and
-# the list starts empty -- so Onyx's own migrations fail on a fresh server with
+# the list starts empty -- so Lumen's own migrations fail on a fresh server with
 # "extension pgcrypto is not allow-listed for users in Azure Database for
 # PostgreSQL". These two are what those migrations create.
 variable "allowed_extensions" {

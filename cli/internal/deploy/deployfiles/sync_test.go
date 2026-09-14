@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-// repoRoot points at the onyx repo checkout containing this package
+// repoRoot points at the lumen repo checkout containing this package
 // (cli/internal/deploy/deployfiles -> four levels up).
 var repoRoot = filepath.Join("..", "..", "..", "..")
 

@@ -4,14 +4,14 @@ import (
 	"context"
 )
 
-// DefaultProjectName is the compose project new Onyx deployments run under,
-// pinned by `name: onyx` in docker-compose.yml. Containers and volumes carry
+// DefaultProjectName is the compose project new Lumen deployments run under,
+// pinned by `name: lumen` in docker-compose.yml. Containers and volumes carry
 // the project as a label, which is what makes an install root movable and
 // what lets docker find the stack without the compose files. Adopted
 // deployments may run under another name (compose prefixes named volumes with
 // the project, so renaming one would strand its data); the CLI records theirs
 // in the manifest and passes it as -p.
-const DefaultProjectName = "onyx"
+const DefaultProjectName = "lumen"
 
 // Compose invokes docker compose (plugin) or docker-compose (standalone),
 // whichever is available, through the Docker sudo wrapper.

@@ -2,7 +2,7 @@ import json
 import math
 import urllib.request
 
-from onyx.configs.model_configs import (
+from lumen.configs.model_configs import (
     ASYM_QUERY_PREFIX,
     DEFAULT_DOCUMENT_ENCODER_MODEL,
     DOC_EMBEDDING_DIM,

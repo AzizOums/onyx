@@ -1,4 +1,4 @@
-// Package cmd implements Cobra CLI commands for the Onyx CLI.
+// Package cmd implements Cobra CLI commands for the Lumen CLI.
 package cmd
 
 import (
@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
-	"github.com/onyx-dot-app/onyx/cli/internal/version"
+	"github.com/lumen-dot-app/lumen/cli/internal/api"
+	"github.com/lumen-dot-app/lumen/cli/internal/config"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/version"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -71,13 +71,13 @@ func Execute() error {
 	}{}
 
 	rootCmd := &cobra.Command{
-		Use:   "onyx-cli",
-		Short: "CLI for Onyx knowledge and search",
+		Use:   "lumen-cli",
+		Short: "CLI for Lumen knowledge and search",
 		// main.go prints the error; without these, cobra prints it a second
 		// time and dumps the full usage text after every runtime failure.
 		SilenceErrors: true,
 		SilenceUsage:  true,
-		Long:          "Onyx CLI — query enterprise knowledge from the terminal or as an agent tool.",
+		Long:          "Lumen CLI — query enterprise knowledge from the terminal or as an agent tool.",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			if opts.Debug {
 				log.SetLevel(log.DebugLevel)
@@ -108,7 +108,7 @@ func Execute() error {
 	rootCmd.AddCommand(newInstallSkillCmd(ios))
 	rootCmd.AddCommand(newExperimentsCmd(ios))
 	rootCmd.AddCommand(newDeployCmd(ios))
-	rootCmd.AddCommand(newInstallOnyxCmd(ios))
+	rootCmd.AddCommand(newInstallLumenCmd(ios))
 
 	rootCmd.RunE = func(cmd *cobra.Command, args []string) error {
 		if showVersion {

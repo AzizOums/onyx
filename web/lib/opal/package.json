@@ -1,14 +1,14 @@
 {
-  "name": "@onyx-ai/opal",
+  "name": "@lumen-ai/opal",
   "version": "0.0.0",
-  "description": "Opal — Onyx's Typescript component library and design system.",
+  "description": "Opal — Lumen's Typescript component library and design system.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/onyx-dot-app/onyx.git",
+    "url": "https://github.com/lumen-dot-app/lumen.git",
     "directory": "web/lib/opal"
   },
-  "homepage": "https://github.com/onyx-dot-app/onyx/tree/main/web/lib/opal",
+  "homepage": "https://github.com/lumen-dot-app/lumen/tree/main/web/lib/opal",
   "type": "module",
   "imports": {
     "#reference.css": "./src/_reference.css"
@@ -100,7 +100,7 @@
     "remark-gfm": "^4.0.0"
   },
   "devDependencies": {
-    "@onyx-ai/shared": "file:../shared",
+    "@lumen-ai/shared": "file:../shared",
     "tsup": "^8.3.0",
     "typescript": "^5.0.0"
   }

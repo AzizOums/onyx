@@ -17,11 +17,11 @@ from model_server.ca_certs import configure_trusted_ca_bundle
 from model_server.encoders import router as encoders_router
 from model_server.management_endpoints import router as management_router
 from model_server.utils import get_cgroup_cpu_limit, get_gpu_type
-from onyx import __version__
-from onyx.utils.logger import setup_logger, setup_uvicorn_logger
-from onyx.utils.middleware import (
-    add_onyx_request_id_middleware,
-    add_onyx_tenant_id_middleware,
+from lumen import __version__
+from lumen.utils.logger import setup_logger, setup_uvicorn_logger
+from lumen.utils.middleware import (
+    add_lumen_request_id_middleware,
+    add_lumen_tenant_id_middleware,
 )
 from shared_configs.configs import (
     INDEXING_ONLY,
@@ -117,10 +117,10 @@ def get_model_app() -> FastAPI:
     configure_trusted_ca_bundle()
 
     application = FastAPI(
-        title="Onyx Model Server", version=__version__, lifespan=lifespan
+        title="Lumen Model Server", version=__version__, lifespan=lifespan
     )
     if SENTRY_DSN:
-        from onyx.configs.sentry import init_sentry
+        from lumen.configs.sentry import init_sentry
 
         init_sentry(
             traces_sample_rate=SENTRY_TRACES_SAMPLE_RATE,
@@ -136,8 +136,8 @@ def get_model_app() -> FastAPI:
     if INDEXING_ONLY:
         request_id_prefix = "IDX"
 
-    add_onyx_tenant_id_middleware(application, logger)
-    add_onyx_request_id_middleware(application, request_id_prefix, logger)
+    add_lumen_tenant_id_middleware(application, logger)
+    add_lumen_request_id_middleware(application, request_id_prefix, logger)
 
     # Initialize and instrument the app
     Instrumentator().instrument(application).expose(application)
@@ -155,7 +155,7 @@ def run_server() -> None:
     # drive the bind host.
     host = "0.0.0.0"  # noqa: S104
     logger.notice(
-        "Starting Onyx Model Server on http://%s:%s/",
+        "Starting Lumen Model Server on http://%s:%s/",
         host,
         str(MODEL_SERVER_PORT),
     )

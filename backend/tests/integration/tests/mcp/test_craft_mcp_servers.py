@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     MCPAuthenticationPerformer,
     MCPAuthenticationType,
     MCPTransport,

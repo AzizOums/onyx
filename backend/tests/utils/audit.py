@@ -1,6 +1,6 @@
 """Parse audit events out of caplog.
 
-These return nothing unless a handler is attached to ``onyx.audit``. The unit
+These return nothing unless a handler is attached to ``lumen.audit``. The unit
 conftests do that automatically; external-dependency tests use ``audit_stream``.
 """
 
@@ -14,7 +14,7 @@ def audit_events(caplog: pytest.LogCaptureFixture) -> list[dict[str, Any]]:
     return [
         json.loads(record.getMessage())
         for record in caplog.records
-        if record.name.startswith("onyx.audit")
+        if record.name.startswith("lumen.audit")
     ]
 
 

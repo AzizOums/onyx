@@ -114,7 +114,7 @@ jobs:
           # Determine if this tag should get the "latest" Docker tag.
           # Only the highest semver stable tag (vX.Y.Z exactly) gets "latest".
           if [[ "$IS_STABLE" == "true" ]]; then
-            HIGHEST_STABLE=$(uv run --no-sync --with onyx-devtools ods latest-stable-tag) || {
+            HIGHEST_STABLE=$(uv run --no-sync --with lumen-devtools ods latest-stable-tag) || {
               echo "::error::Failed to determine highest stable tag via 'ods latest-stable-tag'"
               exit 1
             }
@@ -184,7 +184,7 @@ jobs:
       - name: Run dependency audit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: uv run --no-sync --with onyx-devtools ods audit --fail-on=critical
+        run: uv run --no-sync --with lumen-devtools ods audit --fail-on=critical
 
   # Validate that a pushed release tag is versioned correctly, via
   # `ods release --check`. A cloud tag must be the tag `ods release cloud`
@@ -216,7 +216,7 @@ jobs:
 
       - name: Validate the tag is versioned correctly
         run: |
-          uv run --no-sync --with onyx-devtools ods release --check --ref "$GITHUB_REF_NAME"
+          uv run --no-sync --with lumen-devtools ods release --check --ref "$GITHUB_REF_NAME"
 
   notify-slack-on-tag-check-failure:
     needs:
@@ -505,7 +505,7 @@ jobs:
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-web-server
+      REGISTRY_IMAGE: lumendotapp/lumen-web-server
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -562,7 +562,7 @@ jobs:
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            LUMEN_VERSION=${{ github.ref_name }}
             ${{ env.DHI_NODE_BUILD_ARGS }}
             NODE_OPTIONS=--max-old-space-size=8192
           cache-from: |
@@ -587,7 +587,7 @@ jobs:
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-web-server
+      REGISTRY_IMAGE: lumendotapp/lumen-web-server
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -644,7 +644,7 @@ jobs:
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            LUMEN_VERSION=${{ github.ref_name }}
             ${{ env.DHI_NODE_BUILD_ARGS }}
             NODE_OPTIONS=--max-old-space-size=8192
           cache-from: |
@@ -669,7 +669,7 @@ jobs:
     timeout-minutes: 90
     environment: release
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-web-server
+      REGISTRY_IMAGE: lumendotapp/lumen-web-server
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -761,7 +761,7 @@ jobs:
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-web-server
+      REGISTRY_IMAGE: lumendotapp/lumen-web-server
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -818,7 +818,7 @@ jobs:
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            LUMEN_VERSION=${{ github.ref_name }}
             ${{ env.DHI_NODE_BUILD_ARGS }}
             NEXT_PUBLIC_CLOUD_ENABLED=true
             WEB_FRAME_PROTECTION_ENABLED=false
@@ -853,7 +853,7 @@ jobs:
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-web-server
+      REGISTRY_IMAGE: lumendotapp/lumen-web-server
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -910,7 +910,7 @@ jobs:
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            LUMEN_VERSION=${{ github.ref_name }}
             ${{ env.DHI_NODE_BUILD_ARGS }}
             NEXT_PUBLIC_CLOUD_ENABLED=true
             WEB_FRAME_PROTECTION_ENABLED=false
@@ -945,7 +945,7 @@ jobs:
     timeout-minutes: 90
     environment: release
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-web-server
+      REGISTRY_IMAGE: lumendotapp/lumen-web-server
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -1024,7 +1024,7 @@ jobs:
       digest: ${{ steps.build.outputs.digest }}
       digest-dev: ${{ steps.build-dev.outputs.digest }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-backend
+      REGISTRY_IMAGE: lumendotapp/lumen-backend
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -1074,7 +1074,7 @@ jobs:
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            LUMEN_VERSION=${{ github.ref_name }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:latest
@@ -1095,7 +1095,7 @@ jobs:
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            LUMEN_VERSION=${{ github.ref_name }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge-dev
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
@@ -1120,7 +1120,7 @@ jobs:
       digest: ${{ steps.build.outputs.digest }}
       digest-dev: ${{ steps.build-dev.outputs.digest }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-backend
+      REGISTRY_IMAGE: lumendotapp/lumen-backend
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -1170,7 +1170,7 @@ jobs:
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            LUMEN_VERSION=${{ github.ref_name }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:latest
@@ -1191,7 +1191,7 @@ jobs:
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            LUMEN_VERSION=${{ github.ref_name }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge-dev
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
@@ -1215,7 +1215,7 @@ jobs:
     timeout-minutes: 90
     environment: release
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-backend
+      REGISTRY_IMAGE: lumendotapp/lumen-backend
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -1317,7 +1317,7 @@ jobs:
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-model-server
+      REGISTRY_IMAGE: lumendotapp/lumen-model-server
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -1378,7 +1378,7 @@ jobs:
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            LUMEN_VERSION=${{ github.ref_name }}
             ${{ env.DHI_PYTHON_BUILD_ARGS }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
@@ -1403,7 +1403,7 @@ jobs:
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-model-server
+      REGISTRY_IMAGE: lumendotapp/lumen-model-server
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -1464,7 +1464,7 @@ jobs:
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            ONYX_VERSION=${{ github.ref_name }}
+            LUMEN_VERSION=${{ github.ref_name }}
             ${{ env.DHI_PYTHON_BUILD_ARGS }}
           cache-from: |
             type=registry,ref=${{ env.REGISTRY_IMAGE }}:edge
@@ -1488,7 +1488,7 @@ jobs:
     timeout-minutes: 90
     environment: release
     env:
-      REGISTRY_IMAGE: onyxdotapp/onyx-model-server
+      REGISTRY_IMAGE: lumendotapp/lumen-model-server
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -1576,8 +1576,8 @@ jobs:
       context-tag: ${{ steps.context.outputs.context-tag }}
       context-exists: ${{ steps.exists.outputs.context-exists }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/sandbox
-      SANDBOX_CONTEXT: backend/onyx/server/features/build/sandbox/image
+      REGISTRY_IMAGE: lumendotapp/sandbox
+      SANDBOX_CONTEXT: backend/lumen/server/features/build/sandbox/image
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # ratchet:actions/checkout@v6
@@ -1649,7 +1649,7 @@ jobs:
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/sandbox
+      REGISTRY_IMAGE: lumendotapp/sandbox
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -1693,13 +1693,13 @@ jobs:
         id: build
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
-          context: ./backend/onyx/server/features/build/sandbox/image
-          file: ./backend/onyx/server/features/build/sandbox/image/Dockerfile
+          context: ./backend/lumen/server/features/build/sandbox/image
+          file: ./backend/lumen/server/features/build/sandbox/image/Dockerfile
           platforms: linux/amd64
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: |
-            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/onyxdotapp/sandbox:edge
-            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/onyxdotapp/sandbox:latest
+            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/lumendotapp/sandbox:edge
+            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/lumendotapp/sandbox:latest
           cache-to: type=inline
           outputs: type=image,name=${{ needs.determine-builds.outputs.is-test-run == 'true' && env.RUNS_ON_ECR_CACHE || env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           no-cache: ${{ vars.DOCKER_NO_CACHE == 'true' }}
@@ -1722,7 +1722,7 @@ jobs:
     outputs:
       digest: ${{ steps.build.outputs.digest }}
     env:
-      REGISTRY_IMAGE: onyxdotapp/sandbox
+      REGISTRY_IMAGE: lumendotapp/sandbox
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -1766,13 +1766,13 @@ jobs:
         id: build
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a
         with:
-          context: ./backend/onyx/server/features/build/sandbox/image
-          file: ./backend/onyx/server/features/build/sandbox/image/Dockerfile
+          context: ./backend/lumen/server/features/build/sandbox/image
+          file: ./backend/lumen/server/features/build/sandbox/image/Dockerfile
           platforms: linux/arm64
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: |
-            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/onyxdotapp/sandbox:edge
-            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/onyxdotapp/sandbox:latest
+            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/lumendotapp/sandbox:edge
+            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/lumendotapp/sandbox:latest
           cache-to: type=inline
           outputs: type=image,name=${{ needs.determine-builds.outputs.is-test-run == 'true' && env.RUNS_ON_ECR_CACHE || env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           no-cache: ${{ vars.DOCKER_NO_CACHE == 'true' }}
@@ -1795,7 +1795,7 @@ jobs:
     permissions:
       id-token: write
     env:
-      REGISTRY_IMAGE: onyxdotapp/sandbox
+      REGISTRY_IMAGE: lumendotapp/sandbox
     steps:
       - uses: runs-on/action@4e5f72399b6b17f2e79c511c1b38a315a64d22dc
 
@@ -1989,13 +1989,13 @@ jobs:
       matrix:
         include:
           - component: web
-            registry-image: onyxdotapp/onyx-web-server
+            registry-image: lumendotapp/lumen-web-server
           - component: web-cloud
-            registry-image: onyxdotapp/onyx-web-server
+            registry-image: lumendotapp/lumen-web-server
           - component: backend
-            registry-image: onyxdotapp/onyx-backend
+            registry-image: lumendotapp/lumen-backend
           - component: model-server
-            registry-image: onyxdotapp/onyx-model-server
+            registry-image: lumendotapp/lumen-model-server
     steps:
       - name: Check if this scan should run
         id: should-run
@@ -2084,7 +2084,7 @@ jobs:
         # hard scan failure nothing is written, so seed a valid empty SARIF to keep
         # the always() upload below from choking.
         run: |
-          uv run --no-sync --with onyx-devtools ods audit image "$IMAGE" \
+          uv run --no-sync --with lumen-devtools ods audit image "$IMAGE" \
             --fail-on=critical --format=sarif,text > image-audit.sarif || status=$?
           if [ ! -s image-audit.sarif ]; then
             # $schema is a literal SARIF key, not a shell variable.

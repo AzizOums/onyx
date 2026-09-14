@@ -12,8 +12,8 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import LLMModelFlowType
-from onyx.db.llm import (
+from lumen.db.enums import LLMModelFlowType
+from lumen.db.llm import (
     add_model_to_flow,
     fetch_default_chat_naming_model,
     fetch_default_contextual_rag_model,
@@ -27,9 +27,9 @@ from onyx.db.llm import (
     update_default_vision_provider,
     upsert_llm_provider,
 )
-from onyx.db.models import LLMModelFlow, ModelConfiguration
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.manage.llm.models import (
+from lumen.db.models import LLMModelFlow, ModelConfiguration
+from lumen.llm.constants import LlmProviderNames
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     LLMProviderView,
     ModelConfigurationUpsertRequest,

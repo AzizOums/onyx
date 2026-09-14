@@ -12,12 +12,12 @@ truth; mobile mirrors look **and** structure, documenting platform-driven diverg
 **N/A — no schema changes.** The only persisted state is per-agent `disabled_tool_ids`, and the
 table + endpoints already exist:
 
-- Table `assistant__user_specific_config` (`backend/onyx/db/models.py:4058-4069`): composite PK
+- Table `assistant__user_specific_config` (`backend/lumen/db/models.py:4058-4069`): composite PK
   `(assistant_id, user_id)`, `disabled_tool_ids: ARRAY(Integer) NOT NULL`. Already migrated
   (`backend/alembic/versions/b329d00a9ea6_adding_assistant_specific_user_.py`).
-- DB layer `backend/onyx/db/user_preferences.py` (`get_all_user_assistant_specific_configs:375`,
+- DB layer `backend/lumen/db/user_preferences.py` (`get_all_user_assistant_specific_configs:375`,
   `update_assistant_preferences:387` upsert).
-- Endpoints (`backend/onyx/server/manage/users.py`), both `BASIC_ACCESS`:
+- Endpoints (`backend/lumen/server/manage/users.py`), both `BASIC_ACCESS`:
   - `GET /user/assistant/preferences` → `UserSpecificAssistantPreferences`
     (`= dict[int, {disabled_tool_ids: list[int]}]`).
   - `PATCH /user/assistant/{assistant_id}/preferences`, body
@@ -25,7 +25,7 @@ table + endpoints already exist:
 
 **No backend work.** The four send fields (`deep_research`, `allowed_tool_ids`, `forced_tool_id`,
 `internal_search_filters`) already exist on `SendMessageRequest`
-(`backend/onyx/server/query_and_chat/models.py:110,111,115,117`).
+(`backend/lumen/server/query_and_chat/models.py:110,111,115,117`).
 
 ---
 
@@ -313,11 +313,11 @@ mobile/src/
 - **`stream.ts`** — `SendMessageBody` widened; JSON serialized as-is.
 - **`useAgents()` / `useLiveAgent`** — no change; `liveAgent.tools`/`knowledge_sources` resolve once
   `MinimalAgent` is widened (data already on the `/persona` wire,
-  `backend/onyx/server/features/persona/models.py:202,212`).
+  `backend/lumen/server/features/persona/models.py:202,212`).
 - **`useWorkspaceSettings()`** — `deep_research_enabled` read from the existing `/settings` GET
-  (`backend/onyx/server/settings/models.py:50`).
+  (`backend/lumen/server/settings/models.py:50`).
 - **`app/_layout.tsx:71`** — existing `<PortalHost/>` hosts the popover; no change.
-- **`@onyx-ai/shared`** — **not touched** in this feature. Contracts live natively in
+- **`@lumen-ai/shared`** — **not touched** in this feature. Contracts live natively in
   `mobile/src/chat/` (matching the standing "chat layer is native, not shared" decision and the
   `mobile/src/chat/contracts/projects.ts` precedent). Shared extraction deferred to a future
   proven-reuse moment.

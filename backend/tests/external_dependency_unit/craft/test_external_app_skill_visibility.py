@@ -8,13 +8,13 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ExternalAppType, SkillSharePermission
-from onyx.db.external_app import (
+from lumen.db.enums import ExternalAppType, SkillSharePermission
+from lumen.db.external_app import (
     get_external_app_by_skill_id,
     get_skills_for_external_app,
 )
-from onyx.db.models import ExternalApp__Skill, User, UserSkillPreference
-from onyx.db.skill import (
+from lumen.db.models import ExternalApp__Skill, User, UserSkillPreference
+from lumen.db.skill import (
     SkillManagementPolicy,
     fetch_skill,
     list_runtime_skills_for_user,
@@ -22,10 +22,10 @@ from onyx.db.skill import (
     set_skill_enabled_for_user,
     set_skill_public_permission,
 )
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.skill.response_helpers import skill_response_for_user
-from onyx.skills.built_in import EXTERNAL_APP_BUILT_IN_SKILL_IDS
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.features.skill.response_helpers import skill_response_for_user
+from lumen.skills.built_in import EXTERNAL_APP_BUILT_IN_SKILL_IDS
 from tests.external_dependency_unit.craft.db_helpers import (
     make_built_in_skill_row,
     make_external_app,
@@ -147,14 +147,14 @@ def test_runtime_requires_selection_and_authenticated_external_app(
     app = make_external_app(db_session, skill=skill, auth_template=_AUTH_TEMPLATE)
 
     assert skill.id not in _runtime_skill_ids(user, db_session)
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         set_skill_enabled_for_user(
             skill_id=skill.id,
             enabled=True,
             user=user,
             db_session=db_session,
         )
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
 
     make_user_credential(db_session, app=app, user=user, user_credentials=_FULL_CREDS)
 
@@ -346,14 +346,14 @@ def test_associated_same_name_switch_changes_only_the_acting_user(
             db_session=db_session,
         )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         set_skill_enabled_for_user(
             skill_id=associated.id,
             enabled=True,
             user=first_user,
             db_session=db_session,
         )
-    assert exc_info.value.error_code == OnyxErrorCode.SKILL_NAME_CONFLICT
+    assert exc_info.value.error_code == LumenErrorCode.SKILL_NAME_CONFLICT
 
     set_skill_enabled_for_user(
         skill_id=associated.id,
@@ -409,14 +409,14 @@ def test_associated_skill_cannot_change_required_org_viewer_visibility(
     skill = make_skill(db_session, is_public=True)
     make_external_app(db_session, skill=skill, auth_template={})
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         set_skill_public_permission(
             skill=skill,
             public_permission=public_permission,
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert skill.public_permission == SkillSharePermission.VIEWER
 
 

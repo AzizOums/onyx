@@ -9,23 +9,23 @@ from fastapi import Request
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from onyx.auth.pkce import compute_s256_challenge
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.cross_connector_utils.miscellaneous_utils import (
+from lumen.auth.pkce import compute_s256_challenge
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.cross_connector_utils.miscellaneous_utils import (
     get_oauth_callback_uri,
 )
-from onyx.connectors.salesforce import auth as salesforce_auth
-from onyx.connectors.salesforce import connector as salesforce_connector
-from onyx.connectors.salesforce.models import SalesforceAuthenticationMethod
-from onyx.db.models import Credential
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.documents import standard_oauth
-from onyx.utils.sensitive import SensitiveValue
+from lumen.connectors.salesforce import auth as salesforce_auth
+from lumen.connectors.salesforce import connector as salesforce_connector
+from lumen.connectors.salesforce.models import SalesforceAuthenticationMethod
+from lumen.db.models import Credential
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.documents import standard_oauth
+from lumen.utils.sensitive import SensitiveValue
 from tests.external_dependency_unit.conftest import create_test_user, delete_test_user
 
 _CLIENT_ID = "salesforce-edu-client"
 _CLIENT_SECRET = "salesforce-edu-secret"
-_MY_DOMAIN_URL = "https://onyx-edu.my.salesforce.com"
+_MY_DOMAIN_URL = "https://lumen-edu.my.salesforce.com"
 _INSTANCE_URL = "https://na123.salesforce.com"
 _AUTHORIZATION_CODE = "salesforce-edu-authorization-code"
 _ACCESS_TOKEN = "salesforce-edu-access-token"
@@ -179,7 +179,7 @@ def test_salesforce_standard_oauth_real_redis_postgres_flow(
         assert token_request.call_args.kwargs["log_request_data"] is False
 
         with pytest.raises(
-            OnyxError, match="Invalid or expired OAuth authorization attempt"
+            LumenError, match="Invalid or expired OAuth authorization attempt"
         ):
             standard_oauth.oauth_callback(
                 source=DocumentSource.SALESFORCE,
@@ -209,7 +209,7 @@ def test_salesforce_standard_oauth_invalid_domain_and_disabled_config(
     )
 
     try:
-        with pytest.raises(OnyxError, match="Salesforce URL must use HTTPS"):
+        with pytest.raises(LumenError, match="Salesforce URL must use HTTPS"):
             standard_oauth.oauth_authorize(
                 request=_request(
                     {
@@ -232,7 +232,7 @@ def test_salesforce_standard_oauth_invalid_domain_and_disabled_config(
         )
         assert details.oauth_enabled is False
         assert details.supports_manual_credentials is True
-        with pytest.raises(OnyxError, match="OAuth is not configured"):
+        with pytest.raises(LumenError, match="OAuth is not configured"):
             standard_oauth.oauth_authorize(
                 request=_request({"salesforce_my_domain_url": _MY_DOMAIN_URL}),
                 source=DocumentSource.SALESFORCE,

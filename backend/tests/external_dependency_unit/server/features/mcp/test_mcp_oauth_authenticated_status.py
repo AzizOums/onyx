@@ -7,15 +7,15 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import (
+from lumen.db.enums import (
     MCPAuthenticationPerformer,
     MCPAuthenticationType,
     MCPTransport,
 )
-from onyx.db.mcp import create_connection_config
-from onyx.db.models import MCPServer
-from onyx.server.features.mcp.api import _db_mcp_server_to_api_mcp_server
-from onyx.server.features.mcp.models import MCPConnectionData
+from lumen.db.mcp import create_connection_config
+from lumen.db.models import MCPServer
+from lumen.server.features.mcp.api import _db_mcp_server_to_api_mcp_server
+from lumen.server.features.mcp.models import MCPConnectionData
 from tests.external_dependency_unit.conftest import create_test_user
 
 

@@ -1,6 +1,6 @@
 from typing import List
 
-from onyx.server.features.projects.models import (
+from lumen.server.features.projects.models import (
     CategorizedFilesSnapshot,
     UserFileSnapshot,
     UserProjectSnapshot,

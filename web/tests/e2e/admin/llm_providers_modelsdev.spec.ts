@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 
 test.describe("models.dev provider picker", () => {
   test("browses the catalog and fills the form with multimodal flags", async ({
@@ -46,7 +46,7 @@ test.describe("models.dev provider picker", () => {
   }) => {
     await page.context().clearCookies();
     await loginAs(page, "admin");
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
 
     // Create an openai-compatible provider, then check the discovered model
     // capabilities merged from models.dev (mimo: image + audio + video).

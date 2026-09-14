@@ -1,4 +1,4 @@
-// Package tui implements the Bubble Tea TUI for Onyx CLI.
+// Package tui implements the Bubble Tea TUI for Lumen CLI.
 package tui
 
 import (
@@ -12,14 +12,14 @@ import (
 	"charm.land/bubbles/v2/textinput"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
+	"github.com/lumen-dot-app/lumen/cli/internal/api"
+	"github.com/lumen-dot-app/lumen/cli/internal/config"
+	"github.com/lumen-dot-app/lumen/cli/internal/models"
 )
 
 // Model is the root Bubble Tea model.
 type Model struct {
-	config config.OnyxCliConfig
+	config config.LumenCliConfig
 	client api.ClientAPI
 
 	viewport *viewport
@@ -57,7 +57,7 @@ type Model struct {
 }
 
 // NewModel creates a new TUI model.
-func NewModel(cfg config.OnyxCliConfig, client api.ClientAPI) Model {
+func NewModel(cfg config.LumenCliConfig, client api.ClientAPI) Model {
 	parentID := -1
 
 	return Model{
@@ -74,7 +74,7 @@ func NewModel(cfg config.OnyxCliConfig, client api.ClientAPI) Model {
 }
 
 // NewFirstRunModel creates a TUI model that auto-enters configure mode on startup.
-func NewFirstRunModel(cfg config.OnyxCliConfig) Model {
+func NewFirstRunModel(cfg config.LumenCliConfig) Model {
 	model := NewModel(cfg, nil)
 	model.startMode = startFirstRun
 	return model

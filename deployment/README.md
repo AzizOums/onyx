@@ -1,5 +1,5 @@
-Documentation for how to deploy Onyx can be found in our official docs:
-https://docs.onyx.app/deployment/overview
+Documentation for how to deploy Lumen can be found in our official docs:
+https://docs.lumen.app/deployment/overview
 
 ## Maintaining the compose files (contributors)
 
@@ -13,12 +13,12 @@ directives, documented in `ods generate-compose --help`) and regenerate:
 ods generate-compose --write
 ```
 
-The generator lives in `tools/ods` (`internal/composegen`) and ships with the `onyx-devtools`
+The generator lives in `tools/ods` (`internal/composegen`) and ships with the `lumen-devtools`
 package. The `docker-compose-sync` pre-commit hook runs it automatically for commits touching the
 template or the generated files, so a stray edit to a generated file gets reverted on the next
 commit.
 
-onyx-cli embeds copies of the guided-install deployment files (the generated
+lumen-cli embeds copies of the guided-install deployment files (the generated
 `docker-compose.yml` and `docker-compose.prod.yml`, the lite/craft overlays, the env templates,
 the nginx config, and `docker_compose/README.md`) under
 `cli/internal/deploy/deployfiles/embedded/`. The same `ods generate-compose --write` run refreshes

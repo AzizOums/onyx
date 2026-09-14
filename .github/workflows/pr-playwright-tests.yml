@@ -79,7 +79,7 @@ env:
   MCP_SERVER_PUBLIC_URL: http://host.docker.internal:8004/mcp
 
   # Visual regression S3 bucket (shared across all jobs)
-  PLAYWRIGHT_S3_BUCKET: onyx-playwright-artifacts
+  PLAYWRIGHT_S3_BUCKET: lumen-playwright-artifacts
 
 jobs:
   changes:
@@ -127,14 +127,14 @@ jobs:
               - 'backend/alembic/**'
               - 'backend/alembic_tenants/**'
               - 'backend/model_server/**'
-              - 'backend/onyx/configs/model_configs.py'
-              - 'backend/onyx/db/engine/**'
-              - 'backend/onyx/db/search_settings.py'
-              - 'backend/onyx/document_index/**'
-              - 'backend/onyx/main.py'
-              - 'backend/onyx/natural_language_processing/search_nlp_models.py'
-              - 'backend/onyx/natural_language_processing/utils.py'
-              - 'backend/onyx/setup.py'
+              - 'backend/lumen/configs/model_configs.py'
+              - 'backend/lumen/db/engine/**'
+              - 'backend/lumen/db/search_settings.py'
+              - 'backend/lumen/document_index/**'
+              - 'backend/lumen/main.py'
+              - 'backend/lumen/natural_language_processing/search_nlp_models.py'
+              - 'backend/lumen/natural_language_processing/utils.py'
+              - 'backend/lumen/setup.py'
               - 'backend/requirements/**'
               - 'backend/shared_configs/**'
               - 'backend/tests/airgap/**'
@@ -150,7 +150,7 @@ jobs:
               - '.github/actions/login-ecr-pullthrough-cache/**'
               - '.github/actions/dhi-base-images/**'
             mcp_oauth:
-              - 'backend/onyx/server/features/mcp/**'
+              - 'backend/lumen/server/features/mcp/**'
               - 'backend/tests/integration/mock_services/mcp_test_server/**'
               - 'web/tests/e2e/mcp/**'
               - 'web/tests/e2e/pages/ActionsPopover.ts'
@@ -228,7 +228,7 @@ jobs:
             type=registry,ref=${{ env.RUNS_ON_ECR_CACHE }}:web-cache-${{ github.event.pull_request.head.sha || github.sha }}
             type=registry,ref=${{ env.RUNS_ON_ECR_CACHE }}:web-cache-${{ steps.format-branch.outputs.cache-suffix }}
             type=registry,ref=${{ env.RUNS_ON_ECR_CACHE }}:web-cache
-            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/onyxdotapp/onyx-web-server:latest
+            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/lumendotapp/lumen-web-server:latest
           cache-to: |
             type=registry,ref=${{ env.RUNS_ON_ECR_CACHE }}:web-cache-${{ github.event.pull_request.head.sha || github.sha }},mode=max
             type=registry,ref=${{ env.RUNS_ON_ECR_CACHE }}:web-cache-${{ steps.format-branch.outputs.cache-suffix }},mode=max
@@ -298,7 +298,7 @@ jobs:
             type=registry,ref=${{ env.RUNS_ON_ECR_CACHE }}:backend-cache-${{ github.event.pull_request.head.sha || github.sha }}
             type=registry,ref=${{ env.RUNS_ON_ECR_CACHE }}:backend-cache-${{ steps.format-branch.outputs.cache-suffix }}
             type=registry,ref=${{ env.RUNS_ON_ECR_CACHE }}:backend-cache
-            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/onyxdotapp/onyx-backend:latest
+            type=registry,ref=${{ env.BASE_IMAGE_REGISTRY }}/lumendotapp/lumen-backend:latest
           cache-to: |
             type=registry,ref=${{ env.RUNS_ON_ECR_CACHE }}:backend-cache-${{ github.event.pull_request.head.sha || github.sha }},mode=max
             type=registry,ref=${{ env.RUNS_ON_ECR_CACHE }}:backend-cache-${{ steps.format-branch.outputs.cache-suffix }},mode=max
@@ -363,8 +363,8 @@ jobs:
           BACKEND_IMAGE: ${{ env.RUNS_ON_ECR_CACHE }}:playwright-test-backend-${{ github.run_id }}
           MODEL_SERVER_IMAGE: ${{ env.RUNS_ON_ECR_CACHE }}:playwright-test-model-server-${{ github.run_id }}
         run: |
-          echo "ONYX_BACKEND_IMAGE=${BACKEND_IMAGE}" >> "${GITHUB_ENV}"
-          echo "ONYX_MODEL_SERVER_IMAGE=${MODEL_SERVER_IMAGE}" >> "${GITHUB_ENV}"
+          echo "LUMEN_BACKEND_IMAGE=${BACKEND_IMAGE}" >> "${GITHUB_ENV}"
+          echo "LUMEN_MODEL_SERVER_IMAGE=${MODEL_SERVER_IMAGE}" >> "${GITHUB_ENV}"
 
       - name: Log in to ECR pull-through cache
         uses: ./.github/actions/login-ecr-pullthrough-cache
@@ -374,8 +374,8 @@ jobs:
       - name: Pull deployment images
         working-directory: deployment/docker_compose
         run: |
-          docker pull "${ONYX_BACKEND_IMAGE}"
-          docker pull "${ONYX_MODEL_SERVER_IMAGE}"
+          docker pull "${LUMEN_BACKEND_IMAGE}"
+          docker pull "${LUMEN_MODEL_SERVER_IMAGE}"
           docker compose -f docker-compose.yml pull relational_db opensearch cache minio
 
       - name: Verify deployment without external network
@@ -383,7 +383,7 @@ jobs:
         run: |
           compose=(
             docker compose
-            -p onyx-airgap
+            -p lumen-airgap
             --profile s3-filestore
             -f docker-compose.yml
             -f docker-compose.airgap-test.yml
@@ -418,7 +418,7 @@ jobs:
         run: |
           compose=(
             docker compose
-            -p onyx-airgap-tls
+            -p lumen-airgap-tls
             --profile s3-filestore
             -f docker-compose.yml
             -f docker-compose.airgap-test.yml
@@ -443,11 +443,11 @@ jobs:
         if: always()
         working-directory: deployment/docker_compose
         run: |
-          docker compose -p onyx-airgap \
+          docker compose -p lumen-airgap \
             -f docker-compose.yml \
             -f docker-compose.airgap-test.yml \
             down -v || true
-          docker compose -p onyx-airgap-tls \
+          docker compose -p lumen-airgap-tls \
             -f docker-compose.yml \
             -f docker-compose.airgap-test.yml \
             -f docker-compose.airgap-tls-test.yml \
@@ -549,9 +549,9 @@ jobs:
           # host-gateway address); opt in so the SSRF guard allows it. Cloud-
           # metadata/link-local stays blocked regardless.
           MCP_SERVER_ALLOW_PRIVATE_NETWORK=true
-          ONYX_BACKEND_IMAGE=${ECR_CACHE}:playwright-test-backend-${RUN_ID}
-          ONYX_MODEL_SERVER_IMAGE=${ECR_CACHE}:playwright-test-model-server-${RUN_ID}
-          ONYX_WEB_SERVER_IMAGE=${ECR_CACHE}:playwright-test-web-${RUN_ID}
+          LUMEN_BACKEND_IMAGE=${ECR_CACHE}:playwright-test-backend-${RUN_ID}
+          LUMEN_MODEL_SERVER_IMAGE=${ECR_CACHE}:playwright-test-model-server-${RUN_ID}
+          LUMEN_WEB_SERVER_IMAGE=${ECR_CACHE}:playwright-test-web-${RUN_ID}
           EOF
 
       - name: Log in to ECR pull-through cache
@@ -596,7 +596,7 @@ jobs:
 
       - name: Seed dev license
         run: |
-          docker exec -e ONYX_DEV_LICENSE onyx-api_server-1 \
+          docker exec -e LUMEN_DEV_LICENSE lumen-api_server-1 \
             python -m scripts.seed_dev_license
 
       - name: Run Playwright tests
@@ -730,9 +730,9 @@ jobs:
           # host-gateway address); opt in so the SSRF guard allows it. Cloud-
           # metadata/link-local stays blocked regardless.
           MCP_SERVER_ALLOW_PRIVATE_NETWORK=true
-          ONYX_BACKEND_IMAGE=${ECR_CACHE}:playwright-test-backend-${RUN_ID}
-          ONYX_MODEL_SERVER_IMAGE=${ECR_CACHE}:playwright-test-model-server-${RUN_ID}
-          ONYX_WEB_SERVER_IMAGE=${ECR_CACHE}:playwright-test-web-${RUN_ID}
+          LUMEN_BACKEND_IMAGE=${ECR_CACHE}:playwright-test-backend-${RUN_ID}
+          LUMEN_MODEL_SERVER_IMAGE=${ECR_CACHE}:playwright-test-model-server-${RUN_ID}
+          LUMEN_WEB_SERVER_IMAGE=${ECR_CACHE}:playwright-test-web-${RUN_ID}
           EOF
 
       - name: Log in to ECR pull-through cache
@@ -783,7 +783,7 @@ jobs:
 
       - name: Seed dev license
         run: |
-          docker exec -e ONYX_DEV_LICENSE onyx-api_server-1 \
+          docker exec -e LUMEN_DEV_LICENSE lumen-api_server-1 \
             python -m scripts.seed_dev_license
 
       - name: Run Playwright OAuth spec (real Okta)
@@ -886,8 +886,8 @@ jobs:
           # host-gateway address); opt in so the SSRF guard allows it. Cloud-
           # metadata/link-local stays blocked regardless.
           MCP_SERVER_ALLOW_PRIVATE_NETWORK=true
-          ONYX_BACKEND_IMAGE=${ECR_CACHE}:playwright-test-backend-${RUN_ID}
-          ONYX_WEB_SERVER_IMAGE=${ECR_CACHE}:playwright-test-web-${RUN_ID}
+          LUMEN_BACKEND_IMAGE=${ECR_CACHE}:playwright-test-backend-${RUN_ID}
+          LUMEN_WEB_SERVER_IMAGE=${ECR_CACHE}:playwright-test-web-${RUN_ID}
           EOF
 
       - name: Log in to ECR pull-through cache
@@ -898,12 +898,12 @@ jobs:
       - name: Start Docker containers (lite)
         run: |
           cd deployment/docker_compose
-          docker compose -f docker-compose.yml -f docker-compose.onyx-lite.yml -f docker-compose.dev.yml up -d --wait
+          docker compose -f docker-compose.yml -f docker-compose.lumen-lite.yml -f docker-compose.dev.yml up -d --wait
         id: start_docker
 
       - name: Seed dev license
         run: |
-          docker exec -e ONYX_DEV_LICENSE onyx-api_server-1 \
+          docker exec -e LUMEN_DEV_LICENSE lumen-api_server-1 \
             python -m scripts.seed_dev_license
 
       - name: Run Playwright tests (lite)
@@ -1036,7 +1036,7 @@ jobs:
           PLAYWRIGHT_S3_BUCKET: ${{ env.PLAYWRIGHT_S3_BUCKET }}
           BASELINE_REV: ${{ steps.baseline-rev.outputs.rev }}
         run: |
-          uv run --no-sync --with onyx-devtools ods screenshot-diff compare \
+          uv run --no-sync --with lumen-devtools ods screenshot-diff compare \
             --project "${PROJECT}" \
             --rev "${BASELINE_REV}"
 
@@ -1107,7 +1107,7 @@ jobs:
           BASELINE_REV: ${{ steps.baseline-rev.outputs.rev }}
         run: |
           if [ -d "web/output/screenshots/" ] && [ "$(ls -A web/output/screenshots/)" ]; then
-            uv run --no-sync --with onyx-devtools ods screenshot-diff upload-baselines \
+            uv run --no-sync --with lumen-devtools ods screenshot-diff upload-baselines \
               --project "${PROJECT}" \
               --rev "${BASELINE_REV}" \
               --delete

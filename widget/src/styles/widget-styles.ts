@@ -1,13 +1,13 @@
 import { css } from "lit";
 
 /**
- * Onyx Chat Widget - Component Styles
+ * Lumen Chat Widget - Component Styles
  * All styling for the main widget component
  */
 export const widgetStyles = css`
   :host {
     display: block;
-    font-family: var(--onyx-font-family);
+    font-family: var(--lumen-font-family);
   }
 
   .launcher {
@@ -25,7 +25,7 @@ export const widgetStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: var(--onyx-z-launcher);
+    z-index: var(--lumen-z-launcher);
     transition:
       transform 200ms cubic-bezier(0.4, 0, 0.2, 1),
       box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -54,12 +54,12 @@ export const widgetStyles = css`
     width: 400px;
     height: 600px;
     background: var(--background-neutral-00);
-    border-radius: var(--onyx-radius-16);
+    border-radius: var(--lumen-radius-16);
     box-shadow: var(--shadow-02);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    z-index: var(--onyx-z-widget);
+    z-index: var(--lumen-z-widget);
     border: 1px solid var(--border-01);
     animation: fadeInSlideUp 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
     opacity: 0;
@@ -77,7 +77,7 @@ export const widgetStyles = css`
     position: static;
     width: 100%;
     height: 100%;
-    border-radius: var(--onyx-radius-08);
+    border-radius: var(--lumen-radius-08);
     animation: none;
     opacity: 1;
     transform: none;
@@ -87,7 +87,7 @@ export const widgetStyles = css`
     background: transparent;
     border: none;
     box-shadow: none;
-    border-radius: var(--onyx-radius-16);
+    border-radius: var(--lumen-radius-16);
   }
 
   @media (max-width: 768px) {
@@ -106,7 +106,7 @@ export const widgetStyles = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--onyx-space-md);
+    padding: var(--lumen-space-md);
     background: var(--background-neutral-00);
     color: var(--text-04);
     border-bottom: 1px solid var(--border-01);
@@ -115,13 +115,13 @@ export const widgetStyles = css`
   .header-left {
     display: flex;
     align-items: center;
-    gap: var(--onyx-space-sm);
+    gap: var(--lumen-space-sm);
   }
 
   .header-right {
     display: flex;
     align-items: center;
-    gap: var(--onyx-space-xs);
+    gap: var(--lumen-space-xs);
   }
 
   .avatar {
@@ -137,8 +137,8 @@ export const widgetStyles = css`
 
   .header-title {
     font-weight: 600;
-    font-size: var(--onyx-font-size-label);
-    line-height: var(--onyx-line-height-label);
+    font-size: var(--lumen-font-size-label);
+    line-height: var(--lumen-line-height-label);
     color: var(--text-04);
   }
 
@@ -147,14 +147,14 @@ export const widgetStyles = css`
     border: none;
     color: var(--text-04);
     cursor: pointer;
-    padding: var(--onyx-space-xs);
-    border-radius: var(--onyx-radius-08);
+    padding: var(--lumen-space-xs);
+    border-radius: var(--lumen-radius-08);
     display: flex;
     align-items: center;
     justify-content: center;
     transition:
-      background var(--onyx-transition-fast),
-      color var(--onyx-transition-fast);
+      background var(--lumen-transition-fast),
+      color var(--lumen-transition-fast);
     font-size: 18px;
     width: 32px;
     height: 32px;
@@ -168,17 +168,17 @@ export const widgetStyles = css`
   .messages {
     flex: 1;
     overflow-y: auto;
-    padding: var(--onyx-space-md);
+    padding: var(--lumen-space-md);
     display: flex;
     flex-direction: column;
-    gap: var(--onyx-space-md);
+    gap: var(--lumen-space-md);
     background: var(--background-neutral-00);
   }
 
   .message {
     display: flex;
     flex-direction: column;
-    gap: var(--onyx-space-xs);
+    gap: var(--lumen-space-xs);
   }
 
   .message.user {
@@ -191,21 +191,21 @@ export const widgetStyles = css`
 
   .message-bubble {
     max-width: 85%;
-    padding: var(--onyx-space-sm) var(--onyx-space-md);
-    border-radius: var(--onyx-radius-12);
+    padding: var(--lumen-space-sm) var(--lumen-space-md);
+    border-radius: var(--lumen-radius-12);
     word-wrap: break-word;
-    font-size: var(--onyx-font-size-main);
-    line-height: var(--onyx-line-height-main);
+    font-size: var(--lumen-font-size-main);
+    line-height: var(--lumen-line-height-main);
   }
 
   .message.user .message-bubble {
-    background: var(--onyx-user-message-bg);
+    background: var(--lumen-user-message-bg);
     color: var(--text-04);
     border: 1px solid var(--border-01);
   }
 
   .message.assistant .message-bubble {
-    background: var(--onyx-assistant-message-bg);
+    background: var(--lumen-assistant-message-bg);
     color: var(--text-04);
     border: 1px solid var(--border-01);
   }
@@ -233,8 +233,8 @@ export const widgetStyles = css`
 
   .message-bubble pre {
     background: rgba(0, 0, 0, 0.08);
-    padding: var(--onyx-space-sm);
-    border-radius: var(--onyx-radius-sm);
+    padding: var(--lumen-space-sm);
+    border-radius: var(--lumen-radius-sm);
     overflow-x: auto;
     margin: 0.5em 0;
   }
@@ -286,7 +286,7 @@ export const widgetStyles = css`
   .message-bubble blockquote {
     border-left: 3px solid var(--border-01);
     margin: 0.5em 0;
-    padding-left: var(--onyx-space-md);
+    padding-left: var(--lumen-space-md);
     color: var(--text-04);
   }
 
@@ -307,7 +307,7 @@ export const widgetStyles = css`
   .status-container {
     display: flex;
     align-items: center;
-    gap: var(--onyx-space-sm);
+    gap: var(--lumen-space-sm);
   }
 
   .typing-indicator {
@@ -346,7 +346,7 @@ export const widgetStyles = css`
 
   .status-text {
     color: var(--text-04);
-    font-size: var(--onyx-font-size-sm);
+    font-size: var(--lumen-font-size-sm);
     font-style: italic;
   }
 
@@ -356,27 +356,27 @@ export const widgetStyles = css`
   }
 
   .input-container {
-    padding: var(--onyx-space-md) var(--onyx-space-md) 4px;
+    padding: var(--lumen-space-md) var(--lumen-space-md) 4px;
     display: flex;
     align-items: center;
-    gap: var(--onyx-space-xs);
+    gap: var(--lumen-space-xs);
   }
 
   .input {
     flex: 1;
     min-width: 0;
-    padding: var(--onyx-space-xs) var(--onyx-space-sm);
+    padding: var(--lumen-space-xs) var(--lumen-space-sm);
     border: 1px solid var(--theme-primary-05);
-    border-radius: var(--onyx-radius-08);
-    font-size: var(--onyx-font-size-main);
-    line-height: var(--onyx-line-height-main);
+    border-radius: var(--lumen-radius-08);
+    font-size: var(--lumen-font-size-main);
+    line-height: var(--lumen-line-height-main);
     outline: none;
-    font-family: var(--onyx-font-family);
+    font-family: var(--lumen-font-family);
     background: var(--background-neutral-00);
     color: var(--text-04);
     transition:
-      border-color var(--onyx-transition-fast),
-      box-shadow var(--onyx-transition-fast);
+      border-color var(--lumen-transition-fast),
+      box-shadow var(--lumen-transition-fast);
     height: 36px;
   }
 
@@ -391,13 +391,13 @@ export const widgetStyles = css`
     color: var(--text-04);
     opacity: 0.5;
     text-align: center;
-    padding: 0 var(--onyx-space-md) var(--onyx-space-xs);
+    padding: 0 var(--lumen-space-md) var(--lumen-space-xs);
   }
 
   .powered-by a {
     color: var(--text-04);
     text-decoration: none;
-    transition: opacity var(--onyx-transition-fast);
+    transition: opacity var(--lumen-transition-fast);
   }
 
   .powered-by a:hover {
@@ -410,14 +410,14 @@ export const widgetStyles = css`
     border: none;
     color: var(--text-light-05);
     cursor: pointer;
-    padding: var(--onyx-space-sm);
+    padding: var(--lumen-space-sm);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     transition:
-      background var(--onyx-transition-fast),
-      transform var(--onyx-transition-fast);
+      background var(--lumen-transition-fast),
+      transform var(--lumen-transition-fast);
     flex-shrink: 0;
     width: 36px;
     height: 36px;
@@ -443,7 +443,7 @@ export const widgetStyles = css`
   }
 
   .disclaimer {
-    padding: var(--onyx-space-xs) var(--onyx-space-md);
+    padding: var(--lumen-space-xs) var(--lumen-space-md);
     background: var(--background-neutral-00);
     color: var(--text-04);
     font-size: 11px;
@@ -453,12 +453,12 @@ export const widgetStyles = css`
   }
 
   .error {
-    padding: var(--onyx-space-md);
+    padding: var(--lumen-space-md);
     background: var(--status-error-01);
     color: var(--status-error-05);
-    border-radius: var(--onyx-radius-08);
-    margin: var(--onyx-space-md);
-    font-size: var(--onyx-font-size-main);
+    border-radius: var(--lumen-radius-08);
+    margin: var(--lumen-space-md);
+    font-size: var(--lumen-font-size-main);
   }
 
   /* Compact inline mode (no messages) */
@@ -473,15 +473,15 @@ export const widgetStyles = css`
   .compact-input-container {
     display: flex;
     align-items: center;
-    gap: var(--onyx-space-sm);
-    padding: var(--onyx-space-md);
+    gap: var(--lumen-space-sm);
+    padding: var(--lumen-space-md);
     background: var(--background-neutral-00);
-    border-radius: var(--onyx-radius-16);
+    border-radius: var(--lumen-radius-16);
     border: 1px solid var(--border-01);
     box-shadow: var(--shadow-02);
     transition:
-      border-color var(--onyx-transition-base),
-      box-shadow var(--onyx-transition-base);
+      border-color var(--lumen-transition-base),
+      box-shadow var(--lumen-transition-base);
   }
 
   .compact-input-container:focus-within {
@@ -507,12 +507,12 @@ export const widgetStyles = css`
   .compact-input {
     flex: 1;
     min-width: 0;
-    padding: var(--onyx-space-sm);
+    padding: var(--lumen-space-sm);
     border: none;
-    font-size: var(--onyx-font-size-label);
-    line-height: var(--onyx-line-height-label);
+    font-size: var(--lumen-font-size-label);
+    line-height: var(--lumen-line-height-label);
     outline: none;
-    font-family: var(--onyx-font-family);
+    font-family: var(--lumen-font-family);
     background: transparent;
     color: var(--text-04);
     font-weight: 500;
@@ -549,7 +549,7 @@ export const widgetStyles = css`
     font-size: 12px;
     font-weight: 500;
     padding: 4px 10px 4px 8px;
-    border-radius: var(--onyx-radius-08);
+    border-radius: var(--lumen-radius-08);
     background: var(--background-neutral-00);
     color: var(--text-04);
     text-decoration: none;
@@ -559,7 +559,7 @@ export const widgetStyles = css`
       border-color 150ms ease,
       background 150ms ease;
     line-height: 1.2;
-    font-family: var(--onyx-font-family);
+    font-family: var(--lumen-font-family);
   }
 
   .citation-badge .citation-num {
@@ -602,13 +602,13 @@ export const widgetStyles = css`
     font-size: 11px;
     font-weight: 500;
     padding: 4px 10px;
-    border-radius: var(--onyx-radius-08);
+    border-radius: var(--lumen-radius-08);
     background: none;
     color: var(--text-04);
     opacity: 0.6;
     border: 1px dashed var(--border-01);
     cursor: pointer;
-    font-family: var(--onyx-font-family);
+    font-family: var(--lumen-font-family);
     transition:
       opacity 150ms ease,
       border-color 150ms ease;

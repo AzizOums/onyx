@@ -25,27 +25,27 @@ from uuid import UUID, uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.auth.pat import hash_pat
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import BuildSessionStatus, Permission, SandboxStatus
-from onyx.db.models import BuildSession, PersonalAccessToken, Sandbox, User
-from onyx.server.features.build.db.sandbox import (
+from lumen.auth.pat import hash_pat
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import BuildSessionStatus, Permission, SandboxStatus
+from lumen.db.models import BuildSession, PersonalAccessToken, Sandbox, User
+from lumen.server.features.build.db.sandbox import (
     begin_provisioning_attempt__no_commit,
     finalize_provisioning_attempt__no_commit,
     get_sandbox_by_user_id,
 )
-from onyx.server.features.build.sandbox.models import SandboxInfo
-from onyx.server.features.build.session.errors import (
+from lumen.server.features.build.sandbox.models import SandboxInfo
+from lumen.server.features.build.session.errors import (
     SandboxProvisioningError,
     SandboxProvisioningInProgressError,
     StaleProvisioningAttemptError,
 )
-from onyx.server.features.build.session.manager import SessionManager
-from onyx.server.features.build.session.sandbox_lifecycle import (
+from lumen.server.features.build.session.manager import SessionManager
+from lumen.server.features.build.session.sandbox_lifecycle import (
     ProvisioningPolicy,
     ensure_sandbox_ready,
 )
-from onyx.utils.threadpool_concurrency import start_thread_with_context
+from lumen.utils.threadpool_concurrency import start_thread_with_context
 from tests.common.craft.stubs import StubSandboxManager
 
 
@@ -90,7 +90,7 @@ class _ProbingStub(StubSandboxManager):
         sandbox_id: UUID,
         user_id: UUID,
         tenant_id: str,
-        onyx_pat: str | None,
+        lumen_pat: str | None,
         provisioning_attempt_number: int,
     ) -> SandboxInfo:
         probe = _ReservationProbe(
@@ -129,7 +129,7 @@ class _ProbingStub(StubSandboxManager):
             sandbox_id,
             user_id,
             tenant_id,
-            onyx_pat=onyx_pat,
+            lumen_pat=lumen_pat,
             provisioning_attempt_number=provisioning_attempt_number,
         )
 
@@ -279,7 +279,7 @@ def test_attempt_self_deadline_finalizes_failed_before_external_work(
     FAILED durably without ever reaching ``provision()`` — the same number
     observers use to declare the attempt stale."""
     monkeypatch.setattr(
-        "onyx.server.features.build.session.sandbox_lifecycle.ATTEMPT_DEADLINE_SECONDS",
+        "lumen.server.features.build.session.sandbox_lifecycle.ATTEMPT_DEADLINE_SECONDS",
         -1.0,
     )
 

@@ -4,8 +4,8 @@
 mock_provider "azurerm" {}
 
 variables {
-  name                = "onyx"
-  resource_group_name = "onyx-rg"
+  name                = "lumen"
+  resource_group_name = "lumen-rg"
   location            = "eastus"
 }
 

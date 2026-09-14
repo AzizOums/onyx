@@ -37,7 +37,7 @@ import { MoveCustomAgentChatModal } from "@/lib/agents/components";
 import { ConfirmationModalLayout } from "@opal/layouts";
 import { PopoverSearchInput } from "@/sections/sidebar/ChatButton";
 
-const LS_HIDE_MOVE_CUSTOM_AGENT_MODAL_KEY = "onyx:hideMoveCustomAgentModal";
+const LS_HIDE_MOVE_CUSTOM_AGENT_MODAL_KEY = "lumen:hideMoveCustomAgentModal";
 
 interface ProjectChatItemProps {
   chat: ChatSession;

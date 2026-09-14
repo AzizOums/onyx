@@ -72,7 +72,7 @@ test.describe("Web Content Provider Configuration", () => {
       console.log("[web-content-test] Firecrawl configured successfully");
     });
 
-    test("should switch back to Onyx Web Crawler from Firecrawl", async ({
+    test("should switch back to Lumen Web Crawler from Firecrawl", async ({
       page,
     }) => {
       // First, ensure Firecrawl is configured and active
@@ -122,27 +122,27 @@ test.describe("Web Content Provider Configuration", () => {
       ).toBeVisible({ timeout: 15000 });
 
       console.log(
-        "[web-content-test] Firecrawl configured, now switching to Onyx Web Crawler..."
+        "[web-content-test] Firecrawl configured, now switching to Lumen Web Crawler..."
       );
 
-      // Switch to Onyx Web Crawler
-      const onyxCrawlerCard = findProviderCard(page, "Onyx Web Crawler");
-      await onyxCrawlerCard.waitFor({ state: "visible", timeout: 10000 });
+      // Switch to Lumen Web Crawler
+      const lumenCrawlerCard = findProviderCard(page, "Lumen Web Crawler");
+      await lumenCrawlerCard.waitFor({ state: "visible", timeout: 10000 });
 
-      const onyxSetDefault = onyxCrawlerCard.getByRole("button", {
+      const lumenSetDefault = lumenCrawlerCard.getByRole("button", {
         name: "Set as Default",
       });
 
-      if (await onyxSetDefault.isVisible()) {
-        await onyxSetDefault.click();
+      if (await lumenSetDefault.isVisible()) {
+        await lumenSetDefault.click();
         await page.waitForLoadState("networkidle");
       }
 
       await expect(
-        onyxCrawlerCard.getByRole("button", { name: "Current Crawler" })
+        lumenCrawlerCard.getByRole("button", { name: "Current Crawler" })
       ).toBeVisible({ timeout: 15000 });
 
-      console.log("[web-content-test] Switched back to Onyx Web Crawler");
+      console.log("[web-content-test] Switched back to Lumen Web Crawler");
     });
   });
 });

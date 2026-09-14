@@ -104,7 +104,7 @@ variable "gpu_node_instance_types" {
 
 variable "enable_craft" {
   type        = bool
-  description = "Create a dedicated Craft sandbox node group (labeled onyx.app/workload=sandbox, tainted workload=sandbox:NoSchedule, IMDSv2 hop-limit 1). Opt-in per workspace."
+  description = "Create a dedicated Craft sandbox node group (labeled lumen.app/workload=sandbox, tainted workload=sandbox:NoSchedule, IMDSv2 hop-limit 1). Opt-in per workspace."
   default     = false
 
   validation {
@@ -228,13 +228,13 @@ variable "s3_bucket_names" {
 variable "irsa_service_account_namespace" {
   type        = string
   description = "Namespace for IRSA-enabled Kubernetes service accounts (used by S3 and RDS)"
-  default     = "onyx"
+  default     = "lumen"
 }
 
 variable "irsa_service_account_name" {
   type        = string
   description = "Name of the IRSA-enabled Kubernetes service account for workload access (S3 + optional RDS)"
-  default     = "onyx-workload-access"
+  default     = "lumen-workload-access"
 }
 
 variable "irsa_additional_service_account_names" {

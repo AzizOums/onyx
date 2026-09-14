@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import { Page, Browser } from "@playwright/test";
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 
 // --- Locator Helper Functions ---
 const getAuthorizationUrlInput = (page: Page) =>
@@ -58,7 +58,7 @@ test.afterAll(async ({ browser }: { browser: Browser }) => {
     storageState: "admin_auth.json",
   });
   const page = await context.newPage();
-  const client = new OnyxApiClient(page.request);
+  const client = new LumenApiClient(page.request);
 
   // Delete the assistant first (it references the tool)
   if (createdAssistantId !== null) {

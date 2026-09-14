@@ -15,30 +15,30 @@ from uuid import UUID, uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.chat.incognito import delete_incognito_generated_files
-from onyx.chat.incognito_context import (
+from lumen.chat.incognito import delete_incognito_generated_files
+from lumen.chat.incognito_context import (
     append_incognito_message,
     load_incognito_context,
     teardown_incognito_session,
 )
-from onyx.chat.models import ChatMessageSimple
-from onyx.chat.save_chat import save_chat_turn
-from onyx.configs.constants import DocumentSource, FileOrigin, MessageType
-from onyx.context.search.models import SearchDoc
-from onyx.db.chat import (
+from lumen.chat.models import ChatMessageSimple
+from lumen.chat.save_chat import save_chat_turn
+from lumen.configs.constants import DocumentSource, FileOrigin, MessageType
+from lumen.context.search.models import SearchDoc
+from lumen.db.chat import (
     create_chat_session,
     get_or_create_root_message,
     reserve_message_id,
 )
-from onyx.db.file_record import (
+from lumen.db.file_record import (
     FileRecordNotFoundError,
     get_incognito_file_ids,
     get_session_ids_with_incognito_files,
 )
-from onyx.db.models import ChatMessage, ChatSession, User
-from onyx.file_store.file_store import get_default_file_store
-from onyx.redis.redis_pool import get_redis_client
-from onyx.tools.models import ToolCallInfo
+from lumen.db.models import ChatMessage, ChatSession, User
+from lumen.file_store.file_store import get_default_file_store
+from lumen.redis.redis_pool import get_redis_client
+from lumen.tools.models import ToolCallInfo
 from shared_configs.contextvars import CURRENT_CONTENT_FREE_SESSION_ID_CONTEXTVAR
 from tests.external_dependency_unit.conftest import create_test_user, delete_test_user
 

@@ -18,10 +18,10 @@ class CustomBuildHook(BuildHookInterface):
         # Set platform tag for cross-compilation
         goos = os.getenv("GOOS")
         goarch = os.getenv("GOARCH")
-        wheel_platform_tag = os.getenv("ONYX_CLI_WHEEL_PLATFORM_TAG")
+        wheel_platform_tag = os.getenv("LUMEN_CLI_WHEEL_PLATFORM_TAG")
         if wheel_platform_tag:
             if goos != "linux":
-                msg = "ONYX_CLI_WHEEL_PLATFORM_TAG is only supported with GOOS=linux"
+                msg = "LUMEN_CLI_WHEEL_PLATFORM_TAG is only supported with GOOS=linux"
                 raise ValueError(msg)
             build_data["tag"] = f"py3-none-{wheel_platform_tag}"
         elif manygo.is_goos(goos) and manygo.is_goarch(goarch):

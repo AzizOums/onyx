@@ -1,7 +1,7 @@
 """Integration tests for MANAGE_DOCUMENT_SETS permission gate.
 
 Document-set admin endpoints live in
-``backend/onyx/server/features/document_set/api.py`` (router prefix
+``backend/lumen/server/features/document_set/api.py`` (router prefix
 ``/manage``). Only mutating endpoints exist; the access matrix therefore
 sends valid-shape bodies and tolerates 404 on a bogus DELETE path.
 """
@@ -12,7 +12,7 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.db.enums import AccessType, Permission
+from lumen.db.enums import AccessType, Permission
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.document_set import DocumentSetManager
 from tests.integration.common_utils.test_models import (

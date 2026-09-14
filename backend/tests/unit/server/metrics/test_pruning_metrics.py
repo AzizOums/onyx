@@ -2,7 +2,7 @@
 
 import pytest
 
-from onyx.server.metrics.pruning_metrics import (
+from lumen.server.metrics.pruning_metrics import (
     PRUNING_DIFF_DURATION,
     PRUNING_ENUMERATION_DURATION,
     PRUNING_RATE_LIMIT_ERRORS,

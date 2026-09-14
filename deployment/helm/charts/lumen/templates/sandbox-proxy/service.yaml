@@ -1,0 +1,19 @@
+{{- if eq (include "lumen.craftEnabled" .) "true" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "lumen.resourceName" (list . "sandbox-proxy") }}
+  labels:
+    {{- include "lumen.labels" . | nindent 4 }}
+    app.kubernetes.io/component: sandbox-proxy
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "lumen.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: sandbox-proxy
+  ports:
+    - name: proxy
+      port: {{ include "lumen.sandboxProxyPort" . }}
+      targetPort: proxy
+      protocol: TCP
+{{- end }}

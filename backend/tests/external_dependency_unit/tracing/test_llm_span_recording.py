@@ -5,17 +5,17 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from onyx.llm.model_response import (
+from lumen.llm.model_response import (
     ChatCompletionMessageToolCall,
     Choice,
     Message,
     ModelResponse,
     Usage,
 )
-from onyx.llm.model_response import FunctionCall as ModelResponseFunctionCall
-from onyx.llm.models import FunctionCall, ToolCall
-from onyx.tracing.framework.span_data import GenerationSpanData
-from onyx.tracing.llm_utils import record_llm_response, record_llm_span_output
+from lumen.llm.model_response import FunctionCall as ModelResponseFunctionCall
+from lumen.llm.models import FunctionCall, ToolCall
+from lumen.tracing.framework.span_data import GenerationSpanData
+from lumen.tracing.llm_utils import record_llm_response, record_llm_span_output
 
 
 @pytest.fixture

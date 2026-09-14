@@ -7,13 +7,13 @@ from __future__ import annotations
 
 import pytest
 
-from onyx.db.enums import EndpointPolicy, ExternalAppType
-from onyx.external_apps.providers import gmail, google_calendar, google_drive, registry
-from onyx.external_apps.providers.gmail import GmailAction
-from onyx.external_apps.providers.google_drive import GoogleDriveAction
-from onyx.external_apps.providers.registry import PROVIDERS, get_endpoint_catalog
-from onyx.skills.built_in import BUILTIN_SKILLS_PATH
-from onyx.skills.rendering import render_external_app_skill
+from lumen.db.enums import EndpointPolicy, ExternalAppType
+from lumen.external_apps.providers import gmail, google_calendar, google_drive, registry
+from lumen.external_apps.providers.gmail import GmailAction
+from lumen.external_apps.providers.google_drive import GoogleDriveAction
+from lumen.external_apps.providers.registry import PROVIDERS, get_endpoint_catalog
+from lumen.skills.built_in import BUILTIN_SKILLS_PATH
+from lumen.skills.rendering import render_external_app_skill
 
 # Requesting any of these subjects the OAuth client to an annual third-party
 # security assessment: https://support.google.com/cloud/answer/13464325
@@ -52,7 +52,7 @@ _CLOUD_SCOPES = [
 
 @pytest.fixture
 def cloud(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Pretend this deployment is cloud, where Onyx owns the OAuth client. Only
+    """Pretend this deployment is cloud, where Lumen owns the OAuth client. Only
     the catalog reads this — ``spec.oauth.scope`` is resolved at import."""
     monkeypatch.setattr(registry, "MULTI_TENANT", True)
 

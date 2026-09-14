@@ -426,7 +426,7 @@ const isRetentionReduction = (
 
 interface RetentionFieldProps {
   value: number | null;
-  disabled: boolean;
+  disabled?: boolean;
   onSave: (value: number | null) => void;
 }
 
@@ -669,8 +669,6 @@ export default function ChatPreferencesPage() {
   const settings = useSettings();
   const s = settings;
   // Search Mode toggle is Business+; Chat Retention is Enterprise-only.
-  const businessTier = useTierAtLeast(Tier.BUSINESS);
-  const enterpriseTier = useTierAtLeast(Tier.ENTERPRISE);
 
   // Dedicated chat-naming model. Auto-naming reads this designation via
   // fetch_default_chat_naming_model; when unset it uses the session's model.
@@ -933,37 +931,23 @@ export default function ChatPreferencesPage() {
           <Card border="solid" rounding={4}>
             <Section alignItems="stretch">
               <Disabled
-                disabled={!businessTier || uniqueSources.length === 0}
-                allowClick={businessTier}
-                tooltip={
-                  !businessTier
-                    ? t("searchMode.tierTooltip")
-                    : t("searchMode.noConnectorsTooltip")
-                }
+                disabled={uniqueSources.length === 0}
+                allowClick
+                tooltip={t("searchMode.noConnectorsTooltip")}
               >
                 <InputHorizontal
                   title={t("searchMode.title")}
-                  tag={
-                    !businessTier
-                      ? {
-                          title: t("searchMode.businessPlanTag.label"),
-                          color: "amber",
-                          icon: SvgOrganization,
-                        }
-                      : { title: t("betaTag.label"), color: "blue" }
-                  }
+                  tag={{ title: t("betaTag.label"), color: "blue" }}
                   description={t("searchMode.description")}
-                  disabled={!businessTier || uniqueSources.length === 0}
+                  disabled={uniqueSources.length === 0}
                   withLabel
                 >
                   <Switch
-                    checked={
-                      businessTier ? (s.search_ui_enabled ?? true) : false
-                    }
+                    checked={s.search_ui_enabled ?? true}
                     onCheckedChange={(checked) => {
                       void saveSettings({ search_ui_enabled: checked });
                     }}
-                    disabled={!businessTier || uniqueSources.length === 0}
+                    disabled={uniqueSources.length === 0}
                   />
                 </InputHorizontal>
               </Disabled>
@@ -1348,35 +1332,19 @@ export default function ChatPreferencesPage() {
               <Section gap={4}>
                 <Card border="solid" rounding={4}>
                   <Section alignItems="stretch">
-                    <Disabled
-                      disabled={!enterpriseTier}
-                      tooltip={t("retention.tierTooltip")}
+                    <InputHorizontal
+                      title={t("retention.title")}
+                      description={t("retention.description")}
+                      withLabel
+                      fillInput
                     >
-                      <InputHorizontal
-                        title={t("retention.title")}
-                        description={t("retention.description")}
-                        tag={
-                          !enterpriseTier
-                            ? {
-                                title: t("retention.enterprisePlanTag.label"),
-                                color: "amber",
-                                icon: SvgOrganization,
-                              }
-                            : undefined
+                      <RetentionField
+                        value={s.maximum_chat_retention_days ?? null}
+                        onSave={(maximum_chat_retention_days) =>
+                          void saveSettings({ maximum_chat_retention_days })
                         }
-                        disabled={!enterpriseTier}
-                        withLabel
-                        fillInput
-                      >
-                        <RetentionField
-                          value={s.maximum_chat_retention_days ?? null}
-                          disabled={!enterpriseTier}
-                          onSave={(maximum_chat_retention_days) =>
-                            void saveSettings({ maximum_chat_retention_days })
-                          }
-                        />
-                      </InputHorizontal>
-                    </Disabled>
+                      />
+                    </InputHorizontal>
 
                     <InputHorizontal
                       title={t("queryHistory.title")}

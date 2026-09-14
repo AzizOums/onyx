@@ -6,7 +6,7 @@ import {
   RenderType,
 } from "@/app/app/message/messageComponents/interfaces";
 import { BlinkingBar } from "@/app/app/message/BlinkingBar";
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { LumenDocument } from "@/lib/search/interfaces";
 import { ValidSources } from "@/lib/types";
 import { SearchChipList, SourceInfo } from "./SearchChipList";
 import {
@@ -27,7 +27,7 @@ const queryToSourceInfo = (query: string, index: number): SourceInfo => ({
   icon: SvgSearch,
 });
 
-const resultToSourceInfo = (doc: OnyxDocument): SourceInfo => ({
+const resultToSourceInfo = (doc: LumenDocument): SourceInfo => ({
   id: doc.document_id,
   title: doc.semantic_identifier || "",
   sourceType: doc.source_type,
@@ -104,11 +104,11 @@ export const InternalSearchToolRenderer: MessageRenderer<
               items={results}
               initialCount={INITIAL_RESULTS_TO_SHOW}
               expansionCount={RESULTS_PER_EXPANSION}
-              getKey={(doc: OnyxDocument, index: number) =>
+              getKey={(doc: LumenDocument, index: number) =>
                 doc.document_id ?? `result-${index}`
               }
-              toSourceInfo={(doc: OnyxDocument) => resultToSourceInfo(doc)}
-              onClick={(doc: OnyxDocument) => {
+              toSourceInfo={(doc: LumenDocument) => resultToSourceInfo(doc)}
+              onClick={(doc: LumenDocument) => {
                 if (doc.link) {
                   window.open(doc.link, "_blank", "noopener,noreferrer");
                 }
@@ -167,11 +167,11 @@ export const InternalSearchToolRenderer: MessageRenderer<
             items={results}
             initialCount={INITIAL_RESULTS_TO_SHOW}
             expansionCount={RESULTS_PER_EXPANSION}
-            getKey={(doc: OnyxDocument, index: number) =>
+            getKey={(doc: LumenDocument, index: number) =>
               doc.document_id ?? `result-${index}`
             }
-            toSourceInfo={(doc: OnyxDocument) => resultToSourceInfo(doc)}
-            onClick={(doc: OnyxDocument) => {
+            toSourceInfo={(doc: LumenDocument) => resultToSourceInfo(doc)}
+            onClick={(doc: LumenDocument) => {
               if (doc.link) {
                 window.open(doc.link, "_blank", "noopener,noreferrer");
               }
@@ -224,11 +224,11 @@ export const InternalSearchToolRenderer: MessageRenderer<
                 items={results}
                 initialCount={INITIAL_RESULTS_TO_SHOW}
                 expansionCount={RESULTS_PER_EXPANSION}
-                getKey={(doc: OnyxDocument, index: number) =>
+                getKey={(doc: LumenDocument, index: number) =>
                   doc.document_id ?? `result-${index}`
                 }
-                toSourceInfo={(doc: OnyxDocument) => resultToSourceInfo(doc)}
-                onClick={(doc: OnyxDocument) => {
+                toSourceInfo={(doc: LumenDocument) => resultToSourceInfo(doc)}
+                onClick={(doc: LumenDocument) => {
                   if (doc.link) {
                     window.open(doc.link, "_blank", "noopener,noreferrer");
                   }

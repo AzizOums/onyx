@@ -17,9 +17,9 @@ describe("toPlainString", () => {
   it("strips link syntax, keeping the label", () => {
     expect(
       toPlainString(
-        markdown("[Onyx 0.0.0-dev](https://docs.onyx.app/changelog)")
+        markdown("[Lumen 0.0.0-dev](https://docs.lumen.app/changelog)")
       )
-    ).toBe("Onyx 0.0.0-dev");
+    ).toBe("Lumen 0.0.0-dev");
   });
 
   it("strips bold (**) syntax", () => {
@@ -67,7 +67,7 @@ describe("toPlainString", () => {
   });
 
   it("strips link with bold label", () => {
-    expect(toPlainString(markdown("[**bold link**](https://onyx.app)"))).toBe(
+    expect(toPlainString(markdown("[**bold link**](https://lumen.app)"))).toBe(
       "bold link"
     );
   });

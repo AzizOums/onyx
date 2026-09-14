@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LOGOUT_DISABLED } from "@/lib/constants";
+import { DOCS_BASE_URL, HAS_DOCS, LOGOUT_DISABLED } from "@/lib/constants";
 import { preload } from "swr";
 import { errorHandlingFetcher } from "@/lib/fetcher";
 import {
@@ -32,7 +32,7 @@ import { useSettings } from "@/lib/settings/hooks";
 import UserAvatar from "@/refresh-components/avatars/UserAvatar";
 import SidebarTabSkeleton from "@/refresh-components/skeletons/SidebarTabSkeleton";
 import { useNotificationSummary } from "@/hooks/useNotifications";
-import { SvgOnyxLogo } from "@opal/logos";
+import { SvgLumenLogo } from "@opal/logos";
 import { markdown } from "@opal/utils";
 import { useTranslations } from "next-intl";
 
@@ -130,16 +130,18 @@ function SettingsPopover({
             ) : undefined
           }
         />,
-        <LineItemButton
-          key="help-faq"
-          sizePreset="main-ui"
-          variant="section"
-          rounding={2}
-          icon={SvgHelpCircle}
-          title={t("helpFaq.label")}
-          href="https://docs.onyx.app"
-          target="_blank"
-        />,
+        HAS_DOCS && (
+          <LineItemButton
+            key="help-faq"
+            sizePreset="main-ui"
+            variant="section"
+            rounding={2}
+            icon={SvgHelpCircle}
+            title={t("helpFaq.label")}
+            href={DOCS_BASE_URL}
+            target="_blank"
+          />
+        ),
         enterpriseSettings?.custom_help_link_url && (
           <LineItemButton
             key="custom-help-link"
@@ -185,12 +187,16 @@ function SettingsPopover({
             variant="body"
             color="muted"
             orientation="reverse"
-            icon={SvgOnyxLogo}
-            title={markdown(
-              `[Onyx ${
-                settings.version ?? "dev"
-              }](https://docs.onyx.app/changelog)`
-            )}
+            icon={SvgLumenLogo}
+            title={
+              HAS_DOCS
+                ? markdown(
+                    `[Lumen ${
+                      settings.version ?? "dev"
+                    }](${DOCS_BASE_URL}/changelog)`
+                  )
+                : `Lumen ${settings.version ?? "dev"}`
+            }
           />
         </div>,
       ]}
@@ -241,7 +247,7 @@ export default function AccountPopover({ onShowBuildIntro }: SettingsProps) {
   return (
     <Popover open={!!popupState} onOpenChange={handlePopoverOpen}>
       <Popover.Trigger asChild>
-        <div id="onyx-user-dropdown">
+        <div id="lumen-user-dropdown">
           <SidebarTab
             icon={(props) => (
               <div className="w-[16px] flex flex-col justify-center items-center">

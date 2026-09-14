@@ -19,7 +19,7 @@ output "container_name" {
 }
 
 output "primary_access_key" {
-  description = "Shared access key, null unless shared_access_key_enabled is true. Onyx uses workload identity and does not need it."
+  description = "Shared access key, null unless shared_access_key_enabled is true. Lumen uses workload identity and does not need it."
   value       = var.shared_access_key_enabled ? azurerm_storage_account.this.primary_access_key : null
   sensitive   = true
 }

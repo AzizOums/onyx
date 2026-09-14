@@ -2,8 +2,8 @@
  * Billing and License interfaces.
  *
  * These types match the backend Pydantic models:
- * - LicenseStatusResponse (backend/ee/onyx/server/license/models.py)
- * - BillingInformationResponse (backend/ee/onyx/server/billing/models.py)
+ * - LicenseStatusResponse (backend/ee/lumen/server/license/models.py)
+ * - BillingInformationResponse (backend/ee/lumen/server/billing/models.py)
  */
 
 // ----------------------------------------------------------------------------

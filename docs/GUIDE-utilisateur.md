@@ -1,13 +1,13 @@
-# Guide utilisateur — Onyx Community
+# Guide utilisateur — Lumen Community
 
-> Tout ce que vous pouvez faire avec Onyx et comment l'utiliser au quotidien.
+> Tout ce que vous pouvez faire avec Lumen et comment l'utiliser au quotidien.
 > Destiné aux utilisateurs finaux et aux administrateurs.
 
 ---
 
-## 1. C'est quoi Onyx ?
+## 1. C'est quoi Lumen ?
 
-Onyx est un **assistant IA d'entreprise** : il se connecte à vos outils
+Lumen est un **assistant IA d'entreprise** : il se connecte à vos outils
 (Google Drive, Slack, Confluence, GitHub, SharePoint…), indexe vos documents
 et vous permet de **discuter avec vos connaissances** via un LLM (OpenAI,
 Anthropic, ou en local via **Ollama**). Tout reste **chez vous** : auto-hébergé.
@@ -16,7 +16,7 @@ Anthropic, ou en local via **Ollama**). Tout reste **chez vous** : auto-héberg�
 
 ## 2. Premier pas
 
-1. Ouvrez l'URL fournie par votre admin (ex. `https://onyx.maboite.com`).
+1. Ouvrez l'URL fournie par votre admin (ex. `https://lumen.maboite.com`).
 2. **Inscrivez-vous** avec votre email professionnel (ou connectez-vous via le
    SSO de l'entreprise : Google / OIDC / SAML).
 3. Le premier utilisateur inscrit devient automatiquement **administrateur**.
@@ -63,7 +63,7 @@ Anthropic, ou en local via **Ollama**). Tout reste **chez vous** : auto-héberg�
 Un **agent** = un assistant spécialisé avec son prompt, ses outils et ses
 documents de référence.
 
-- **Agents par défaut** : l'« Onyx Assistant » répond à tout avec accès à
+- **Agents par défaut** : l'« Lumen Assistant » répond à tout avec accès à
   l'ensemble des connaissances.
 - **Créer un agent** : `Explore Agents` → `Nouveau`.
   - Nom, description, **prompt système** (son rôle, son ton).
@@ -92,7 +92,7 @@ documents de référence.
 - **Connecteurs** : Google Drive, Slack, Confluence, GitHub, SharePoint,
   Notion, Jira, sites web (web connector), fichiers… Configurer la source,
   les accès, la fréquence de synchronisation.
-- **Slack / Discord bots** : un bot Onyx répond directement dans vos canaux.
+- **Slack / Discord bots** : un bot Lumen répond directement dans vos canaux.
 - **MCP Actions** : connecter des serveurs MCP (outils externes pour les
   agents) — avec clé API, OAuth, ou auth par utilisateur.
 - **OpenAPI Actions** : brancher n'importe quelle API REST comme outil.

@@ -7,8 +7,8 @@ import { SEARCH_PARAM_NAMES } from "@/app/app/services/searchParams";
 import { Section } from "@/layouts/general-layouts";
 import { useFederatedConnectors, useLlmManager } from "@/lib/hooks";
 import { useSendChatMessageFromURL } from "@/lib/chat/hooks";
-import OnyxInitializingLoader from "@/components/OnyxInitializingLoader";
-import { OnyxDocument, MinimalOnyxDocument } from "@/lib/search/interfaces";
+import LumenInitializingLoader from "@/components/LumenInitializingLoader";
+import { LumenDocument, MinimalLumenDocument } from "@/lib/search/interfaces";
 import { useToolConfiguration } from "@/lib/tools/hooks";
 import { useSettings } from "@/lib/settings/hooks";
 import Dropzone from "react-dropzone";
@@ -216,7 +216,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
     !isLoadingProjects && activeProject === null && deepResearchEnabled;
 
   const [presentingDocument, setPresentingDocument] =
-    useState<MinimalOnyxDocument | null>(null);
+    useState<MinimalLumenDocument | null>(null);
 
   const llmManager = useLlmManager(
     currentChatSession ?? undefined,
@@ -277,7 +277,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
   const loadedIdSessionRef = useRef<string | null>(currentChatSessionId);
   const submitOnLoadPerformed = useRef<boolean>(false);
 
-  const [selectedDocuments, setSelectedDocuments] = useState<OnyxDocument[]>(
+  const [selectedDocuments, setSelectedDocuments] = useState<LumenDocument[]>(
     []
   );
 
@@ -702,7 +702,7 @@ export default function AppPage({ firstMessage }: ChatPageProps) {
             : "1fr auto 1fr",
   };
 
-  if (!isReady) return <OnyxInitializingLoader />;
+  if (!isReady) return <LumenInitializingLoader />;
 
   return (
     <>

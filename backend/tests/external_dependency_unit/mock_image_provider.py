@@ -10,12 +10,12 @@ from unittest.mock import patch
 
 from litellm.types.utils import ImageObject, ImageResponse
 
-from onyx.image_gen.interfaces import (
+from lumen.image_gen.interfaces import (
     ImageGenerationProvider,
     ImageGenerationProviderCredentials,
     ReferenceImage,
 )
-from onyx.llm.interfaces import LLMConfig
+from lumen.llm.interfaces import LLMConfig
 
 
 class ImageGenerationProviderController(abc.ABC):
@@ -116,17 +116,17 @@ def use_mock_image_generation_provider() -> Generator[
     with (
         # Mock the image generation provider factory
         patch(
-            "onyx.tools.tool_implementations.images.image_generation_tool.get_image_generation_provider",
+            "lumen.tools.tool_implementations.images.image_generation_tool.get_image_generation_provider",
             return_value=image_gen_provider,
         ),
         # Mock is_available to return True so the tool is registered
         patch(
-            "onyx.tools.tool_implementations.images.image_generation_tool.ImageGenerationTool.is_available",
+            "lumen.tools.tool_implementations.images.image_generation_tool.ImageGenerationTool.is_available",
             return_value=True,
         ),
         # Mock the config lookup in tool_constructor to return a valid LLMConfig
         patch(
-            "onyx.tools.tool_constructor._get_image_generation_config",
+            "lumen.tools.tool_constructor._get_image_generation_config",
             return_value=_create_mock_image_generation_llm_config(),
         ),
     ):

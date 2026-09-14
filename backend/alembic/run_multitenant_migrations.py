@@ -27,9 +27,9 @@ from typing import NamedTuple
 from alembic.config import Config
 from alembic.script import ScriptDirectory
 
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.engine.tenant_utils import get_schemas_needing_migration
-from onyx.db.engine.tenant_utils import get_tenant_ids_by_shard
+from lumen.db.engine.sql_engine import SqlEngine
+from lumen.db.engine.tenant_utils import get_schemas_needing_migration
+from lumen.db.engine.tenant_utils import get_tenant_ids_by_shard
 from shared_configs.configs import TENANT_ID_PREFIX
 
 # ---------------------------------------------------------------------------

@@ -37,7 +37,7 @@ export interface SearchFiltersRequest {
   document_set: string[] | null;
   updated_at_range: TimeRange | null;
   // `buildFilters` has always sent this and the backend has always read it
-  // (BaseFilters.tags in onyx/context/search/models.py). It went undeclared
+  // (BaseFilters.tags in lumen/context/search/models.py). It went undeclared
   // because the old body returned via a variable, which skips the excess
   // property check a returned literal gets.
   tags: Tag[];

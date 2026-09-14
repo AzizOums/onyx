@@ -12,11 +12,11 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from fastapi_limiter import FastAPILimiter
 
-from onyx.auth.users import current_chat_accessible_user
-from onyx.configs.app_configs import FEEDBACK_RATE_LIMIT_MAX_REQUESTS
-from onyx.db.enums import AccountType
-from onyx.redis.redis_pool import get_async_redis_connection
-from onyx.server.middleware.rate_limiting import get_feedback_rate_limiters
+from lumen.auth.users import current_chat_accessible_user
+from lumen.configs.app_configs import FEEDBACK_RATE_LIMIT_MAX_REQUESTS
+from lumen.db.enums import AccountType
+from lumen.redis.redis_pool import get_async_redis_connection
+from lumen.server.middleware.rate_limiting import get_feedback_rate_limiters
 
 
 def _fake_user(account_type: AccountType = AccountType.STANDARD) -> SimpleNamespace:

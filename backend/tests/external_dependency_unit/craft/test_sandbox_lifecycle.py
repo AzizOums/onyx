@@ -21,29 +21,29 @@ import pytest
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import BuildSessionStatus, SandboxStatus
-from onyx.db.models import BuildSession, Sandbox, User
-from onyx.server.features.build.db.sandbox import (
+from lumen.db.enums import BuildSessionStatus, SandboxStatus
+from lumen.db.models import BuildSession, Sandbox, User
+from lumen.server.features.build.db.sandbox import (
     create_snapshot__no_commit,
     get_running_sandboxes,
 )
-from onyx.server.features.build.sandbox.models import (
+from lumen.server.features.build.sandbox.models import (
     CraftLLMProviderConfig,
     CraftMCPServerConfig,
     FileSet,
     FilesystemEntry,
     SandboxInfo,
 )
-from onyx.server.features.build.sandbox.user_library import USER_LIBRARY_MOUNT_PATH
-from onyx.server.features.build.session.api import restore_session
-from onyx.server.features.build.session.errors import SandboxProvisioningError
-from onyx.server.features.build.session.manager import SessionManager
-from onyx.server.features.build.session.sandbox_lifecycle import (
+from lumen.server.features.build.sandbox.user_library import USER_LIBRARY_MOUNT_PATH
+from lumen.server.features.build.session.api import restore_session
+from lumen.server.features.build.session.errors import SandboxProvisioningError
+from lumen.server.features.build.session.manager import SessionManager
+from lumen.server.features.build.session.sandbox_lifecycle import (
     ProvisioningPolicy,
     ensure_sandbox_ready,
     is_sandbox_idle,
 )
-from onyx.skills.push import SKILLS_MOUNT_PATH
+from lumen.skills.push import SKILLS_MOUNT_PATH
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.common.craft.stubs import StubSandboxManager
 from tests.external_dependency_unit.craft.db_helpers import make_sandbox, make_user
@@ -282,7 +282,7 @@ class TestHealthCheckFailureRecovery:
 
         # restore_session reads ``get_sandbox_manager`` from sessions_api.
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "lumen.server.features.build.session.api.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
@@ -354,7 +354,7 @@ class TestRestoreFailureRecovery:
         stub_sandbox_manager.cleanup_session_workspace_silent = True
 
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "lumen.server.features.build.session.api.get_sandbox_manager",
             lambda: stub_sandbox_manager,
         )
 
@@ -634,15 +634,15 @@ class TestManagedContentPushOrdering:
         stub.write_sandbox_file_silent = True
 
         monkeypatch.setattr(
-            "onyx.server.features.build.session.api.get_sandbox_manager",
+            "lumen.server.features.build.session.api.get_sandbox_manager",
             lambda: stub,
         )
         monkeypatch.setattr(
-            "onyx.server.features.build.session.manager.get_sandbox_manager",
+            "lumen.server.features.build.session.manager.get_sandbox_manager",
             lambda: stub,
         )
         monkeypatch.setattr(
-            "onyx.server.features.build.sandbox.factory._sandbox_manager_instance",
+            "lumen.server.features.build.sandbox.factory._sandbox_manager_instance",
             stub,
         )
 

@@ -9,7 +9,7 @@ from __future__ import annotations
 import pytest
 from kubernetes import client
 
-from onyx.server.features.build.configs import (
+from lumen.server.features.build.configs import (
     SANDBOX_BACKEND,
     SANDBOX_NAMESPACE,
     SandboxBackend,
@@ -106,7 +106,7 @@ def test_dev_resources_not_blocked_by_origin_gate(
     resp = proxy_get(
         pool_api_user,
         str(ready_webapp_session.session_id),
-        "_next/static/onyx-origin-gate-probe.js",
+        "_next/static/lumen-origin-gate-probe.js",
     )
     # 404 for a nonexistent asset is fine; the gate rejects before routing,
     # so a 403 means Origin/sec-fetch-* leaked through the proxy or the

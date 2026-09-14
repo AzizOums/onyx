@@ -3,12 +3,12 @@ from collections.abc import Generator
 
 import pytest
 
-from onyx.connectors.slack.models import ChannelType
+from lumen.connectors.slack.models import ChannelType
 from tests.integration.connector_job_tests.slack.slack_api_utils import SlackManager
 
-SLACK_ADMIN_EMAIL = os.environ.get("SLACK_ADMIN_EMAIL", "evan@onyx.app")
-SLACK_TEST_USER_1_EMAIL = os.environ.get("SLACK_TEST_USER_1_EMAIL", "evan+1@onyx.app")
-SLACK_TEST_USER_2_EMAIL = os.environ.get("SLACK_TEST_USER_2_EMAIL", "justin@onyx.app")
+SLACK_ADMIN_EMAIL = os.environ.get("SLACK_ADMIN_EMAIL", "evan@lumen.app")
+SLACK_TEST_USER_1_EMAIL = os.environ.get("SLACK_TEST_USER_1_EMAIL", "evan+1@lumen.app")
+SLACK_TEST_USER_2_EMAIL = os.environ.get("SLACK_TEST_USER_2_EMAIL", "justin@lumen.app")
 
 
 def _provision_slack_channels(

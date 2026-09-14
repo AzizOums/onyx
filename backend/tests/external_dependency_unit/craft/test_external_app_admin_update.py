@@ -12,14 +12,14 @@ import pytest
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-import onyx.server.features.build.external_apps.api as api
-from onyx.db.enums import ExternalAppType
-from onyx.db.external_app import (
+import lumen.server.features.build.external_apps.api as api
+from lumen.db.enums import ExternalAppType
+from lumen.db.external_app import (
     get_external_app_by_id,
     get_skills_for_external_app,
 )
-from onyx.db.models import ExternalApp, Skill, User
-from onyx.server.features.build.external_apps.models import UpdateExternalAppRequest
+from lumen.db.models import ExternalApp, Skill, User
+from lumen.server.features.build.external_apps.models import UpdateExternalAppRequest
 from tests.external_dependency_unit.craft.db_helpers import (
     make_external_app,
     reset_built_in_skill_row,

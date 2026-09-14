@@ -7,11 +7,11 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.auth.permissions import (
+from lumen.auth.permissions import (
     SCOPED_MANAGER_PERMISSIONS,
     SCOPED_MANAGER_PERMISSIONS_EXPANDED,
 )
-from onyx.auth.scoped_permissions import (
+from lumen.auth.scoped_permissions import (
     assert_global,
     assert_manages_group,
     assert_within_scope,
@@ -19,9 +19,9 @@ from onyx.auth.scoped_permissions import (
     manages_group,
     within_scope,
 )
-from onyx.db.document_set import get_document_set_by_id
-from onyx.db.enums import AccessType, Permission
-from onyx.db.models import (
+from lumen.db.document_set import get_document_set_by_id
+from lumen.db.enums import AccessType, Permission
+from lumen.db.models import (
     ConnectorCredentialPair,
     DocumentSet,
     DocumentSet__UserGroup,
@@ -30,13 +30,13 @@ from onyx.db.models import (
     UserGroup,
     UserGroup__ConnectorCredentialPair,
 )
-from onyx.db.scoped_permissions import (
+from lumen.db.scoped_permissions import (
     fetch_managed_group_ids,
     scoped_group_ids_subquery,
     within_managed_scope_clause,
 )
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.manage.models import UserInfo
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.manage.models import UserInfo
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.external_dependency_unit.indexing_helpers import make_cc_pair
 from tests.utils.audit import events_for
@@ -154,13 +154,13 @@ def test_assert_global_admits_only_global(db_session: Session) -> None:
     manager.effective_permissions = []  # SCOPED for a bundle token, no global grant
 
     # SCOPED → rejected even on a bundle token they "reach" at the route.
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_global(manager, permission=Permission.MANAGE_DOCUMENT_SETS)
 
     # NONE → rejected.
     plain = create_test_user(db_session, "global-gate-plain")
     plain.effective_permissions = []
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_global(plain, permission=Permission.MANAGE_DOCUMENT_SETS)
 
     # GLOBAL holder → passes.
@@ -221,7 +221,7 @@ def test_assert_within_scope_manager_invariants(
     )
 
     # out-of-scope group (capture-by-reassign) → reject
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_within_scope(
             manager,
             db_session,
@@ -232,7 +232,7 @@ def test_assert_within_scope_manager_invariants(
         )
 
     # detach to zero groups → reject
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_within_scope(
             manager,
             db_session,
@@ -243,7 +243,7 @@ def test_assert_within_scope_manager_invariants(
         )
 
     # non-private resource → reject
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_within_scope(
             manager,
             db_session,
@@ -261,7 +261,7 @@ def test_assert_within_scope_fails_closed_on_empty_scope(
     user = create_test_user(db_session, "gate2-noscope")
     user.effective_permissions = []
     user.is_group_manager = True  # flag set, but no manager edges
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_within_scope(
             user,
             db_session,
@@ -294,7 +294,7 @@ def test_assert_within_scope_classifies_each_permission(
     )
 
     # manage:connectors only via scope → out-of-scope group rejected
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_within_scope(
             user,
             db_session,
@@ -459,7 +459,7 @@ def test_manages_group_scoped_manager_only_managed(db_session: Session) -> None:
     assert_manages_group(manager, db_session, group_id=managed.id)
 
     assert not manages_group(manager, db_session, group_id=unmanaged.id)
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_manages_group(manager, db_session, group_id=unmanaged.id)
 
 
@@ -574,11 +574,11 @@ def test_each_gate_records_its_refusal(
     unmanaged = _make_group(db_session)
     _manage(db_session, manager, managed)
 
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_manages_group(manager, db_session, group_id=unmanaged.id)
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_global(manager, permission=Permission.MANAGE_DOCUMENT_SETS)
-    with pytest.raises(OnyxError):
+    with pytest.raises(LumenError):
         assert_within_scope(
             manager,
             db_session,
@@ -622,7 +622,7 @@ def test_every_refusal_is_recorded(
     _manage(db_session, manager, managed)
 
     def refuse(target_group_id: int) -> None:
-        with pytest.raises(OnyxError):
+        with pytest.raises(LumenError):
             assert_within_scope(
                 manager,
                 db_session,

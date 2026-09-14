@@ -3,9 +3,9 @@ from uuid import uuid4
 from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.enums import AccessType
-from onyx.db.models import ConnectorCredentialPair, DocumentByConnectorCredentialPair
+from lumen.configs.constants import DocumentSource
+from lumen.db.enums import AccessType
+from lumen.db.models import ConnectorCredentialPair, DocumentByConnectorCredentialPair
 from tests.integration.common_utils.constants import API_SERVER_URL, NUM_DOCS
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.api_key import DATestAPIKey
@@ -111,7 +111,7 @@ class DocumentManager:
             document = _generate_dummy_document(document_id, cc_pair.id)
             documents.append(document)
             response = client.post(
-                f"{API_SERVER_URL}/onyx-api/ingestion",
+                f"{API_SERVER_URL}/lumen-api/ingestion",
                 json=document,
                 headers=api_key.headers,
             )
@@ -147,7 +147,7 @@ class DocumentManager:
             extra_metadata=metadata,
         )
         response = client.post(
-            f"{API_SERVER_URL}/onyx-api/ingestion",
+            f"{API_SERVER_URL}/lumen-api/ingestion",
             json=document,
             headers=api_key.headers,
         )
@@ -268,7 +268,7 @@ class IngestionManager(DocumentManager):
         api_key: DATestAPIKey,
     ) -> list[dict]:
         response = client.get(
-            f"{API_SERVER_URL}/onyx-api/ingestion",
+            f"{API_SERVER_URL}/lumen-api/ingestion",
             headers=api_key.headers,
         )
         response.raise_for_status()
@@ -280,7 +280,7 @@ class IngestionManager(DocumentManager):
         api_key: DATestAPIKey,
     ) -> None:
         response = client.delete(
-            f"{API_SERVER_URL}/onyx-api/ingestion/{document_id}",
+            f"{API_SERVER_URL}/lumen-api/ingestion/{document_id}",
             headers=api_key.headers,
         )
         response.raise_for_status()

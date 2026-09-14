@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
-	"github.com/onyx-dot-app/onyx/cli/internal/version"
+	"github.com/lumen-dot-app/lumen/cli/internal/api"
+	"github.com/lumen-dot-app/lumen/cli/internal/config"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/version"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +20,7 @@ func newValidateConfigCmd(ios *iostreams.IOStreams) *cobra.Command {
 		Long: `Check that the CLI is configured, the server is reachable, and the personal
 access token (PAT) is valid. Also reports the server version and warns if it
 is below the minimum required.`,
-		Example: `  onyx-cli validate-config`,
+		Example: `  lumen-cli validate-config`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cfg, err := requireConfig()
 			if err != nil {

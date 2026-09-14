@@ -1,4 +1,4 @@
-from onyx.server.features.persona.constants import (
+from lumen.server.features.persona.constants import (
     ADMIN_AGENTS_RESOURCE,
     AGENTS_RESOURCE,
 )

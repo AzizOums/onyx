@@ -11,9 +11,9 @@ from uuid import uuid4
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 
-from onyx.db.engine.sql_engine import SYNC_DB_API, build_connection_string
+from lumen.db.engine.sql_engine import SYNC_DB_API, build_connection_string
 
-# Must match ONYX_DB_DEFAULT_SHARD, which each suite's fixture pins.
+# Must match LUMEN_DB_DEFAULT_SHARD, which each suite's fixture pins.
 DEFAULT_SHARD = "default"
 
 

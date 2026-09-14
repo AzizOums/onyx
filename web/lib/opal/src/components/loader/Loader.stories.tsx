@@ -1,38 +1,38 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { OnyxLoader, IconLoader } from "@opal/components";
+import { LumenLoader, IconLoader } from "@opal/components";
 import { SvgSettings } from "@opal/icons";
 
-const meta: Meta<typeof OnyxLoader> = {
+const meta: Meta<typeof LumenLoader> = {
   title: "opal/components/Loader",
-  component: OnyxLoader,
+  component: LumenLoader,
   tags: ["autodocs"],
 };
 
 export default meta;
 type Story = StoryObj;
 
-// OnyxLoader: the branded octagon/logo crossfade.
+// LumenLoader: the branded octagon/logo crossfade.
 
-export const OnyxMark: Story = {
-  render: () => <OnyxLoader />,
+export const LumenMark: Story = {
+  render: () => <LumenLoader />,
 };
 
-export const OnyxSizes: Story = {
+export const LumenSizes: Story = {
   render: () => (
     <div className="flex items-end gap-6">
-      <OnyxLoader size={24} />
-      <OnyxLoader size={40} />
-      <OnyxLoader size={64} />
+      <LumenLoader size={24} />
+      <LumenLoader size={40} />
+      <LumenLoader size={64} />
     </div>
   ),
 };
 
-export const OnyxColors: Story = {
+export const LumenColors: Story = {
   render: () => (
     <div className="flex items-end gap-6">
-      <OnyxLoader />
-      <OnyxLoader color="text-04" />
-      <OnyxLoader color="status-error-05" />
+      <LumenLoader />
+      <LumenLoader color="text-04" />
+      <LumenLoader color="status-error-05" />
     </div>
   ),
 };
@@ -61,7 +61,7 @@ export const IconColors: Story = {
 export const Inherit: Story = {
   render: () => (
     <div className="flex items-center gap-6 text-status-error-05">
-      <OnyxLoader color="inherit" />
+      <LumenLoader color="inherit" />
       <IconLoader size={32} color="inherit" />
     </div>
   ),

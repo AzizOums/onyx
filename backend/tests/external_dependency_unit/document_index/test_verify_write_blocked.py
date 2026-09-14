@@ -14,21 +14,21 @@ from unittest.mock import patch
 
 import pytest
 
-from onyx.db.enums import EmbeddingPrecision
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch import (
+from lumen.db.enums import EmbeddingPrecision
+from lumen.document_index.interfaces_new import TenantState
+from lumen.document_index.opensearch import (
     opensearch_document_index as opensearch_document_index_module,
 )
-from onyx.document_index.opensearch.client import (
+from lumen.document_index.opensearch.client import (
     OpenSearchIndexClient,
     OpenSearchIndexWriteBlockedError,
     is_cluster_block_error,
 )
-from onyx.document_index.opensearch.opensearch_document_index import (
+from lumen.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
 )
-from onyx.indexing.models import IndexingSetting
-from onyx.setup import setup_document_indices
+from lumen.indexing.models import IndexingSetting
+from lumen.setup import setup_document_indices
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.external_dependency_unit.document_index.conftest import EMBEDDING_DIM
 

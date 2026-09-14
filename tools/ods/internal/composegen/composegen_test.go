@@ -33,7 +33,7 @@ func assertRender(t *testing.T, lines []string, variant string, want []string) {
 }
 
 func TestPlainLinesFlowToEveryVariant(t *testing.T) {
-	lines := []string{"name: onyx", "", "services:"}
+	lines := []string{"name: lumen", "", "services:"}
 	for _, variant := range allVariants {
 		assertRender(t, lines, variant, lines)
 	}
@@ -101,10 +101,10 @@ func TestValueThreeWayStack(t *testing.T) {
 
 func TestValueTextMayContainColons(t *testing.T) {
 	lines := []string{
-		"  #!value prod: image: onyxdotapp/x:${TAG:-latest}",
+		"  #!value prod: image: lumendotapp/x:${TAG:-latest}",
 		"  image: fallback",
 	}
-	assertRender(t, lines, "prod", []string{"  image: onyxdotapp/x:${TAG:-latest}"})
+	assertRender(t, lines, "prod", []string{"  image: lumendotapp/x:${TAG:-latest}"})
 }
 
 func TestDirectivesInsideExcludedForBlockAreConsumed(t *testing.T) {
@@ -225,7 +225,7 @@ func TestMalformedValue(t *testing.T) {
 }
 
 func TestGenerateAllAddsBannerAndValidatesYaml(t *testing.T) {
-	lines := []string{"name: onyx", "services:", "  api_server:", "    image: x"}
+	lines := []string{"name: lumen", "services:", "  api_server:", "    image: x"}
 	results, err := GenerateAll(lines)
 	if err != nil {
 		t.Fatalf("GenerateAll failed: %v", err)

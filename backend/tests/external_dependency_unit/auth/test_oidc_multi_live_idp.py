@@ -27,12 +27,12 @@ from fastapi_users.password import PasswordHelper
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.orm import Session
 
-from onyx.auth.users import cookie_transport
-from onyx.db.enums import AccountType, SSOProviderType
-from onyx.db.models import ScimUserMapping, SSOProvider, User, User__UserGroup
-from onyx.db.sso_provider import create_sso_provider
-from onyx.error_handling.exceptions import register_onyx_exception_handlers
-from onyx.server import oidc_multi
+from lumen.auth.users import cookie_transport
+from lumen.db.enums import AccountType, SSOProviderType
+from lumen.db.models import ScimUserMapping, SSOProvider, User, User__UserGroup
+from lumen.db.sso_provider import create_sso_provider
+from lumen.error_handling.exceptions import register_lumen_exception_handlers
+from lumen.server import oidc_multi
 
 _MOCK_URL = os.environ.get("MOCK_OIDC_URL", "http://localhost:8086").rstrip("/")
 _STATE_SECRET = "live-idp-test-secret"
@@ -122,8 +122,8 @@ def _create_provider(db_session: Session, name: str, issuer: str, domain: str) -
         display_name=f"Mock OIDC {name}",
         provider_type=SSOProviderType.OIDC,
         config={
-            "client_id": "onyx-live",
-            "client_secret": "onyx-live-secret",
+            "client_id": "lumen-live",
+            "client_secret": "lumen-live-secret",
             "openid_config_url": _config_url(issuer),
         },
         allowed_email_domains=[domain],
@@ -182,7 +182,7 @@ def app(monkeypatch: pytest.MonkeyPatch) -> FastAPI:
     monkeypatch.setattr(oidc_multi, "USER_AUTH_SECRET", _STATE_SECRET)
     fastapi_app = FastAPI()
     fastapi_app.include_router(oidc_multi.router)
-    register_onyx_exception_handlers(fastapi_app)
+    register_lumen_exception_handlers(fastapi_app)
     return fastapi_app
 
 
@@ -203,9 +203,9 @@ def _idp_login(authorization_url: str, email: str, email_verified: bool = True) 
 async def _drive_login(
     client: AsyncClient, provider: str, email: str, email_verified: bool = True
 ) -> httpx.Response:
-    """Full authorization-code flow: authorize on the Onyx side (CSRF cookie lands
+    """Full authorization-code flow: authorize on the Lumen side (CSRF cookie lands
     in the client jar), log in at the IdP, then follow the redirect back into the
-    Onyx callback."""
+    Lumen callback."""
     resp = await client.get(f"/auth/oidc/{provider}/authorize")
     assert resp.status_code == 200, resp.text
     location = _idp_login(resp.json()["authorization_url"], email, email_verified)

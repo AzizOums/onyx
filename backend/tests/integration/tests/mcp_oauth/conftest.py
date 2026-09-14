@@ -24,8 +24,8 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 from fastapi.testclient import TestClient
 
-from onyx.server.features.mcp import api as mcp_api
-from onyx.server.features.mcp import client_metadata
+from lumen.server.features.mcp import api as mcp_api
+from lumen.server.features.mcp import client_metadata
 from tests.integration.common_utils.cimd_oauth import (
     CimdOAuthTestServices,
     OAuthHttpsEndpoint,

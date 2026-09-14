@@ -2,7 +2,7 @@ import { test, expect } from "./fixtures";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import { Permission } from "@/lib/types";
 import { apiLogin, loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import { AdminAgentsPage } from "@tests/e2e/pages/AdminAgentsPage";
 
 test.skip(true, "EE default-deny permission semantics are not used in the Community build (CE auto-grants ADD_AGENTS)");
@@ -158,7 +158,7 @@ test.describe("Permission gating — MANAGE_AGENTS", () => {
       await cleanup(async () => {
         await page.context().clearCookies();
         await loginAs(page, "admin");
-        const cleanupClient = new OnyxApiClient(page.request);
+        const cleanupClient = new LumenApiClient(page.request);
         await cleanupClient.deleteAgent(agentId);
       });
     }
@@ -240,7 +240,7 @@ test.describe("Permission gating — MANAGE_LLMS", () => {
       await cleanup(async () => {
         await page.context().clearCookies();
         await loginAs(page, "admin");
-        const cleanupClient = new OnyxApiClient(page.request);
+        const cleanupClient = new LumenApiClient(page.request);
         await cleanupClient.deleteProvider(providerId);
         await cleanupClient.deleteCostOverride(overrideModel);
       });
@@ -346,7 +346,7 @@ test.describe("Permission gating — MANAGE_CONNECTORS", () => {
       await cleanup(async () => {
         await page.context().clearCookies();
         await loginAs(page, "admin");
-        const cleanupClient = new OnyxApiClient(page.request);
+        const cleanupClient = new LumenApiClient(page.request);
         await cleanupClient.deleteCCPair(ccPairId);
       });
     }
@@ -495,7 +495,7 @@ test.describe("Permission gating — MANAGE_DOCUMENT_SETS", () => {
       await cleanup(async () => {
         await page.context().clearCookies();
         await loginAs(page, "admin");
-        const cleanupClient = new OnyxApiClient(page.request);
+        const cleanupClient = new LumenApiClient(page.request);
         await cleanupClient.deleteCCPair(ccPairId);
         await cleanupClient.deleteCCPair(privateCcPairId);
         await cleanupClient.deleteUserGroup(extraGroupId);
@@ -612,7 +612,7 @@ test.describe("Permission gating — MANAGE_ACTIONS", () => {
       await cleanup(async () => {
         await page.context().clearCookies();
         await loginAs(page, "admin");
-        const cleanupClient = new OnyxApiClient(page.request);
+        const cleanupClient = new LumenApiClient(page.request);
         await cleanupClient.deleteCustomTool(toolId);
         await cleanupClient.deleteMcpServer(mcpServerId);
       });
@@ -713,7 +713,7 @@ test.describe("Permission gating — MANAGE_SERVICE_ACCOUNT_API_KEYS", () => {
       await cleanup(async () => {
         await page.context().clearCookies();
         await loginAs(page, "admin");
-        const cleanupClient = new OnyxApiClient(page.request);
+        const cleanupClient = new LumenApiClient(page.request);
         await cleanupClient.deleteServiceAccount(apiKeyId);
         await cleanupClient.deleteUserGroup(extraGroupId);
       });
@@ -801,7 +801,7 @@ test.describe("Permission gating — MANAGE_BOTS", () => {
       await cleanup(async () => {
         await page.context().clearCookies();
         await loginAs(page, "admin");
-        const cleanupClient = new OnyxApiClient(page.request);
+        const cleanupClient = new LumenApiClient(page.request);
         await cleanupClient.deleteDiscordGuild(guild.id);
       });
     }
@@ -871,7 +871,7 @@ test.describe("Permission gating — READ_QUERY_HISTORY", () => {
       await cleanup(async () => {
         await page.context().clearCookies();
         await loginAs(page, "admin");
-        const cleanupClient = new OnyxApiClient(page.request);
+        const cleanupClient = new LumenApiClient(page.request);
         await cleanupClient.deleteChatSession(chatSessionId);
       });
     }
@@ -1094,7 +1094,7 @@ test.describe("Permission gating — MANAGE_USER_GROUPS", () => {
         // Delete doc set before connector since it references it
         await page.context().clearCookies();
         await loginAs(page, "admin");
-        const cleanupClient = new OnyxApiClient(page.request);
+        const cleanupClient = new LumenApiClient(page.request);
         await cleanupClient.deleteDocumentSet(docSetId);
         await cleanupClient.deleteCCPair(ccPairId);
         await cleanupClient.deleteAgent(agentId);

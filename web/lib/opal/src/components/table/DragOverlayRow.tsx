@@ -6,15 +6,15 @@ import QualifierContainer from "@opal/components/table/QualifierContainer";
 import TableQualifier from "@opal/components/table/TableQualifier";
 import ActionsContainer from "@opal/components/table/ActionsContainer";
 import type {
-  OnyxColumnDef,
-  OnyxQualifierColumn,
+  LumenColumnDef,
+  LumenQualifierColumn,
 } from "@opal/components/table/types";
 
 interface DragOverlayRowProps<TData> {
   row: Row<TData>;
   columnWidths?: Record<string, number>;
-  columnKindMap?: Map<string, OnyxColumnDef<TData>>;
-  qualifierColumn?: OnyxQualifierColumn<TData> | null;
+  columnKindMap?: Map<string, LumenColumnDef<TData>>;
+  qualifierColumn?: LumenQualifierColumn<TData> | null;
   isSelectable?: boolean;
 }
 

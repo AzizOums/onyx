@@ -271,7 +271,7 @@
         },
         "placeholder": "选择方式",
         "ptOauth": {
-          "description": "转发用户用于验证 Onyx 身份的 OAuth 访问 token。",
+          "description": "转发用户用于验证 Lumen 身份的 OAuth 访问 token。",
           "label": "OAuth 透传"
         },
         "required": "必须选择身份验证类型"
@@ -310,11 +310,11 @@
         "title": "此 MCP 服务器不使用身份验证"
       },
       "oauthInfo": {
-        "discovery": "客户端 ID 和密钥为可选项。在自动发现过程中，Onyx 会在服务器支持时使用客户端 ID 元数据文档（CIMD），否则回退到动态客户端注册（DCR）。",
-        "manualRegistration": "如果您的服务器两种方式都不支持，请先在服务器提供方处注册您的 Onyx 实例。为 Onyx 授予操作所需的权限范围。"
+        "discovery": "客户端 ID 和密钥为可选项。在自动发现过程中，Lumen 会在服务器支持时使用客户端 ID 元数据文档（CIMD），否则回退到动态客户端注册（DCR）。",
+        "manualRegistration": "如果您的服务器两种方式都不支持，请先在服务器提供方处注册您的 Lumen 实例。为 Lumen 授予操作所需的权限范围。"
       },
       "passThroughNotice": {
-        "description": "Onyx 会将用户的 OAuth 访问 token 作为 Authorization 请求头直接转发给服务器。请确保该服务器支持使用同一提供方进行身份验证。",
+        "description": "Lumen 会将用户的 OAuth 访问 token 作为 Authorization 请求头直接转发给服务器。请确保该服务器支持使用同一提供方进行身份验证。",
         "title": "对使用同一身份提供方的服务，请使用透传方式。"
       },
       "providerMode": {
@@ -468,7 +468,7 @@
         },
         "placeholder": "选择方式",
         "ptOauth": {
-          "description": "转发用户用于验证 Onyx 身份的 OAuth 访问 token。",
+          "description": "转发用户用于验证 Lumen 身份的 OAuth 访问 token。",
           "label": "OAuth 透传"
         },
         "required": "必须选择身份验证方式"
@@ -516,7 +516,7 @@
         "description": "OAuth 透传需要支持 OAuth 的登录方式（Google 或 OIDC）。"
       },
       "passThroughNotice": {
-        "description": "Onyx 会将用户的 OAuth 访问 token 作为 Authorization 请求头直接转发给服务器。请确保该服务器支持使用同一提供方进行身份验证。",
+        "description": "Lumen 会将用户的 OAuth 访问 token 作为 Authorization 请求头直接转发给服务器。请确保该服务器支持使用同一提供方进行身份验证。",
         "title": "对使用同一身份提供方的服务，请使用透传方式。"
       },
       "redirectUri": {
@@ -993,7 +993,7 @@
         "title": "反馈"
       },
       "page": {
-        "description": "了解您的工作区在查询、反馈和智能体方面如何使用 Onyx。"
+        "description": "了解您的工作区在查询、反馈和智能体方面如何使用 Lumen。"
       },
       "reports": {
         "calendar": {
@@ -1060,8 +1060,8 @@
       },
       "slackChannelChart": {
         "description": "查询总数与自动解决数对比",
-        "empty": "所选时间范围内此工作区没有 OnyxBot 活动。",
-        "error": "获取 OnyxBot 数据失败。",
+        "empty": "所选时间范围内此工作区没有 LumenBot 活动。",
+        "error": "获取 LumenBot 数据失败。",
         "series": {
           "autoResolved": {
             "label": "自动解决"
@@ -1085,367 +1085,6 @@
           }
         },
         "title": "使用情况"
-      }
-    },
-    "billing": {
-      "activatingBanner": {
-        "description": "正在处理您的许可证。确认后会自动跳转到账单详情。",
-        "title": "您的许可证仍在激活中"
-      },
-      "banners": {
-        "airGapped": {
-          "description": "在线账单管理已禁用。请联系支持团队更新您的订阅。",
-          "title": "隔离网络部署"
-        },
-        "expired": {
-          "description": "续订后可恢复对付费功能的访问。",
-          "title": "您的订阅已过期。",
-          "withDate": {
-            "description": "请在 {date} 之前续订以恢复访问。"
-          },
-          "withDeletion": {
-            "title": "您的订阅已过期。数据将在 {days} 天后删除。"
-          }
-        },
-        "expiring": {
-          "description": "请在 {date} 之前续订，以免服务中断。",
-          "title": "您的订阅将在 {days} 天后到期。"
-        },
-        "graceSync": {
-          "title": "正在检查是否有已续订的许可证…"
-        },
-        "stripeError": {
-          "description": "请检查网络连接，或手动提供许可证。",
-          "title": "无法连接到 Stripe 付款门户。"
-        }
-      },
-      "checkout": {
-        "adjustPlan": {
-          "label": "调整方案"
-        },
-        "annual": {
-          "label": "按年"
-        },
-        "annualBadge": {
-          "label": "节省 20%"
-        },
-        "billingCycle": {
-          "description": "1 个月免费试用结束后",
-          "title": "计费周期"
-        },
-        "continueToPayment": {
-          "label": "继续付款"
-        },
-        "createSessionFailed": {
-          "error": "创建结账会话失败"
-        },
-        "loading": {
-          "label": "加载中..."
-        },
-        "monthly": {
-          "label": "按月"
-        },
-        "perSeatMonth": {
-          "label": "每席位/月"
-        },
-        "plan": {
-          "title": "商业版"
-        },
-        "price": {
-          "label": "${price}"
-        },
-        "seats": {
-          "description": "{count, plural, one {当前用户和 Slack 账号至少需要 # 个席位。} other {当前用户和 Slack 账号至少需要 # 个席位。}}",
-          "title": "席位数量"
-        },
-        "trialBilling": {
-          "text": "在您的 1 个月免费试用结束后，我们将于 <value>{date}</value> 向您收费。"
-        }
-      },
-      "footer": {
-        "activateLicenseKey": {
-          "label": "激活许可证密钥"
-        },
-        "billingHelp": {
-          "label": "账单帮助"
-        },
-        "licenseKeyPrompt": {
-          "label": "已有许可证密钥？"
-        },
-        "updateLicenseKey": {
-          "label": "更新许可证密钥"
-        }
-      },
-      "header": {
-        "plansBilling": {
-          "title": "套餐与账单"
-        },
-        "upgradePlan": {
-          "title": "升级套餐"
-        },
-        "viewPlans": {
-          "title": "查看套餐"
-        }
-      },
-      "info": {
-        "empty": {
-          "message": "没有可用的账单信息。"
-        },
-        "loadError": {
-          "message": "加载账单信息时出错。请稍后重试。"
-        },
-        "loading": {
-          "label": "加载中..."
-        },
-        "manageSubscription": {
-          "description": "查看您的套餐、更新付款方式或更改订阅",
-          "title": "管理订阅"
-        },
-        "page": {
-          "title": "账单信息"
-        },
-        "portalError": {
-          "message": "创建客户门户会话时出错"
-        },
-        "subscriptionDetails": {
-          "title": "订阅详情"
-        },
-        "summary": {
-          "billingEnd": {
-            "label": "账单结束日期"
-          },
-          "billingStart": {
-            "label": "账单开始日期"
-          },
-          "seats": {
-            "label": "席位"
-          },
-          "status": {
-            "label": "订阅状态"
-          }
-        },
-        "updatedToast": {
-          "message": "恭喜!您的订阅已成功更新。"
-        }
-      },
-      "license": {
-        "activateFailed": {
-          "error": "激活许可证失败"
-        },
-        "activateLicense": {
-          "label": "激活许可证"
-        },
-        "activateSuccess": {
-          "message": "许可证激活成功！"
-        },
-        "activateTitle": {
-          "title": "激活许可证密钥"
-        },
-        "activating": {
-          "label": "激活中..."
-        },
-        "activeUntil": {
-          "label": "许可证密钥有效期至 <value>{date}</value>"
-        },
-        "cancel": {
-          "label": "取消"
-        },
-        "close": {
-          "label": "关闭"
-        },
-        "description": "手动为此 Onyx 实例添加并激活许可证。",
-        "emptyKey": {
-          "error": "请输入许可证密钥"
-        },
-        "error": {
-          "text": "{error}。<link>账单帮助</link>"
-        },
-        "expired": {
-          "label": "许可证密钥已过期"
-        },
-        "keyField": {
-          "description": "粘贴或附加您从 Onyx 收到的许可证密钥文件。",
-          "title": "许可证密钥"
-        },
-        "updateKey": {
-          "label": "更新密钥"
-        },
-        "updateLicense": {
-          "label": "更新许可证"
-        },
-        "updateSuccess": {
-          "message": "许可证更新成功！"
-        },
-        "updateTitle": {
-          "title": "更新许可证密钥"
-        }
-      },
-      "payment": {
-        "card": {
-          "description": "付款方式",
-          "title": "尾号 1234 的 Visa 卡"
-        },
-        "lastPayment": {
-          "description": "上次付款"
-        },
-        "section": {
-          "title": "付款"
-        },
-        "update": {
-          "label": "更新"
-        },
-        "viewInvoice": {
-          "label": "查看发票"
-        }
-      },
-      "plans": {
-        "business": {
-          "button": {
-            "label": "购买商业版套餐"
-          },
-          "description": "每席位/月，按年计费\n按月计费则为每席位 $25",
-          "features": {
-            "apiKeys": "服务账号 API 密钥",
-            "documentPermissions": "继承文档权限",
-            "encryption": "机密信息加密",
-            "queryHistory": "查询历史与使用情况看板",
-            "rbac": "基于角色的访问控制（RBAC）",
-            "selfHosting": "自托管（可选）",
-            "theming": "自定义主题"
-          },
-          "featuresPrefix": "借助 AI 帮助您的团队完成更多工作。",
-          "pricing": "$20",
-          "title": "商业版"
-        },
-        "card": {
-          "ariaLabel": "{plan} 套餐卡片"
-        },
-        "currentPlan": {
-          "label": "您当前的套餐"
-        },
-        "enterprise": {
-          "button": {
-            "label": "联系销售"
-          },
-          "description": "面向大型组织的\n灵活定价与部署方案",
-          "features": {
-            "customDeployments": "自定义部署",
-            "customRoles": "自定义角色与权限",
-            "hookExtensions": "钩子扩展",
-            "regionalProcessing": "特定区域数据处理",
-            "scim": "SCIM / 用户组同步",
-            "support": "企业级 SLA 与优先支持",
-            "usageLimits": "可配置的用量限制",
-            "whiteLabeling": "完整白标定制"
-          },
-          "featuresPrefix": "包含商业版套餐的全部功能，另加：",
-          "title": "企业版"
-        },
-        "includedInPlan": {
-          "label": "已包含在您的套餐中"
-        }
-      },
-      "seats": {
-        "belowMinimum": {
-          "error": "您不能将席位数量设置为低于当前使用中/待处理的 **{minimum}** 个。请先[移除用户](/admin/users)，再调整席位数量。"
-        },
-        "billing": {
-          "added": "{count, plural, one {我们将按比例向您收取新增 <value>{count}</value> 个席位 的费用。} other {我们将按比例向您收取新增 <value>{count}</value> 个席位 的费用。}}",
-          "removed": "{count, plural, one {<value>{count}</value> 个席位将于 <value>{date}</value> 移除（在当前计费周期结束后）。} other {<value>{count}</value> 个席位将于 <value>{date}</value> 移除（在当前计费周期结束后）。}}",
-          "unchanged": "您的账单不会有变化。"
-        },
-        "breakdown": {
-          "label": "{used} 使用中 • {pending} 待处理 • {remaining} 剩余"
-        },
-        "cancel": {
-          "label": "取消"
-        },
-        "confirmChange": {
-          "label": "确认更改"
-        },
-        "delta": {
-          "added": "{count, plural, one {将新增 # 个席位} other {将新增 # 个席位}}",
-          "removed": "{count, plural, one {将移除 # 个席位} other {将移除 # 个席位}}"
-        },
-        "saving": {
-          "label": "保存中..."
-        },
-        "seatsField": {
-          "title": "席位数量"
-        },
-        "total": {
-          "label": "{count} 个席位"
-        },
-        "updateFailed": {
-          "error": "更新席位数量失败"
-        },
-        "updateSeats": {
-          "description": "增加或减少席位，以匹配您的团队规模。",
-          "label": "更新席位数量",
-          "title": "更新席位数量"
-        },
-        "viewUsers": {
-          "label": "查看用户"
-        }
-      },
-      "subscription": {
-        "businessPlan": {
-          "name": "商业版套餐"
-        },
-        "connectToStripe": {
-          "label": "连接到 Stripe"
-        },
-        "connecting": {
-          "label": "连接中..."
-        },
-        "enterprisePlan": {
-          "name": "企业版套餐"
-        },
-        "expired": {
-          "subtitle": "已于 {date} 过期"
-        },
-        "managePlan": {
-          "label": "管理套餐"
-        },
-        "managedBySales": {
-          "text": "您的套餐由销售团队管理。<br></br>如需变更，请<link>联系账单支持</link>。"
-        },
-        "nextPayment": {
-          "subtitle": "下次付款日期：{date}"
-        },
-        "syncLicense": {
-          "label": "同步许可证"
-        },
-        "syncing": {
-          "label": "同步中..."
-        },
-        "trialDays": {
-          "subtitle": "试用将在 {days} 天后结束。需在 {date} 付款"
-        },
-        "trialToday": {
-          "subtitle": "试用今天结束。需在 {date} 付款"
-        },
-        "trialTomorrow": {
-          "subtitle": "试用明天结束。需在 {date} 付款"
-        },
-        "upgradeNow": {
-          "label": "立即升级"
-        },
-        "upgrading": {
-          "label": "升级中..."
-        },
-        "validUntil": {
-          "subtitle": "有效期至 {date}"
-        },
-        "viewPlanDetails": {
-          "label": "查看套餐详情"
-        }
-      },
-      "toasts": {
-        "endTrialFailed": "结束试用失败",
-        "licenseSyncFailed": "许可证同步失败",
-        "paymentMethodRequired": "请先添加付款方式，然后重试升级。",
-        "syncLicenseFailed": "同步许可证失败"
       }
     },
     "chatPreferences": {
@@ -1560,10 +1199,7 @@
           "placeholder": "以天为单位",
           "restoreTooltip": "恢复默认"
         },
-        "description": "指定 Onyx 在您的组织中保留对话的时长。",
-        "enterprisePlanTag": {
-          "label": "企业版套餐"
-        },
+        "description": "指定 Lumen 在您的组织中保留对话的时长。",
         "forever": {
           "label": "永久"
         },
@@ -1579,16 +1215,11 @@
           "message": "超过 {days, plural, one {# 天} other {# 天}} 没有活动的对话将被永久删除。此操作无法撤销。",
           "title": "缩短对话保留期？"
         },
-        "tierTooltip": "对话历史保留是企业版套餐的功能。",
         "title": "保留对话历史"
       },
       "searchMode": {
-        "businessPlanTag": {
-          "label": "商业版套餐"
-        },
         "description": "用于在组织内快速搜索文档的界面模式。",
         "noConnectorsTooltip": "设置连接器后才能使用搜索模式",
-        "tierTooltip": "搜索模式需要商业版或企业版套餐。",
         "title": "搜索模式"
       },
       "systemPrompt": {
@@ -1622,7 +1253,7 @@
       },
       "teamContext": {
         "description": "用户还可以在个人设置中提供额外的个人上下文。",
-        "placeholder": "描述您的团队以及 Onyx 应有的行为方式。",
+        "placeholder": "描述您的团队以及 Lumen 应有的行为方式。",
         "title": "团队上下文"
       },
       "teamName": {
@@ -1742,7 +1373,7 @@
     "connector": {
       "accessType": {
         "autoSyncOption": {
-          "description": "我们将自动从数据源同步权限。只有当执行搜索的用户在数据源中有权访问该文档时，该文档才能在 Onyx 中被搜索到。",
+          "description": "我们将自动从数据源同步权限。只有当执行搜索的用户在数据源中有权访问该文档时，该文档才能在 Lumen 中被搜索到。",
           "disabledReason": "当前凭据的认证方式不支持自动同步权限。请将凭据的认证方式更改为受支持的方式。",
           "name": "自动同步权限"
         },
@@ -1755,7 +1386,7 @@
           "name": "私有"
         },
         "publicOption": {
-          "description": "拥有 Onyx 账户的所有人都可以访问此连接器导入的文档",
+          "description": "拥有 Lumen 账户的所有人都可以访问此连接器导入的文档",
           "name": "公开"
         }
       },
@@ -2781,7 +2412,7 @@
         "title": "未找到用户"
       },
       "header": {
-        "description": "控制谁可以使用 Craft，即 Onyx 的智能体式应用构建器。",
+        "description": "控制谁可以使用 Craft，即 Lumen 的智能体式应用构建器。",
         "title": "访问权限"
       },
       "perUserAccess": {
@@ -2812,7 +2443,7 @@
         }
       },
       "unavailable": {
-        "description": "Craft 由 Onyx 按部署逐一启用。请联系您的 Onyx 客户代表以获取访问权限。",
+        "description": "Craft 由 Lumen 按部署逐一启用。请联系您的 Lumen 客户代表以获取访问权限。",
         "title": "此部署不提供 Craft"
       },
       "usersLoadError": {
@@ -2898,7 +2529,7 @@
         "label": "在 Craft 中试用"
       },
       "unavailable": {
-        "description": "Craft 由 Onyx 按部署逐一启用。请联系您的 Onyx 客户代表以获取访问权限。",
+        "description": "Craft 由 Lumen 按部署逐一启用。请联系您的 Lumen 客户代表以获取访问权限。",
         "title": "此部署不提供 Craft"
       }
     },
@@ -3042,10 +2673,10 @@
     },
     "customAnalytics": {
       "intro": {
-        "description": "这允许您将自己的分析工具接入 Onyx!将分析提供商的 Web 代码片段复制到下面的输入框中,我们就会开始发送使用事件。"
+        "description": "这允许您将自己的分析工具接入 Lumen!将分析提供商的 Web 代码片段复制到下面的输入框中,我们就会开始发送使用事件。"
       },
       "notEnabled": {
-        "description": "要设置自定义分析脚本,请与团队中负责部署 Onyx 的人员合作,设置环境变量 <i>CUSTOM_ANALYTICS_SECRET_KEY</i>。",
+        "description": "要设置自定义分析脚本,请与团队中负责部署 Lumen 的人员合作,设置环境变量 <i>CUSTOM_ANALYTICS_SECRET_KEY</i>。",
         "title": "自定义分析未启用。"
       },
       "script": {
@@ -3054,7 +2685,7 @@
         "label": "脚本"
       },
       "secretKey": {
-        "description": "出于安全考虑,您必须提供密钥才能更新此脚本。该值应为初次设置 Onyx 时配置的环境变量 <i>CUSTOM_ANALYTICS_SECRET_KEY</i> 的值。",
+        "description": "出于安全考虑,您必须提供密钥才能更新此脚本。该值应为初次设置 Lumen 时配置的环境变量 <i>CUSTOM_ANALYTICS_SECRET_KEY</i> 的值。",
         "label": "密钥"
       },
       "updateButton": {
@@ -3283,7 +2914,7 @@
       },
       "page": {
         "header": {
-          "description": "将 Onyx 连接到您的 Discord 服务器。用户可以直接在 Discord 频道中提问。"
+          "description": "将 Lumen 连接到您的 Discord 服务器。用户可以直接在 Discord 频道中提问。"
         }
       },
       "registrationKey": {
@@ -3320,7 +2951,7 @@
           "label": "删除 API 密钥"
         },
         "deleteHint": "更新前请先删除当前 API 密钥。",
-        "description": "Unstructured 可从 .pdf、.docx、.png、.pptx 等格式中提取并转换复杂数据，生成干净的文本供 Onyx 导入。提供 API 密钥即可启用 Unstructured 文档处理。",
+        "description": "Unstructured 可从 .pdf、.docx、.png、.pptx 等格式中提取并转换复杂数据，生成干净的文本供 Lumen 导入。提供 API 密钥即可启用 Unstructured 文档处理。",
         "learnMore": "在<link>这里</link>了解有关 Unstructured 的更多信息。",
         "note": "<label>注意：</label>此功能会将文档发送到 Unstructured 服务器进行处理。",
         "saveButton": {
@@ -3397,7 +3028,7 @@
         "deleteScheduled": {
           "toast": "已安排删除文档集“{name}”"
         },
-        "description": "**文档集**可以把逻辑相关的文档归入同一个集合。搜索时可以将它们用作筛选条件，控制 Onyx 检索的信息范围。",
+        "description": "**文档集**可以把逻辑相关的文档归入同一个集合。搜索时可以将它们用作筛选条件，控制 Lumen 检索的信息范围。",
         "edit": {
           "header": {
             "title": "编辑文档集"
@@ -3545,7 +3176,7 @@
         "title": "导出日志"
       },
       "header": {
-        "description": "下载服务器日志文件的 zip 压缩包,以附加到 Onyx 支持工单中。"
+        "description": "下载服务器日志文件的 zip 压缩包,以附加到 Lumen 支持工单中。"
       },
       "receipt": {
         "duplicateHost": {
@@ -3660,7 +3291,7 @@
         "noCustomSkills": "无自定义技能",
         "orgCredentialsSet": "已设置组织凭证",
         "perUserCredentials": "按用户凭证",
-        "providedByOnyx": "由 Onyx 提供",
+        "providedByLumen": "由 Lumen 提供",
         "tools": "{count, plural, one {# 个工具} other {# 个工具}}",
         "upstreamPatterns": "{count, plural, one {# 个上游模式} other {# 个上游模式}}"
       },
@@ -3909,7 +3540,7 @@
           "tooltip": "由于此用户组最近发生更改，正在更新文档 embedding。"
         },
         "systemGroup": {
-          "description": "此用户组由 Onyx 管理。它只包含成员，您也只能更改成员。",
+          "description": "此用户组由 Lumen 管理。它只包含成员，您也只能更改成员。",
           "title": "系统用户组"
         },
         "toasts": {
@@ -4022,7 +3653,7 @@
         }
       },
       "permissionsChanged": {
-        "description": "Onyx 现在使用基于用户组的权限。访问权限按用户组配置，因此用户的权限是其所属全部用户组权限的合集。",
+        "description": "Lumen 现在使用基于用户组的权限。访问权限按用户组配置，因此用户的权限是其所属全部用户组权限的合集。",
         "learnMore": {
           "label": "了解更多"
         },
@@ -4085,7 +3716,6 @@
           "placeholder": "费用上限",
           "unit": "(USD)"
         },
-        "disabledTooltip": "Token 速率限制仅在 [Onyx 企业版](/admin/billing) 中提供。",
         "section": {
           "description": "限制此用户组在指定时间段内可以使用的 token 数量。",
           "title": "Token 速率限制"
@@ -4148,7 +3778,7 @@
       },
       "disconnectModal": {
         "body": {
-          "description": "Onyx 将停止为钩子 ***{name}*** 调用此端点。进行中的请求将继续运行。外部端点可能仍保留之前发送给它的数据。如有需要,您可以稍后重新连接此钩子。"
+          "description": "Lumen 将停止为钩子 ***{name}*** 调用此端点。进行中的请求将继续运行。外部端点可能仍保留之前发送给它的数据。如有需要,您可以稍后重新连接此钩子。"
         },
         "deleteNote": {
           "description": "您也可以删除此钩子。删除后无法撤销。"
@@ -4168,7 +3798,7 @@
       },
       "form": {
         "apiKey": {
-          "description": "Onyx 将使用此密钥向您的 API 端点进行身份验证。",
+          "description": "Lumen 将使用此密钥向您的 API 端点进行身份验证。",
           "keepCurrent": {
             "placeholder": "留空以保留当前密钥"
           },
@@ -4218,10 +3848,10 @@
           "label": "保存更改"
         },
         "softStrategy": {
-          "description": "如果端点返回错误,Onyx 会记录该错误并照常继续流水线,忽略钩子结果。"
+          "description": "如果端点返回错误,Lumen 会记录该错误并照常继续流水线,忽略钩子结果。"
         },
         "timeout": {
-          "description": "在应用失败策略之前,Onyx 等待端点响应的最长时间。必须大于 0 且最多 {max} 秒。",
+          "description": "在应用失败策略之前,Lumen 等待端点响应的最长时间。必须大于 0 且最多 {max} 秒。",
           "revert": {
             "tooltip": "恢复默认值"
           },
@@ -4286,16 +3916,13 @@
         }
       },
       "page": {
-        "description": "通过在预定义的钩子点将外部 API 端点注册为回调,扩展 Onyx 流水线。",
+        "description": "通过在预定义的钩子点将外部 API 端点注册为回调,扩展 Lumen 流水线。",
         "empty": {
           "title": "没有可用的钩子点"
         },
         "emptySearch": {
           "description": "请尝试其他搜索词。",
           "title": "未找到结果"
-        },
-        "enterpriseRequired": {
-          "message": "钩子扩展需要企业版许可证。"
         },
         "loadHooksFailed": {
           "message": "加载钩子失败。请刷新页面。"
@@ -4432,7 +4059,7 @@
           "message": "API 密钥验证失败"
         },
         "authMethod": {
-          "idle": "选择 Onyx 与 Google Vertex AI 进行身份验证的方式。",
+          "idle": "选择 Lumen 与 Google Vertex AI 进行身份验证的方式。",
           "label": "身份验证方式",
           "required": "身份验证方式为必填项",
           "serviceAccount": {
@@ -4482,7 +4109,7 @@
           "customPlaceholder": "Fetch models from the server above, then pick one"
         },
         "projectId": {
-          "idle": "已启用 Vertex AI 的 GCP 项目。Onyx 使用 pod 绑定的服务账号进行身份验证（GKE Workload Identity）。",
+          "idle": "已启用 Vertex AI 的 GCP 项目。Lumen 使用 pod 绑定的服务账号进行身份验证（GKE Workload Identity）。",
           "label": "GCP 项目 ID",
           "required": "项目 ID 为必填项"
         },
@@ -4582,7 +4209,7 @@
           "title": "部署名称"
         },
         "modelName": {
-          "description": "此模型在 Onyx 中的标签。Azure 按部署名称路由请求，因此这里只需是一个唯一标识符。"
+          "description": "此模型在 Lumen 中的标签。Azure 按部署名称路由请求，因此这里只需是一个唯一标识符。"
         },
         "targetUrl": {
           "title": "目标 URL"
@@ -4609,7 +4236,7 @@
           "title": "选择此上下文检索 LLM 的应用方式"
         },
         "default": {
-          "description": "修改 embedding 或检索设置后，需要对所有文档进行完整的重新索引才能生效，这可能需要**数小时或数天**，具体取决于语料库规模。[了解更多](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "修改 embedding 或检索设置后，需要对所有文档进行完整的重新索引才能生效，这可能需要**数小时或数天**，具体取决于语料库规模。",
           "title": "更改需要完整的重新索引。"
         },
         "orSeparator": {
@@ -4617,7 +4244,7 @@
         }
       },
       "cloudDisabled": {
-        "tooltip": "此设置由 Onyx Cloud 管理。"
+        "tooltip": "此设置由 Lumen Cloud 管理。"
       },
       "contextualModel": {
         "description": "此模型用于为分块生成上下文。",
@@ -4631,9 +4258,9 @@
       },
       "embeddingModel": {
         "cloudManaged": {
-          "title": "Embedding 模型和相关设置由 Onyx Cloud 管理。"
+          "title": "Embedding 模型和相关设置由 Lumen Cloud 管理。"
         },
-        "description": "Onyx 使用此模型对文档进行编码，以供搜索和检索。",
+        "description": "Lumen 使用此模型对文档进行编码，以供搜索和检索。",
         "title": "Embedding 模型"
       },
       "errorsModal": {
@@ -4681,7 +4308,7 @@
         },
         "modelName": {
           "placeholder": "model-name",
-          "selfHostedDescription": "Onyx 将在您的自托管端点上连接此模型。",
+          "selfHostedDescription": "Lumen 将在您的自托管端点上连接此模型。",
           "title": "模型名称"
         },
         "normalize": {
@@ -4725,7 +4352,7 @@
           "title": "API 基础 URL"
         },
         "modelName": {
-          "description": "Onyx 将在您的 {provider} 代理上连接此模型。"
+          "description": "Lumen 将在您的 {provider} 代理上连接此模型。"
         }
       },
       "maxImageSize": {
@@ -4941,7 +4568,7 @@
       "wontPortConsentModal": {
         "title": "{count, plural, one {该连接器将被删除} other {这 # 个连接器将被删除}}",
         "submit": "删除并重新索引",
-        "description": "{count, plural, one {重新索引会跳过已暂停和无效的连接器，因此该连接器不会迁移到新索引。Onyx 会将它以及它已索引的文档一并删除：} other {重新索引会跳过已暂停和无效的连接器，因此这 # 个不会迁移到新索引。Onyx 会将它们以及它们已索引的文档一并删除：}}",
+        "description": "{count, plural, one {重新索引会跳过已暂停和无效的连接器，因此该连接器不会迁移到新索引。Lumen 会将它以及它已索引的文档一并删除：} other {重新索引会跳过已暂停和无效的连接器，因此这 # 个不会迁移到新索引。Lumen 会将它们以及它们已索引的文档一并删除：}}",
         "connector": "{name} — {status}",
         "statusInvalid": "无效",
         "statusPaused": "已暂停",
@@ -5106,7 +4733,7 @@
         "title": "暂时无法新增 LLM 配置。"
       },
       "defaultModel": {
-        "description": "Onyx 将在您的对话中默认使用此模型。",
+        "description": "Lumen 将在您的对话中默认使用此模型。",
         "title": "默认模型"
       },
       "deleteModal": {
@@ -5120,7 +4747,7 @@
       },
       "groups": {
         "addProvider": {
-          "description": "Onyx 同时支持主流提供商和自托管模型。",
+          "description": "Lumen 同时支持主流提供商和自托管模型。",
           "title": "添加提供商"
         },
         "gateways": {
@@ -5198,7 +4825,7 @@
               "description": "适用于非 AWS 环境",
               "label": "访问密钥"
             },
-            "description": "选择 Onyx 与 Bedrock 进行身份验证的方式。",
+            "description": "选择 Lumen 与 Bedrock 进行身份验证的方式。",
             "iam": {
               "description": "推荐用于 AWS 环境",
               "label": "环境 IAM 角色"
@@ -5210,7 +4837,7 @@
             "title": "身份验证方式"
           },
           "iamNotice": {
-            "title": "Onyx 将使用其运行环境所附加的 IAM 角色进行身份验证。"
+            "title": "Lumen 将使用其运行环境所附加的 IAM 角色进行身份验证。"
           },
           "longTermApiKeyField": {
             "placeholder": "您的长期 API 密钥",
@@ -5259,7 +4886,7 @@
             "addButton": {
               "label": "添加行"
             },
-            "description": "按模型提供商的要求添加额外属性。这些属性会作为[环境变量](https://docs.litellm.ai/docs/set_keys#environment-variables)传递给 LiteLLM 的 `completion()` 调用。更多说明请参见[文档](https://docs.onyx.app/admins/ai_models/custom_inference_provider)。",
+            "description": "按模型提供商的要求添加额外属性。这些属性会作为[环境变量](https://docs.litellm.ai/docs/set_keys#environment-variables)传递给 LiteLLM 的 `completion()` 调用。",
             "keyInput": {
               "placeholder": "例如 OPENAI_ORGANIZATION"
             },
@@ -5484,7 +5111,7 @@
         },
         "setup": {
           "apiBaseField": {
-            "containerizedNote": "当 Onyx 在容器中运行时，请使用 `host.docker.internal` 代替 `localhost` 来访问主机上的服务。",
+            "containerizedNote": "当 Lumen 在容器中运行时，请使用 `host.docker.internal` 代替 `localhost` 来访问主机上的服务。",
             "title": "API 基础 URL"
           },
           "apiKeyField": {
@@ -5549,7 +5176,7 @@
         },
         "vertexAi": {
           "authMethodField": {
-            "description": "选择 Onyx 与 Google Vertex AI 进行身份验证的方式。",
+            "description": "选择 Lumen 与 Google Vertex AI 进行身份验证的方式。",
             "serviceAccount": {
               "description": "上传 GCP 服务账号密钥 JSON 文件",
               "label": "服务账号 JSON"
@@ -5578,7 +5205,7 @@
             "projectRequired": "GCP 项目 ID 为必填项"
           },
           "workloadIdentityNotice": {
-            "title": "Onyx 将使用 Pod 的环境 Google Cloud 凭据（通过 google.auth.default）。请确保 Kubernetes ServiceAccount 已绑定到有权访问 Vertex AI 的 GCP 服务账号。"
+            "title": "Lumen 将使用 Pod 的环境 Google Cloud 凭据（通过 google.auth.default）。请确保 Kubernetes ServiceAccount 已绑定到有权访问 Vertex AI 的 GCP 服务账号。"
           }
         }
       },
@@ -5645,8 +5272,8 @@
           "responseFallback": "请求邀请失败"
         },
         "requestSentBody": "您的加入请求已发送。在等待 {domain} 管理员批准期间，您可以先以自己的团队身份浏览体验。",
-        "tryOnyxButton": {
-          "label": "等待期间先试用 Onyx"
+        "tryLumenButton": {
+          "label": "等待期间先试用 Lumen"
         }
       },
       "newTenant": {
@@ -6083,7 +5710,7 @@
       },
       "authentication": {
         "allowedEmailDomains": {
-          "placeholder": "添加域名（例如 onyx.app）",
+          "placeholder": "添加域名（例如 lumen.app）",
           "subDescription": "新用户只能使用此域名列表中的邮箱注册新账户。",
           "title": "允许的邮箱域名"
         },
@@ -6201,7 +5828,7 @@
     },
     "serviceAccounts": {
       "deleteModal": {
-        "description": "任何使用账户 *{name}*（`{keyDisplay}`）的 API 密钥的应用都将失去对 Onyx 的访问权限。",
+        "description": "任何使用账户 *{name}*（`{keyDisplay}`）的 API 密钥的应用都将失去对 Lumen 的访问权限。",
         "submit": {
           "label": "删除"
         },
@@ -6248,7 +5875,7 @@
         "cancelButton": {
           "label": "取消"
         },
-        "description": "使用服务账号 API 密钥，以用户级权限通过程序访问 Onyx API。您可以稍后修改账号详情。",
+        "description": "使用服务账号 API 密钥，以用户级权限通过程序访问 Lumen API。您可以稍后修改账号详情。",
         "groups": {
           "empty": {
             "description": "尚未向此服务账号分配任何用户组。",
@@ -6310,7 +5937,7 @@
         }
       },
       "page": {
-        "description": "使用服务账号通过程序访问 Onyx API。",
+        "description": "使用服务账号通过程序访问 Lumen API。",
         "error": {
           "description": "请查看控制台了解更多详情。",
           "title": "加载服务账号失败。"
@@ -6367,10 +5994,6 @@
         "keyCopied": "API 密钥已复制到剪贴板。",
         "regenerateFailed": "重新生成 API 密钥失败。",
         "regenerateFailedWithDetail": "重新生成 API 密钥失败：{detail}"
-      },
-      "trialNotice": {
-        "description": "试用账号不包含 API 密钥访问权限，请购买付费订阅以解锁此功能。",
-        "title": "升级到付费方案即可创建 API 密钥。"
       }
     },
     "shared": {
@@ -6380,8 +6003,9 @@
         }
       },
       "liteModeNotice": {
-        "description": "此部署运行的是 Onyx Lite，它没有向量数据库，因此连接器和文档索引均已禁用，不会索引任何内容。要连接数据源并索引文档，请以**标准模式**部署 Onyx。请查看[部署指南]({docsUrl})开始使用。",
-        "title": "Lite 模式下无法使用索引功能"
+        "description": "此部署运行的是 Lumen Lite，它没有向量数据库，因此连接器和文档索引均已禁用，不会索引任何内容。要连接数据源并索引文档，请以**标准模式**部署 Lumen。请查看[部署指南]({docsUrl})开始使用。",
+        "title": "Lite 模式下无法使用索引功能",
+        "descriptionNoDocs": "此部署运行的是 Lumen Lite，它没有向量数据库，因此连接器和文档索引均已禁用，不会索引任何内容。要连接数据源并索引文档，请以**标准模式**部署 Lumen。"
       },
       "providerCard": {
         "connectButton": {
@@ -6406,10 +6030,10 @@
     "slackBots": {
       "channelConfig": {
         "createError": {
-          "toast": "创建 OnyxBot 配置出错 - {error}"
+          "toast": "创建 LumenBot 配置出错 - {error}"
         },
         "updateError": {
-          "toast": "更新 OnyxBot 配置出错 - {error}"
+          "toast": "更新 LumenBot 配置出错 - {error}"
         }
       },
       "channels": {
@@ -6527,16 +6151,16 @@
         },
         "disableDefault": {
           "label": "禁用默认配置",
-          "warning": "警告：禁用默认配置后，OnyxBot 只会在明确配置过的 Slack 频道中回复。此外，OnyxBot 也不会回复私信。"
+          "warning": "警告：禁用默认配置后，LumenBot 只会在明确配置过的 Slack 频道中回复。此外，LumenBot 也不会回复私信。"
         },
         "documentSets": {
           "autoSyncedDisabled": {
-            "tooltip": "无法使用此文档集，因为它包含启用了权限自动同步的连接器。OnyxBot 在此频道中的回复对所有 Slack 用户可见，因此沿用提问者的权限可能会意外泄露私密信息。"
+            "tooltip": "无法使用此文档集，因为它包含启用了权限自动同步的连接器。LumenBot 在此频道中的回复对所有 Slack 用户可见，因此沿用提问者的权限可能会意外泄露私密信息。"
           },
           "autoSyncedNote": {
             "text": "以下文档集无法附加，因为它们包含自动同步的文档："
           },
-          "description": "选择 OnyxBot 在 Slack 中回答问题时使用的文档集。",
+          "description": "选择 LumenBot 在 Slack 中回答问题时使用的文档集。",
           "hideUnselectableButton": {
             "label": "隐藏不可选的文档集"
           },
@@ -6561,12 +6185,12 @@
         },
         "isEphemeral": {
           "label": "以私密（临时）消息回复用户",
-          "tooltip": "启用后，OnyxBot 只会以私密（临时）消息回复该用户。如果您在上面还选择了“搜索”智能体，启用此选项后，该用户的私有文档也可用于其查询。"
+          "tooltip": "启用后，LumenBot 只会以私密（临时）消息回复该用户。如果您在上面还选择了“搜索”智能体，启用此选项后，该用户的私有文档也可用于其查询。"
         },
         "knowledgeSource": {
           "allPublic": {
             "label": "所有公开知识",
-            "sublabel": "让 OnyxBot 基于所有公开连接器中的信息进行回复"
+            "sublabel": "让 LumenBot 基于所有公开连接器中的信息进行回复"
           },
           "documentSets": {
             "label": "指定文档集",
@@ -6583,7 +6207,7 @@
           }
         },
         "nonSearchAgent": {
-          "description": "选择 OnyxBot 在 Slack 中回答问题时使用的非搜索智能体。"
+          "description": "选择 LumenBot 在 Slack 中回答问题时使用的非搜索智能体。"
         },
         "privacyAlert": {
           "connectors": {
@@ -6594,7 +6218,7 @@
         },
         "questionmarkPrefilter": {
           "label": "仅回复提问",
-          "tooltip": "启用后，OnyxBot 只会回复包含问号的消息"
+          "tooltip": "启用后，LumenBot 只会回复包含问号的消息"
         },
         "removedDocumentSets": {
           "toast": "我们已从您的选择中移除了一个或多个文档集，因为它们不再有效。请检查并更新您的配置。"
@@ -6604,15 +6228,15 @@
             "tooltip": "启用“以私密（临时）消息回复用户”时不可用，因为临时回复只针对单个用户。"
           },
           "label": "（可选）仅回复特定用户/用户组",
-          "subtext": "如果指定，则只有这些用户/用户组可以在此频道中调用 OnyxBot，且回复仅对他们可见。"
+          "subtext": "如果指定，则只有这些用户/用户组可以在此频道中调用 LumenBot，且回复仅对他们可见。"
         },
         "respondTagOnly": {
-          "label": "仅回复 @OnyxBot",
-          "tooltip": "启用后，OnyxBot 只会在被直接提及时回复"
+          "label": "仅回复 @LumenBot",
+          "tooltip": "启用后，LumenBot 只会在被直接提及时回复"
         },
         "respondToBots": {
           "label": "回复机器人消息",
-          "tooltip": "未启用时，OnyxBot 将始终忽略来自机器人的消息"
+          "tooltip": "未启用时，LumenBot 将始终忽略来自机器人的消息"
         },
         "responseType": {
           "detailed": {
@@ -6622,10 +6246,10 @@
           "standard": {
             "label": "标准"
           },
-          "tooltip": "控制 OnyxBot 回复的格式。"
+          "tooltip": "控制 LumenBot 回复的格式。"
         },
         "searchAgent": {
-          "description": "选择 OnyxBot 在 Slack 中回答问题时使用的搜索智能体。"
+          "description": "选择 LumenBot 在 Slack 中回答问题时使用的搜索智能体。"
         },
         "searchConfig": {
           "section": {
@@ -6634,14 +6258,14 @@
         },
         "showContinueInWebUi": {
           "label": "显示“在 Web 界面中继续”按钮",
-          "tooltip": "启用后，将在回复底部显示一个按钮，让用户可以在 Onyx Web 界面中继续对话"
+          "tooltip": "启用后，将在回复底部显示一个按钮，让用户可以在 Lumen Web 界面中继续对话"
         },
         "stillNeedHelp": {
           "label": "提供“仍需帮助？”按钮",
           "section": {
             "prompt": "配置“仍需帮助”按钮"
           },
-          "tooltip": "OnyxBot 的回复底部将包含一个按钮，询问用户是否仍需帮助。"
+          "tooltip": "LumenBot 的回复底部将包含一个按钮，询问用户是否仍需帮助。"
         },
         "syncEnabledAgents": {
           "hideButton": {
@@ -6662,17 +6286,17 @@
       },
       "intro": {
         "autoAnswer": {
-          "item": "设置 OnyxBot，让它在特定频道中自动回答问题。"
+          "item": "设置 LumenBot，让它在特定频道中自动回答问题。"
         },
-        "description": "设置连接到 Onyx 的 Slack 机器人。设置完成后，您可以直接在 Slack 中向 Onyx 提问。此外，您还可以：",
+        "description": "设置连接到 Lumen 的 Slack 机器人。设置完成后，您可以直接在 Slack 中向 Lumen 提问。此外，您还可以：",
         "directMessage": {
-          "item": "像在 Web 界面中一样，直接给 OnyxBot 发消息进行搜索。"
+          "item": "像在 Web 界面中一样，直接给 LumenBot 发消息进行搜索。"
         },
         "docsPrompt": {
-          "text": "请按照 Onyx 文档中的<link>指南</link>开始使用！"
+          "text": "请按照 Lumen 文档中的<link>指南</link>开始使用！"
         },
         "documentSets": {
-          "item": "根据提问所在的频道，选择 OnyxBot 应基于哪些文档集回答。"
+          "item": "根据提问所在的频道，选择 LumenBot 应基于哪些文档集回答。"
         }
       },
       "list": {
@@ -6690,7 +6314,7 @@
       },
       "newChannel": {
         "header": {
-          "title": "为 Slack 频道配置 OnyxBot"
+          "title": "为 Slack 频道配置 LumenBot"
         }
       },
       "table": {
@@ -6707,7 +6331,7 @@
           "badge": "已禁用"
         },
         "empty": {
-          "message": "请添加新的 Slack 机器人，开始与 Onyx 对话！"
+          "message": "请添加新的 Slack 机器人，开始与 Lumen 对话！"
         },
         "enabled": {
           "badge": "已启用"
@@ -6794,8 +6418,7 @@
       "addProvider": {
         "button": {
           "label": "添加提供商"
-        },
-        "gatedTooltip": "同时启用多个 SSO 提供商需要 Business 或 Enterprise 方案。"
+        }
       },
       "copyRedirectUri": {
         "tooltip": "复制重定向 URI"
@@ -6862,7 +6485,7 @@
           "emailDomainsField": {
             "description": "只有这些域名下的邮箱才能通过此提供商登录。",
             "optionalDescription": "只有这些域名下的邮箱才能通过此提供商登录。建议填写，也可以留空以允许任何域名。",
-            "placeholder": "添加域名（例如 onyx.app）",
+            "placeholder": "添加域名（例如 lumen.app）",
             "recommendedTitle": "允许的邮箱域名（推荐）",
             "title": "允许的邮箱域名"
           },
@@ -7114,13 +6737,12 @@
         "label": "首次访问弹窗通知"
       },
       "appName": {
-        "description": "此名称将在整个应用中显示,并替换界面中的\"Onyx\"。",
+        "description": "此名称将在整个应用中显示,并替换界面中的\"Lumen\"。",
         "label": "应用显示名称"
       },
       "branding": {
-        "description": "移除应用中的\"powered by Onyx\"及其他 Onyx 品牌标识。",
-        "enterpriseTooltip": "隐藏 Onyx 品牌标识是企业版套餐的功能。",
-        "label": "隐藏 Onyx 品牌标识"
+        "description": "移除应用中的\"powered by Lumen\"及其他 Lumen 品牌标识。",
+        "label": "隐藏 Lumen 品牌标识"
       },
       "chatFooter": {
         "description": "添加用于免责声明或附加信息的 markdown 内容。",
@@ -7145,8 +6767,7 @@
         "label": "问候语"
       },
       "helpLink": {
-        "description": "除 Onyx 文档外,在用户菜单中添加自定义帮助链接。",
-        "enterpriseTooltip": "自定义帮助链接是企业版套餐的功能。",
+        "description": "除 Lumen 文档外,在用户菜单中添加自定义帮助链接。",
         "label": "自定义帮助链接"
       },
       "helpLinkLabel": {
@@ -7563,7 +7184,7 @@
         }
       },
       "activateModal": {
-        "description": "<strong>{email}</strong> 将重新获得 Onyx 的访问权限。",
+        "description": "<strong>{email}</strong> 将重新获得 Lumen 的访问权限。",
         "submit": {
           "label": "激活"
         },
@@ -7573,7 +7194,7 @@
         }
       },
       "cancelInviteModal": {
-        "description": "<strong>{email}</strong> 将无法再使用此邀请加入 Onyx。",
+        "description": "<strong>{email}</strong> 将无法再使用此邀请加入 Lumen。",
         "submit": {
           "label": "取消邀请"
         },
@@ -7583,7 +7204,7 @@
         }
       },
       "deactivateModal": {
-        "description": "<strong>{email}</strong> 将立即失去 Onyx 的访问权限。其会话和智能体将被保留，占用的许可席位将被释放。您可以稍后重新激活此账号。",
+        "description": "<strong>{email}</strong> 将立即失去 Lumen 的访问权限。其会话和智能体将被保留，占用的许可席位将被释放。您可以稍后重新激活此账号。",
         "submit": {
           "label": "停用"
         },
@@ -7593,7 +7214,7 @@
         }
       },
       "deleteModal": {
-        "description": "<strong>{email}</strong> 将从 Onyx 中永久移除。其所有会话历史都将被删除。删除操作无法撤销。",
+        "description": "<strong>{email}</strong> 将从 Lumen 中永久移除。其所有会话历史都将被删除。删除操作无法撤销。",
         "submit": {
           "label": "删除"
         },
@@ -7718,7 +7339,7 @@
         "title": "用户与申请"
       },
       "permissionsNotice": {
-        "description": "Onyx 现在使用基于用户组的权限。策展人和全局策展人角色已由可配置的用户组权限取代，并可为每个用户组指定管理者，实现范围化管理。",
+        "description": "Lumen 现在使用基于用户组的权限。策展人和全局策展人角色已由可配置的用户组权限取代，并可为每个用户组指定管理者，实现范围化管理。",
         "learnMoreButton": {
           "label": "了解更多"
         },
@@ -7957,12 +7578,12 @@
           "placeholder": "例如 whisper-1"
         },
         "targetUri": {
-          "description": "粘贴 [Azure Portal（密钥和终结点）]({portalUrl}) 中显示的终结点。Onyx 会从该 URL 中提取语音区域。示例：`https://westus.api.cognitive.microsoft.com/` 或 `https://westus.tts.speech.microsoft.com/`。",
+          "description": "粘贴 [Azure Portal（密钥和终结点）]({portalUrl}) 中显示的终结点。Lumen 会从该 URL 中提取语音区域。示例：`https://westus.api.cognitive.microsoft.com/` 或 `https://westus.tts.speech.microsoft.com/`。",
           "label": "目标 URI",
           "required": "目标 URI 为必填项"
         },
         "ttsModel": {
-          "description": "Onyx 将默认使用此模型进行文字转语音。",
+          "description": "Lumen 将默认使用此模型进行文字转语音。",
           "label": "默认模型",
           "openaiDescription": "您服务器上的模型名称（自托管端点可自由填写）。",
           "placeholder": "例如 tts-1"
@@ -8034,7 +7655,7 @@
           "message": "{label} 已断开连接"
         },
         "fallback": {
-          "description": "Onyx 将回退到内置的网页爬虫。"
+          "description": "Lumen 将回退到内置的网页爬虫。"
         },
         "header": {
           "description": "这将删除为此提供方存储的凭据。",
@@ -8458,7 +8079,7 @@
           "title": "对话开场白"
         },
         "defaultModel": {
-          "description": "Onyx 将在您的聊天中默认使用此模型。",
+          "description": "Lumen 将在您的聊天中默认使用此模型。",
           "title": "默认模型"
         },
         "featured": {
@@ -8559,7 +8180,7 @@
         "label": "创建新组织"
       },
       "createTeamOption": {
-        "text": "创建新的 Onyx 团队"
+        "text": "创建新的 Lumen 团队"
       },
       "differentEmailPrompt": {
         "text": "拥有使用其他邮箱的账户？"
@@ -8568,10 +8189,10 @@
         "title": "未找到账户"
       },
       "inviteOption": {
-        "text": "受邀加入现有的 Onyx 团队"
+        "text": "受邀加入现有的 Lumen 团队"
       },
       "notFound": {
-        "description": "我们在记录中找不到您的账户。要访问 Onyx，您需要执行以下操作之一："
+        "description": "我们在记录中找不到您的账户。要访问 Lumen，您需要执行以下操作之一："
       },
       "signInLink": {
         "label": "登录"
@@ -8640,7 +8261,7 @@
         "description": "账户访问限制或权限问题"
       },
       "cloudSupportPrompt": {
-        "text": "如果问题持续存在，请通过 <link>support@onyx.app</link> 联系 Onyx 团队"
+        "text": "如果问题持续存在，请通过 <link>support@lumen.app</link> 联系 Lumen 团队"
       },
       "code": {
         "accessDenied": "您的身份提供方拒绝了访问。",
@@ -8723,7 +8344,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "注意：此功能仅面向 @onyx.app 管理员开放"
+        "text": "注意：此功能仅面向 @lumen.app 管理员开放"
       },
       "apiKeyField": {
         "label": "API 密钥",
@@ -8939,7 +8560,7 @@
         "label": "您是如何了解到我们的？"
       },
       "subtitle": {
-        "text": "开始使用 Onyx"
+        "text": "开始使用 Lumen"
       }
     },
     "verifyEmail": {
@@ -9173,7 +8794,7 @@
       },
       "healthBanner": {
         "backendUnavailable": {
-          "description": "如果这是您的首次设置，或者您刚更新了 Onyx 部署，这可能是因为后端仍在启动。请等待一两分钟，然后刷新页面。如果仍然无效，请确认后端已正确设置，或联系管理员。",
+          "description": "如果这是您的首次设置，或者您刚更新了 Lumen 部署，这可能是因为后端仍在启动。请等待一两分钟，然后刷新页面。如果仍然无效，请确认后端已正确设置，或联系管理员。",
           "title": "后端当前不可用"
         }
       },
@@ -9278,7 +8899,7 @@
           "placeholder": "今天我能帮您做些什么？",
           "queuedPlaceholder": "按上箭头键编辑排队的消息",
           "searchPlaceholder": "搜索已连接的来源",
-          "speakingPlaceholder": "Onyx 正在朗读..."
+          "speakingPlaceholder": "Lumen 正在朗读..."
         },
         "sendButton": {
           "processingFilesTooltip": "正在等待附件处理完成"
@@ -9399,7 +9020,7 @@
       },
       "sharedAppInputBar": {
         "input": {
-          "placeholder": "今天 Onyx 能为您做些什么"
+          "placeholder": "今天 Lumen 能为您做些什么"
         },
         "startSessionButton": {
           "label": "开始新会话"
@@ -10327,7 +9948,7 @@
           "loginButton": {
             "label": "登录"
           },
-          "title": "欢迎使用 Onyx"
+          "title": "欢迎使用 Lumen"
         },
         "noResubmitMessage": {
           "toast": "未找到之前发送的消息。"
@@ -10345,8 +9966,8 @@
           "confirmButton": {
             "label": "关闭"
           },
-          "description": "您将看到浏览器默认的新标签页。您可以随时在 Onyx 设置中重新开启。",
-          "title": "关闭 Onyx 新标签页？"
+          "description": "您将看到浏览器默认的新标签页。您可以随时在 Lumen 设置中重新开启。",
+          "title": "关闭 Lumen 新标签页？"
         }
       },
       "settingsPanel": {
@@ -10372,7 +9993,7 @@
           "title": "设置"
         },
         "newTabToggle": {
-          "label": "将 Onyx 用作新标签页"
+          "label": "将 Lumen 用作新标签页"
         },
         "themeToggle": {
           "tooltip": "{mode, select, light {切换为浅色主题} other {切换为深色主题}}"
@@ -10382,8 +10003,8 @@
         "newChatButton": {
           "tooltip": "新聊天"
         },
-        "openInOnyxButton": {
-          "tooltip": "在 Onyx 中打开"
+        "openInLumenButton": {
+          "tooltip": "在 Lumen 中打开"
         }
       }
     },
@@ -10395,7 +10016,7 @@
         "error": "您需要同意条款才能使用本应用。"
       },
       "header": {
-        "title": "欢迎使用 Onyx！"
+        "title": "欢迎使用 Lumen！"
       },
       "logoIcon": {
         "alt": "徽标"
@@ -10753,16 +10374,16 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "如果您是管理员，请访问<billingLink>管理员账单</billingLink>页面以{hadLicense, select, true {续订} other {激活}}您的许可证，通过 Stripe 注册，或联系 <supportLink>support@onyx.app</supportLink> 获取账单帮助。"
+          "text": "如果您是管理员，请访问<billingLink>管理员账单</billingLink>页面以{hadLicense, select, true {续订} other {激活}}您的许可证，通过 Stripe 注册，或联系 <supportLink>support@lumen.app</supportLink> 获取账单帮助。"
         },
         "heading": {
           "title": "访问受限"
         },
         "licenseLapse": {
-          "description": "由于许可证失效，您对 Onyx 的访问已被暂时停用。"
+          "description": "由于许可证失效，您对 Lumen 的访问已被暂时停用。"
         },
         "licenseRequired": {
-          "description": "使用 Onyx 需要许可证。您的数据受到保护，许可证激活后即可使用。"
+          "description": "使用 Lumen 需要许可证。您的数据受到保护，许可证激活后即可使用。"
         },
         "logoutButton": {
           "label": "退出登录"
@@ -10774,7 +10395,7 @@
           "description": "要开始使用，请联系系统管理员获取许可证。"
         },
         "renewLicense": {
-          "description": "要恢复访问权限并继续使用 Onyx，请联系系统管理员续订许可证。"
+          "description": "要恢复访问权限并继续使用 Lumen，请联系系统管理员续订许可证。"
         },
         "resubscribeButton": {
           "label": "重新订阅",
@@ -10793,10 +10414,10 @@
           "description": "您的组织已超出许可席位数（{used} 位用户 / {seats} 个席位）。在减少用户数量或升级许可证之前，访问将受到限制。"
         },
         "subscriptionLapse": {
-          "description": "由于订阅失效，您对 Onyx 的访问已被暂时停用。"
+          "description": "由于订阅失效，您对 Lumen 的访问已被暂时停用。"
         },
         "updatePayment": {
-          "description": "要恢复访问权限并继续使用 Onyx 的强大功能，请更新您的付款信息。"
+          "description": "要恢复访问权限并继续使用 Lumen 的强大功能，请更新您的付款信息。"
         }
       },
       "configError": {
@@ -10804,7 +10425,7 @@
           "text": "如果您是管理员，请查看我们的<docsLink>文档</docsLink>了解正确的配置步骤。如果您是普通用户，请联系管理员寻求帮助。"
         },
         "heading": {
-          "description": "加载您的 Onyx 设置时似乎出现了问题。这可能是由于配置问题或安装未完成造成的。",
+          "description": "加载您的 Lumen 设置时似乎出现了问题。这可能是由于配置问题或安装未完成造成的。",
           "title": "我们遇到了问题"
         }
       },
@@ -10813,7 +10434,7 @@
           "description": "对由此带来的不便我们深表歉意，感谢您的耐心等待。"
         },
         "checkBack": {
-          "description": "Onyx 目前处于维护窗口期。请几分钟后再试。"
+          "description": "Lumen 目前处于维护窗口期。请几分钟后再试。"
         },
         "heading": {
           "title": "维护进行中"
@@ -11094,7 +10715,7 @@
         "alt": "徽标"
       },
       "poweredBy": {
-        "label": "由 Onyx 提供支持"
+        "label": "由 Lumen 提供支持"
       }
     },
     "nonSelectableConnectors": {
@@ -11291,8 +10912,8 @@
             "label": "名称"
           }
         },
-        "managedDescription": "由 Onyx 提供，请配置智能体可以执行的操作。",
-        "managedNote": "此应用由 Onyx 提供，凭据由系统代管。请在下方选择智能体可以执行的操作。用户可从“应用”页面连接它。",
+        "managedDescription": "由 Lumen 提供，请配置智能体可以执行的操作。",
+        "managedNote": "此应用由 Lumen 提供，凭据由系统代管。请在下方选择智能体可以执行的操作。用户可从“应用”页面连接它。",
         "saveButton": "保存"
       },
       "customApp": {
@@ -11377,14 +10998,14 @@
           "startAuthFailed": "无法启动授权"
         },
         "header": {
-          "description": "连接 Onyx Craft 在工作时可用作上下文的工具。",
+          "description": "连接 Lumen Craft 在工作时可用作上下文的工具。",
           "manageButton": "管理应用",
           "searchPlaceholder": "搜索应用...",
           "title": "应用"
         },
         "kinds": {
           "app": {
-            "blurb": "Onyx 直接支持的集成。每个都附带教 Craft 如何使用它的技能，从这里开始。",
+            "blurb": "Lumen 直接支持的集成。每个都附带教 Craft 如何使用它的技能，从这里开始。",
             "empty": "您的组织尚未配置任何应用。",
             "emptyTitle": "暂无应用",
             "tabLabel": "应用 · {count}"
@@ -11759,7 +11380,7 @@
       },
       "llmLocked": {
         "backToChatButton": "返回聊天",
-        "description": "Onyx Craft 需要模型提供商，且只有管理员可以设置。请让您的管理员连接 Anthropic、OpenAI 或 OpenRouter。",
+        "description": "Lumen Craft 需要模型提供商，且只有管理员可以设置。请让您的管理员连接 Anthropic、OpenAI 或 OpenRouter。",
         "title": "需要 LLM 提供商"
       },
       "llmSetup": {
@@ -11904,7 +11525,7 @@
         "ariaLabel": "复制链接"
       },
       "organization": {
-        "description": "登录您的 Onyx 的任何人都可以查看此应用。",
+        "description": "登录您的 Lumen 的任何人都可以查看此应用。",
         "label": "组织"
       },
       "private": {
@@ -12440,7 +12061,7 @@
         "placeholder": "筛选文件..."
       },
       "processing": {
-        "description": "Onyx 仍在处理您上传的文件。您现在可以创建智能体，但在处理完成前，它无法访问所有文件。"
+        "description": "Lumen 仍在处理您上传的文件。您现在可以创建智能体，但在处理完成前，它无法访问所有文件。"
       }
     },
     "search": {
@@ -12519,7 +12140,7 @@
         "button": {
           "label": "网页搜索"
         },
-        "description": "让 Onyx 能够在互联网上搜索信息。",
+        "description": "让 Lumen 能够在互联网上搜索信息。",
         "title": "选择网页搜索提供商"
       }
     },
@@ -12539,7 +12160,7 @@
         "subtitle": "兼容 LiteLLM 的 API",
         "title": "自定义 LLM 提供商"
       },
-      "description": "Onyx 同时支持自托管模型和主流提供商。",
+      "description": "Lumen 同时支持自托管模型和主流提供商。",
       "edit": {
         "ariaLabel": "编辑 LLM 提供商"
       },
@@ -12559,7 +12180,7 @@
       "input": {
         "placeholder": "您的姓名"
       },
-      "title": "Onyx 该怎么称呼您？"
+      "title": "Lumen 该怎么称呼您？"
     },
     "nonAdminStep": {
       "confirmation": {
@@ -12685,7 +12306,7 @@
         "searchPlaceholder": "搜索…"
       },
       "revokeModal": {
-        "description": "任何使用 token {name}（{tokenDisplay}）的应用都将失去对 Onyx 的访问权限。此操作无法撤销。",
+        "description": "任何使用 token {name}（{tokenDisplay}）的应用都将失去对 Lumen 的访问权限。此操作无法撤销。",
         "question": "确定要吊销此 token 吗？",
         "submit": "吊销",
         "title": "吊销访问 token"
@@ -12713,10 +12334,6 @@
         "copyButton": "复制 token",
         "description": "请在继续之前保存此 token。它不会再次显示。",
         "title": "访问 token"
-      },
-      "upsell": {
-        "description": "访问 token 需要有效的付费订阅。",
-        "upgradeButton": "升级套餐"
       }
     },
     "appearance": {
@@ -12751,7 +12368,7 @@
         "title": "默认应用模式"
       },
       "defaultModel": {
-        "description": "Onyx 会在您的对话中默认使用此模型。",
+        "description": "Lumen 会在您的对话中默认使用此模型。",
         "title": "默认模型"
       },
       "defaultReasoningLevel": {
@@ -12776,7 +12393,7 @@
       "connectButton": "连接",
       "disconnectModal": {
         "continueNote": "您仍然可以继续引用 {name} 内容的现有会话。",
-        "description": "Onyx 将无法再访问或搜索您 {name} 账户中的内容。",
+        "description": "Lumen 将无法再访问或搜索您 {name} 账户中的内容。",
         "disconnecting": "正在断开连接…",
         "submit": "断开连接",
         "title": "断开 *{name}* 连接"
@@ -12823,7 +12440,7 @@
         "copy": "复制",
         "copyError": "无法复制该值。"
       },
-      "description": "将外部工具连接到您在 Onyx 中可用的模型。",
+      "description": "将外部工具连接到您在 Lumen 中可用的模型。",
       "guideButton": "指南",
       "loadError": {
         "description": "请刷新页面后重试。",
@@ -12886,7 +12503,7 @@
         "maxReached": "已达到 {count} 条记忆的上限"
       },
       "empty": {
-        "description": "添加希望 Onyx 记住的个人笔记或记忆。",
+        "description": "添加希望 Lumen 记住的个人笔记或记忆。",
         "getStarted": "还没有记忆。点击“添加行”开始。",
         "noMatches": "没有与搜索匹配的记忆。"
       },
@@ -12897,11 +12514,11 @@
         "label": "{count, plural, one {行} other {行}}"
       },
       "modal": {
-        "description": "让 Onyx 在聊天中引用这些存储的笔记和记忆。",
+        "description": "让 Lumen 在聊天中引用这些存储的笔记和记忆。",
         "searchPlaceholder": "搜索..."
       },
       "referenceStoredMemories": {
-        "description": "允许 Onyx 在对话中引用已存储的记忆。",
+        "description": "允许 Lumen 在对话中引用已存储的记忆。",
         "title": "引用已存储的记忆"
       },
       "removeLineButton": {
@@ -12913,7 +12530,7 @@
         "saved": "偏好设置已保存"
       },
       "updateMemories": {
-        "description": "允许 Onyx 生成并更新已存储的记忆。",
+        "description": "允许 Lumen 生成并更新已存储的记忆。",
         "title": "更新记忆"
       },
       "viewAll": {
@@ -13149,9 +12766,6 @@
         "tracing": {
           "label": "追踪"
         },
-        "upgradePlan": {
-          "label": "升级套餐"
-        },
         "usage": {
           "label": "用量"
         },
@@ -13190,12 +12804,6 @@
       }
     },
     "adminSidebar": {
-      "businessOrEnterpriseOnly": {
-        "tooltip": "此功能仅在 [Onyx 商业版或企业版](/admin/billing) 中提供。"
-      },
-      "enterpriseOnly": {
-        "tooltip": "此功能仅在 [Onyx 企业版](/admin/billing) 中提供。"
-      },
       "exitAdminPanel": {
         "label": "退出管理面板"
       },
@@ -13735,7 +13343,7 @@
           "title": "从 GitHub 导入"
         },
         "scratch": {
-          "description": "在 Onyx 中编写说明并添加支持文件。",
+          "description": "在 Lumen 中编写说明并添加支持文件。",
           "title": "从头开始"
         },
         "trigger": {

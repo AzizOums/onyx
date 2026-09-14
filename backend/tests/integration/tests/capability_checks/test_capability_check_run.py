@@ -12,22 +12,22 @@ from typing import Any
 
 from sqlalchemy import update
 
-from onyx.background.celery.versioned_apps.client import app as client_app
-from onyx.configs.constants import (
+from lumen.background.celery.versioned_apps.client import app as client_app
+from lumen.configs.constants import (
     DocumentSource,
-    OnyxCeleryPriority,
-    OnyxCeleryTask,
+    LumenCeleryPriority,
+    LumenCeleryTask,
 )
-from onyx.connectors.capabilities import CredentialCapability
-from onyx.connectors.capability_checks.models import (
+from lumen.connectors.capabilities import CredentialCapability
+from lumen.connectors.capability_checks.models import (
     CapabilityCheckStatus,
     CapabilityVerdict,
 )
-from onyx.connectors.models import InputType
-from onyx.db.credential_capability import mark_capability_report_running
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import CapabilityCheckTrigger, CapabilityReportRunStatus
-from onyx.db.models import CredentialCapabilityReportRow
+from lumen.connectors.models import InputType
+from lumen.db.credential_capability import mark_capability_report_running
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import CapabilityCheckTrigger, CapabilityReportRunStatus
+from lumen.db.models import CredentialCapabilityReportRow
 from shared_configs.contextvars import get_current_tenant_id
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
@@ -340,9 +340,9 @@ def test_sweep_retires_a_dead_run_and_retrigger_recovers(
     # Under test.
     # The sweep the beat schedule fires every ten minutes.
     client_app.send_task(
-        OnyxCeleryTask.CHECK_FOR_STALE_CAPABILITY_RUNS,
+        LumenCeleryTask.CHECK_FOR_STALE_CAPABILITY_RUNS,
         kwargs=dict(tenant_id=get_current_tenant_id()),
-        priority=OnyxCeleryPriority.LOW,
+        priority=LumenCeleryPriority.LOW,
         expires=300,
     )
 

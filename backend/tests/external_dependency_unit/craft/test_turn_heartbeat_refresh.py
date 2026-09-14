@@ -11,8 +11,8 @@ from acp.schema import AgentMessageChunk, PromptResponse, TextContentBlock
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 
-from onyx.db.models import Sandbox, User
-from onyx.server.features.build.session import streaming as streaming_module
+from lumen.db.models import Sandbox, User
+from lumen.server.features.build.session import streaming as streaming_module
 from tests.common.craft.stubs import StubSandboxManager
 from tests.external_dependency_unit.craft.db_helpers import make_sandbox, make_user
 

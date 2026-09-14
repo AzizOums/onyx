@@ -16,8 +16,8 @@ export default defineConfig(({ mode }) => {
     build: {
       lib: {
         entry: resolve(__dirname, "src/index.ts"),
-        name: "OnyxWidget",
-        fileName: "onyx-widget",
+        name: "LumenWidget",
+        fileName: "lumen-widget",
         formats: ["es"],
       },
       rollupOptions: {

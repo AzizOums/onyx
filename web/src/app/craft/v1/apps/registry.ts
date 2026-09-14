@@ -11,7 +11,7 @@ import {
 import { SvgPlug } from "@opal/icons";
 import { IconFunctionComponent } from "@opal/types";
 
-// Mirrors `onyx.db.enums.ExternalAppType` on the backend.
+// Mirrors `lumen.db.enums.ExternalAppType` on the backend.
 export type ExternalAppType =
   | "SLACK"
   | "GOOGLE_CALENDAR"
@@ -54,7 +54,7 @@ export interface OrgCredentialFieldDescriptor {
   secret: boolean;
 }
 
-// Mirrors `onyx.db.enums.EndpointPolicy` on the backend.
+// Mirrors `lumen.db.enums.EndpointPolicy` on the backend.
 export type EndpointPolicy = "ALWAYS" | "ASK" | "DENY";
 
 export interface EndpointDescriptor {
@@ -100,9 +100,9 @@ export interface ExternalAppAdminResponse {
     name: string;
     is_valid: boolean | null;
   }[];
-  // Onyx-managed built-in (cloud): creds/config Onyx-owned and blanked here; the
+  // Lumen-managed built-in (cloud): creds/config Lumen-owned and blanked here; the
   // admin may only set availability and policies (the UI hides the rest).
-  is_onyx_managed: boolean;
+  is_lumen_managed: boolean;
 }
 
 export interface ExternalAppUserResponse {

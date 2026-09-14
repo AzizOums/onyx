@@ -25,7 +25,7 @@ export interface TokenRateLimitDisplay {
   cost_budget_cents: number | null;
 }
 
-/** Mirrors backend PermissionRegistryEntry from onyx.auth.permissions. */
+/** Mirrors backend PermissionRegistryEntry from lumen.auth.permissions. */
 export interface PermissionRegistryEntry {
   id: string;
   display_name: string;

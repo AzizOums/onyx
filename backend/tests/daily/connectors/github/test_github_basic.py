@@ -2,8 +2,8 @@ import time
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.github.connector import GithubConnector
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.github.connector import GithubConnector
 from tests.daily.connectors.utils import load_all_from_connector
 from tests.utils.secret_names import TestSecret
 
@@ -15,7 +15,7 @@ def github_connector(
     test_secrets: dict[TestSecret, str],
 ) -> GithubConnector:
     connector = GithubConnector(
-        repo_owner="onyx-dot-app",
+        repo_owner="lumen-dot-app",
         repositories="documentation",
         include_prs=True,
         include_issues=True,
@@ -57,7 +57,7 @@ def test_github_connector_basic(github_connector: GithubConnector) -> None:
     assert "state" in pr_doc.metadata
     assert "user" in pr_doc.metadata
     assert "assignees" in pr_doc.metadata
-    assert pr_doc.metadata.get("repo") == "onyx-dot-app/documentation"
+    assert pr_doc.metadata.get("repo") == "lumen-dot-app/documentation"
     assert "num_commits" in pr_doc.metadata
     assert "num_files_changed" in pr_doc.metadata
     assert "labels" in pr_doc.metadata
@@ -70,7 +70,7 @@ def test_github_connector_basic(github_connector: GithubConnector) -> None:
     assert "state" in issue_doc.metadata
     assert "user" in issue_doc.metadata
     assert "assignees" in issue_doc.metadata
-    assert issue_doc.metadata.get("repo") == "onyx-dot-app/documentation"
+    assert issue_doc.metadata.get("repo") == "lumen-dot-app/documentation"
     assert "labels" in issue_doc.metadata
     assert "created_at" in issue_doc.metadata
 

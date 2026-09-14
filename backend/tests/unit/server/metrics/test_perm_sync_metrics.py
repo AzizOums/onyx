@@ -2,7 +2,7 @@
 
 import pytest
 
-from onyx.server.metrics.perm_sync_metrics import (
+from lumen.server.metrics.perm_sync_metrics import (
     DOC_PERM_SYNC_DB_UPDATE_DURATION,
     DOC_PERM_SYNC_DOCS_PROCESSED,
     DOC_PERM_SYNC_DURATION,

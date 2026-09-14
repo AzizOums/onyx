@@ -1,6 +1,6 @@
 (() => {
-  if (window.__ONYX_ALT_MENU_HANDLER__) return;
-  window.__ONYX_ALT_MENU_HANDLER__ = true;
+  if (window.__LUMEN_ALT_MENU_HANDLER__) return;
+  window.__LUMEN_ALT_MENU_HANDLER__ = true;
 
   let altPressedAlone = false;
 

@@ -28,13 +28,13 @@ from fastapi_users.authentication import AuthenticationBackend, CookieTransport
 from fastapi_users.jwt import decode_jwt
 from httpx_oauth.oauth2 import BaseOAuth2
 
-from onyx.auth.mobile_sso.code_store import consume_sso_code
-from onyx.auth.users import STATE_TOKEN_AUDIENCE, generate_pkce_pair, get_oauth_router
-from onyx.error_handling.exceptions import register_onyx_exception_handlers
+from lumen.auth.mobile_sso.code_store import consume_sso_code
+from lumen.auth.users import STATE_TOKEN_AUDIENCE, generate_pkce_pair, get_oauth_router
+from lumen.error_handling.exceptions import register_lumen_exception_handlers
 
 _STATE_SECRET = "test-secret"
 _MINTED_TOKEN = "minted_session_token"
-_ALLOWED_REDIRECT = "onyx://auth/callback"
+_ALLOWED_REDIRECT = "lumen://auth/callback"
 
 
 class _StubOAuthClient:
@@ -128,7 +128,7 @@ def _build_test_client(
     )
     app = FastAPI()
     app.include_router(router, prefix="/auth/oauth")
-    register_onyx_exception_handlers(app)
+    register_lumen_exception_handlers(app)
 
     client = TestClient(app, raise_server_exceptions=False)
     return client, oauth_client, login_mock, user_manager
@@ -144,7 +144,7 @@ def _authorize_and_get_state(client: TestClient, params: dict[str, str]) -> str:
 def _callback(client: TestClient, state: str) -> httpx.Response:
     # Every callback test resolves the tenant the same way; centralize the patch.
     with patch(
-        "onyx.auth.users.fetch_ee_implementation_or_noop",
+        "lumen.auth.users.fetch_ee_implementation_or_noop",
         # Dispatch arity varies by target. This test guards the mobile bridge,
         # not the resolver signature.
         return_value=lambda *_args: "tenant_1",

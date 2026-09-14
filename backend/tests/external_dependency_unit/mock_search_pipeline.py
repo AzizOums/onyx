@@ -6,19 +6,19 @@ from unittest.mock import MagicMock, patch
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.context.search.models import (
+from lumen.configs.constants import DocumentSource
+from lumen.context.search.models import (
     ChunkSearchRequest,
     InferenceChunk,
     PersonaSearchInfo,
     SearchDoc,
 )
-from onyx.db.models import SearchSettings, User
-from onyx.document_index.interfaces_new import DocumentIndex
-from onyx.federated_connectors.federated_retrieval import FederatedRetrievalInfo
-from onyx.llm.interfaces import LLM
-from onyx.natural_language_processing.search_nlp_models import EmbeddingModel
-from onyx.tools.tool_implementations.search.search_tool import SearchTool
+from lumen.db.models import SearchSettings, User
+from lumen.document_index.interfaces_new import DocumentIndex
+from lumen.federated_connectors.federated_retrieval import FederatedRetrievalInfo
+from lumen.llm.interfaces import LLM
+from lumen.natural_language_processing.search_nlp_models import EmbeddingModel
+from lumen.tools.tool_implementations.search.search_tool import SearchTool
 
 
 def run_functions_tuples_sequential(
@@ -161,64 +161,64 @@ def use_mock_search_pipeline(
 
     with (
         patch(
-            "onyx.tools.tool_implementations.search.search_tool.search_pipeline",
+            "lumen.tools.tool_implementations.search.search_tool.search_pipeline",
             new=override_search_pipeline,
         ),
         patch(
-            "onyx.tools.tool_implementations.search.search_tool.check_connectors_exist",
+            "lumen.tools.tool_implementations.search.search_tool.check_connectors_exist",
             new=mock_check_connectors_exist,
         ),
         patch(
-            "onyx.tools.tool_implementations.search.search_tool.check_federated_connectors_exist",
+            "lumen.tools.tool_implementations.search.search_tool.check_federated_connectors_exist",
             new=mock_check_federated_connectors_exist,
         ),
         patch(
-            "onyx.tools.tool_implementations.search.search_tool.semantic_query_rephrase",
+            "lumen.tools.tool_implementations.search.search_tool.semantic_query_rephrase",
             return_value="",
         ),
         patch(
-            "onyx.tools.tool_implementations.search.search_tool.keyword_query_expansion",
+            "lumen.tools.tool_implementations.search.search_tool.keyword_query_expansion",
             return_value=[],
         ),
         patch(
-            "onyx.tools.tool_runner.run_functions_tuples_in_parallel",
+            "lumen.tools.tool_runner.run_functions_tuples_in_parallel",
             new=run_functions_tuples_sequential,
         ),
         patch(
-            "onyx.db.connector.check_connectors_exist",
+            "lumen.db.connector.check_connectors_exist",
             new=mock_check_connectors_exist,
         ),
         patch(
-            "onyx.db.connector.check_federated_connectors_exist",
+            "lumen.db.connector.check_federated_connectors_exist",
             new=mock_check_federated_connectors_exist,
         ),
         patch(
-            "onyx.db.connector.check_user_files_exist",
+            "lumen.db.connector.check_user_files_exist",
             new=mock_check_user_files_exist,
         ),
         patch(
-            "onyx.db.connector.fetch_unique_document_sources",
+            "lumen.db.connector.fetch_unique_document_sources",
             new=mock_fetch_unique_document_sources,
         ),
         # Mock the pre-fetch phase of SearchTool.run()
         patch(
-            "onyx.tools.tool_implementations.search.search_tool.get_session_with_current_tenant",
+            "lumen.tools.tool_implementations.search.search_tool.get_session_with_current_tenant",
             new=mock_get_session,
         ),
         patch(
-            "onyx.tools.tool_implementations.search.search_tool.build_access_filters_for_user",
+            "lumen.tools.tool_implementations.search.search_tool.build_access_filters_for_user",
             return_value=[],
         ),
         patch(
-            "onyx.tools.tool_implementations.search.search_tool.get_current_search_settings",
+            "lumen.tools.tool_implementations.search.search_tool.get_current_search_settings",
             return_value=MagicMock(spec=SearchSettings),
         ),
         patch(
-            "onyx.tools.tool_implementations.search.search_tool.EmbeddingModel.from_db_model",
+            "lumen.tools.tool_implementations.search.search_tool.EmbeddingModel.from_db_model",
             return_value=MagicMock(spec=EmbeddingModel),
         ),
         patch(
-            "onyx.tools.tool_implementations.search.search_tool.get_federated_retrieval_functions",
+            "lumen.tools.tool_implementations.search.search_tool.get_federated_retrieval_functions",
             return_value=[],
         ),
         patch.object(

@@ -17,7 +17,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
 
-from onyx.connectors.slack.models import ChannelType, MessageType
+from lumen.connectors.slack.models import ChannelType, MessageType
 
 _SLACK_LIMIT = 900
 

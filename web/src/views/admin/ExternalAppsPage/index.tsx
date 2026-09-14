@@ -180,7 +180,7 @@ function AppsAdminContent({
 
   const integrationLabels = useMemo<IntegrationLabels>(
     () => ({
-      providedByOnyx: t("facts.providedByOnyx"),
+      providedByLumen: t("facts.providedByLumen"),
       noCredentials: t("facts.noCredentials"),
       orgCredentialsSet: t("facts.orgCredentialsSet"),
       perUserCredentials: t("facts.perUserCredentials"),

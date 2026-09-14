@@ -40,21 +40,21 @@ from cryptography.hazmat.primitives.serialization import (
 )
 from kubernetes import client
 
-import onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager as ksm
-import onyx.server.features.build.sandbox.kubernetes.sidecar_client as sidecar
-from onyx.server.features.build.configs import SANDBOX_PROXY_INJECTED_PLACEHOLDER
-from onyx.server.features.build.sandbox.image.sandbox_daemon.contract import (
+import lumen.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager as ksm
+import lumen.server.features.build.sandbox.kubernetes.sidecar_client as sidecar
+from lumen.server.features.build.configs import SANDBOX_PROXY_INJECTED_PLACEHOLDER
+from lumen.server.features.build.sandbox.image.sandbox_daemon.contract import (
     PUSH_DAEMON_PORT,
     SIDECAR_HEALTH_PATH,
     SIDECAR_READY_PATH,
 )
-from onyx.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
+from lumen.server.features.build.sandbox.kubernetes.kubernetes_sandbox_manager import (
     KubernetesSandboxManager,
 )
 from tests.common.paths import find_ancestor_containing
 
-_REPO_ROOT = find_ancestor_containing("deployment/helm/charts/onyx")
-_CHART_DIR = _REPO_ROOT / "deployment" / "helm" / "charts" / "onyx"
+_REPO_ROOT = find_ancestor_containing("deployment/helm/charts/lumen")
+_CHART_DIR = _REPO_ROOT / "deployment" / "helm" / "charts" / "lumen"
 _DEFAULT_KUBE_VERSION_ARGS = ["--kube-version", "1.33.0"]
 _HELM_TEST_SECRET_ARGS = [
     "--set-string",
@@ -87,7 +87,7 @@ def _push_key_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(sidecar, "SANDBOX_PUSH_PRIVATE_KEY", _gen_key_b64())
     monkeypatch.setattr(sidecar, "_push_private_key", None, raising=False)
     monkeypatch.setattr(sidecar, "_push_public_key_b64", None, raising=False)
-    monkeypatch.setattr(ksm, "SANDBOX_PROXY_HOST", "sandbox-proxy.onyx.svc")
+    monkeypatch.setattr(ksm, "SANDBOX_PROXY_HOST", "sandbox-proxy.lumen.svc")
     monkeypatch.setattr(
         ksm.KubernetesSandboxManager,
         "_resolve_proxy_ip",
@@ -110,10 +110,10 @@ def _helm_template_cmd(extra_args: list[str] | None = None) -> list[str]:
     return [
         helm,
         "template",
-        "onyx",
+        "lumen",
         str(_CHART_DIR),
         "-n",
-        "onyx",
+        "lumen",
         "-f",
         str(_CHART_DIR / "values-ci.yaml"),
         *_chart_args_with_default_kube_version(extra_args),
@@ -186,9 +186,9 @@ def test_sandbox_image_defaults_to_global_version() -> None:
     sandbox_init = init_containers["sandbox-init"]
     sidecar = init_containers["sidecar"]
 
-    assert sandbox["image"] == "onyxdotapp/sandbox:v9.8.7"
-    assert sandbox_init["image"] == "onyxdotapp/sandbox:v9.8.7"
-    assert sidecar["image"] == "onyxdotapp/sandbox:v9.8.7"
+    assert sandbox["image"] == "lumendotapp/sandbox:v9.8.7"
+    assert sandbox_init["image"] == "lumendotapp/sandbox:v9.8.7"
+    assert sidecar["image"] == "lumendotapp/sandbox:v9.8.7"
     assert sandbox["imagePullPolicy"] == "IfNotPresent"
     assert sandbox_init["imagePullPolicy"] == "IfNotPresent"
     assert sidecar["imagePullPolicy"] == "IfNotPresent"
@@ -213,7 +213,7 @@ def test_moving_sandbox_image_defaults_to_global_pull_policy() -> None:
     sandbox_init = init_containers["sandbox-init"]
     sidecar = init_containers["sidecar"]
 
-    assert sandbox["image"] == "onyxdotapp/sandbox:edge"
+    assert sandbox["image"] == "lumendotapp/sandbox:edge"
     assert sandbox["imagePullPolicy"] == "IfNotPresent"
     assert sandbox_init["imagePullPolicy"] == "IfNotPresent"
     assert sidecar["imagePullPolicy"] == "IfNotPresent"
@@ -240,7 +240,7 @@ def test_internal_sandbox_pull_policy_override_wins() -> None:
     sandbox_init = init_containers["sandbox-init"]
     sidecar = init_containers["sidecar"]
 
-    assert sandbox["image"] == "onyxdotapp/sandbox:edge"
+    assert sandbox["image"] == "lumendotapp/sandbox:edge"
     assert sandbox["imagePullPolicy"] == "Always"
     assert sandbox_init["imagePullPolicy"] == "Always"
     assert sidecar["imagePullPolicy"] == "Always"
@@ -251,7 +251,7 @@ def test_implicit_latest_sandbox_image_defaults_to_global_pull_policy() -> None:
         _render_pod_template_yaml(
             [
                 "--set-string",
-                "configMap.SANDBOX_CONTAINER_IMAGE=onyxdotapp/sandbox",
+                "configMap.SANDBOX_CONTAINER_IMAGE=lumendotapp/sandbox",
             ]
         )
     )
@@ -263,7 +263,7 @@ def test_implicit_latest_sandbox_image_defaults_to_global_pull_policy() -> None:
     sandbox_init = init_containers["sandbox-init"]
     sidecar = init_containers["sidecar"]
 
-    assert sandbox["image"] == "onyxdotapp/sandbox"
+    assert sandbox["image"] == "lumendotapp/sandbox"
     assert sandbox["imagePullPolicy"] == "IfNotPresent"
     assert sandbox_init["imagePullPolicy"] == "IfNotPresent"
     assert sidecar["imagePullPolicy"] == "IfNotPresent"
@@ -274,7 +274,7 @@ def test_local_dev_sandbox_image_defaults_to_if_not_present() -> None:
         _render_pod_template_yaml(
             [
                 "--set-string",
-                "configMap.SANDBOX_CONTAINER_IMAGE=onyxdotapp/sandbox:dev",
+                "configMap.SANDBOX_CONTAINER_IMAGE=lumendotapp/sandbox:dev",
             ]
         )
     )
@@ -286,7 +286,7 @@ def test_local_dev_sandbox_image_defaults_to_if_not_present() -> None:
     sandbox_init = init_containers["sandbox-init"]
     sidecar = init_containers["sidecar"]
 
-    assert sandbox["image"] == "onyxdotapp/sandbox:dev"
+    assert sandbox["image"] == "lumendotapp/sandbox:dev"
     assert sandbox["imagePullPolicy"] == "IfNotPresent"
     assert sandbox_init["imagePullPolicy"] == "IfNotPresent"
     assert sidecar["imagePullPolicy"] == "IfNotPresent"
@@ -322,7 +322,7 @@ def test_craft_helm_rejects_docker_sandbox_backend_override() -> None:
 def _build_pod() -> client.V1Pod:
     pod_template = _render_pod_template()
     mgr: KubernetesSandboxManager = object.__new__(KubernetesSandboxManager)
-    mgr._namespace = "onyx-sandboxes"
+    mgr._namespace = "lumen-sandboxes"
     mgr._core_api = _FakeCoreApi(pod_template)  # ty: ignore[invalid-assignment]
     return mgr._create_sandbox_pod(
         sandbox_id="abc12345-abcd-abcd-abcd-abcdef123456",
@@ -411,8 +411,8 @@ def test_push_public_key_is_in_sidecar_env_only(pod: client.V1Pod) -> None:
     """
     sandbox_env = {e.name for e in _container(pod, "sandbox").env}
     sidecar_env = {e.name for e in _sidecar(pod).env}
-    assert "ONYX_SANDBOX_PUSH_PUBLIC_KEY" in sidecar_env
-    assert "ONYX_SANDBOX_PUSH_PUBLIC_KEY" not in sandbox_env
+    assert "LUMEN_SANDBOX_PUSH_PUBLIC_KEY" in sidecar_env
+    assert "LUMEN_SANDBOX_PUSH_PUBLIC_KEY" not in sandbox_env
 
 
 def test_sidecar_probes_target_the_daemon_port(pod: client.V1Pod) -> None:
@@ -532,14 +532,14 @@ def test_service_account_token_automount_is_disabled(pod: client.V1Pod) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_onyx_pat_env_is_placeholder_not_real(pod: client.V1Pod) -> None:
+def test_lumen_pat_env_is_placeholder_not_real(pod: client.V1Pod) -> None:
     """The pod ships a placeholder; the egress proxy injects the real PAT."""
     env = {e.name: e.value for e in _container(pod, "sandbox").env}
-    assert env["ONYX_PAT"] == SANDBOX_PROXY_INJECTED_PLACEHOLDER
+    assert env["LUMEN_PAT"] == SANDBOX_PROXY_INJECTED_PLACEHOLDER
 
 
 def test_no_proxy_is_loopback_only(pod: client.V1Pod) -> None:
-    """Only loopback may bypass the proxy; the Onyx API host must route through
+    """Only loopback may bypass the proxy; the Lumen API host must route through
     it so the PAT can be injected on the wire."""
     env = {e.name: e.value for e in _container(pod, "sandbox").env}
     assert set(env["NO_PROXY"].split(",")) == {"127.0.0.1", "localhost"}
@@ -671,13 +671,13 @@ def test_redis_tls_mounts_ca_in_all_enabled_redis_workloads() -> None:
         if doc and doc.get("kind") == "Deployment"
     }
     redis_workload_names = {
-        "onyx-api-server",
-        "onyx-celery-beat",
-        "onyx-celery-worker-primary",
-        "onyx-celery-worker-light",
-        "onyx-celery-worker-heavy",
-        "onyx-celery-worker-scheduled-tasks",
-        "onyx-sandbox-proxy",
+        "lumen-api-server",
+        "lumen-celery-beat",
+        "lumen-celery-worker-primary",
+        "lumen-celery-worker-light",
+        "lumen-celery-worker-heavy",
+        "lumen-celery-worker-scheduled-tasks",
+        "lumen-sandbox-proxy",
     }
     assert redis_workload_names <= deployments.keys()
 
@@ -794,7 +794,7 @@ def test_service_exposes_push_daemon_port() -> None:
     """push/snapshot/health reach the pod via the Service FQDN, so the
     push-daemon port must be exposed on the Service, not just the pod."""
     mgr: KubernetesSandboxManager = object.__new__(KubernetesSandboxManager)
-    mgr._namespace = "onyx-sandboxes"
+    mgr._namespace = "lumen-sandboxes"
     svc = mgr._create_sandbox_service(
         sandbox_id=UUID("abc12345-abcd-abcd-abcd-abcdef123456"),
         tenant_id="t-1",

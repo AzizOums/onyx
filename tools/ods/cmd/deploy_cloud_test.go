@@ -22,7 +22,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/gittest"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/gittest"
 )
 
 func TestDeployCloud_dryRunCreatesNothing(t *testing.T) {

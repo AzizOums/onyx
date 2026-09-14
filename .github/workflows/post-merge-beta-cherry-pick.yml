@@ -61,10 +61,10 @@ jobs:
           # against the dispatching actor.
           ALLOWED_MERGERS: |
             acaprau
-            bo-onyx
+            bo-lumen
             danelegend
-            duo-onyx
-            evan-onyx
+            duo-lumen
+            evan-lumen
             jmelahman
             joachim-danswer
             justin-tahara
@@ -72,7 +72,7 @@ jobs:
             raunakab
             rohoswagger
             subash-mohan
-            wenxi-onyx
+            wenxi-lumen
             weves
             yuhongsun96
         run: |
@@ -184,7 +184,7 @@ jobs:
             release_args+=(--release "${RELEASE}")
           fi
           set +e
-          uv run --no-sync --with onyx-devtools ods cherry-pick "${MERGE_COMMIT_SHA}" "${release_args[@]}" --yes --no-verify 2>&1 | tee "$output_file"
+          uv run --no-sync --with lumen-devtools ods cherry-pick "${MERGE_COMMIT_SHA}" "${release_args[@]}" --yes --no-verify 2>&1 | tee "$output_file"
           pipe_statuses=("${PIPESTATUS[@]}")
           exit_code="${pipe_statuses[0]}"
           tee_exit="${pipe_statuses[1]:-0}"

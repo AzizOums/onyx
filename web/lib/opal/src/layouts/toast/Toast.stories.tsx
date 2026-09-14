@@ -42,7 +42,7 @@ export const Levels: Story = {
 };
 
 export const ErrorAppendix: Story = {
-  parameters: { errorAppendix: "Need help? Contact support@onyx.app." },
+  parameters: { errorAppendix: "Need help? Contact support@lumen.app." },
   render: () => (
     <Button onClick={() => toast.error("Indexing failed")}>
       Error with appendix

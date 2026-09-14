@@ -9,9 +9,9 @@ Requires a running Postgres instance.
 
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.models import Credential
-from onyx.utils.sensitive import SensitiveValue
+from lumen.configs.constants import DocumentSource
+from lumen.db.models import Credential
+from lumen.utils.sensitive import SensitiveValue
 
 # NOTE: this is not the real shape of a Drive credential,
 # but it is intended to test nested JSON credential handling

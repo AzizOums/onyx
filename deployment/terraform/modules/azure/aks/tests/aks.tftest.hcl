@@ -5,10 +5,10 @@ mock_provider "azurerm" {}
 mock_provider "kubernetes" {}
 
 variables {
-  cluster_name        = "onyx-prod"
-  resource_group_name = "onyx-rg"
+  cluster_name        = "lumen-prod"
+  resource_group_name = "lumen-rg"
   location            = "eastus"
-  subnet_id           = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Network/virtualNetworks/onyx-vnet/subnets/onyx-aks"
+  subnet_id           = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Network/virtualNetworks/lumen-vnet/subnets/lumen-aks"
 
   # The module now refuses a public API server that no range restricts, so every
   # case below has to say what it wants. This is the ordinary answer.
@@ -126,7 +126,7 @@ run "optional_pools_are_tainted_and_labelled" {
   }
 
   assert {
-    condition     = azurerm_kubernetes_cluster_node_pool.this["sandbox"].node_labels["onyx.app/workload"] == "sandbox"
+    condition     = azurerm_kubernetes_cluster_node_pool.this["sandbox"].node_labels["lumen.app/workload"] == "sandbox"
     error_message = "Sandbox pods select their pool by label."
   }
 }
@@ -192,7 +192,7 @@ run "a_storage_account_federates_the_service_account" {
   command = plan
 
   variables {
-    storage_account_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxfilestore"]
+    storage_account_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenfilestore"]
   }
 
   assert {
@@ -201,17 +201,17 @@ run "a_storage_account_federates_the_service_account" {
   }
 
   assert {
-    condition     = azurerm_federated_identity_credential.workload["onyx-workload-access"].subject == "system:serviceaccount:onyx:onyx-workload-access"
+    condition     = azurerm_federated_identity_credential.workload["lumen-workload-access"].subject == "system:serviceaccount:lumen:lumen-workload-access"
     error_message = "The subject is the same system:serviceaccount string the AWS module puts in an IRSA trust policy."
   }
 
   assert {
-    condition     = azurerm_federated_identity_credential.workload["onyx-workload-access"].audience[0] == "api://AzureADTokenExchange"
+    condition     = azurerm_federated_identity_credential.workload["lumen-workload-access"].audience[0] == "api://AzureADTokenExchange"
     error_message = "Azure only exchanges tokens for this audience."
   }
 
   # Counted, not keyed by id: the ids normally arrive from a storage module in
-  # the same apply and are unknown at plan time. The onyx composition's tests
+  # the same apply and are unknown at plan time. The lumen composition's tests
   # are what exercise that case, since only there are the ids actually unknown.
   assert {
     condition     = azurerm_role_assignment.workload_storage[0].role_definition_name == "Storage Blob Data Contributor"
@@ -229,8 +229,8 @@ run "every_supplied_storage_account_gets_a_role_assignment" {
 
   variables {
     storage_account_ids = [
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxfilestore",
-      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxuploads",
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenfilestore",
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenuploads",
     ]
   }
 
@@ -249,7 +249,7 @@ run "the_namespace_is_created_before_the_service_account" {
   command = plan
 
   variables {
-    storage_account_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxfilestore"]
+    storage_account_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenfilestore"]
   }
 
   assert {
@@ -258,7 +258,7 @@ run "the_namespace_is_created_before_the_service_account" {
   }
 
   assert {
-    condition     = kubernetes_namespace.workload[0].metadata[0].name == "onyx"
+    condition     = kubernetes_namespace.workload[0].metadata[0].name == "lumen"
     error_message = "The namespace created should be the one the service account lives in."
   }
 }
@@ -267,7 +267,7 @@ run "the_namespace_can_be_left_to_something_else" {
   command = plan
 
   variables {
-    storage_account_ids       = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxfilestore"]
+    storage_account_ids       = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenfilestore"]
     create_workload_namespace = false
   }
 
@@ -295,8 +295,8 @@ run "additional_service_accounts_are_federated_but_not_created" {
   command = plan
 
   variables {
-    storage_account_ids                       = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxfilestore"]
-    additional_workload_service_account_names = ["onyx-sandbox-proxy"]
+    storage_account_ids                       = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenfilestore"]
+    additional_workload_service_account_names = ["lumen-sandbox-proxy"]
   }
 
   assert {
@@ -377,7 +377,7 @@ run "the_role_assignment_survives_directory_replication_lag" {
   command = plan
 
   variables {
-    storage_account_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxfilestore"]
+    storage_account_ids = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenfilestore"]
   }
 
   assert {
@@ -392,9 +392,9 @@ run "a_long_namespace_still_produces_a_valid_credential_name" {
   # Azure caps a federated credential name at 120 characters, and a namespace
   # and a service account name can each be 63.
   variables {
-    storage_account_ids                = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.Storage/storageAccounts/onyxfilestore"]
-    workload_service_account_namespace = "onyx-production-workloads-with-a-deliberately-long-namespace-nm"
-    workload_service_account_name      = "onyx-workload-access-with-a-deliberately-long-service-account-n"
+    storage_account_ids                = ["/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.Storage/storageAccounts/lumenfilestore"]
+    workload_service_account_namespace = "lumen-production-workloads-with-a-deliberately-long-namespace-nm"
+    workload_service_account_name      = "lumen-workload-access-with-a-deliberately-long-service-account-n"
   }
 
   assert {
@@ -472,7 +472,7 @@ run "rejects_taints_on_the_system_pool" {
     node_pools = {
       main = {
         vm_size     = "Standard_D8ds_v5"
-        node_taints = ["dedicated=onyx:NoSchedule"]
+        node_taints = ["dedicated=lumen:NoSchedule"]
       }
     }
   }
@@ -559,7 +559,7 @@ run "rejects_an_unknown_log_category" {
   command = plan
 
   variables {
-    log_analytics_workspace_id   = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/onyx-rg/providers/Microsoft.OperationalInsights/workspaces/onyx-logs"
+    log_analytics_workspace_id   = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/lumen-rg/providers/Microsoft.OperationalInsights/workspaces/lumen-logs"
     control_plane_log_categories = ["kube-apiserver", "authenticator"]
   }
 

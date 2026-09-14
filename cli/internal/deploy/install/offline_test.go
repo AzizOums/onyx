@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/deploy/dockercmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/deploy/dockercmd"
 )
 
 // offlineDockerHandler answers like a healthy host that already holds images
@@ -93,7 +93,7 @@ func TestOfflineInstallNeverReachesTheRegistry(t *testing.T) {
 	shimDockerOnPath(t)
 	runner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		if strings.Contains(argv(c), "config --images") {
-			return dockercmd.Result{Stdout: "onyxdotapp/onyx-backend:v4.4.6\nonyxdotapp/code-interpreter:latest\n"}, nil
+			return dockercmd.Result{Stdout: "lumendotapp/lumen-backend:v4.4.6\nlumendotapp/code-interpreter:latest\n"}, nil
 		}
 		return offlineDockerHandler(c)
 	}}
@@ -133,12 +133,12 @@ func TestOfflineInstallNeverReachesTheRegistry(t *testing.T) {
 func TestOfflineInstallNamesTheMissingImage(t *testing.T) {
 	isolateEnv(t)
 	shimDockerOnPath(t)
-	const missing = "onyxdotapp/code-interpreter:latest"
+	const missing = "lumendotapp/code-interpreter:latest"
 	runner := &fakeRunner{handler: func(c dockercmd.Command) (dockercmd.Result, error) {
 		a := argv(c)
 		switch {
 		case strings.Contains(a, "config --images"):
-			return dockercmd.Result{Stdout: "onyxdotapp/onyx-backend:v4.4.6\n" + missing + "\n"}, nil
+			return dockercmd.Result{Stdout: "lumendotapp/lumen-backend:v4.4.6\n" + missing + "\n"}, nil
 		case strings.Contains(a, "image inspect "+missing):
 			return dockercmd.Result{}, errors.New("Error: No such image")
 		}

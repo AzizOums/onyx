@@ -4,17 +4,16 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { EmptyMessageCard } from "@opal/components";
-import { useTierAtLeast } from "@/hooks/useTierAtLeast";
 import { useLLMProviders } from "@/lib/languageModels/hooks";
 import { hasVisibleLLMModel } from "@/lib/languageModels/utils";
 import { useSettings } from "@/lib/settings/hooks";
-import { LLM_GATEWAY_MIN_TIER } from "@/lib/tiers";
+import { LLM_GATEWAY_AVAILABLE } from "@/lib/tiers";
 import { LLMGatewaySettings } from "@/views/SettingsPage";
 
 export default function LLMGatewayPage() {
   const t = useTranslations("settings.gateway");
   const router = useRouter();
-  const gatewayTier = useTierAtLeast(LLM_GATEWAY_MIN_TIER);
+  const gatewayTier = LLM_GATEWAY_AVAILABLE;
   const settings = useSettings();
   const { llmProviders, isLoading, error } = useLLMProviders();
   const hasAccessibleGatewayModel = hasVisibleLLMModel(llmProviders);

@@ -14,7 +14,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/paths"
 )
 
 // Severity is a normalized advisory severity.

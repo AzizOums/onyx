@@ -153,7 +153,7 @@ reused by these chat components.
   `side="bottom"`.
 - **No new API for the tool/source catalog.** `MinimalPersonaSnapshot` already returns `tools` +
   `knowledge_sources`; we widen the mobile type instead of adding a fetch. (Verified:
-  `backend/onyx/server/features/persona/models.py:202,212`.)
+  `backend/lumen/server/features/persona/models.py:202,212`.)
 - **Server-persist `disabled_tool_ids` per agent; keep the rest ephemeral.** This matches web exactly
   (web persists via PATCH, resets forced-tool/deep-research per session) so the two clients stay in
   sync and the behavior is predictable. It also adds the mobile app's first agent-preferences write

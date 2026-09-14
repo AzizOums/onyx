@@ -14,26 +14,26 @@ from unittest.mock import MagicMock
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.celery.tasks.vespa.document_sync import (
+from lumen.background.celery.tasks.vespa.document_sync import (
     generate_document_sync_tasks,
 )
-from onyx.configs.constants import OnyxCeleryPriority
-from onyx.db.document import (
+from lumen.configs.constants import LumenCeleryPriority
+from lumen.db.document import (
     construct_document_id_select_by_needs_sync_or_secondary_pending,
     count_documents_by_needs_sync,
     count_documents_by_needs_sync_or_secondary_pending,
     mark_document_as_modified,
     mark_document_synced_secondary_pending,
 )
-from onyx.db.models import ConnectorCredentialPair
-from onyx.db.models import Document as DbDocument
-from onyx.db.port_attempt import (
+from lumen.db.models import ConnectorCredentialPair
+from lumen.db.models import Document as DbDocument
+from lumen.db.port_attempt import (
     any_future_port_in_progress,
     create_port_attempt,
     mark_port_in_progress,
     mark_port_succeeded,
 )
-from onyx.kg.models import KGStage
+from lumen.kg.models import KGStage
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair_and_future,
     make_cc_pair,
@@ -165,8 +165,8 @@ def test_sync_priority_across_three_states(
     attempt = create_port_attempt(db_session, cc_pair.id, future_id)
     mark_port_in_progress(db_session, attempt.id)
     captured = _run_generate(db_session)
-    assert captured[f"{_DOC_PREFIX}A"]["priority"] == OnyxCeleryPriority.MEDIUM
-    assert captured[f"{_DOC_PREFIX}B"]["priority"] == OnyxCeleryPriority.LOW
+    assert captured[f"{_DOC_PREFIX}A"]["priority"] == LumenCeleryPriority.MEDIUM
+    assert captured[f"{_DOC_PREFIX}B"]["priority"] == LumenCeleryPriority.LOW
     assert captured[f"{_DOC_PREFIX}A"]["expires"] > 0
     assert captured[f"{_DOC_PREFIX}B"]["expires"] > 0
 
@@ -174,5 +174,5 @@ def test_sync_priority_across_three_states(
     # gate, so the deferred doc goes HIGH and needs_sync yields to LOW
     mark_port_succeeded(db_session, attempt.id)
     captured = _run_generate(db_session)
-    assert captured[f"{_DOC_PREFIX}B"]["priority"] == OnyxCeleryPriority.HIGH
-    assert captured[f"{_DOC_PREFIX}A"]["priority"] == OnyxCeleryPriority.LOW
+    assert captured[f"{_DOC_PREFIX}B"]["priority"] == LumenCeleryPriority.HIGH
+    assert captured[f"{_DOC_PREFIX}A"]["priority"] == LumenCeleryPriority.LOW

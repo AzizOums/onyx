@@ -98,11 +98,11 @@ const BackgroundThumbnail = ({
 export const SettingsPanel = ({
   settingsOpen,
   toggleSettings,
-  handleUseOnyxToggle,
+  handleUseLumenToggle,
 }: {
   settingsOpen: boolean;
   toggleSettings: () => void;
-  handleUseOnyxToggle: (checked: boolean) => void;
+  handleUseLumenToggle: (checked: boolean) => void;
 }) => {
   const tBg = useTranslations("common.chatBackgrounds");
   const bgLabels: Record<string, string> = {
@@ -114,7 +114,7 @@ export const SettingsPanel = ({
     night: tBg("night.label"),
   };
   const t = useTranslations("chat");
-  const { useOnyxAsNewTab } = useNRFPreferences();
+  const { useLumenAsNewTab } = useNRFPreferences();
   const { theme, setTheme } = useTheme();
   const { user, updateUserChatBackground, updateUserThemePreference } =
     useUser();
@@ -215,8 +215,8 @@ export const SettingsPanel = ({
             <div className="flex flex-col gap-1 bg-background-tint-01 rounded-2xl px-4">
               <SettingRow label={t("nrf.settingsPanel.newTabToggle.label")}>
                 <Switch
-                  checked={useOnyxAsNewTab}
-                  onCheckedChange={handleUseOnyxToggle}
+                  checked={useLumenAsNewTab}
+                  onCheckedChange={handleUseLumenToggle}
                 />
               </SettingRow>
             </div>

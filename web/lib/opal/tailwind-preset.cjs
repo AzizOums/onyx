@@ -4,14 +4,14 @@
  * Consumers wire this in their own tailwind.config.js:
  *
  *   module.exports = {
- *     presets: [require("@onyx-ai/opal/tailwind-preset")],
+ *     presets: [require("@lumen-ai/opal/tailwind-preset")],
  *     content: [
  *       "./src/**\/*.{ts,tsx}",
- *       "./node_modules/@onyx-ai/opal/dist/**\/*.{js,mjs}",
+ *       "./node_modules/@lumen-ai/opal/dist/**\/*.{js,mjs}",
  *     ],
  *   };
  *
- * Consumers must also `import "@onyx-ai/opal/styles.css"` once at the top of
+ * Consumers must also `import "@lumen-ai/opal/styles.css"` once at the top of
  * their app (e.g. in a Next.js root layout) so the underlying CSS variables
  * referenced by these tokens are defined.
  */
@@ -176,12 +176,12 @@ module.exports = {
         "theme-magenta-05": "var(--theme-magenta-05)",
         "theme-magenta-02": "var(--theme-magenta-02)",
         "theme-magenta-01": "var(--theme-magenta-01)",
-        "onyx-ink-100": "var(--onyx-ink-100)",
-        "onyx-ink-95": "var(--onyx-ink-95)",
-        "onyx-ink-90": "var(--onyx-ink-90)",
-        "onyx-chrome-20": "var(--onyx-chrome-20)",
-        "onyx-chrome-10": "var(--onyx-chrome-10)",
-        "onyx-chrome-00": "var(--onyx-chrome-00)",
+        "lumen-ink-100": "var(--lumen-ink-100)",
+        "lumen-ink-95": "var(--lumen-ink-95)",
+        "lumen-ink-90": "var(--lumen-ink-90)",
+        "lumen-chrome-20": "var(--lumen-chrome-20)",
+        "lumen-chrome-10": "var(--lumen-chrome-10)",
+        "lumen-chrome-00": "var(--lumen-chrome-00)",
         "tint-98": "var(--tint-98)",
         "tint-95": "var(--tint-95)",
         "tint-90": "var(--tint-90)",

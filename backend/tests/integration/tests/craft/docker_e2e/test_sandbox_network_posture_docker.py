@@ -14,12 +14,12 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.server.features.build.configs import (
+from lumen.server.features.build.configs import (
     SANDBOX_BACKEND,
     SANDBOX_PROXY_INJECTED_PLACEHOLDER,
     SandboxBackend,
 )
-from onyx.server.features.build.sandbox.docker.docker_sandbox_manager import (
+from lumen.server.features.build.sandbox.docker.docker_sandbox_manager import (
     SANDBOX_EXEC_USER,
 )
 from tests.integration.common_utils.managers.user import UserManager
@@ -35,8 +35,8 @@ pytestmark = pytest.mark.skipif(
     reason="Docker integration tests require SANDBOX_BACKEND=docker.",
 )
 
-_PROXY_CA_ISSUER_RE = re.compile(r"CN=Onyx Sandbox Proxy CA")
-_SANDBOX_BRIDGE_NETWORK = "onyx_craft_sandbox"
+_PROXY_CA_ISSUER_RE = re.compile(r"CN=Lumen Sandbox Proxy CA")
+_SANDBOX_BRIDGE_NETWORK = "lumen_craft_sandbox"
 
 
 def _opencode_pid(container: str, docker_exec: DockerExec) -> int:
@@ -114,9 +114,9 @@ def test_credentials_injected_on_wire_returns_real_user(
 ) -> None:
     _session_id, container = module_sandbox
 
-    env_check = docker_exec(container, ["sh", "-c", "echo $ONYX_PAT"])
+    env_check = docker_exec(container, ["sh", "-c", "echo $LUMEN_PAT"])
     assert env_check.stdout.strip() == SANDBOX_PROXY_INJECTED_PLACEHOLDER, (
-        f"ONYX_PAT in sandbox env was not the placeholder: {env_check.stdout!r}"
+        f"LUMEN_PAT in sandbox env was not the placeholder: {env_check.stdout!r}"
     )
 
     me_call = docker_exec(
@@ -265,7 +265,7 @@ def test_unlabeled_container_gets_unidentified_sandbox_403() -> None:
     assert proc.stdout.strip() == "403", f"Unlabeled bypass not 403: {proc.stdout!r}"
 
     proxy_logs = subprocess.run(
-        ["docker", "logs", "--tail", "50", "onyx-sandbox-proxy-1"],
+        ["docker", "logs", "--tail", "50", "lumen-sandbox-proxy-1"],
         capture_output=True,
         text=True,
         timeout=10,

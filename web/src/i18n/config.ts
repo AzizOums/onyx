@@ -1,7 +1,7 @@
 // Locale registry for the web UI.
 //
 // Must stay in sync with the backend `SupportedLanguage` enum in
-// backend/onyx/db/enums.py — config.test.ts pins this list, and
+// backend/lumen/db/enums.py — config.test.ts pins this list, and
 // `PATCH /user/language` rejects values outside that enum.
 export const SUPPORTED_LOCALES = [
   "en",
@@ -21,7 +21,7 @@ export const DEFAULT_LOCALE: Locale = "en";
 
 // Cookie the server layout reads to resolve the locale without a DB round
 // trip. The backend owns it: PATCH /user/language and GET /me set it from the
-// stored preference (NEXT_LOCALE_COOKIE_NAME in backend/onyx/configs/
+// stored preference (NEXT_LOCALE_COOKIE_NAME in backend/lumen/configs/
 // constants.py). The client never writes it.
 export const LOCALE_COOKIE_NAME = "NEXT_LOCALE";
 

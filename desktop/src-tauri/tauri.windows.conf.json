@@ -3,7 +3,7 @@
   "app": {
     "windows": [
       {
-        "title": "Onyx",
+        "title": "Lumen",
         "label": "main",
         "url": "index.html",
         "create": false,

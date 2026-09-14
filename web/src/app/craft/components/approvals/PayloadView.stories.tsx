@@ -103,7 +103,7 @@ export const ArrayOfObjects: Story = {
 export const LongArrayOfPrimitives: Story = {
   args: {
     payload: {
-      repository: "onyx-dot-app/onyx",
+      repository: "lumen-dot-app/lumen",
       issue_number: 12047,
       assignees: Array.from(
         { length: 40 },
@@ -135,7 +135,7 @@ export const LargeNestedObject: Story = {
 export const WideKeysAllFit: Story = {
   args: {
     payload: {
-      repository: "onyx-dot-app/onyx",
+      repository: "lumen-dot-app/lumen",
       branch: "whuang/feature",
       head_commit_sha: "8a383f69a1",
       title: "Add structured payload renderer",

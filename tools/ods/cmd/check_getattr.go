@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/pycheck"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/pycheck"
 )
 
 // NewCheckGetattrCommand creates the check-getattr command.
@@ -31,7 +31,7 @@ limit the check; if none are provided, all backend Python files are scanned.
 
 Examples:
   ods check-getattr                   # Check all backend Python files
-  ods check-getattr onyx/chat/        # Check only files in onyx/chat/
+  ods check-getattr lumen/chat/        # Check only files in lumen/chat/
   ods check-getattr --annotate        # Append ignore markers to violating lines`,
 		Run: func(cmd *cobra.Command, args []string) {
 			runCheckGetattr(args, annotate)

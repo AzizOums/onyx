@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# craft-up.sh — one-shot Onyx Craft dev setup on the local machine.
+# craft-up.sh — one-shot Lumen Craft dev setup on the local machine.
 #
 # Idempotent wrapper around k8s-up.sh that also builds and loads the sandbox
 # image and bootstraps .vscode/.env.k8s from the tracked template. Safe to
@@ -13,7 +13,7 @@
 #   deployment/helm/dev/craft-up.sh --skip-sandbox-image
 #
 # Flags:
-#   --cluster-name <name>          kind cluster name (default: onyx-dev)
+#   --cluster-name <name>          kind cluster name (default: lumen-dev)
 #   --skip-cluster-create          skip kind create (passthrough to k8s-up.sh)
 #   --skip-helm                    only create the cluster (passthrough)
 #   --skip-sandbox-image           skip the sandbox image build, but still run
@@ -25,15 +25,15 @@
 
 set -euo pipefail
 
-CLUSTER_NAME="onyx-dev"
+CLUSTER_NAME="lumen-dev"
 SKIP_HELM=0
 SKIP_SANDBOX_IMAGE=0
 PASSTHROUGH=()
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
-SANDBOX_IMAGE="onyxdotapp/sandbox:dev"
-SANDBOX_IMAGE_DIR="$REPO_ROOT/backend/onyx/server/features/build/sandbox/image"
+SANDBOX_IMAGE="lumendotapp/sandbox:dev"
+SANDBOX_IMAGE_DIR="$REPO_ROOT/backend/lumen/server/features/build/sandbox/image"
 ENV_K8S="$REPO_ROOT/.vscode/.env.k8s"
 ENV_K8S_TEMPLATE="$REPO_ROOT/.vscode/.env.k8s.template"
 
@@ -127,7 +127,7 @@ cat <<EOF
 craft-up complete.
 
 next steps:
-  1. open vscode and run the "Run All Onyx Services (k8s)" launch profile.
+  1. open vscode and run the "Run All Lumen Services (k8s)" launch profile.
      (api + web + every celery worker + beat, intercepting api_server via
      telepresence.)
 

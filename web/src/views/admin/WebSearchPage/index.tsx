@@ -10,7 +10,7 @@ import { PageLoader } from "@opal/layouts";
 import { useWebSearchProviders } from "@/lib/webSearch/hooks";
 import { useCreateModal } from "@opal/components";
 import { SvgGlobe } from "@opal/icons";
-import { SvgOnyxLogo } from "@opal/logos";
+import { SvgLumenLogo } from "@opal/logos";
 import { MessageCard } from "@opal/components";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import {
@@ -180,11 +180,11 @@ export default function WebSearchPage() {
       const existing = byType.get(providerType);
       if (existing) return existing;
 
-      if (providerType === "onyx_web_crawler") {
+      if (providerType === "lumen_web_crawler") {
         return {
           id: -1,
-          name: "Onyx Web Crawler",
-          provider_type: "onyx_web_crawler",
+          name: "Lumen Web Crawler",
+          provider_type: "lumen_web_crawler",
           is_active: true,
           config: null,
           masked_api_key: null,
@@ -505,7 +505,7 @@ export default function WebSearchPage() {
 
                 const canActivate =
                   providerId > 0 ||
-                  provider.provider_type === "onyx_web_crawler" ||
+                  provider.provider_type === "lumen_web_crawler" ||
                   isConfigured;
 
                 const ContentLogo =
@@ -517,8 +517,8 @@ export default function WebSearchPage() {
                     icon={() =>
                       ContentLogo ? (
                         <ContentLogo size={16} />
-                      ) : provider.provider_type === "onyx_web_crawler" ? (
-                        <SvgOnyxLogo size={16} />
+                      ) : provider.provider_type === "lumen_web_crawler" ? (
+                        <SvgLumenLogo size={16} />
                       ) : (
                         <SvgGlobe size={16} />
                       )
@@ -542,7 +542,7 @@ export default function WebSearchPage() {
                       )
                     }
                     onEdit={
-                      provider.provider_type !== "onyx_web_crawler" &&
+                      provider.provider_type !== "lumen_web_crawler" &&
                       isConfigured
                         ? () => {
                             openContentModal(provider.provider_type, provider);
@@ -550,7 +550,7 @@ export default function WebSearchPage() {
                         : undefined
                     }
                     onDisconnect={
-                      provider.provider_type !== "onyx_web_crawler" &&
+                      provider.provider_type !== "lumen_web_crawler" &&
                       isConfigured &&
                       provider.id > 0
                         ? () => {

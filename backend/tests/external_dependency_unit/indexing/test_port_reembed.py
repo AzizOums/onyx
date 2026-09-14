@@ -15,29 +15,29 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from onyx.configs.constants import RETURN_SEPARATOR, DocumentSource
-from onyx.configs.model_configs import (
+from lumen.configs.constants import RETURN_SEPARATOR, DocumentSource
+from lumen.configs.model_configs import (
     ASYM_PASSAGE_PREFIX,
     ASYM_QUERY_PREFIX,
     DEFAULT_DOCUMENT_ENCODER_MODEL,
     DOC_EMBEDDING_DIM,
     NORMALIZE_EMBEDDINGS,
 )
-from onyx.connectors.models import (
+from lumen.connectors.models import (
     convert_metadata_dict_to_list_of_strings,
     convert_metadata_list_of_strings_to_dict,
 )
-from onyx.db.models import SearchSettings
-from onyx.document_index.chunk_content_enrichment import (
+from lumen.db.models import SearchSettings
+from lumen.document_index.chunk_content_enrichment import (
     generate_enriched_content_for_chunk_embedding,
 )
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.constants import DEFAULT_MAX_CHUNK_SIZE
-from onyx.document_index.opensearch.schema import DocumentChunkWithoutVectors
-from onyx.indexing.chunker import get_metadata_suffix_for_document_index
-from onyx.indexing.embedder import DefaultIndexingEmbedder, IndexingEmbedder
-from onyx.indexing.models import ChunkEmbedding, DocAwareChunk, IndexChunk
-from onyx.indexing.port_reembed import (
+from lumen.document_index.interfaces_new import TenantState
+from lumen.document_index.opensearch.constants import DEFAULT_MAX_CHUNK_SIZE
+from lumen.document_index.opensearch.schema import DocumentChunkWithoutVectors
+from lumen.indexing.chunker import get_metadata_suffix_for_document_index
+from lumen.indexing.embedder import DefaultIndexingEmbedder, IndexingEmbedder
+from lumen.indexing.models import ChunkEmbedding, DocAwareChunk, IndexChunk
+from lumen.indexing.port_reembed import (
     AugmentationReembedContext,
     ReembedStrategy,
     _bare_contents,
@@ -48,8 +48,8 @@ from onyx.indexing.port_reembed import (
     recover_embedding_input,
     select_reembed_strategy,
 )
-from onyx.natural_language_processing.utils import BaseTokenizer
-from onyx.utils.pydantic_util import shallow_model_dump
+from lumen.natural_language_processing.utils import BaseTokenizer
+from lumen.utils.pydantic_util import shallow_model_dump
 from shared_configs.configs import (
     DOC_EMBEDDING_CONTEXT_SIZE,
     MODEL_SERVER_HOST,
@@ -429,7 +429,7 @@ def test_augmentation_enrich_on_generates_and_reembeds(
         return chunks
 
     monkeypatch.setattr(
-        "onyx.indexing.indexing_pipeline.add_contextual_summaries", _fake_enrich
+        "lumen.indexing.indexing_pipeline.add_contextual_summaries", _fake_enrich
     )
 
     bare = "the body text"
@@ -491,7 +491,7 @@ def test_augmentation_mixed_docs_enrich_per_document(
         return chunks
 
     monkeypatch.setattr(
-        "onyx.indexing.indexing_pipeline.add_contextual_summaries", _fake_enrich
+        "lumen.indexing.indexing_pipeline.add_contextual_summaries", _fake_enrich
     )
 
     a0 = _stored_chunk("a-first", document_id="doc-a", chunk_index=0, title=None)

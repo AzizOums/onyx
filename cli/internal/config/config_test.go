@@ -16,18 +16,18 @@ func clearEnvVars(t *testing.T) {
 
 func writeConfig(t *testing.T, dir string, data []byte) {
 	t.Helper()
-	onyxDir := filepath.Join(dir, "onyx-cli")
-	if err := os.MkdirAll(onyxDir, 0o755); err != nil {
+	lumenDir := filepath.Join(dir, "lumen-cli")
+	if err := os.MkdirAll(lumenDir, 0o755); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(filepath.Join(onyxDir, "config.json"), data, 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(lumenDir, "config.json"), data, 0o644); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestDefaultConfig(t *testing.T) {
 	cfg := DefaultConfig()
-	if cfg.ServerURL != "https://cloud.onyx.app" {
+	if cfg.ServerURL != "https://cloud.lumen.app" {
 		t.Errorf("expected default server URL, got %s", cfg.ServerURL)
 	}
 	if cfg.APIKey != "" {
@@ -55,7 +55,7 @@ func TestLoadDefaults(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", dir)
 
 	cfg := Load()
-	if cfg.ServerURL != "https://cloud.onyx.app" {
+	if cfg.ServerURL != "https://cloud.lumen.app" {
 		t.Errorf("expected default URL, got %s", cfg.ServerURL)
 	}
 	if cfg.APIKey != "" {
@@ -69,14 +69,14 @@ func TestLoadFromFile(t *testing.T) {
 	t.Setenv("XDG_CONFIG_HOME", dir)
 
 	data, _ := json.Marshal(map[string]interface{}{
-		"server_url":         "https://my-onyx.example.com",
+		"server_url":         "https://my-lumen.example.com",
 		"api_key":            "test-key-123",
 		"default_persona_id": 5,
 	})
 	writeConfig(t, dir, data)
 
 	cfg := Load()
-	if cfg.ServerURL != "https://my-onyx.example.com" {
+	if cfg.ServerURL != "https://my-lumen.example.com" {
 		t.Errorf("got %s", cfg.ServerURL)
 	}
 	if cfg.APIKey != "test-key-123" {
@@ -95,7 +95,7 @@ func TestLoadCorruptFile(t *testing.T) {
 	writeConfig(t, dir, []byte("not valid json {{{"))
 
 	cfg := Load()
-	if cfg.ServerURL != "https://cloud.onyx.app" {
+	if cfg.ServerURL != "https://cloud.lumen.app" {
 		t.Errorf("expected default URL on corrupt file, got %s", cfg.ServerURL)
 	}
 }
@@ -175,7 +175,7 @@ func TestSaveAndReload(t *testing.T) {
 	dir := t.TempDir()
 	t.Setenv("XDG_CONFIG_HOME", dir)
 
-	cfg := OnyxCliConfig{
+	cfg := LumenCliConfig{
 		ServerURL:      "https://saved.example.com",
 		APIKey:         "saved-key",
 		DefaultAgentID: 10,
@@ -244,7 +244,7 @@ func TestSaveCreatesParentDirs(t *testing.T) {
 	nested := filepath.Join(dir, "deep", "nested")
 	t.Setenv("XDG_CONFIG_HOME", nested)
 
-	if err := Save(OnyxCliConfig{APIKey: "test"}); err != nil {
+	if err := Save(LumenCliConfig{APIKey: "test"}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -259,10 +259,10 @@ func TestAPIURL(t *testing.T) {
 		input string
 		want  string
 	}{
-		{"https://cloud.onyx.app", "https://cloud.onyx.app/api"},
-		{"https://cloud.onyx.app/", "https://cloud.onyx.app/api"},
-		{"https://cloud.onyx.app/api", "https://cloud.onyx.app/api"},
-		{"https://cloud.onyx.app/api/", "https://cloud.onyx.app/api"},
+		{"https://cloud.lumen.app", "https://cloud.lumen.app/api"},
+		{"https://cloud.lumen.app/", "https://cloud.lumen.app/api"},
+		{"https://cloud.lumen.app/api", "https://cloud.lumen.app/api"},
+		{"https://cloud.lumen.app/api/", "https://cloud.lumen.app/api"},
 		{"http://localhost:8080", "http://localhost:8080/api"},
 	}
 	for _, tc := range cases {
@@ -274,13 +274,13 @@ func TestAPIURL(t *testing.T) {
 }
 
 func TestAPIURLCustomPrefix(t *testing.T) {
-	t.Setenv(EnvAPIPrefix, "/onyx/api")
+	t.Setenv(EnvAPIPrefix, "/lumen/api")
 	for _, input := range []string{
-		"https://onyx.example",
-		"https://onyx.example/onyx/api",
+		"https://lumen.example",
+		"https://lumen.example/lumen/api",
 	} {
 		got := APIURL(input)
-		if got != "https://onyx.example/onyx/api" {
+		if got != "https://lumen.example/lumen/api" {
 			t.Errorf("APIURL(%q) = %q", input, got)
 		}
 	}
@@ -293,22 +293,22 @@ func TestAPIURLEmptyPrefix(t *testing.T) {
 	}
 }
 
-func TestOnyxWebURL(t *testing.T) {
+func TestLumenWebURL(t *testing.T) {
 	t.Setenv(EnvAPIPrefix, "/api")
 	cases := []struct {
 		input string
 		want  string
 	}{
-		{"https://cloud.onyx.app/api", "https://cloud.onyx.app"},
-		{"https://cloud.onyx.app/api/", "https://cloud.onyx.app"},
-		{"https://onyx.example/base/api", "https://onyx.example/base"},
-		{"https://cloud.onyx.app", "https://cloud.onyx.app"},
+		{"https://cloud.lumen.app/api", "https://cloud.lumen.app"},
+		{"https://cloud.lumen.app/api/", "https://cloud.lumen.app"},
+		{"https://lumen.example/base/api", "https://lumen.example/base"},
+		{"https://cloud.lumen.app", "https://cloud.lumen.app"},
 		{"http://localhost:8080", "http://localhost:8080"},
 	}
 	for _, tc := range cases {
-		got := OnyxWebURL(tc.input)
+		got := LumenWebURL(tc.input)
 		if got != tc.want {
-			t.Errorf("OnyxWebURL(%q) = %q, want %q", tc.input, got, tc.want)
+			t.Errorf("LumenWebURL(%q) = %q, want %q", tc.input, got, tc.want)
 		}
 	}
 }

@@ -5,10 +5,10 @@ import sys
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-from onyx.db.document import delete_documents_complete__no_commit
-from onyx.db.enums import ConnectorCredentialPairStatus
-from onyx.db.search_settings import get_active_search_settings
-from onyx.db.tag import delete_orphan_tags_batched
+from lumen.db.document import delete_documents_complete__no_commit
+from lumen.db.enums import ConnectorCredentialPairStatus
+from lumen.db.search_settings import get_active_search_settings
+from lumen.db.tag import delete_orphan_tags_batched
 
 # Modify sys.path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -18,32 +18,32 @@ sys.path.append(parent_dir)
 # pylint: disable=E402
 # flake8: noqa: E402
 
-# Now import Onyx modules
-from onyx.configs.constants import DocumentSource
-from onyx.db.connector import fetch_connector_by_id
-from onyx.db.connector_credential_pair import (
+# Now import Lumen modules
+from lumen.configs.constants import DocumentSource
+from lumen.db.connector import fetch_connector_by_id
+from lumen.db.connector_credential_pair import (
     get_connector_credential_pair,
     get_connector_credential_pair_from_id,
 )
-from onyx.db.document import get_documents_for_connector_credential_pair
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.index_attempt import (
+from lumen.db.document import get_documents_for_connector_credential_pair
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.index_attempt import (
     cancel_indexing_attempts_for_ccpair,
     delete_index_attempts,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     ConnectorCredentialPair,
     DocumentSet__ConnectorCredentialPair,
     UserGroup__ConnectorCredentialPair,
 )
-from onyx.db.permission_sync_attempt import (
+from lumen.db.permission_sync_attempt import (
     delete_doc_permission_sync_attempts__no_commit,
     delete_external_group_permission_sync_attempts__no_commit,
 )
-from onyx.document_index.factory import get_all_document_indices
-from onyx.document_index.interfaces_new import DocumentIndex
-from onyx.file_store.file_store import get_default_file_store
-from onyx.utils.logger import setup_logger
+from lumen.document_index.factory import get_all_document_indices
+from lumen.document_index.interfaces_new import DocumentIndex
+from lumen.file_store.file_store import get_default_file_store
+from lumen.utils.logger import setup_logger
 
 # pylint: enable=E402
 # flake8: noqa: E402
@@ -153,7 +153,7 @@ def _unsafe_deletion(
 def _delete_connector(cc_pair_id: int, db_session: Session) -> None:
     user_input = input(
         "DO NOT USE THIS UNLESS YOU KNOW WHAT YOU ARE DOING. \
-        IT MAY CAUSE ISSUES with your Onyx instance! \
+        IT MAY CAUSE ISSUES with your Lumen instance! \
         Are you SURE you want to continue? (enter 'Y' to continue): "
     )
     if user_input != "Y":

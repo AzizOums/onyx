@@ -72,7 +72,7 @@ Status: design (v2, revised after adversarial pressure test) · Task: group-mana
 
 ## 1. Overview & Motivation
 
-Onyx's group-manager feature lets a non-admin manage resources *within the groups they manage*. The backend enforcement for this (PR1–PR5) is built, vetted, and fail-closed — it is the real security boundary. The **UI**, however, guesses at that boundary from a second, client-side re-derivation of policy that has already drifted out of agreement with the server. The result is not a security hole; it is an **affordance-correctness** problem: buttons that shouldn't render do, buttons that should render don't, and clicks that pass the client gate 403 at the server. A ground-truth inventory of every permission-gated affordance in the web app quantifies the drift.
+Lumen's group-manager feature lets a non-admin manage resources *within the groups they manage*. The backend enforcement for this (PR1–PR5) is built, vetted, and fail-closed — it is the real security boundary. The **UI**, however, guesses at that boundary from a second, client-side re-derivation of policy that has already drifted out of agreement with the server. The result is not a security hole; it is an **affordance-correctness** problem: buttons that shouldn't render do, buttons that should render don't, and clicks that pass the client gate 403 at the server. A ground-truth inventory of every permission-gated affordance in the web app quantifies the drift.
 
 ### 1.1 Evidence
 
@@ -89,7 +89,7 @@ An 8-agent inventory audited 109 permission-gated UI affordances against the rea
 | Navigation | 2 | 12 | 17% | coarse-only |
 | **Total** | **49** | **109** | **45%** | |
 
-Connectors scoring best is the tell: it is the one domain that already stamps a server-computed per-item flag (`backend/onyx/server/documents/connector.py:1231`, `cc_pair.py:323`). Everywhere the client is left to *infer* the boundary, it gets ~half the affordances wrong.
+Connectors scoring best is the tell: it is the one domain that already stamps a server-computed per-item flag (`backend/lumen/server/documents/connector.py:1231`, `cc_pair.py:323`). Everywhere the client is left to *infer* the boundary, it gets ~half the affordances wrong.
 
 ### 1.2 Three structural root causes
 
@@ -125,7 +125,7 @@ Connectors scoring best is the tell: it is the one domain that already stamps a 
 
 ### 1.4 Non-Goals
 
-- **Not changing what backend enforcement decides.** GATE 2 / the PR1–5 PEP remain the security boundary; every guard keeps its exact `OnyxErrorCode`, message, and trigger. A small **behavior-preserving** refactor *is* in scope — it lifts each guard's boolean decision into a shared `can_<action>` helper that the guard still calls before raising (§2.3), so the guards enforce identically. The **existing PR1–5 enforcement suite is the proof**: it must stay green with zero edits.
+- **Not changing what backend enforcement decides.** GATE 2 / the PR1–5 PEP remain the security boundary; every guard keeps its exact `LumenErrorCode`, message, and trigger. A small **behavior-preserving** refactor *is* in scope — it lifts each guard's boolean decision into a shared `can_<action>` helper that the guard still calls before raising (§2.3), so the guards enforce identically. The **existing PR1–5 enforcement suite is the proof**: it must stay green with zero edits.
 - **Not a security fix.** Enforcement is already fail-closed; a mis-gated button that 403s is a UX bug, not an escalation. This work is affordance-correctness + maintainability only.
 - **The `can_<action>` helper is required, not deferred.** D1 promotes it from the old "optional `can()` facade" to a v1 core — but as an **internal server function**, not an HTTP endpoint. Only the *batched* `POST /capabilities` endpoint stays deferred (§3.6).
 
@@ -185,7 +185,7 @@ Why `effective_permissions` and `admin_capabilities` must stay distinct: the uni
 
 Today each tricky guard **decides and raises in one body**; a read projection would have to **re-derive the same decision** separately — two implementations of one policy, guaranteed to drift. The fix makes drift impossible **by construction**: lift the *boolean decision* out of each guard into a shared helper `can_<action>(user, resource, db) -> bool`, then have all three consumers call it.
 
-- **Guard (write, PEP — behavior unchanged):** `assert_<action>` now calls the helper, then raises its exact same `OnyxError` on `False`. Same code, same message, same trigger.
+- **Guard (write, PEP — behavior unchanged):** `assert_<action>` now calls the helper, then raises its exact same `LumenError` on `False`. Same code, same message, same trigger.
 - **Projection (read, NEW):** stamps `dto.permissions[action] = can_<action>(user, res, db)`.
 - **Contract test:** calls the *same* helper and asserts it equals "the guard did not raise."
 
@@ -203,7 +203,7 @@ Today each tricky guard **decides and raises in one body**; a read projection wo
 
 Because `assert_<action>` now *calls* `can_<action>`, "what the projection stamps" and "what the PEP enforces" are the **same boolean** — not a mirror that has to be kept faithful, but literally one function. The safety net proving enforcement is unchanged is the **existing PR1–5 enforcement suite**: it drives the `assert_*` guards and must stay green after the extraction. Green suite ⇒ the decision the PEP makes is provably identical; the only new thing is that the same decision is now also *readable*.
 
-This is a small, behavior-preserving refactor across ~6 guards — `auth/scoped_permissions.py:55` (`assert_within_scope`), `:92` (`assert_manages_group`); persona `db/persona.py:340` + EE `ee/onyx/db/persona.py:73`; tool `tool/api.py:84`; mcp `mcp/api.py:1376`. Two of the underlying gates are **already booleans** (`user_can_view_assistant_stats` `ee/onyx/db/analytics.py:339`, `agent_mediated_scope_allows` `auth/scoped_permissions.py:36`) — the projection just calls them. Full per-guard extraction (Tier-0 scope booleans + Tier-1 read wrappers, and the write-shaped→read-mode adaptation) is specified in §3.1a.
+This is a small, behavior-preserving refactor across ~6 guards — `auth/scoped_permissions.py:55` (`assert_within_scope`), `:92` (`assert_manages_group`); persona `db/persona.py:340` + EE `ee/lumen/db/persona.py:73`; tool `tool/api.py:84`; mcp `mcp/api.py:1376`. Two of the underlying gates are **already booleans** (`user_can_view_assistant_stats` `ee/lumen/db/analytics.py:339`, `agent_mediated_scope_allows` `auth/scoped_permissions.py:36`) — the projection just calls them. Full per-guard extraction (Tier-0 scope booleans + Tier-1 read wrappers, and the write-shaped→read-mode adaptation) is specified in §3.1a.
 
 > **Not "one filter per resource."** Each *action* bottoms out on its own real gate with its own shape — owner-bypass, creator-bypass, single-group membership, or a global token. The helper is `can_<action>`, not `can_touch_<resource>`; the editable filter `_add_user_filters(get_editable=True)` is a superset union that mis-stamps most actions if reused alone (over-reports scoped edits → 403; under-reports owner/creator affordances → their own button vanishes). See the per-action table in §3.3.
 
@@ -291,8 +291,8 @@ Two-tier helper layout. Tier 0 = generic scope booleans in `auth/scoped_permissi
 | **0 (generic scope booleans)** | `within_scope(...) -> bool` | `auth/scoped_permissions.py` | `assert_within_scope` (`:55`) | write-shaped (current/requested/non-public) |
 | | `manages_group(...) -> bool` | `auth/scoped_permissions.py` | `assert_manages_group` (`:92`) | single-group |
 | | `agent_mediated_scope_allows(...)` | `auth/scoped_permissions.py:36` | — **already a bool** | reuse as-is |
-| **1 (per-resource read wrappers)** | `can_edit_persona` / `can_share_persona` | `db/persona.py`, `ee/onyx/db/persona.py` | `_assert_persona_update_within_managed_scope` (`:340`), `_assert_group_share_within_scope` (ee `:73`) | resolve current state → call Tier-0 |
-| | `can_view_persona_stats` | `ee/onyx/db/analytics.py:339` | `user_can_view_assistant_stats` — **already a bool** | reuse as-is (O-class) |
+| **1 (per-resource read wrappers)** | `can_edit_persona` / `can_share_persona` | `db/persona.py`, `ee/lumen/db/persona.py` | `_assert_persona_update_within_managed_scope` (`:340`), `_assert_group_share_within_scope` (ee `:73`) | resolve current state → call Tier-0 |
+| | `can_view_persona_stats` | `ee/lumen/db/analytics.py:339` | `user_can_view_assistant_stats` — **already a bool** | reuse as-is (O-class) |
 | | `can_edit_custom_tool` | `server/features/tool/api.py` | `_get_editable_custom_tool` (`:84`) + `_assert_action_within_managed_scope` (`:62`) | admin∨creator∨scoped |
 | | `can_edit_mcp_server` | `server/features/mcp/api.py` | `_ensure_mcp_server_editable` (`:1376`) | admin∨owner(email)∨scoped |
 | | `can_manage_group` | `auth/scoped_permissions.py` | thin over `manages_group` | single-group |
@@ -314,7 +314,7 @@ def assert_within_scope(user, db_session, *, permission, current_group_ids,
         final = set(current_group_ids) | set(requested_group_ids)
         if managed and final and final.issubset(managed) and is_non_public:
             return
-    raise OnyxError(OnyxErrorCode.INSUFFICIENT_PERMISSIONS, "Group managers can only ...")
+    raise LumenError(LumenErrorCode.INSUFFICIENT_PERMISSIONS, "Group managers can only ...")
 ```
 
 Refactored — the decision is extracted; the raise is unchanged:
@@ -343,7 +343,7 @@ def assert_within_scope(user, db_session, *, permission, current_group_ids,
                         current_group_ids=current_group_ids,
                         requested_group_ids=requested_group_ids,
                         is_non_public=is_non_public):
-        raise OnyxError(OnyxErrorCode.INSUFFICIENT_PERMISSIONS,
+        raise LumenError(LumenErrorCode.INSUFFICIENT_PERMISSIONS,
                         "Group managers can only act on private resources "
                         "within the groups they manage.")
 ```
@@ -363,7 +363,7 @@ def manages_group(user, db_session, *, group_id,
 
 def assert_manages_group(user, db_session, *, group_id) -> None:
     if not manages_group(user, db_session, group_id=group_id):
-        raise OnyxError(OnyxErrorCode.INSUFFICIENT_PERMISSIONS,
+        raise LumenError(LumenErrorCode.INSUFFICIENT_PERMISSIONS,
                         "Group managers can only act within the groups they manage.")
 ```
 
@@ -381,7 +381,7 @@ Because both bottom out on `within_scope`, `can_edit_persona(u,R,db)` and "`asse
 
 #### Tier 1 — per-resource read wrappers
 
-**Persona edit / share** (`db/persona.py:340`, `ee/onyx/db/persona.py:73`). Per §3.3 (D2): the projection is **read-editable AND managed-scope** — never `_add_user_filters(get_editable=True)` alone (superset union → over-reports → 403). Extract the scope-boolean from each guard, then compose with editable-membership.
+**Persona edit / share** (`db/persona.py:340`, `ee/lumen/db/persona.py:73`). Per §3.3 (D2): the projection is **read-editable AND managed-scope** — never `_add_user_filters(get_editable=True)` alone (superset union → over-reports → 403). Extract the scope-boolean from each guard, then compose with editable-membership.
 
 `_assert_persona_update_within_managed_scope` (`:340`) short-circuits non-SCOPED holders and personal (no-group) agents, resolves current groups/privacy in-txn, then delegates the raise to `assert_within_scope`. Extract its body to a bool:
 
@@ -407,7 +407,7 @@ def _assert_persona_update_within_managed_scope(persona_id, request, user, db_se
     if not persona_update_within_scope(user, db_session, persona_id=persona_id,
                                        requested_group_ids=_resolved_groups(request, ...),
                                        requested_is_public=_resolved_public(request, ...)):
-        raise OnyxError(OnyxErrorCode.INSUFFICIENT_PERMISSIONS, "Group managers can only ...")
+        raise LumenError(LumenErrorCode.INSUFFICIENT_PERMISSIONS, "Group managers can only ...")
 ```
 
 Read wrapper (projection + contract test call this):
@@ -427,7 +427,7 @@ def can_edit_persona(user, persona: Persona, db_session, *,
 
 **Share** has the same shape over `_assert_group_share_within_scope` (ee `:73`, called `:161`, body ends in `assert_within_scope` at ee `:104`): extract `persona_group_share_within_scope(...) -> bool`, then `can_share_persona = editable-membership AND persona_group_share_within_scope(read-mode: requested := current groups, original_is_public := persona.is_public)`.
 
-**Persona view_stats — reclassify M → O (already a bool).** Per §3.3, the real gate is **not** the editable filter — it is `user_can_view_assistant_stats` (`ee/onyx/db/analytics.py:339`), which returns `owner OR FULL_ADMIN`. No extraction:
+**Persona view_stats — reclassify M → O (already a bool).** Per §3.3, the real gate is **not** the editable filter — it is `user_can_view_assistant_stats` (`ee/lumen/db/analytics.py:339`), which returns `owner OR FULL_ADMIN`. No extraction:
 
 ```python
 def can_view_persona_stats(user, persona, db_session) -> bool:
@@ -480,7 +480,7 @@ def can_edit_mcp_server(user, server: DbMCPServer, db_session) -> bool:
 
 def _ensure_mcp_server_editable(server, user, db_session) -> None:
     if not can_edit_mcp_server(user, server, db_session):
-        raise OnyxError(OnyxErrorCode.INSUFFICIENT_PERMISSIONS,
+        raise LumenError(LumenErrorCode.INSUFFICIENT_PERMISSIONS,
                         "Only the server owner or a manager of its groups can modify this MCP server.")
 ```
 
@@ -512,13 +512,13 @@ def can_manage_group(user, group: UserGroup, db_session, *,
 
 #### Behavior-preservation invariant (for the reviewer)
 
-- Every `assert_*` keeps its **exact `OnyxErrorCode` + message**; the extraction only relocates the boolean, so the **existing PR1–5 enforcement suite is the proof security is unchanged** — it must stay green with zero edits.
+- Every `assert_*` keeps its **exact `LumenErrorCode` + message**; the extraction only relocates the boolean, so the **existing PR1–5 enforcement suite is the proof security is unchanged** — it must stay green with zero edits.
 - If a contract-test cell fails, the bug is in the **read wrapper's composition** (forgot the `editable ∧` for persona; stamped only the scoped term for tool/mcp) — **never** a reason to relax a guard.
 - Fail-closed by shape: every helper's terminal branch returns `False`; unknown authority, empty managed scope, and missing resource state all deny.
 
 ### 3.2 Read-side projection: `permissions_for` + ctx (no N+1)
 
-New module `backend/onyx/auth/permission_projection.py`. The projection **never re-derives policy** — it calls the §3.1 `can_<action>` helpers. To keep list paths off the N+1 path, the caller preloads a small `ctx` **once** and threads it through every per-row helper call so per-row stamping issues **no** DB query.
+New module `backend/lumen/auth/permission_projection.py`. The projection **never re-derives policy** — it calls the §3.1 `can_<action>` helpers. To keep list paths off the N+1 path, the caller preloads a small `ctx` **once** and threads it through every per-row helper call so per-row stamping issues **no** DB query.
 
 ```python
 # auth/permission_projection.py
@@ -596,8 +596,8 @@ The old "one filter per resource" was wrong: within a single resource, different
 | Resource | Action | Real gate (fn + file:line) | Scope | Notes |
 |---|---|---|---|---|
 | **Persona** | edit | `_assert_persona_update_within_managed_scope` → `assert_within_scope` `db/persona.py:340` (route `persona/api.py:336`, `ADD_AGENTS` allow_scope) **AND** read-editable `_add_user_filters(get_editable=True)` `db/persona.py:82` | M | Both gates; NOT `get_editable` alone (superset union → over-reports → 403) |
-| | share | `_assert_group_share_within_scope` → `assert_within_scope` **EE** `ee/onyx/db/persona.py:73` (called `:161`; route `persona/api.py:443`) **AND** read-editable | M | EE-only; `_assert_persona_update…` doesn't fire on a groups-unchanged share |
-| | **view_stats** | `user_can_view_assistant_stats` `ee/onyx/db/analytics.py:339` (route `ee/…/analytics/api.py:220`) | **O** | **M→O**: `FULL_ADMIN OR persona.user_id==user.id`. NOT the editable filter |
+| | share | `_assert_group_share_within_scope` → `assert_within_scope` **EE** `ee/lumen/db/persona.py:73` (called `:161`; route `persona/api.py:443`) **AND** read-editable | M | EE-only; `_assert_persona_update…` doesn't fire on a groups-unchanged share |
+| | **view_stats** | `user_can_view_assistant_stats` `ee/lumen/db/analytics.py:339` (route `ee/…/analytics/api.py:220`) | **O** | **M→O**: `FULL_ADMIN OR persona.user_id==user.id`. NOT the editable filter |
 | | **delete** | `get_persona_by_id(is_for_edit=True)` `db/persona.py:1426` via `mark_persona_as_deleted` (route `persona/api.py:487`, `ADD_AGENTS` **no** allow_scope) | **O\|A** | `global MANAGE_AGENTS OR owner(user_id) OR owner-group member` — excludes scoped-manager rels, so ≠ edit's `M` |
 | | feature | route `persona/api.py:177` `MANAGE_AGENTS` **no** allow_scope | A | global token |
 | | list (listed) | route `persona/api.py:143` `MANAGE_AGENTS` **no** allow_scope | A | global token |
@@ -652,7 +652,7 @@ Because `assert_*` now *calls* the helper, `test_helper_matches_guard` is **stru
 
 ### 3.4 `/me.admin_capabilities` — server-computed Layer-1 set (+ cache coherence)
 
-New field on `UserInfo` (`backend/onyx/server/manage/models.py:131`), derived, never persisted, never consulted by the PEP. `effective_permissions` stays **global-only, unchanged**. `admin_capabilities` is **query-free** — `is_group_manager` is a column and the bundle is a constant:
+New field on `UserInfo` (`backend/lumen/server/manage/models.py:131`), derived, never persisted, never consulted by the PEP. `effective_permissions` stays **global-only, unchanged**. `admin_capabilities` is **query-free** — `is_group_manager` is a column and the bundle is a constant:
 
 ```python
 # UserInfo.from_model — no DB
@@ -708,7 +708,7 @@ The connectors domain already does the batch pattern: preload the editable set o
 
 ---
 
-_Verified paths (HEAD):_ `backend/onyx/auth/scoped_permissions.py:36,55,92` · `backend/onyx/db/scoped_permissions.py:25,34,39` · `backend/onyx/db/persona.py:82,340,560,1426` · `backend/onyx/db/persona_sharing.py:40,48` · `backend/ee/onyx/db/persona.py:73,104,161` · `backend/onyx/server/features/persona/api.py:143,158,177,196,215,336,443,487,501,568` · `backend/onyx/server/features/tool/api.py:62,84,100,140,167,194` · `backend/onyx/server/features/mcp/api.py:1358,1376,1386` · `backend/onyx/db/tools.py:141,153` · `backend/ee/onyx/db/analytics.py:339` · `backend/onyx/server/features/document_set/api.py:76,91,123` · `backend/onyx/server/features/skill/api.py:233,258,287,304,339,355,378` · `backend/ee/onyx/server/user_group/api.py:133,191,216,239,262,282,333` · `backend/ee/onyx/db/user_group.py:545` · `backend/onyx/server/manage/models.py:131` · `backend/onyx/server/documents/connector.py:1229,1231,1443` · `backend/onyx/server/documents/cc_pair.py:324-326` · `web/src/lib/admin-routes.ts:86,92` · `web/src/lib/auth/requireAuth.ts:108` · `web/src/layouts/chromes/AdminSSChrome.tsx`.
+_Verified paths (HEAD):_ `backend/lumen/auth/scoped_permissions.py:36,55,92` · `backend/lumen/db/scoped_permissions.py:25,34,39` · `backend/lumen/db/persona.py:82,340,560,1426` · `backend/lumen/db/persona_sharing.py:40,48` · `backend/ee/lumen/db/persona.py:73,104,161` · `backend/lumen/server/features/persona/api.py:143,158,177,196,215,336,443,487,501,568` · `backend/lumen/server/features/tool/api.py:62,84,100,140,167,194` · `backend/lumen/server/features/mcp/api.py:1358,1376,1386` · `backend/lumen/db/tools.py:141,153` · `backend/ee/lumen/db/analytics.py:339` · `backend/lumen/server/features/document_set/api.py:76,91,123` · `backend/lumen/server/features/skill/api.py:233,258,287,304,339,355,378` · `backend/ee/lumen/server/user_group/api.py:133,191,216,239,262,282,333` · `backend/ee/lumen/db/user_group.py:545` · `backend/lumen/server/manage/models.py:131` · `backend/lumen/server/documents/connector.py:1229,1231,1443` · `backend/lumen/server/documents/cc_pair.py:324-326` · `web/src/lib/admin-routes.ts:86,92` · `web/src/lib/auth/requireAuth.ts:108` · `web/src/layouts/chromes/AdminSSChrome.tsx`.
 
 ---
 
@@ -861,7 +861,7 @@ const canCreate = useCapabilities(["connector:create"]);
 
 ### 4.4 Per-item consumption — collapse the duplication
 
-**Where the tags come from (D3).** Per-card Layer-2 tags are **not** stamped onto the hottest path — the chat/explore agent list is a `MinimalPersonaSnapshot` fetched `get_editable=False` (`backend/onyx/server/features/persona/api.py:501-517`); stamping `edit`/`share`/`view_stats` there would add an N+1 scope resolve per card. Instead, `AgentCard` already fetches the per-card `FullPersonaSnapshot` via `useAgent(agent.id)` (`AgentCard.tsx:64`, a `GET /persona/{id}`) — **that** DTO carries `permissions`, so per-card gating is **zero net-new query**. Never source the tag from the existing `user_permission` / `PersonaAccessLevel` field (`ee/onyx/db/persona_sharing.py:48`): it does **not** reflect scoped-manager edit rights → silent drift. Read `fullAgent.permissions`, fall back to hidden while the per-card fetch is in flight.
+**Where the tags come from (D3).** Per-card Layer-2 tags are **not** stamped onto the hottest path — the chat/explore agent list is a `MinimalPersonaSnapshot` fetched `get_editable=False` (`backend/lumen/server/features/persona/api.py:501-517`); stamping `edit`/`share`/`view_stats` there would add an N+1 scope resolve per card. Instead, `AgentCard` already fetches the per-card `FullPersonaSnapshot` via `useAgent(agent.id)` (`AgentCard.tsx:64`, a `GET /persona/{id}`) — **that** DTO carries `permissions`, so per-card gating is **zero net-new query**. Never source the tag from the existing `user_permission` / `PersonaAccessLevel` field (`ee/lumen/db/persona_sharing.py:48`): it does **not** reflect scoped-manager edit rights → silent drift. Read `fullAgent.permissions`, fall back to hidden while the per-card fetch is in flight.
 
 **Featured status (4 copies today).** The gate is a *global* manage-agents action (managers get `false`), so the server stamps `agent.permissions.feature`. All four sites become `<Can resource={agent} action="feature">`.
 
@@ -998,7 +998,7 @@ Coarse rows use `hasPermission(adminCapabilities, X)` / `useCapabilities([...])`
 
 **Note — where the chat-card tags come from (D3).** The chat/explore card's `edit`/`share`/`view_stats` tags are stamped on the per-card **`GET /persona/{id}`** (`FullPersonaSnapshot`) that `AgentCard` **already** fetches via `useAgent` (`AgentCard.tsx:64`) — **zero net-new query**. They are **not** stamped on the `MinimalPersonaSnapshot` chat/explore *list* (fetched `get_editable=False`, `persona/api.py:501-517` — the hottest path; leave it untagged), and are **never** sourced from `user_permission`/`PersonaAccessLevel` (`persona/models.py:398`), which does **not** reflect scoped-manager edit rights (silent drift). Admin-list rows stamp per-row from a preload-once editable-id set (connectors template).
 
-**Note — the gates (D2).** `edit`/`share` = **read-editable AND scoped-assert** — `_add_user_filters(get_editable=True)` (`db/persona.py:82`) **AND** `_assert_persona_update_within_managed_scope`→`assert_within_scope` (share adds EE `_assert_group_share_within_scope`, `ee/onyx/db/persona.py:104,161`); **never** the editable filter alone (superset union → over-reports → 403). `view_stats` = **O** (reclassified M→O): `user_can_view_assistant_stats` (`ee/onyx/db/analytics.py:339`) = owner **OR** FULL_ADMIN — **not** the editable filter. `delete`/`publish` = **O|A** (reclassified A→O|A): `global MANAGE_AGENTS OR owner OR owner-group member` — a plain owner *can* delete/org-publish their own agent, but the filter excludes scoped-manager rels, so ≠ `edit`'s M.
+**Note — the gates (D2).** `edit`/`share` = **read-editable AND scoped-assert** — `_add_user_filters(get_editable=True)` (`db/persona.py:82`) **AND** `_assert_persona_update_within_managed_scope`→`assert_within_scope` (share adds EE `_assert_group_share_within_scope`, `ee/lumen/db/persona.py:104,161`); **never** the editable filter alone (superset union → over-reports → 403). `view_stats` = **O** (reclassified M→O): `user_can_view_assistant_stats` (`ee/lumen/db/analytics.py:339`) = owner **OR** FULL_ADMIN — **not** the editable filter. `delete`/`publish` = **O|A** (reclassified A→O|A): `global MANAGE_AGENTS OR owner OR owner-group member` — a plain owner *can* delete/org-publish their own agent, but the filter excludes scoped-manager rels, so ≠ `edit`'s M.
 
 **Note — the featured fork / labels.** `canUpdateFeaturedStatus` exists in **three injected-token copies** (`AgentCard:57`, `ShareAgentModal:79`, `AgentEditorPage:492`) vs the one correct `effective_permissions` copy (`AgentRowActions:68`) — collapse all four to `<Can resource={agent} action="feature">`. `checkUserOwnsAgent` stays only as the **"Your Agents"** label (`AgentsNavigationPage.tsx:79`), never as an edit/share gate. Coarse **"New Agent"** (`AgentsNavigationPage.tsx:105`, currently `hasPermission(permissions, ADD_AGENTS)` off injected tokens) → `useCapabilities(['agent:create'])` off `admin_capabilities`.
 
@@ -1079,7 +1079,7 @@ Coarse rows use `hasPermission(adminCapabilities, X)` / `useCapabilities([...])`
 
 ---
 
-_Provenance: every `file:line` in §5 was verified against the repo `HEAD` (branch `perms-pr6-manager-ui-scoped-nav`). Notable confirmations while writing this table: `canUpdateFeaturedStatus` exists in **4** copies (not 3 — `AgentRowActions.tsx:68` is a fourth, and the one correct one); the doc-set double-fetch, the `is_editable_for_current_user` connector template, the `CraftManageLayout` FULL_ADMIN skills redirect, and the `visibilityPermissions` injection point are all present; and the per-page gate that `admin-routes.ts` claims lives in `ClientLayout.tsx` does **not** exist (per-page enforcement is genuinely absent — `AdminSSChrome` is the only gate). Per-gate D2/D5/D6 verifications baked in: persona `view_stats` = `user_can_view_assistant_stats` (owner ∨ FULL_ADMIN, `ee/onyx/db/analytics.py:339`), **not** the editable filter (M→O); persona `edit`/`share` = read-editable **AND** `_assert_persona_update_within_managed_scope`/EE `_assert_group_share_within_scope` (not `get_editable` alone); MCP `edit` owner is by **EMAIL** (`mcp/api.py:1386`) and Tool `edit` has a **creator** bypass (`tool/api.py:100`) — both M→M|O; persona `delete`/`publish` are owner-or-global (A→O|A); federated connectors have no scope model → admin-only (D6); the per-page SSR gate must **default-deny** unmatched `/admin/*` (D5, else it fails open on `systeminfo`/`groups2`/`federated/[id]`)._
+_Provenance: every `file:line` in §5 was verified against the repo `HEAD` (branch `perms-pr6-manager-ui-scoped-nav`). Notable confirmations while writing this table: `canUpdateFeaturedStatus` exists in **4** copies (not 3 — `AgentRowActions.tsx:68` is a fourth, and the one correct one); the doc-set double-fetch, the `is_editable_for_current_user` connector template, the `CraftManageLayout` FULL_ADMIN skills redirect, and the `visibilityPermissions` injection point are all present; and the per-page gate that `admin-routes.ts` claims lives in `ClientLayout.tsx` does **not** exist (per-page enforcement is genuinely absent — `AdminSSChrome` is the only gate). Per-gate D2/D5/D6 verifications baked in: persona `view_stats` = `user_can_view_assistant_stats` (owner ∨ FULL_ADMIN, `ee/lumen/db/analytics.py:339`), **not** the editable filter (M→O); persona `edit`/`share` = read-editable **AND** `_assert_persona_update_within_managed_scope`/EE `_assert_group_share_within_scope` (not `get_editable` alone); MCP `edit` owner is by **EMAIL** (`mcp/api.py:1386`) and Tool `edit` has a **creator** bypass (`tool/api.py:100`) — both M→M|O; persona `delete`/`publish` are owner-or-global (A→O|A); federated connectors have no scope model → admin-only (D6); the per-page SSR gate must **default-deny** unmatched `/admin/*` (D5, else it fails open on `systeminfo`/`groups2`/`federated/[id]`)._
 
 ---
 
@@ -1124,7 +1124,7 @@ def test_helper_matches_guard(db_session, actor, resource_kind, action):
     assert helper_says is (not raised), f"DRIFT {resource_kind}.{action} for {actor}"
 ```
 
-`guard_raised` invokes the actual `_assert_persona_update_within_managed_scope` / `_ensure_mcp_server_editable` / `assert_manages_group` / … and reports whether it raised `OnyxError`. A policy edit to `within_scope`/`manages_group` (`auth/scoped_permissions.py:55,92`) moves **both** sides at once or fails CI — this is what makes drift structurally impossible. If a cell fails, the bug is the read wrapper's *composition* (forgot the `editable ∧` for persona, or stamped only the scoped term for tool/mcp) — **never** a reason to relax a guard.
+`guard_raised` invokes the actual `_assert_persona_update_within_managed_scope` / `_ensure_mcp_server_editable` / `assert_manages_group` / … and reports whether it raised `LumenError`. A policy edit to `within_scope`/`manages_group` (`auth/scoped_permissions.py:55,92`) moves **both** sides at once or fails CI — this is what makes drift structurally impossible. If a cell fails, the bug is the read wrapper's *composition* (forgot the `editable ∧` for persona, or stamped only the scoped term for tool/mcp) — **never** a reason to relax a guard.
 
 **A-class (global-token) actions** — `feature`, `list`, `reorder`, and the pure-global `delete`/`toggle` — have **no per-resource guard**; the gate is the route's `require_permission(perm, allow_scope=False)`. They stamp constant-per-row from `effective_permissions`, so they are asserted against token membership directly (managers → `false`):
 

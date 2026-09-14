@@ -12,7 +12,7 @@ from typing import Any
 
 import pytest
 
-from onyx.sandbox_proxy.mcp_jsonrpc import McpRpcKind, classify_mcp_request
+from lumen.sandbox_proxy.mcp_jsonrpc import McpRpcKind, classify_mcp_request
 
 
 def _body(payload: Any) -> bytes:

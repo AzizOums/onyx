@@ -1,6 +1,6 @@
 """Tool sync for an MCP server (`_sync_mcp_server_tools`) against a real DB.
 
-Regression coverage for onyx-dot-app/onyx#14346: one OAuth connect fired two
+Regression coverage for lumen-dot-app/lumen#14346: one OAuth connect fired two
 concurrent tool refreshes and every tool was stored twice."""
 
 import threading
@@ -12,16 +12,16 @@ import pytest
 from mcp.types import Tool as MCPLibTool
 from sqlalchemy.orm import Session
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import (
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import (
     MCPAuthenticationPerformer,
     MCPAuthenticationType,
     MCPTransport,
 )
-from onyx.db.mcp import create_mcp_server__no_commit
-from onyx.db.models import MCPServer, Tool
-from onyx.db.tools import get_tools_by_mcp_server_id
-from onyx.server.features.mcp import api as mcp_api
+from lumen.db.mcp import create_mcp_server__no_commit
+from lumen.db.models import MCPServer, Tool
+from lumen.db.tools import get_tools_by_mcp_server_id
+from lumen.server.features.mcp import api as mcp_api
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from shared_configs.contextvars import CURRENT_TENANT_ID_CONTEXTVAR
 

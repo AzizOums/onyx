@@ -13,7 +13,7 @@ const SIGNUP: readonly string[] = ["(auth)", "signup"];
 
 function input(overrides: Partial<AuthGateInput>): AuthGateInput {
   return {
-    serverUrl: "https://cloud.onyx.app",
+    serverUrl: "https://lumen.example.com",
     status: "loading",
     isAuthed: false,
     isAuthError: false,

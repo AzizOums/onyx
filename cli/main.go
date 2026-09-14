@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/onyx-dot-app/onyx/cli/cmd"
-	"github.com/onyx-dot-app/onyx/cli/internal/exitcodes"
+	"github.com/lumen-dot-app/lumen/cli/cmd"
+	"github.com/lumen-dot-app/lumen/cli/internal/exitcodes"
 )
 
 var (

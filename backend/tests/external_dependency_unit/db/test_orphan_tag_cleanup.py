@@ -11,10 +11,10 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import Document, Document__Tag, Tag
-from onyx.db.tag import (
+from lumen.configs.constants import DocumentSource
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.models import Document, Document__Tag, Tag
+from lumen.db.tag import (
     _delete_orphan_tags_batch,
     delete_orphan_tags__no_commit,
     delete_orphan_tags_batched,
@@ -89,7 +89,7 @@ class TestOrphanTagCleanup:
         linked_ids = _seed_linked_tags(db_session, 3)
 
         with patch(
-            "onyx.db.tag._delete_orphan_tags_batch",
+            "lumen.db.tag._delete_orphan_tags_batch",
             wraps=_delete_orphan_tags_batch,
         ) as batch_spy:
             total_deleted = delete_orphan_tags_batched(db_session, batch_size=10)
@@ -111,7 +111,7 @@ class TestOrphanTagCleanup:
         linked_ids = _seed_linked_tags(db_session, 2)
 
         with patch(
-            "onyx.db.tag._delete_orphan_tags_batch",
+            "lumen.db.tag._delete_orphan_tags_batch",
             wraps=_delete_orphan_tags_batch,
         ) as batch_spy:
             total_deleted = delete_orphan_tags_batched(db_session, batch_size=10)

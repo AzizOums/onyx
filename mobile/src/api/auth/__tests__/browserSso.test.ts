@@ -11,7 +11,7 @@ import { openAuthSessionAsync } from "expo-web-browser";
 // `jest.mock` is hoisted above the imports by babel-jest.
 jest.mock("@/api/config", () => ({ getApiPrefix: () => "/api" }));
 jest.mock("@/state/session", () => ({
-  getStoredServerUrl: () => "https://acme.onyx.app",
+  getStoredServerUrl: () => "https://acme.lumen.app",
 }));
 
 jest.mock("expo-crypto", () => ({
@@ -86,7 +86,7 @@ describe("runBrowserSso", () => {
       const state = new URL(url).searchParams.get("app_state");
       return Promise.resolve({
         type: "success",
-        url: `onyx://auth/callback?code=ONE_TIME_CODE&state=${state}`,
+        url: `lumen://auth/callback?code=ONE_TIME_CODE&state=${state}`,
       });
     });
 
@@ -97,13 +97,13 @@ describe("runBrowserSso", () => {
 
     const opened = new URL(openedUrl);
     expect(opened.origin + opened.pathname).toBe(
-      "https://acme.onyx.app/api/auth/mobile/oauth/authorize",
+      "https://acme.lumen.app/api/auth/mobile/oauth/authorize",
     );
     expect(opened.searchParams.get("redirect")).toBe("true");
     expect(opened.searchParams.get("mobile_redirect_uri")).toBe(
-      "onyx://auth/callback",
+      "lumen://auth/callback",
     );
-    expect(mockOpen.mock.calls[0][1]).toBe("onyx://auth/callback");
+    expect(mockOpen.mock.calls[0][1]).toBe("lumen://auth/callback");
 
     // Challenge on the wire == S256(verifier); the backend recomputes the same.
     const expectedChallenge = toBase64Url(
@@ -121,7 +121,7 @@ describe("runBrowserSso", () => {
       const state = new URL(url).searchParams.get("app_state");
       return Promise.resolve({
         type: "success",
-        url: `onyx://auth/callback?code=c&state=${state}`,
+        url: `lumen://auth/callback?code=c&state=${state}`,
       });
     });
 
@@ -134,7 +134,7 @@ describe("runBrowserSso", () => {
   it("rejects a callback whose state doesn't match the one it generated", async () => {
     mockOpen.mockResolvedValue({
       type: "success",
-      url: "onyx://auth/callback?code=c&state=ATTACKER_STATE",
+      url: "lumen://auth/callback?code=c&state=ATTACKER_STATE",
     });
 
     await expect(runBrowserSso(GOOGLE)).rejects.toThrow();
@@ -145,7 +145,7 @@ describe("runBrowserSso", () => {
       const state = new URL(url).searchParams.get("app_state");
       return Promise.resolve({
         type: "success",
-        url: `onyx://auth/callback?state=${state}`,
+        url: `lumen://auth/callback?state=${state}`,
       });
     });
 

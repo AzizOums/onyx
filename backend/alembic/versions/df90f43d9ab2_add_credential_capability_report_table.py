@@ -15,8 +15,8 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.enums import CapabilityCheckTrigger, CapabilityReportRunStatus
+from lumen.configs.constants import DocumentSource
+from lumen.db.enums import CapabilityCheckTrigger, CapabilityReportRunStatus
 
 # revision identifiers, used by Alembic.
 revision = "df90f43d9ab2"

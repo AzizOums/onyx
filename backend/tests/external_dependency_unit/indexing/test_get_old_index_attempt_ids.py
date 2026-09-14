@@ -18,14 +18,14 @@ import pytest
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing.index_attempt_utils import (
+from lumen.background.indexing.index_attempt_utils import (
     NUM_RECENT_INDEX_ATTEMPTS_TO_KEEP,
     get_old_index_attempt_ids,
 )
-from onyx.configs.constants import NUM_DAYS_TO_KEEP_INDEX_ATTEMPTS
-from onyx.db.engine.time_utils import get_db_current_time
-from onyx.db.enums import IndexingStatus
-from onyx.db.models import ConnectorCredentialPair, IndexAttempt
+from lumen.configs.constants import NUM_DAYS_TO_KEEP_INDEX_ATTEMPTS
+from lumen.db.engine.time_utils import get_db_current_time
+from lumen.db.enums import IndexingStatus
+from lumen.db.models import ConnectorCredentialPair, IndexAttempt
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
     make_cc_pair,

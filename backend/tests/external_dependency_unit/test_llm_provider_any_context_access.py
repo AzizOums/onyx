@@ -4,13 +4,13 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.llm import (
+from lumen.db.llm import (
     fetch_all_llm_providers_accessible_in_any_context,
     remove_llm_provider,
     upsert_llm_provider,
 )
-from onyx.db.models import User
-from onyx.server.manage.llm.models import (
+from lumen.db.models import User
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )

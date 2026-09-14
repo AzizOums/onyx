@@ -13,10 +13,10 @@ from uuid import uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.models import Document, Tag
-from onyx.db.tag import create_or_add_document_tag, create_or_add_document_tag_list
+from lumen.configs.constants import DocumentSource
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.models import Document, Tag
+from lumen.db.tag import create_or_add_document_tag, create_or_add_document_tag_list
 
 
 def _create_test_document(db_session: Session, doc_id: str) -> Document:

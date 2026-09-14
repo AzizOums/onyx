@@ -40,7 +40,7 @@ PRIVATE and strictly within their managed groups — enforced authoritatively at
 - **Escalation points that gate only on global `manage:*` today:** group membership writes
   (`ee/user_group.py:462/504`), connector create (`connector_credential_pair.py:496`), persona group-share
   (`ee/persona.py:68`). These are where GATE 2 must be inserted.
-- **Conventions (CLAUDE.md):** raise `OnyxError`, strict typing, no `response_model`, DB ops only under
+- **Conventions (CLAUDE.md):** raise `LumenError`, strict typing, no `response_model`, DB ops only under
   `*/db/`, EE code under `ee/`.
 - **Regression-review additions (2026-06-29) — see [03 §11](03-detailed-design.md) for the full checklist:**
   - **PREREQUISITE (boot bug, §11.0):** `current_curator_or_admin_user` is gone but still imported by
@@ -79,7 +79,7 @@ PRIVATE and strictly within their managed groups — enforced authoritatively at
 
 **Step 0 — Prerequisite boot fix (independent of §8).** Re-point `skill/api.py` (`:16` + deps at
 `:173/186/223/259/297/322`) and `targeted_reindex.py:22` off the deleted `current_curator_or_admin_user`
-onto `require_permission(...)`. Until this lands, `import onyx.main` raises `ImportError` and nothing runs.
+onto `require_permission(...)`. Until this lands, `import lumen.main` raises `ImportError` and nothing runs.
 Lands as its own small commit ahead of (or at the head of) PR1.
 
 **Step 1 — Schema + cached flag + migration.** Add `User__UserGroup.is_manager` and `User.is_group_manager`
@@ -93,9 +93,9 @@ PR1 — verify, don't author: both columns, role-gated `is_manager` backfill (CU
 `within_managed_scope_clause`, `assert_within_scope`. Extend `require_permission` with
 `allow_scope: bool` (`auth/permissions.py`). Unit-coverable, no endpoints wired yet.
 
-**Step 3 — Manager assignment.** `make_group_manager` / `revoke_group_manager` (`ee/onyx/db/user_group.py`) with
+**Step 3 — Manager assignment.** `make_group_manager` / `revoke_group_manager` (`ee/lumen/db/user_group.py`) with
 a recompute trigger for the affected user. New EE endpoint `PUT …/user-group/{group_id}/manager`
-(`ee/onyx/server/user_group/api.py`) gated `admin ∨ group_id ∈ managed` (D3); reject non-member targets.
+(`ee/lumen/server/user_group/api.py`) gated `admin ∨ group_id ∈ managed` (D3); reject non-member targets.
 
 **Step 4 — Write-side gates (the security core).** Insert `assert_within_scope` into each scoped write
 fn, re-reading current groups in-txn: connector create/update (`db/connector_credential_pair.py:496` +
@@ -129,7 +129,7 @@ Use `UserGroupManager` / resource managers in `tests/integration/common_utils`; 
 > - recompute / `effective_permissions` → `tests/integration/tests/usergroup/test_group_membership_updates_user_permissions.py`
 > - grant / revoke (bulk) + implied-expansion → `tests/integration/tests/usergroup/test_group_permission_toggle.py`
 > - registration / default-group propagation + fixtures → `tests/integration/tests/permissions/` (`test_auth_permission_propagation.py`, `conftest.py`)
-> - read-time permission expansion (pure logic) → `tests/unit/onyx/auth/test_permissions.py`
+> - read-time permission expansion (pure logic) → `tests/unit/lumen/auth/test_permissions.py`
 >
 > Worked example (PR1): `is_group_manager` is the *second* column `recompute_user_permissions__no_commit`
 > writes, so its coverage was folded into the existing recompute test above — **not** a standalone file. An

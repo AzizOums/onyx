@@ -23,9 +23,9 @@ use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 // CLI flags
 // ============================================================================
 
-/// Onyx desktop client. Launching with no flags opens the app normally.
+/// Lumen desktop client. Launching with no flags opens the app normally.
 #[derive(Parser)]
-#[command(name = "onyx", long_about = None, disable_version_flag = true)]
+#[command(name = "lumen", long_about = None, disable_version_flag = true)]
 struct Cli {
     // Handled manually rather than via `#[command(version)]` so it can also
     // report the connected server's version, not just the client build.
@@ -96,12 +96,12 @@ fn print_version_info() {
 // so this can't go through the usual logging path.
 #[allow(clippy::print_stderr)]
 fn print_debug_startup_banner() {
-    eprintln!("[ONYX DEBUG] Debug mode enabled");
+    eprintln!("[LUMEN DEBUG] Debug mode enabled");
     if let Some(path) = debug_log::get_debug_log_path() {
-        eprintln!("[ONYX DEBUG] Frontend logs: {}", path.display());
+        eprintln!("[LUMEN DEBUG] Frontend logs: {}", path.display());
     }
-    eprintln!("[ONYX DEBUG] DevTools will open automatically");
-    eprintln!("[ONYX DEBUG] Capturing console.log/warn/error/info/debug from webview");
+    eprintln!("[LUMEN DEBUG] DevTools will open automatically");
+    eprintln!("[LUMEN DEBUG] Capturing console.log/warn/error/info/debug from webview");
 }
 
 /// Everything that runs once the Tauri app is up: menu/tray, the main

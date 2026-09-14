@@ -7,7 +7,7 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.models import (
+from lumen.db.models import (
     MCPServer,
     MCPServer__UserGroup,
     Persona,
@@ -16,7 +16,7 @@ from onyx.db.models import (
     User__UserGroup,
     UserGroup,
 )
-from onyx.db.persona import upsert_persona
+from lumen.db.persona import upsert_persona
 from tests.external_dependency_unit.conftest import create_test_user
 
 

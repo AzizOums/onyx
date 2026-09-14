@@ -1,4 +1,4 @@
-// Package release resolves Onyx app release tags and fetches deployment files
+// Package release resolves Lumen app release tags and fetches deployment files
 // for a pinned ref from GitHub, so a deployment can match versions other than
 // the snapshot embedded in this binary.
 package release
@@ -18,8 +18,8 @@ import (
 const (
 	defaultAPIBase = "https://api.github.com"
 	defaultRawBase = "https://raw.githubusercontent.com"
-	owner          = "onyx-dot-app"
-	repo           = "onyx"
+	owner          = "lumen-dot-app"
+	repo           = "lumen"
 
 	// fetchAttempts bounds retries for raw-file downloads (mirrors
 	// install.sh's `curl --retry`).
@@ -27,7 +27,7 @@ const (
 	defaultRetryDelay = 2 * time.Second
 )
 
-// appTagPattern matches Onyx app release tags (vX.Y.Z, optionally suffixed
+// appTagPattern matches Lumen app release tags (vX.Y.Z, optionally suffixed
 // like v4.4.6-beta.1), as opposed to tool releases such as cli/v1.2.3.
 var appTagPattern = regexp.MustCompile(`^v\d+\.\d+\.\d+`)
 
@@ -128,7 +128,7 @@ type releaseInfo struct {
 	Prerelease bool   `json:"prerelease"`
 }
 
-// LatestAppTag returns the newest Onyx app release tag (vX.Y.Z).
+// LatestAppTag returns the newest Lumen app release tag (vX.Y.Z).
 //
 // /releases/latest is repo-global: this repo also publishes desktop and tool
 // releases (cli/v*, ods/v*) under the same namespace, so the result is
@@ -146,7 +146,7 @@ func (c *Client) LatestAppTag(ctx context.Context) (string, error) {
 
 	var releases []releaseInfo
 	if err := c.getJSON(ctx, c.APIBase+"/repos/"+owner+"/"+repo+"/releases?per_page=100", &releases); err != nil {
-		return "", fmt.Errorf("failed to look up the latest Onyx release: %w", err)
+		return "", fmt.Errorf("failed to look up the latest Lumen release: %w", err)
 	}
 	for _, r := range releases {
 		if r.Draft || r.Prerelease {
@@ -156,7 +156,7 @@ func (c *Client) LatestAppTag(ctx context.Context) (string, error) {
 			return r.TagName, nil
 		}
 	}
-	return "", fmt.Errorf("no Onyx app release found among the repository's releases")
+	return "", fmt.Errorf("no Lumen app release found among the repository's releases")
 }
 
 // ErrNotFound reports that the ref is reachable but doesn't carry the file.

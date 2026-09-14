@@ -7,12 +7,12 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/portutil"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/paths"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/portutil"
 )
 
 const (
-	defaultProjectName = "onyx"
+	defaultProjectName = "lumen"
 	maxPortScanRange   = 100
 )
 
@@ -119,7 +119,7 @@ func SetProjectFlags(project string) {
 }
 
 // ProjectName returns the Docker Compose project name. Uses --project if set,
-// otherwise the basename of the git working tree root (e.g. "onyx" for the main
+// otherwise the basename of the git working tree root (e.g. "lumen" for the main
 // checkout, "feature-x" for a worktree at .../feature-x). The result is
 // normalized to satisfy Docker Compose's naming rules (lowercase alphanumeric,
 // hyphens, and underscores).

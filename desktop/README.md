@@ -1,6 +1,6 @@
-# Onyx Desktop
+# Lumen Desktop
 
-A lightweight macOS desktop application for [Onyx Cloud](https://cloud.onyx.app).
+A lightweight macOS desktop application for any Lumen deployment.
 
 Built with [Tauri](https://tauri.app) for minimal bundle size (~10MB vs Electron's 150MB+).
 
@@ -10,7 +10,7 @@ Built with [Tauri](https://tauri.app) for minimal bundle size (~10MB vs Electron
 - ⌨️ **Keyboard Shortcuts** - Quick navigation and actions
 - 🪟 **Native Feel** - macOS-style title bar with traffic lights
 - 💾 **Window State** - Remembers size/position between sessions
-- 🔗 **Multi-window** - Open multiple Onyx windows
+- 🔗 **Multi-window** - Open multiple Lumen windows
 
 ## Keyboard Shortcuts
 
@@ -101,7 +101,7 @@ bun run build:windows
 ## Project Structure
 
 ```
-onyx-desktop/
+lumen-desktop/
 ├── package.json          # Node dependencies & scripts
 ├── src/
 │   └── index.html        # Fallback/loading page
@@ -135,13 +135,13 @@ bunx tauri icon path/to/your-icon.png
 
 ### Self-Hosted / Custom Server URL
 
-The app defaults to `https://cloud.onyx.app` but supports any Onyx instance.
+The app defaults to `http://localhost:3000` but supports any Lumen instance.
 
 **Config file location:**
 
-- macOS: `~/Library/Application Support/app.onyx.onyx-desktop/config.json`
-- Linux: `~/.config/onyx-desktop/config.json` (or `$XDG_CONFIG_HOME/onyx-desktop/config.json`)
-- Windows: `%APPDATA%\onyx\onyx-desktop\config\config.json`
+- macOS: `~/Library/Application Support/app.lumen.lumen-desktop/config.json`
+- Linux: `~/.config/lumen-desktop/config.json` (or `$XDG_CONFIG_HOME/lumen-desktop/config.json`)
+- Windows: `%APPDATA%\lumen\lumen-desktop\config\config.json`
 
 **To use a self-hosted instance:**
 
@@ -151,8 +151,8 @@ The app defaults to `https://cloud.onyx.app` but supports any Onyx instance.
 
 ```json
 {
-  "server_url": "https://your-onyx-instance.company.com",
-  "window_title": "Onyx"
+  "server_url": "https://your-lumen-instance.company.com",
+  "window_title": "Lumen"
 }
 ```
 
@@ -162,10 +162,10 @@ The app defaults to `https://cloud.onyx.app` but supports any Onyx instance.
 
 ```bash
 # macOS
-open -t ~/Library/Application\ Support/app.onyx.onyx-desktop/config.json
+open -t ~/Library/Application\ Support/app.lumen.lumen-desktop/config.json
 
 # Or use any editor
-code ~/Library/Application\ Support/app.onyx.onyx-desktop/config.json
+code ~/Library/Application\ Support/app.lumen.lumen-desktop/config.json
 ```
 
 ### Change the default URL in build
@@ -177,7 +177,7 @@ Edit `src-tauri/tauri.conf.json`:
   "app": {
     "windows": [
       {
-        "url": "https://your-onyx-instance.com"
+        "url": "https://your-lumen-instance.com"
       }
     ]
   }
@@ -200,7 +200,7 @@ Modify the window configuration in `src-tauri/tauri.conf.json`:
 
 ### "Unable to resolve host"
 
-Make sure you have an internet connection. The app loads content from `cloud.onyx.app`.
+Make sure the configured server URL is reachable. The app loads all content from that server.
 
 ### Build fails on M1/M2 Mac
 
@@ -214,7 +214,7 @@ rustup target add aarch64-apple-darwin
 For distributing outside the App Store, you'll need to:
 
 1. Get an Apple Developer certificate
-2. Sign the app: `codesign --deep --force --sign "Developer ID" target/release/bundle/macos/Onyx.app`
+2. Sign the app: `codesign --deep --force --sign "Developer ID" target/release/bundle/macos/Lumen.app`
 3. Notarize with Apple
 
 ## License

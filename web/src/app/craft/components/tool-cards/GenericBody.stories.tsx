@@ -53,7 +53,7 @@ export const StructuredJsonHint: Story = {
   "skills": [
     { "name": "code-review", "version": "1.2.0" },
     { "name": "playwright",  "version": "0.4.3" },
-    { "name": "onyx-cli",    "version": "0.1.0" }
+    { "name": "lumen-cli",    "version": "0.1.0" }
   ]
 }`,
     }),

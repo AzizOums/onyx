@@ -14,9 +14,9 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import AccountType, Permission
-from onyx.db.models import PermissionGrant, User__UserGroup, UserGroup
-from onyx.db.users import DEFAULT_ADMIN_GROUP_NAME, DEFAULT_BASIC_GROUP_NAME
+from lumen.db.enums import AccountType, Permission
+from lumen.db.models import PermissionGrant, User__UserGroup, UserGroup
+from lumen.db.users import DEFAULT_ADMIN_GROUP_NAME, DEFAULT_BASIC_GROUP_NAME
 from tests.external_dependency_unit.craft.db_helpers import make_user
 
 

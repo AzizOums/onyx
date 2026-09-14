@@ -6,16 +6,16 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from onyx.configs.constants import MessageType, QAFeedbackType
-from onyx.context.search.models import SavedSearchDoc, SearchDoc
-from onyx.db.enums import AccessType
-from onyx.server.documents.models import (
+from lumen.configs.constants import MessageType, QAFeedbackType
+from lumen.context.search.models import SavedSearchDoc, SearchDoc
+from lumen.db.enums import AccessType
+from lumen.server.documents.models import (
     DocumentSource,
     IndexAttemptSnapshot,
     IndexingStatus,
     InputType,
 )
-from onyx.server.query_and_chat.streaming_models import GeneratedImage
+from lumen.server.query_and_chat.streaming_models import GeneratedImage
 
 """
 These data models are used to represent the data on the testing side of things.

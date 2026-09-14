@@ -27,8 +27,8 @@ export class ChatPage {
     this.inputBar = new InputBar(page);
     this.container = page.locator("[data-main-container]");
     this.scrollContainer = page.getByTestId("chat-scroll-container");
-    this.humanMessages = page.locator("#onyx-human-message");
-    this.aiMessages = page.getByTestId("onyx-ai-message");
+    this.humanMessages = page.locator("#lumen-human-message");
+    this.aiMessages = page.getByTestId("lumen-ai-message");
     this.usageLimitBanner = page.getByText(/you've reached the usage budget/i);
   }
 

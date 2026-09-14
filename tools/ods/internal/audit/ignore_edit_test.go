@@ -12,7 +12,7 @@ import (
 
 func TestMarshalIgnoresRoundTrip(t *testing.T) {
 	entries := []IgnoreEntry{
-		{ID: "GHSA-aaaa", Ecosystem: "npm", Reason: "not reachable", AddedBy: "you@onyx.app", Expires: "2026-09-01"},
+		{ID: "GHSA-aaaa", Ecosystem: "npm", Reason: "not reachable", AddedBy: "you@lumen.app", Expires: "2026-09-01"},
 		{ID: "GHSA-bbbb"},
 	}
 

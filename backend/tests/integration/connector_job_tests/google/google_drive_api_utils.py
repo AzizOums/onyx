@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from google.oauth2.service_account import Credentials
 
-from onyx.connectors.google_utils.resources import (
+from lumen.connectors.google_utils.resources import (
     GoogleDocsService,
     GoogleDriveService,
     get_drive_service,

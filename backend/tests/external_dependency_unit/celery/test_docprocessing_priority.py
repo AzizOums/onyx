@@ -14,17 +14,17 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing.run_docfetching import connector_document_extraction
-from onyx.configs.constants import DocumentSource, OnyxCeleryPriority
-from onyx.connectors.models import InputType
-from onyx.db.enums import (
+from lumen.background.indexing.run_docfetching import connector_document_extraction
+from lumen.configs.constants import DocumentSource, LumenCeleryPriority
+from lumen.connectors.models import InputType
+from lumen.db.enums import (
     AccessType,
     ConnectorCredentialPairStatus,
     EmbeddingPrecision,
     IndexingStatus,
     IndexModelStatus,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     Connector,
     ConnectorCredentialPair,
     Credential,
@@ -138,31 +138,31 @@ class TestDocprocessingPriorityInDocumentExtraction:
         "has_successful_index,expected_priority",
         [
             # First-time indexing (no last_successful_index_time) should get HIGH priority
-            (False, OnyxCeleryPriority.HIGH),
+            (False, LumenCeleryPriority.HIGH),
             # Re-indexing (has last_successful_index_time) should get MEDIUM priority
-            (True, OnyxCeleryPriority.MEDIUM),
+            (True, LumenCeleryPriority.MEDIUM),
         ],
     )
-    @patch("onyx.background.indexing.run_docfetching.get_document_batch_storage")
-    @patch("onyx.background.indexing.run_docfetching.MemoryTracer")
-    @patch("onyx.background.indexing.run_docfetching._get_connector_runner")
+    @patch("lumen.background.indexing.run_docfetching.get_document_batch_storage")
+    @patch("lumen.background.indexing.run_docfetching.MemoryTracer")
+    @patch("lumen.background.indexing.run_docfetching._get_connector_runner")
     @patch(
-        "onyx.background.indexing.run_docfetching.strip_null_characters",
+        "lumen.background.indexing.run_docfetching.strip_null_characters",
         side_effect=lambda batch: batch,
     )
     @patch(
-        "onyx.background.indexing.run_docfetching.get_recent_completed_attempts_for_cc_pair"
+        "lumen.background.indexing.run_docfetching.get_recent_completed_attempts_for_cc_pair"
     )
     @patch(
-        "onyx.background.indexing.run_docfetching.get_last_successful_attempt_poll_range_end"
+        "lumen.background.indexing.run_docfetching.get_last_successful_attempt_poll_range_end"
     )
-    @patch("onyx.background.indexing.run_docfetching.save_checkpoint")
-    @patch("onyx.background.indexing.run_docfetching.get_latest_valid_checkpoint")
-    @patch("onyx.background.indexing.run_docfetching.get_redis_client")
-    @patch("onyx.background.indexing.run_docfetching.ensure_source_node_exists")
-    @patch("onyx.background.indexing.run_docfetching.get_source_node_id_from_cache")
-    @patch("onyx.background.indexing.run_docfetching.get_node_id_from_raw_id")
-    @patch("onyx.background.indexing.run_docfetching.cache_hierarchy_nodes_batch")
+    @patch("lumen.background.indexing.run_docfetching.save_checkpoint")
+    @patch("lumen.background.indexing.run_docfetching.get_latest_valid_checkpoint")
+    @patch("lumen.background.indexing.run_docfetching.get_redis_client")
+    @patch("lumen.background.indexing.run_docfetching.ensure_source_node_exists")
+    @patch("lumen.background.indexing.run_docfetching.get_source_node_id_from_cache")
+    @patch("lumen.background.indexing.run_docfetching.get_node_id_from_raw_id")
+    @patch("lumen.background.indexing.run_docfetching.cache_hierarchy_nodes_batch")
     def test_docprocessing_priority_based_on_last_successful_index_time(
         self,
         mock_cache_hierarchy_nodes_batch: MagicMock,  # noqa: ARG002
@@ -180,7 +180,7 @@ class TestDocprocessingPriorityInDocumentExtraction:
         mock_get_batch_storage: MagicMock,
         db_session: Session,
         has_successful_index: bool,
-        expected_priority: OnyxCeleryPriority,
+        expected_priority: LumenCeleryPriority,
     ) -> None:
         """
         Test that docprocessing tasks get the correct priority based on

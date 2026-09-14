@@ -5,7 +5,7 @@ import {
   WORKER_USER_POOL_SIZE,
   workerUserCredentials,
 } from "@tests/e2e/constants";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 
 const PREFLIGHT_TIMEOUT_MS = 60_000;
 const PREFLIGHT_POLL_INTERVAL_MS = 2_000;
@@ -50,7 +50,7 @@ async function waitForServer(baseURL: string): Promise<void> {
   }
 
   throw new Error(
-    `Onyx is not running at ${baseURL}. ` +
+    `Lumen is not running at ${baseURL}. ` +
       `Timed out after ${
         PREFLIGHT_TIMEOUT_MS / 1000
       }s waiting for ${healthURL} to return 200. ` +
@@ -124,7 +124,7 @@ async function apiLoginAndSaveState(
 
 /**
  * Set the user's display name via the personalization API. This dismisses the
- * first-time "What should Onyx call you?" prompt that otherwise covers the
+ * first-time "What should Lumen call you?" prompt that otherwise covers the
  * chat UI and silently breaks tests that interact with the action popover.
  */
 async function setDisplayName(
@@ -303,7 +303,7 @@ async function globalSetup(config: FullConfig) {
     storageState: "admin_auth.json",
   });
   try {
-    const client = new OnyxApiClient(adminCtx, baseURL);
+    const client = new LumenApiClient(adminCtx, baseURL);
     await client.ensurePublicProvider();
   } finally {
     await adminCtx.dispose();

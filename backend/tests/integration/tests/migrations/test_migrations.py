@@ -7,8 +7,8 @@ import json
 import pytest
 from sqlalchemy import text
 
-from onyx.configs.constants import ANONYMOUS_USER_UUID, DEFAULT_BOOST
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.configs.constants import ANONYMOUS_USER_UUID, DEFAULT_BOOST
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
 from tests.integration.common_utils.reset import downgrade_postgres, upgrade_postgres
 
 
@@ -340,9 +340,9 @@ def test_anonymous_user_migration_dedupes_null_notifications() -> None:
                         FALSE,
                         NOW(),
                         NOW(),
-                        'Onyx v2.10.0 is available!',
+                        'Lumen v2.10.0 is available!',
                         'Check out what''s new in v2.10.0',
-                        '{"version":"v2.10.0","link":"https://docs.onyx.app/changelog#v2-10-0"}'::jsonb
+                        '{"version":"v2.10.0","link":"https://docs.lumen.app/changelog#v2-10-0"}'::jsonb
                     ),
                     (
                         2,
@@ -351,9 +351,9 @@ def test_anonymous_user_migration_dedupes_null_notifications() -> None:
                         FALSE,
                         NOW(),
                         NOW(),
-                        'Onyx v2.10.0 is available!',
+                        'Lumen v2.10.0 is available!',
                         'Check out what''s new in v2.10.0',
-                        '{"version":"v2.10.0","link":"https://docs.onyx.app/changelog#v2-10-0"}'::jsonb
+                        '{"version":"v2.10.0","link":"https://docs.lumen.app/changelog#v2-10-0"}'::jsonb
                     )
                 """)
         )
@@ -385,7 +385,7 @@ def test_anonymous_user_migration_dedupes_null_notifications() -> None:
     assert notifications[0].id == 2  # Higher id wins when timestamps are equal
     assert str(notifications[0].user_id) == ANONYMOUS_USER_UUID
     assert anonymous_user is not None
-    assert anonymous_user.email == "anonymous@onyx.app"
+    assert anonymous_user.email == "anonymous@lumen.app"
     assert anonymous_user.role == "LIMITED"
 
 
@@ -408,7 +408,7 @@ def test_anonymous_user_migration_collision_with_existing_anonymous_notification
         db_session.execute(
             text("""
                 INSERT INTO "user" (id, email, hashed_password, is_active, is_superuser, is_verified, role)
-                VALUES (:id, 'anonymous@onyx.app', '', TRUE, FALSE, TRUE, 'LIMITED')
+                VALUES (:id, 'anonymous@lumen.app', '', TRUE, FALSE, TRUE, 'LIMITED')
                 ON CONFLICT (id) DO NOTHING
                 """),
             {"id": ANONYMOUS_USER_UUID},
@@ -423,15 +423,15 @@ def test_anonymous_user_migration_collision_with_existing_anonymous_notification
                 VALUES
                     (
                         1, 'RELEASE_NOTES', :user_id, FALSE, NOW(), NOW(),
-                        'Onyx v2.10.0 is available!',
+                        'Lumen v2.10.0 is available!',
                         'Check out what''s new in v2.10.0',
-                        '{"version":"v2.10.0","link":"https://docs.onyx.app/changelog#v2-10-0"}'::jsonb
+                        '{"version":"v2.10.0","link":"https://docs.lumen.app/changelog#v2-10-0"}'::jsonb
                     ),
                     (
                         2, 'RELEASE_NOTES', NULL, FALSE, NOW(), NOW(),
-                        'Onyx v2.10.0 is available!',
+                        'Lumen v2.10.0 is available!',
                         'Check out what''s new in v2.10.0',
-                        '{"version":"v2.10.0","link":"https://docs.onyx.app/changelog#v2-10-0"}'::jsonb
+                        '{"version":"v2.10.0","link":"https://docs.lumen.app/changelog#v2-10-0"}'::jsonb
                     )
                 """),
             {"user_id": ANONYMOUS_USER_UUID},

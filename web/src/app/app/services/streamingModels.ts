@@ -1,4 +1,4 @@
-import { OnyxDocument } from "@/lib/search/interfaces";
+import { LumenDocument } from "@/lib/search/interfaces";
 
 // Base interface for all streaming objects
 interface BaseObj {
@@ -73,7 +73,7 @@ export interface MessageStart extends BaseObj {
   type: "message_start";
   content: string;
 
-  final_documents: OnyxDocument[] | null;
+  final_documents: LumenDocument[] | null;
   pre_answer_processing_seconds?: number;
 }
 
@@ -133,7 +133,7 @@ export interface SearchToolFilterDelta extends BaseObj {
 
 export interface SearchToolDocumentsDelta extends BaseObj {
   type: "search_tool_documents_delta";
-  documents: OnyxDocument[];
+  documents: LumenDocument[];
 }
 
 export type ImageShape = "square" | "landscape" | "portrait";
@@ -172,7 +172,7 @@ export interface FetchToolUrls extends BaseObj {
 
 export interface FetchToolDocuments extends BaseObj {
   type: "open_url_documents";
-  documents: OnyxDocument[];
+  documents: LumenDocument[];
 }
 
 // Custom Tool Packets
@@ -293,7 +293,7 @@ export interface IntermediateReportDelta extends BaseObj {
 
 export interface IntermediateReportCitedDocs extends BaseObj {
   type: "intermediate_report_cited_docs";
-  cited_docs: OnyxDocument[] | null;
+  cited_docs: LumenDocument[] | null;
 }
 
 export type ChatObj = MessageStart | MessageDelta | MessageEnd;

@@ -14,12 +14,12 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource, FileOrigin
-from onyx.connectors.models import Document, InputType, TextSection
-from onyx.context.search.models import SavedSearchSettings
-from onyx.db.enums import AccessType, ConnectorCredentialPairStatus, IndexModelStatus
-from onyx.db.file_record import get_filerecord_by_file_id_optional
-from onyx.db.models import (
+from lumen.configs.constants import DocumentSource, FileOrigin
+from lumen.connectors.models import Document, InputType, TextSection
+from lumen.context.search.models import SavedSearchSettings
+from lumen.db.enums import AccessType, ConnectorCredentialPairStatus, IndexModelStatus
+from lumen.db.file_record import get_filerecord_by_file_id_optional
+from lumen.db.models import (
     Connector,
     ConnectorCredentialPair,
     Credential,
@@ -28,10 +28,10 @@ from onyx.db.models import (
     IndexAttempt,
     SearchSettings,
 )
-from onyx.db.models import Document as DBDocument
-from onyx.db.search_settings import create_search_settings, get_current_search_settings
-from onyx.file_store.file_store import get_default_file_store
-from onyx.kg.models import KGStage
+from lumen.db.models import Document as DBDocument
+from lumen.db.search_settings import create_search_settings, get_current_search_settings
+from lumen.file_store.file_store import get_default_file_store
+from lumen.kg.models import KGStage
 
 
 def make_doc(

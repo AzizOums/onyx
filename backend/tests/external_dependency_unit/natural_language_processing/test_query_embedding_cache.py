@@ -6,8 +6,8 @@ from uuid import uuid4
 from prometheus_client import REGISTRY
 from redis.exceptions import RedisError
 
-from onyx.cache.factory import get_cache_backend
-from onyx.natural_language_processing.query_embedding_cache import (
+from lumen.cache.factory import get_cache_backend
+from lumen.natural_language_processing.query_embedding_cache import (
     _build_key,
     cache_query_embeddings,
     get_cached_query_embeddings,
@@ -21,7 +21,7 @@ def _unique_query() -> str:
 
 def _lookup_count(provider: str, outcome: str) -> float:
     value = REGISTRY.get_sample_value(
-        "onyx_query_embedding_cache_lookups_total",
+        "lumen_query_embedding_cache_lookups_total",
         {"provider": provider, "outcome": outcome},
     )
     return value or 0.0
@@ -29,7 +29,7 @@ def _lookup_count(provider: str, outcome: str) -> float:
 
 def _write_count(provider: str, outcome: str) -> float:
     value = REGISTRY.get_sample_value(
-        "onyx_query_embedding_cache_writes_total",
+        "lumen_query_embedding_cache_writes_total",
         {"provider": provider, "outcome": outcome},
     )
     return value or 0.0
@@ -222,7 +222,7 @@ class TestFailOpen:
         )
 
         with patch(
-            "onyx.cache.redis_backend.RedisCacheBackend.get",
+            "lumen.cache.redis_backend.RedisCacheBackend.get",
             side_effect=RedisError("boom"),
         ):
             # Under test.
@@ -243,7 +243,7 @@ class TestFailOpen:
         # Precondition.
         query = _unique_query()
         with patch(
-            "onyx.cache.redis_backend.RedisCacheBackend.set",
+            "lumen.cache.redis_backend.RedisCacheBackend.set",
             side_effect=RedisError("boom"),
         ):
             # Under test.

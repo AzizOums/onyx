@@ -1,4 +1,4 @@
-name: onyx
+name: lumen
 
 services:
   # Self-hosted mock OIDC / OAuth2 authorization server. Replaces the real Okta
@@ -9,7 +9,7 @@ services:
   # host.docker.internal -> host-gateway) and the host-run Playwright browser
   # (via an /etc/hosts entry the workflow adds before the tests run).
   mock_oidc_idp:
-    image: onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}
+    image: lumendotapp/lumen-backend:${IMAGE_TAG:-latest}
     restart: on-failure
     working_dir: /workspace
     environment:
@@ -40,7 +40,7 @@ services:
       start_period: 10s
 
   mcp_oauth_server:
-    image: onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}
+    image: lumendotapp/lumen-backend:${IMAGE_TAG:-latest}
     restart: on-failure
     working_dir: /workspace
     depends_on:

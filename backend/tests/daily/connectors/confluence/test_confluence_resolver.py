@@ -7,10 +7,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.confluence.connector import ConfluenceConnector
-from onyx.connectors.credentials_provider import OnyxStaticCredentialsProvider
-from onyx.connectors.models import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.confluence.connector import ConfluenceConnector
+from lumen.connectors.credentials_provider import LumenStaticCredentialsProvider
+from lumen.connectors.models import (
     ConnectorFailure,
     Document,
     DocumentFailure,
@@ -38,7 +38,7 @@ def _make_connector(space: str, access_token: str) -> ConfluenceConnector:
         page_id=os.environ.get("CONFLUENCE_TEST_PAGE_ID", ""),
     )
     connector.set_credentials_provider(
-        OnyxStaticCredentialsProvider(
+        LumenStaticCredentialsProvider(
             None,
             DocumentSource.CONFLUENCE,
             {
@@ -86,7 +86,7 @@ def _build_failures(doc_ids: list[str]) -> list[ConnectorFailure]:
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_single_page(
@@ -113,7 +113,7 @@ def test_reindex_single_page(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_multiple_pages(
@@ -139,7 +139,7 @@ def test_reindex_multiple_pages(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_unknown_page_yields_failure(
@@ -162,7 +162,7 @@ def test_reindex_unknown_page_yields_failure(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_unparseable_url_yields_failure(
@@ -183,7 +183,7 @@ def test_reindex_unparseable_url_yields_failure(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_empty_errors(
@@ -194,7 +194,7 @@ def test_reindex_empty_errors(
 
 
 @patch(
-    "onyx.file_processing.extract_file_text.get_unstructured_api_key",
+    "lumen.file_processing.extract_file_text.get_unstructured_api_key",
     return_value=None,
 )
 def test_reindex_entity_failures_are_skipped(

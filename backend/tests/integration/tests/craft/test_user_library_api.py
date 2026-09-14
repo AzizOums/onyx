@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from uuid import uuid4
 
-from onyx.server.features.build.user_library.api import (
+from lumen.server.features.build.user_library.api import (
     DeleteFileResponse,
     LibraryEntryResponse,
     UploadResponse,

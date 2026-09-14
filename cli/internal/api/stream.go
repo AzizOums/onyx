@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/models"
-	"github.com/onyx-dot-app/onyx/cli/internal/parser"
+	"github.com/lumen-dot-app/lumen/cli/internal/models"
+	"github.com/lumen-dot-app/lumen/cli/internal/parser"
 )
 
 // SendMessageStream starts streaming a chat message response.
@@ -66,7 +66,7 @@ func (c *Client) SendMessageStream(
 				return // cancelled
 			}
 			wrapped := wrapTimeoutError(err)
-			if apiErr, ok := wrapped.(*OnyxAPIError); ok {
+			if apiErr, ok := wrapped.(*LumenAPIError); ok {
 				ch <- models.ErrorEvent{
 					Error:       apiErr.Error(),
 					IsRetryable: true,
@@ -80,7 +80,7 @@ func (c *Client) SendMessageStream(
 		defer func() { _ = resp.Body.Close() }()
 
 		if err := checkResponse(resp); err != nil {
-			apiErr, ok := err.(*OnyxAPIError)
+			apiErr, ok := err.(*LumenAPIError)
 			if ok {
 				ch <- models.ErrorEvent{
 					Error:       fmt.Sprintf("HTTP %d: %s", apiErr.StatusCode, apiErr.Detail),

@@ -1,6 +1,6 @@
 # Guide technique — Implémentation, déploiement & opérations
 
-> Build **FLOSS** d'Onyx : Community Edition pur, 100 % open source, rebuildable
+> Build **FLOSS** d'Lumen : Community Edition pur, 100 % open source, rebuildable
 > intégralement depuis ce dépôt (aucun binaire fermé, aucune licence requise).
 > Public : équipe technique / DevOps.
 
@@ -42,12 +42,12 @@
 
 | Service | Image | Build depuis les sources | Rôle |
 |---|---|---|---|
-| `api_server` | `onyxdotapp/onyx-backend` | ✅ `backend/Dockerfile` | API FastAPI (auth, chat, agents, admin) |
+| `api_server` | `lumendotapp/lumen-backend` | ✅ `backend/Dockerfile` | API FastAPI (auth, chat, agents, admin) |
 | `background` | idem backend | ✅ | Workers Celery : connecteurs, indexation, permissions, monitoring |
-| `web_server` | `onyxdotapp/onyx-web-server` | ✅ `web/Dockerfile` | Frontend Next.js 16 / React 19 |
-| `inference_model_server` | `onyxdotapp/onyx-model-server` | ✅ `backend/Dockerfile.model_server` | Embeddings query + rerank |
+| `web_server` | `lumendotapp/lumen-web-server` | ✅ `web/Dockerfile` | Frontend Next.js 16 / React 19 |
+| `inference_model_server` | `lumendotapp/lumen-model-server` | ✅ `backend/Dockerfile.model_server` | Embeddings query + rerank |
 | `indexing_model_server` | idem | ✅ | Embeddings d'indexation |
-| `onyx-sandbox` (Craft) | `onyxdotapp/sandbox` | ✅ `backend/onyx/server/features/build/sandbox/image/Dockerfile` | Sandboxes agents (OpenCode) |
+| `lumen-sandbox` (Craft) | `lumendotapp/sandbox` | ✅ `backend/lumen/server/features/build/sandbox/image/Dockerfile` | Sandboxes agents (OpenCode) |
 | `relational_db` | `postgres:15.2-alpine` | tiers | Données relationnelles |
 | `opensearch` | `opensearchproject/opensearch:3.6` | tiers | Index keyword + vectoriel |
 | `cache` | `redis:7.4-alpine` | tiers | Broker Celery + cache |
@@ -70,7 +70,7 @@
 **Principe** : les capacités d'entrée des modèles (texte/image/audio/vidéo/PDF)
 viennent de **[models.dev](https://models.dev)** (catalogue public, 213+
 providers) au lieu d'être codées en dur :
-- `backend/onyx/llm/modelsdev.py` : client + cache Redis 24 h
+- `backend/lumen/llm/modelsdev.py` : client + cache Redis 24 h
   (`DISABLE_MODELSDEV=true` pour couper) — lookup avec normalisation des noms.
 - Flows `AUDIO_INPUT` / `VIDEO_INPUT` (`LLMModelFlowType`), persistés comme
   `VISION` dans `llm_model_flow` et exposés dans les vues/entités modèles.
@@ -153,14 +153,14 @@ cd backend && uv sync
 uv run alembic upgrade head
 uv run uvicorn model_server.main:app --reload --port 9000   # model server
 python ./scripts/dev_run_background_jobs.py                  # workers
-AUTH_TYPE=basic uv run uvicorn onyx.main:app --reload --port 8080
+AUTH_TYPE=basic uv run uvicorn lumen.main:app --reload --port 8080
 
 # Frontend
 cd web && bun install && bun run dev
 ```
 
 Alternative recommandée : le debuggeur VSCode (`.vscode/launch.json`,
-« Run All Onyx Services »), voir CONTRIBUTING.md.
+« Run All Lumen Services »), voir CONTRIBUTING.md.
 
 ---
 
@@ -220,9 +220,9 @@ Checklist sécurité prod :
 ### 4.2 Kubernetes (Helm) — AWS / GCP / Azure / on-prem
 
 ```bash
-helm repo add onyx https://onyx-dot-app.github.io/onyx
+helm repo add lumen https://lumen-dot-app.github.io/lumen
 helm repo update
-helm install onyx onyx/onyx -n onyx --create-namespace \
+helm install lumen lumen/lumen -n lumen --create-namespace \
   --set auth.opensearch.values.opensearch_admin_password='...'
 ```
 
@@ -255,7 +255,7 @@ configMap:
 ```
 
 Craft (agents avec sandbox) en K8s : `configMap.ENABLE_CRAFT=true`,
-Kubernetes >= 1.33, image `onyxdotapp/sandbox` buildée depuis le repo
+Kubernetes >= 1.33, image `lumendotapp/sandbox` buildée depuis le repo
 (`make craft-sandbox-image`).
 
 ### 4.3 GPU (optionnel)
@@ -276,7 +276,7 @@ compose ou utiliser des node pools GPU en K8s.
 
 ### Monitoring
 - Endpoints Prometheus `/api/metrics` (Bearer `METRICS_AUTH_TOKEN`).
-- Dashboards Grafana fournis dans `deployment/helm/charts/onyx/dashboards/`.
+- Dashboards Grafana fournis dans `deployment/helm/charts/lumen/dashboards/`.
 - Logs : `docker compose logs` ; rotation json-file déjà configurée.
 
 ### Mises à jour
@@ -286,7 +286,7 @@ cd deployment/docker_compose
 docker compose pull && docker compose up -d
 
 # Helm
-helm upgrade onyx onyx/onyx -n onyx
+helm upgrade lumen lumen/lumen -n lumen
 ```
 Compatibilité SemVer entre minor versions ; les migrations Alembic s'exécutent
 au démarrage de l'API. Toujours tester une montée de version sur un staging.
@@ -328,7 +328,7 @@ E2E avec Ollama local :
 E2E multimodal (gateway gratuite OpenCode Zen, sans clé) :
 - Provider openai-compatible `https://opencode.ai/zen/v1`, modèle
   `mimo-v2.5-free` (text/image/audio/video, quota gratuit limité).
-- Vérifié : discovery enrichie, persistance des flags, vision via Onyx
+- Vérifié : discovery enrichie, persistance des flags, vision via Lumen
   (carré rouge → « Red »), upload audio/vidéo acceptés. Si `FreeUsageLimitError`,
   attendre la fenêtre de quota.
 
@@ -339,14 +339,14 @@ Lint/format : `pre-commit run --files <paths>` (ruff, oxlint, oxfmt).
 ## 7. Structure du dépôt
 
 ```
-backend/          API FastAPI (onyx/), workers Celery, migrations alembic/
-  onyx/llm/modelsdev.py       client catalogue models.dev (cache Redis 24 h)
-  onyx/server/user_group/     API gestion des groupes (portée EE→CE)
-  onyx/server/enterprise_settings/  API settings/branding (portée EE→CE)
-  onyx/db/user_group_crud.py  couche DB groupes (portée EE→CE)
+backend/          API FastAPI (lumen/), workers Celery, migrations alembic/
+  lumen/llm/modelsdev.py       client catalogue models.dev (cache Redis 24 h)
+  lumen/server/user_group/     API gestion des groupes (portée EE→CE)
+  lumen/server/enterprise_settings/  API settings/branding (portée EE→CE)
+  lumen/db/user_group_crud.py  couche DB groupes (portée EE→CE)
 web/              Frontend Next.js (src/), tests e2e (tests/e2e/)
 deployment/       docker_compose/ (compose + templates) et helm/ (chart K8s)
-cli/              onyx-cli (installer / gestion du cycle de vie)
+cli/              lumen-cli (installer / gestion du cycle de vie)
 docs/             Ce guide + guide utilisateur
 desktop/ mobile/  Applications Tauri et Expo (builds séparés)
 widget/           Widget chat embarquable

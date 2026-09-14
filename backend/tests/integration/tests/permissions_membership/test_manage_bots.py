@@ -1,9 +1,9 @@
 """Integration tests for MANAGE_BOTS permission gate.
 
 MANAGE_BOTS protects the Slack-bot admin endpoints in
-``backend/onyx/server/manage/slack_bot.py`` (router prefix ``/manage``)
+``backend/lumen/server/manage/slack_bot.py`` (router prefix ``/manage``)
 and the Discord-bot admin endpoints in
-``backend/onyx/server/manage/discord_bot/api.py`` (router prefix
+``backend/lumen/server/manage/discord_bot/api.py`` (router prefix
 ``/manage/admin/discord-bot``).
 
 Bogus ids are fine: the gate runs before the handler, and none of these routes
@@ -19,7 +19,7 @@ from typing import Any
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.test_models import DATestAPIKey, DATestUser
 from tests.integration.tests.permissions._access_matrix import (
     USER_KINDS,

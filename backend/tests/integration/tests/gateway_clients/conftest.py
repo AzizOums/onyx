@@ -22,8 +22,8 @@ from uuid import uuid4
 import httpx
 import pytest
 
-from onyx.db.enums import Permission
-from onyx.llm.constants import LlmProviderNames
+from lumen.db.enums import Permission
+from lumen.llm.constants import LlmProviderNames
 from tests.integration.common_utils import http_client
 from tests.integration.common_utils.constants import API_SERVER_URL, GENERAL_HEADERS
 from tests.integration.common_utils.managers.llm_provider import LLMProviderManager
@@ -74,7 +74,7 @@ def _skip_or_fail(reason: str) -> Never:
 def _real_api_server() -> Generator[None, None, None]:
     """Point the shared http_client at a real, out-of-process api_server.
 
-    Skips the whole module unless API_SERVER_URL returns the Onyx health
+    Skips the whole module unless API_SERVER_URL returns the Lumen health
     payload: a CLI subprocess needs an actual TCP socket to connect to, which
     the rest of tests/integration does not provide.
     """
@@ -86,7 +86,7 @@ def _real_api_server() -> Generator[None, None, None]:
             raise ValueError(f"unexpected health response: {payload!r}")
     except (httpx.HTTPError, ValueError) as e:
         _skip_or_fail(
-            f"No real api_server returned the Onyx health payload at "
+            f"No real api_server returned the Lumen health payload at "
             f"{API_SERVER_URL} ({e!r}); gateway client tests require an "
             "out-of-process dev server. See README.md."
         )
@@ -109,7 +109,7 @@ def _install_cli(package: str, executable: str) -> Generator[str, None, None]:
     if shutil.which("npm") is None:
         _skip_or_fail(f"npm is not available; cannot install {package}.")
 
-    with tempfile.TemporaryDirectory(prefix="onyx-gateway-cli-") as tmpdir:
+    with tempfile.TemporaryDirectory(prefix="lumen-gateway-cli-") as tmpdir:
         prefix = Path(tmpdir)
         try:
             result = subprocess.run(

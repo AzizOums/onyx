@@ -1,5 +1,5 @@
 """
-Integration tests for onyx.db.engine.tenant_utils.get_schemas_needing_migration.
+Integration tests for lumen.db.engine.tenant_utils.get_schemas_needing_migration.
 
 These tests require a live database and exercise the function directly,
 independent of the alembic migration runner script.
@@ -18,9 +18,9 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
-from onyx.db.engine.shard_registry import get_default_shard_name
-from onyx.db.engine.sql_engine import SqlEngine
-from onyx.db.engine.tenant_utils import get_schemas_needing_migration
+from lumen.db.engine.shard_registry import get_default_shard_name
+from lumen.db.engine.sql_engine import SqlEngine
+from lumen.db.engine.tenant_utils import get_schemas_needing_migration
 
 _BACKEND_DIR = __file__[: __file__.index("/tests/")]
 

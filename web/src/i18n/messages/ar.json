@@ -271,7 +271,7 @@
         },
         "placeholder": "اختر طريقة",
         "ptOauth": {
-          "description": "تمرير رمز وصول OAuth الخاص بالمستخدم المستخدم لمصادقة Onyx.",
+          "description": "تمرير رمز وصول OAuth الخاص بالمستخدم المستخدم لمصادقة Lumen.",
           "label": "تمرير OAuth المباشر"
         },
         "required": "نوع المصادقة مطلوب"
@@ -310,11 +310,11 @@
         "title": "لا توجد مصادقة لخادم MCP هذا"
       },
       "oauthInfo": {
-        "discovery": "معرّف العميل والسر اختياريان. أثناء الاكتشاف التلقائي، يستخدم Onyx مستند بيانات معرّف العميل (CIMD) عند دعمه ويعود إلى التسجيل الديناميكي للعميل (DCR).",
-        "manualRegistration": "إذا كان خادمك لا يدعم أيًا من الطريقتين، سجّل نسخة Onyx الخاصة بك لدى موفر الخادم أولًا. امنح Onyx النطاقات اللازمة لإجراءاتك."
+        "discovery": "معرّف العميل والسر اختياريان. أثناء الاكتشاف التلقائي، يستخدم Lumen مستند بيانات معرّف العميل (CIMD) عند دعمه ويعود إلى التسجيل الديناميكي للعميل (DCR).",
+        "manualRegistration": "إذا كان خادمك لا يدعم أيًا من الطريقتين، سجّل نسخة Lumen الخاصة بك لدى موفر الخادم أولًا. امنح Lumen النطاقات اللازمة لإجراءاتك."
       },
       "passThroughNotice": {
-        "description": "سيمرر Onyx رمز وصول OAuth الخاص بالمستخدم مباشرة إلى الخادم كترويسة Authorization. تأكد من أن الخادم يدعم المصادقة عبر نفس الموفر.",
+        "description": "سيمرر Lumen رمز وصول OAuth الخاص بالمستخدم مباشرة إلى الخادم كترويسة Authorization. تأكد من أن الخادم يدعم المصادقة عبر نفس الموفر.",
         "title": "استخدم التمرير المباشر للخدمات ذات موفر الهوية المشترك."
       },
       "providerMode": {
@@ -468,7 +468,7 @@
         },
         "placeholder": "اختر طريقة",
         "ptOauth": {
-          "description": "تمرير رمز وصول OAuth الخاص بالمستخدم المستخدم لمصادقة Onyx.",
+          "description": "تمرير رمز وصول OAuth الخاص بالمستخدم المستخدم لمصادقة Lumen.",
           "label": "تمرير OAuth المباشر"
         },
         "required": "طريقة المصادقة مطلوبة"
@@ -516,7 +516,7 @@
         "description": "يتطلب تمرير OAuth المباشر طريقة تسجيل دخول تدعم OAuth (Google أو OIDC)."
       },
       "passThroughNotice": {
-        "description": "سيمرر Onyx رمز وصول OAuth الخاص بالمستخدم مباشرة إلى الخادم كترويسة Authorization. تأكد من أن الخادم يدعم المصادقة عبر نفس الموفر.",
+        "description": "سيمرر Lumen رمز وصول OAuth الخاص بالمستخدم مباشرة إلى الخادم كترويسة Authorization. تأكد من أن الخادم يدعم المصادقة عبر نفس الموفر.",
         "title": "استخدم التمرير المباشر للخدمات ذات موفر الهوية المشترك."
       },
       "redirectUri": {
@@ -993,7 +993,7 @@
         "title": "الملاحظات"
       },
       "page": {
-        "description": "افهم كيف تستخدم مساحة عملك Onyx عبر الاستعلامات والملاحظات والوكلاء."
+        "description": "افهم كيف تستخدم مساحة عملك Lumen عبر الاستعلامات والملاحظات والوكلاء."
       },
       "reports": {
         "calendar": {
@@ -1060,8 +1060,8 @@
       },
       "slackChannelChart": {
         "description": "إجمالي الاستعلامات مقابل المحلولة تلقائيًا",
-        "empty": "لا يوجد نشاط لـ OnyxBot في مساحة العمل هذه للنطاق الزمني المحدد.",
-        "error": "فشل جلب بيانات OnyxBot.",
+        "empty": "لا يوجد نشاط لـ LumenBot في مساحة العمل هذه للنطاق الزمني المحدد.",
+        "error": "فشل جلب بيانات LumenBot.",
         "series": {
           "autoResolved": {
             "label": "محلولة تلقائيًا"
@@ -1085,367 +1085,6 @@
           }
         },
         "title": "الاستخدام"
-      }
-    },
-    "billing": {
-      "activatingBanner": {
-        "description": "جارٍ معالجة ترخيصك. ستُنقل إلى تفاصيل الفوترة تلقائيًا بمجرد التأكيد.",
-        "title": "لا يزال ترخيصك قيد التفعيل"
-      },
-      "banners": {
-        "airGapped": {
-          "description": "إدارة الفوترة عبر الإنترنت معطّلة. تواصل مع الدعم لتحديث اشتراكك.",
-          "title": "نشر معزول عن الإنترنت"
-        },
-        "expired": {
-          "description": "جدّد اشتراكك لاستعادة الوصول إلى الميزات المدفوعة.",
-          "title": "انتهى اشتراكك.",
-          "withDate": {
-            "description": "جدّد اشتراكك بحلول {date} لاستعادة الوصول."
-          },
-          "withDeletion": {
-            "title": "انتهى اشتراكك. ستُحذف البيانات خلال {days} أيام."
-          }
-        },
-        "expiring": {
-          "description": "جدّد اشتراكك بحلول {date} لتجنب الانقطاع.",
-          "title": "سينتهي اشتراكك خلال {days} أيام."
-        },
-        "graceSync": {
-          "title": "جارٍ التحقق من وجود ترخيص مجدّد…"
-        },
-        "stripeError": {
-          "description": "تحقق من اتصالك بالإنترنت أو قدّم ترخيصًا يدويًا.",
-          "title": "تعذّر الاتصال ببوابة الدفع Stripe."
-        }
-      },
-      "checkout": {
-        "adjustPlan": {
-          "label": "تعديل الخطة"
-        },
-        "annual": {
-          "label": "سنوي"
-        },
-        "annualBadge": {
-          "label": "وفّر 20%"
-        },
-        "billingCycle": {
-          "description": "بعد فترتك التجريبية المجانية لمدة شهر",
-          "title": "دورة الفوترة"
-        },
-        "continueToPayment": {
-          "label": "المتابعة إلى الدفع"
-        },
-        "createSessionFailed": {
-          "error": "فشل إنشاء جلسة الدفع"
-        },
-        "loading": {
-          "label": "جارٍ التحميل..."
-        },
-        "monthly": {
-          "label": "شهري"
-        },
-        "perSeatMonth": {
-          "label": "لكل مقعد/شهر"
-        },
-        "plan": {
-          "title": "Business"
-        },
-        "price": {
-          "label": "${price}"
-        },
-        "seats": {
-          "description": "{count, plural, one {مطلوب مقعد واحد كحد أدنى لمستخدميك وحسابات Slack الحالية.} other {مطلوب # مقاعد كحد أدنى لمستخدميك وحسابات Slack الحالية.}}",
-          "title": "المقاعد"
-        },
-        "trialBilling": {
-          "text": "ستتم فوترتك في <value>{date}</value> بعد انتهاء فترتك التجريبية المجانية لمدة شهر."
-        }
-      },
-      "footer": {
-        "activateLicenseKey": {
-          "label": "تفعيل مفتاح الترخيص"
-        },
-        "billingHelp": {
-          "label": "مساعدة الفوترة"
-        },
-        "licenseKeyPrompt": {
-          "label": "هل لديك مفتاح ترخيص؟"
-        },
-        "updateLicenseKey": {
-          "label": "تحديث مفتاح الترخيص"
-        }
-      },
-      "header": {
-        "plansBilling": {
-          "title": "الخطط والفوترة"
-        },
-        "upgradePlan": {
-          "title": "ترقية الخطة"
-        },
-        "viewPlans": {
-          "title": "عرض الخطط"
-        }
-      },
-      "info": {
-        "empty": {
-          "message": "لا تتوفر معلومات فوترة."
-        },
-        "loadError": {
-          "message": "حدث خطأ أثناء تحميل معلومات الفوترة. يرجى المحاولة مرة أخرى لاحقًا."
-        },
-        "loading": {
-          "label": "جارٍ التحميل..."
-        },
-        "manageSubscription": {
-          "description": "اعرض خطتك أو حدِّث الدفع أو غيِّر الاشتراك",
-          "title": "إدارة الاشتراك"
-        },
-        "page": {
-          "title": "معلومات الفوترة"
-        },
-        "portalError": {
-          "message": "حدث خطأ أثناء إنشاء جلسة بوابة العملاء"
-        },
-        "subscriptionDetails": {
-          "title": "تفاصيل الاشتراك"
-        },
-        "summary": {
-          "billingEnd": {
-            "label": "نهاية الفوترة"
-          },
-          "billingStart": {
-            "label": "بداية الفوترة"
-          },
-          "seats": {
-            "label": "المقاعد"
-          },
-          "status": {
-            "label": "حالة الاشتراك"
-          }
-        },
-        "updatedToast": {
-          "message": "تهانينا! تم تحديث اشتراكك بنجاح."
-        }
-      },
-      "license": {
-        "activateFailed": {
-          "error": "فشل تفعيل الترخيص"
-        },
-        "activateLicense": {
-          "label": "تفعيل الترخيص"
-        },
-        "activateSuccess": {
-          "message": "تم تفعيل الترخيص بنجاح!"
-        },
-        "activateTitle": {
-          "title": "تفعيل مفتاح الترخيص"
-        },
-        "activating": {
-          "label": "جارٍ التفعيل..."
-        },
-        "activeUntil": {
-          "label": "مفتاح الترخيص فعّال حتى <value>{date}</value>"
-        },
-        "cancel": {
-          "label": "إلغاء"
-        },
-        "close": {
-          "label": "إغلاق"
-        },
-        "description": "أضف وفعّل ترخيصًا يدويًا لنسخة Onyx هذه.",
-        "emptyKey": {
-          "error": "يرجى إدخال مفتاح ترخيص"
-        },
-        "error": {
-          "text": "{error}. <link>مساعدة الفوترة</link>"
-        },
-        "expired": {
-          "label": "انتهت صلاحية مفتاح الترخيص"
-        },
-        "keyField": {
-          "description": "الصق أو أرفق ملف مفتاح الترخيص الذي استلمته من Onyx.",
-          "title": "مفتاح الترخيص"
-        },
-        "updateKey": {
-          "label": "تحديث المفتاح"
-        },
-        "updateLicense": {
-          "label": "تحديث الترخيص"
-        },
-        "updateSuccess": {
-          "message": "تم تحديث الترخيص بنجاح!"
-        },
-        "updateTitle": {
-          "title": "تحديث مفتاح الترخيص"
-        }
-      },
-      "payment": {
-        "card": {
-          "description": "طريقة الدفع",
-          "title": "Visa تنتهي بـ 1234"
-        },
-        "lastPayment": {
-          "description": "آخر دفعة"
-        },
-        "section": {
-          "title": "الدفع"
-        },
-        "update": {
-          "label": "تحديث"
-        },
-        "viewInvoice": {
-          "label": "عرض الفاتورة"
-        }
-      },
-      "plans": {
-        "business": {
-          "button": {
-            "label": "الحصول على خطة Business"
-          },
-          "description": "لكل مقعد/شهر بفوترة سنوية\nأو 25$ لكل مقعد بفوترة شهرية",
-          "features": {
-            "apiKeys": "مفاتيح API لحسابات الخدمة",
-            "documentPermissions": "وراثة أذونات المستندات",
-            "encryption": "تشفير الأسرار",
-            "queryHistory": "سجل الاستعلامات ولوحة الاستخدام",
-            "rbac": "التحكم في الوصول حسب الدور (RBAC)",
-            "selfHosting": "الاستضافة الذاتية (اختياري)",
-            "theming": "سمات مخصصة"
-          },
-          "featuresPrefix": "أنجز المزيد من العمل بالذكاء الاصطناعي لفريقك.",
-          "pricing": "$20",
-          "title": "Business"
-        },
-        "card": {
-          "ariaLabel": "بطاقة خطة {plan}"
-        },
-        "currentPlan": {
-          "label": "خطتك الحالية"
-        },
-        "enterprise": {
-          "button": {
-            "label": "التواصل مع المبيعات"
-          },
-          "description": "أسعار وخيارات نشر مرنة\nللمؤسسات الكبيرة",
-          "features": {
-            "customDeployments": "عمليات نشر مخصصة",
-            "customRoles": "أدوار وأذونات مخصصة",
-            "hookExtensions": "امتدادات Hook",
-            "regionalProcessing": "معالجة البيانات حسب المنطقة",
-            "scim": "SCIM / مزامنة المجموعات",
-            "support": "اتفاقيات مستوى خدمة ودعم ذو أولوية",
-            "usageLimits": "حدود استخدام قابلة للتهيئة",
-            "whiteLabeling": "علامة بيضاء كاملة"
-          },
-          "featuresPrefix": "كل ما في خطة Business، بالإضافة إلى:",
-          "title": "Enterprise"
-        },
-        "includedInPlan": {
-          "label": "مضمّن في خطتك"
-        }
-      },
-      "seats": {
-        "belowMinimum": {
-          "error": "لا يمكنك تعيين المقاعد أقل من **{minimum}** المقاعد المستخدمة/المعلقة حاليًا. [أزل المستخدمين](/admin/users) أولًا قبل تعديل المقاعد."
-        },
-        "billing": {
-          "added": "{count, plural, one {ستتم فوترتك عن <value>{count}</value> مقعد إضافي بمبلغ تناسبي.} other {ستتم فوترتك عن <value>{count}</value> مقاعد إضافية بمبلغ تناسبي.}}",
-          "removed": "{count, plural, one {سيُزال <value>{count}</value> مقعد في <value>{date}</value> (بعد دورة الفوترة الحالية).} other {ستُزال <value>{count}</value> مقاعد في <value>{date}</value> (بعد دورة الفوترة الحالية).}}",
-          "unchanged": "لا تغييرات على فوترتك."
-        },
-        "breakdown": {
-          "label": "{used} مستخدمة • {pending} معلقة • {remaining} متبقية"
-        },
-        "cancel": {
-          "label": "إلغاء"
-        },
-        "confirmChange": {
-          "label": "تأكيد التغيير"
-        },
-        "delta": {
-          "added": "{count, plural, one {مقعد واحد سيُضاف} other {# مقاعد ستُضاف}}",
-          "removed": "{count, plural, one {مقعد واحد سيُزال} other {# مقاعد ستُزال}}"
-        },
-        "saving": {
-          "label": "جارٍ الحفظ..."
-        },
-        "seatsField": {
-          "title": "المقاعد"
-        },
-        "total": {
-          "label": "{count} مقاعد"
-        },
-        "updateFailed": {
-          "error": "فشل تحديث المقاعد"
-        },
-        "updateSeats": {
-          "description": "أضف أو أزل مقاعد لتعكس حجم فريقك.",
-          "label": "تحديث المقاعد",
-          "title": "تحديث المقاعد"
-        },
-        "viewUsers": {
-          "label": "عرض المستخدمين"
-        }
-      },
-      "subscription": {
-        "businessPlan": {
-          "name": "خطة Business"
-        },
-        "connectToStripe": {
-          "label": "الاتصال بـ Stripe"
-        },
-        "connecting": {
-          "label": "جارٍ الاتصال..."
-        },
-        "enterprisePlan": {
-          "name": "خطة Enterprise"
-        },
-        "expired": {
-          "subtitle": "انتهت في {date}"
-        },
-        "managePlan": {
-          "label": "إدارة الخطة"
-        },
-        "managedBySales": {
-          "text": "تُدار خطتك عبر المبيعات.<br></br><link>تواصل مع الفوترة</link> لإجراء تغييرات."
-        },
-        "nextPayment": {
-          "subtitle": "الدفعة التالية في {date}"
-        },
-        "syncLicense": {
-          "label": "مزامنة الترخيص"
-        },
-        "syncing": {
-          "label": "جارٍ المزامنة..."
-        },
-        "trialDays": {
-          "subtitle": "تنتهي الفترة التجريبية خلال {days} أيام. الدفع مطلوب في {date}"
-        },
-        "trialToday": {
-          "subtitle": "تنتهي الفترة التجريبية اليوم. الدفع مطلوب في {date}"
-        },
-        "trialTomorrow": {
-          "subtitle": "تنتهي الفترة التجريبية غدًا. الدفع مطلوب في {date}"
-        },
-        "upgradeNow": {
-          "label": "الترقية الآن"
-        },
-        "upgrading": {
-          "label": "جارٍ الترقية..."
-        },
-        "validUntil": {
-          "subtitle": "صالح حتى {date}"
-        },
-        "viewPlanDetails": {
-          "label": "عرض تفاصيل الخطة"
-        }
-      },
-      "toasts": {
-        "endTrialFailed": "فشل إنهاء الفترة التجريبية",
-        "licenseSyncFailed": "فشلت مزامنة الترخيص",
-        "paymentMethodRequired": "أضف طريقة دفع أولًا، ثم حاول الترقية مرة أخرى.",
-        "syncLicenseFailed": "فشلت مزامنة الترخيص"
       }
     },
     "chatPreferences": {
@@ -1560,10 +1199,7 @@
           "placeholder": "بالأيام",
           "restoreTooltip": "استعادة الافتراضي"
         },
-        "description": "حدد مدة احتفاظ Onyx بالمحادثات في مؤسستك.",
-        "enterprisePlanTag": {
-          "label": "خطة Enterprise"
-        },
+        "description": "حدد مدة احتفاظ Lumen بالمحادثات في مؤسستك.",
         "forever": {
           "label": "إلى الأبد"
         },
@@ -1579,16 +1215,11 @@
           "message": "ستُحذف نهائيًا المحادثات التي لا نشاط فيها لأكثر من {days, plural, one {يوم واحد} other {# أيام}}. لا يمكن التراجع عن هذا.",
           "title": "تقليل مدة الاحتفاظ بالمحادثات؟"
         },
-        "tierTooltip": "الاحتفاظ بسجل المحادثات ميزة في خطة Enterprise.",
         "title": "الاحتفاظ بسجل المحادثات"
       },
       "searchMode": {
-        "businessPlanTag": {
-          "label": "خطة Business"
-        },
         "description": "وضع واجهة للبحث السريع في المستندات عبر مؤسستك.",
         "noConnectorsTooltip": "قم بإعداد موصلات لاستخدام وضع البحث",
-        "tierTooltip": "يتطلب وضع البحث خطة Business أو Enterprise.",
         "title": "وضع البحث"
       },
       "systemPrompt": {
@@ -1622,7 +1253,7 @@
       },
       "teamContext": {
         "description": "يمكن للمستخدمين أيضًا تقديم سياق فردي إضافي في إعداداتهم الشخصية.",
-        "placeholder": "صف فريقك وكيف يجب أن يتصرف Onyx.",
+        "placeholder": "صف فريقك وكيف يجب أن يتصرف Lumen.",
         "title": "سياق الفريق"
       },
       "teamName": {
@@ -1742,7 +1373,7 @@
     "connector": {
       "accessType": {
         "autoSyncOption": {
-          "description": "سنقوم بمزامنة الأذونات تلقائيًا من المصدر. لن يكون المستند قابلًا للبحث في Onyx إلا إذا كان المستخدم الذي يجري البحث يملك إذن الوصول إلى المستند في المصدر.",
+          "description": "سنقوم بمزامنة الأذونات تلقائيًا من المصدر. لن يكون المستند قابلًا للبحث في Lumen إلا إذا كان المستخدم الذي يجري البحث يملك إذن الوصول إلى المستند في المصدر.",
           "disabledReason": "طريقة مصادقة بيانات الاعتماد الحالية لا تدعم مزامنة الأذونات تلقائيًا. يرجى تغيير طريقة المصادقة إلى طريقة مدعومة.",
           "name": "مزامنة الأذونات تلقائيًا"
         },
@@ -1755,7 +1386,7 @@
           "name": "خاص"
         },
         "publicOption": {
-          "description": "يمكن لأي شخص لديه حساب على Onyx الوصول إلى المستندات التي يجلبها هذا الموصّل",
+          "description": "يمكن لأي شخص لديه حساب على Lumen الوصول إلى المستندات التي يجلبها هذا الموصّل",
           "name": "عام"
         }
       },
@@ -2781,7 +2412,7 @@
         "title": "لم يتم العثور على مستخدمين"
       },
       "header": {
-        "description": "تحكم فيمن يمكنه استخدام Craft، منشئ التطبيقات الوكيلي من Onyx.",
+        "description": "تحكم فيمن يمكنه استخدام Craft، منشئ التطبيقات الوكيلي من Lumen.",
         "title": "الوصول"
       },
       "perUserAccess": {
@@ -2812,7 +2443,7 @@
         }
       },
       "unavailable": {
-        "description": "يُفعَّل Craft لكل نشر بواسطة Onyx. تواصل مع ممثل Onyx الخاص بك للحصول على صلاحية الوصول.",
+        "description": "يُفعَّل Craft لكل نشر بواسطة Lumen. تواصل مع ممثل Lumen الخاص بك للحصول على صلاحية الوصول.",
         "title": "Craft غير متاح في هذا النشر"
       },
       "usersLoadError": {
@@ -2898,7 +2529,7 @@
         "label": "جرّب في Craft"
       },
       "unavailable": {
-        "description": "يُفعَّل Craft لكل نشر بواسطة Onyx. تواصل مع ممثل Onyx الخاص بك للحصول على صلاحية الوصول.",
+        "description": "يُفعَّل Craft لكل نشر بواسطة Lumen. تواصل مع ممثل Lumen الخاص بك للحصول على صلاحية الوصول.",
         "title": "Craft غير متاح في هذا النشر"
       }
     },
@@ -3042,10 +2673,10 @@
     },
     "customAnalytics": {
       "intro": {
-        "description": "يتيح لك هذا استخدام أداة التحليلات الخاصة بك مع Onyx! انسخ مقتطف الويب من مزود التحليلات لديك في المربع أدناه، وسنبدأ في إرسال أحداث الاستخدام."
+        "description": "يتيح لك هذا استخدام أداة التحليلات الخاصة بك مع Lumen! انسخ مقتطف الويب من مزود التحليلات لديك في المربع أدناه، وسنبدأ في إرسال أحداث الاستخدام."
       },
       "notEnabled": {
-        "description": "لإعداد نصوص التحليلات المخصصة، يرجى التعاون مع الفريق الذي قام بإعداد Onyx لديكم لتعيين متغير البيئة <i>CUSTOM_ANALYTICS_SECRET_KEY</i>.",
+        "description": "لإعداد نصوص التحليلات المخصصة، يرجى التعاون مع الفريق الذي قام بإعداد Lumen لديكم لتعيين متغير البيئة <i>CUSTOM_ANALYTICS_SECRET_KEY</i>.",
         "title": "التحليلات المخصصة غير مفعّلة."
       },
       "script": {
@@ -3054,7 +2685,7 @@
         "label": "النص البرمجي"
       },
       "secretKey": {
-        "description": "لأسباب أمنية، يجب تقديم مفتاح سري لتحديث هذا النص البرمجي. يجب أن يكون هذا هو قيمة متغير البيئة <i>CUSTOM_ANALYTICS_SECRET_KEY</i> الذي تم تعيينه عند إعداد Onyx لأول مرة.",
+        "description": "لأسباب أمنية، يجب تقديم مفتاح سري لتحديث هذا النص البرمجي. يجب أن يكون هذا هو قيمة متغير البيئة <i>CUSTOM_ANALYTICS_SECRET_KEY</i> الذي تم تعيينه عند إعداد Lumen لأول مرة.",
         "label": "المفتاح السري"
       },
       "updateButton": {
@@ -3283,7 +2914,7 @@
       },
       "page": {
         "header": {
-          "description": "اربط Onyx بخوادم Discord الخاصة بك. يمكن للمستخدمين طرح الأسئلة مباشرة في قنوات Discord."
+          "description": "اربط Lumen بخوادم Discord الخاصة بك. يمكن للمستخدمين طرح الأسئلة مباشرة في قنوات Discord."
         }
       },
       "registrationKey": {
@@ -3320,7 +2951,7 @@
           "label": "حذف مفتاح API"
         },
         "deleteHint": "احذف مفتاح API الحالي قبل التحديث.",
-        "description": "يستخرج Unstructured البيانات المعقدة ويحوّلها من تنسيقات مثل ‎.pdf و.docx و.png و.pptx وغيرها إلى نص نظيف ليستوعبه Onyx. قدّم مفتاح API لتفعيل معالجة المستندات عبر Unstructured.",
+        "description": "يستخرج Unstructured البيانات المعقدة ويحوّلها من تنسيقات مثل ‎.pdf و.docx و.png و.pptx وغيرها إلى نص نظيف ليستوعبه Lumen. قدّم مفتاح API لتفعيل معالجة المستندات عبر Unstructured.",
         "learnMore": "اعرف المزيد عن Unstructured <link>هنا</link>.",
         "note": "<label>ملاحظة:</label> سيرسل هذا المستندات إلى خوادم Unstructured للمعالجة.",
         "saveButton": {
@@ -3397,7 +3028,7 @@
         "deleteScheduled": {
           "toast": "تمت جدولة مجموعة المستندات \"{name}\" للحذف"
         },
-        "description": "تتيح لك **مجموعات المستندات** تجميع المستندات المترابطة منطقيًا في حزمة واحدة. يمكن بعدها استخدامها كمرشح عند البحث للتحكم في نطاق المعلومات التي يبحث فيها Onyx.",
+        "description": "تتيح لك **مجموعات المستندات** تجميع المستندات المترابطة منطقيًا في حزمة واحدة. يمكن بعدها استخدامها كمرشح عند البحث للتحكم في نطاق المعلومات التي يبحث فيها Lumen.",
         "edit": {
           "header": {
             "title": "تعديل مجموعة المستندات"
@@ -3545,7 +3176,7 @@
         "title": "تصدير السجلات"
       },
       "header": {
-        "description": "نزِّل ملف zip يحتوي على ملفات سجلات الخادم لإرفاقه بمحادثة دعم Onyx."
+        "description": "نزِّل ملف zip يحتوي على ملفات سجلات الخادم لإرفاقه بمحادثة دعم Lumen."
       },
       "receipt": {
         "duplicateHost": {
@@ -3660,7 +3291,7 @@
         "noCustomSkills": "بدون مهارات مخصصة",
         "orgCredentialsSet": "بيانات اعتماد المؤسسة معيّنة",
         "perUserCredentials": "بيانات اعتماد لكل مستخدم",
-        "providedByOnyx": "مقدَّم من Onyx",
+        "providedByLumen": "مقدَّم من Lumen",
         "tools": "{count, plural, one {# أداة} other {# أدوات}}",
         "upstreamPatterns": "{count, plural, one {# نمط منبع} other {# أنماط منبع}}"
       },
@@ -3909,7 +3540,7 @@
           "tooltip": "يجري تحديث تضمينات المستندات بسبب تغييرات حديثة على هذه المجموعة."
         },
         "systemGroup": {
-          "description": "يدير Onyx هذه المجموعة. الأعضاء هم الشيء الوحيد الذي تحتويه، والشيء الوحيد الذي يمكنك تغييره.",
+          "description": "يدير Lumen هذه المجموعة. الأعضاء هم الشيء الوحيد الذي تحتويه، والشيء الوحيد الذي يمكنك تغييره.",
           "title": "مجموعة نظام"
         },
         "toasts": {
@@ -4022,7 +3653,7 @@
         }
       },
       "permissionsChanged": {
-        "description": "يستخدم Onyx الآن أذونات قائمة على المجموعات. تُهيأ صلاحيات الوصول لكل مجموعة، لذا أذونات المستخدم هي مجموع كل المجموعات التي ينتمي إليها.",
+        "description": "يستخدم Lumen الآن أذونات قائمة على المجموعات. تُهيأ صلاحيات الوصول لكل مجموعة، لذا أذونات المستخدم هي مجموع كل المجموعات التي ينتمي إليها.",
         "learnMore": {
           "label": "اعرف المزيد"
         },
@@ -4085,7 +3716,6 @@
           "placeholder": "حد التكلفة",
           "unit": "(دولار)"
         },
-        "disabledTooltip": "حدود معدل الرموز متاحة فقط في [نسخة Enterprise من Onyx](/admin/billing).",
         "section": {
           "description": "حدّ من عدد الرموز التي يمكن لهذه المجموعة استخدامها خلال فترة زمنية معينة.",
           "title": "حد معدل الرموز"
@@ -4148,7 +3778,7 @@
       },
       "disconnectModal": {
         "body": {
-          "description": "سيتوقف Onyx عن استدعاء نقطة النهاية هذه للخطاف ***{name}***. ستستمر الطلبات الجارية في التنفيذ. قد تحتفظ نقطة النهاية الخارجية بالبيانات المرسلة إليها سابقًا. يمكنك إعادة توصيل هذا الخطاف لاحقًا إذا لزم الأمر."
+          "description": "سيتوقف Lumen عن استدعاء نقطة النهاية هذه للخطاف ***{name}***. ستستمر الطلبات الجارية في التنفيذ. قد تحتفظ نقطة النهاية الخارجية بالبيانات المرسلة إليها سابقًا. يمكنك إعادة توصيل هذا الخطاف لاحقًا إذا لزم الأمر."
         },
         "deleteNote": {
           "description": "يمكنك أيضًا حذف هذا الخطاف. لا يمكن التراجع عن الحذف."
@@ -4168,7 +3798,7 @@
       },
       "form": {
         "apiKey": {
-          "description": "سيستخدم Onyx هذا المفتاح للمصادقة مع نقطة نهاية API الخاصة بك.",
+          "description": "سيستخدم Lumen هذا المفتاح للمصادقة مع نقطة نهاية API الخاصة بك.",
           "keepCurrent": {
             "placeholder": "اتركه فارغًا للاحتفاظ بالمفتاح الحالي"
           },
@@ -4218,10 +3848,10 @@
           "label": "حفظ التغييرات"
         },
         "softStrategy": {
-          "description": "إذا أعادت نقطة النهاية خطأ، يسجّله Onyx ويواصل المسار كالمعتاد متجاهلاً نتيجة الخطاف."
+          "description": "إذا أعادت نقطة النهاية خطأ، يسجّله Lumen ويواصل المسار كالمعتاد متجاهلاً نتيجة الخطاف."
         },
         "timeout": {
-          "description": "أقصى وقت ينتظره Onyx لاستجابة نقطة النهاية قبل تطبيق استراتيجية الفشل. يجب أن يكون أكبر من 0 وبحد أقصى {max} ثانية.",
+          "description": "أقصى وقت ينتظره Lumen لاستجابة نقطة النهاية قبل تطبيق استراتيجية الفشل. يجب أن يكون أكبر من 0 وبحد أقصى {max} ثانية.",
           "revert": {
             "tooltip": "الرجوع إلى الافتراضي"
           },
@@ -4286,16 +3916,13 @@
         }
       },
       "page": {
-        "description": "وسّع مسارات Onyx بتسجيل نقاط نهاية API خارجية كاستدعاءات عند نقاط خطافات محددة مسبقًا.",
+        "description": "وسّع مسارات Lumen بتسجيل نقاط نهاية API خارجية كاستدعاءات عند نقاط خطافات محددة مسبقًا.",
         "empty": {
           "title": "لا توجد نقاط خطافات متاحة"
         },
         "emptySearch": {
           "description": "جرّب مصطلح بحث مختلفًا.",
           "title": "لم يتم العثور على نتائج"
-        },
-        "enterpriseRequired": {
-          "message": "تتطلب امتدادات الخطافات ترخيص Enterprise."
         },
         "loadHooksFailed": {
           "message": "فشل تحميل الخطافات. يرجى تحديث الصفحة."
@@ -4432,7 +4059,7 @@
           "message": "فشل التحقق من مفتاح API"
         },
         "authMethod": {
-          "idle": "اختر كيف يجب أن يصادق Onyx مع Google Vertex AI.",
+          "idle": "اختر كيف يجب أن يصادق Lumen مع Google Vertex AI.",
           "label": "طريقة المصادقة",
           "required": "طريقة المصادقة مطلوبة",
           "serviceAccount": {
@@ -4482,7 +4109,7 @@
           "customPlaceholder": "Fetch models from the server above, then pick one"
         },
         "projectId": {
-          "idle": "مشروع GCP الذي فُعّل فيه Vertex AI. يصادق Onyx بحساب الخدمة المرتبط بالحاوية (GKE Workload Identity).",
+          "idle": "مشروع GCP الذي فُعّل فيه Vertex AI. يصادق Lumen بحساب الخدمة المرتبط بالحاوية (GKE Workload Identity).",
           "label": "معرّف مشروع GCP",
           "required": "معرّف المشروع مطلوب"
         },
@@ -4582,7 +4209,7 @@
           "title": "اسم النشر"
         },
         "modelName": {
-          "description": "تسمية لهذا النموذج في Onyx. يوجّه Azure الطلبات حسب اسم النشر، لذا يكفي أن يكون معرّفًا فريدًا."
+          "description": "تسمية لهذا النموذج في Lumen. يوجّه Azure الطلبات حسب اسم النشر، لذا يكفي أن يكون معرّفًا فريدًا."
         },
         "targetUrl": {
           "title": "عنوان URL الهدف"
@@ -4609,7 +4236,7 @@
           "title": "اختر كيفية تطبيق نموذج LLM للاسترجاع السياقي"
         },
         "default": {
-          "description": "يتطلب تعديل إعدادات التضمين أو الاسترجاع إعادة فهرسة كاملة لجميع المستندات لتسري، وقد يستغرق ذلك **ساعات أو أيامًا** بحسب حجم المحتوى. [اعرف المزيد](https://docs.onyx.app/security/architecture/data_flows)",
+          "description": "يتطلب تعديل إعدادات التضمين أو الاسترجاع إعادة فهرسة كاملة لجميع المستندات لتسري، وقد يستغرق ذلك **ساعات أو أيامًا** بحسب حجم المحتوى.",
           "title": "تتطلب التغييرات إعادة فهرسة كاملة."
         },
         "orSeparator": {
@@ -4617,7 +4244,7 @@
         }
       },
       "cloudDisabled": {
-        "tooltip": "يُدار هذا الإعداد بواسطة Onyx Cloud."
+        "tooltip": "يُدار هذا الإعداد بواسطة Lumen Cloud."
       },
       "contextualModel": {
         "description": "سيُستخدم هذا النموذج لتوليد السياق للأجزاء.",
@@ -4631,9 +4258,9 @@
       },
       "embeddingModel": {
         "cloudManaged": {
-          "title": "نموذج التضمين وإعداداته يديرهما Onyx Cloud."
+          "title": "نموذج التضمين وإعداداته يديرهما Lumen Cloud."
         },
-        "description": "يستخدم Onyx هذا النموذج لترميز المستندات للبحث والاسترجاع.",
+        "description": "يستخدم Lumen هذا النموذج لترميز المستندات للبحث والاسترجاع.",
         "title": "نموذج التضمين"
       },
       "errorsModal": {
@@ -4681,7 +4308,7 @@
         },
         "modelName": {
           "placeholder": "model-name",
-          "selfHostedDescription": "سيتصل Onyx بهذا النموذج على نقطة النهاية المستضافة ذاتيًا.",
+          "selfHostedDescription": "سيتصل Lumen بهذا النموذج على نقطة النهاية المستضافة ذاتيًا.",
           "title": "اسم النموذج"
         },
         "normalize": {
@@ -4725,7 +4352,7 @@
           "title": "عنوان URL الأساسي لـ API"
         },
         "modelName": {
-          "description": "سيتصل Onyx بهذا النموذج على وكيل {provider} الخاص بك."
+          "description": "سيتصل Lumen بهذا النموذج على وكيل {provider} الخاص بك."
         }
       },
       "maxImageSize": {
@@ -4940,7 +4567,7 @@
       },
       "wontPortConsentModal": {
         "connector": "{name} — {status}",
-        "description": "{count, plural, one {تتجاوز إعادة الفهرسة الموصلات المتوقفة وغير الصالحة، لذا لن يُنقل هذا الموصل إلى الفهرس الجديد. سيحذفه Onyx مع المستندات التي فهرسها:} other {تتجاوز إعادة الفهرسة الموصلات المتوقفة وغير الصالحة، لذا لن تُنقل هذه الموصلات (#) إلى الفهرس الجديد. سيحذفها Onyx مع المستندات التي فهرستها:}}",
+        "description": "{count, plural, one {تتجاوز إعادة الفهرسة الموصلات المتوقفة وغير الصالحة، لذا لن يُنقل هذا الموصل إلى الفهرس الجديد. سيحذفه Lumen مع المستندات التي فهرسها:} other {تتجاوز إعادة الفهرسة الموصلات المتوقفة وغير الصالحة، لذا لن تُنقل هذه الموصلات (#) إلى الفهرس الجديد. سيحذفها Lumen مع المستندات التي فهرستها:}}",
         "restoreHint": "للاحتفاظ بموصل، ألغِ هنا ثم استأنفه أو أصلحه وأعد الفهرسة، وسيُنقل تلقائيًا. وإلا فأضفه من جديد بعد اكتمال إعادة الفهرسة.",
         "statusInvalid": "غير صالح",
         "statusPaused": "متوقف مؤقتًا",
@@ -5106,7 +4733,7 @@
         "title": "تهيئة LLM جديدة غير متاحة مؤقتًا."
       },
       "defaultModel": {
-        "description": "سيستخدم Onyx هذا النموذج افتراضيًا في محادثاتك.",
+        "description": "سيستخدم Lumen هذا النموذج افتراضيًا في محادثاتك.",
         "title": "النموذج الافتراضي"
       },
       "deleteModal": {
@@ -5120,7 +4747,7 @@
       },
       "groups": {
         "addProvider": {
-          "description": "يدعم Onyx الموفرين الشائعين والنماذج المستضافة ذاتيًا.",
+          "description": "يدعم Lumen الموفرين الشائعين والنماذج المستضافة ذاتيًا.",
           "title": "إضافة موفر"
         },
         "gateways": {
@@ -5198,7 +4825,7 @@
               "description": "لبيئات خارج AWS",
               "label": "مفتاح وصول"
             },
-            "description": "اختر كيف يجب أن يصادق Onyx مع Bedrock.",
+            "description": "اختر كيف يجب أن يصادق Lumen مع Bedrock.",
             "iam": {
               "description": "موصى به لبيئات AWS",
               "label": "دور IAM للبيئة"
@@ -5210,7 +4837,7 @@
             "title": "طريقة المصادقة"
           },
           "iamNotice": {
-            "title": "سيستخدم Onyx دور IAM المرتبط بالبيئة التي يعمل فيها للمصادقة."
+            "title": "سيستخدم Lumen دور IAM المرتبط بالبيئة التي يعمل فيها للمصادقة."
           },
           "longTermApiKeyField": {
             "placeholder": "مفتاح API طويل الأمد الخاص بك",
@@ -5259,7 +4886,7 @@
             "addButton": {
               "label": "إضافة سطر"
             },
-            "description": "أضف خصائص إضافية بحسب حاجة موفر النموذج. تُمرَّر هذه إلى استدعاء `completion()` في LiteLLM كـ[متغيرات بيئة](https://docs.litellm.ai/docs/set_keys#environment-variables). راجع [الوثائق](https://docs.onyx.app/admins/ai_models/custom_inference_provider) لمزيد من التعليمات.",
+            "description": "أضف خصائص إضافية بحسب حاجة موفر النموذج. تُمرَّر هذه إلى استدعاء `completion()` في LiteLLM كـ[متغيرات بيئة](https://docs.litellm.ai/docs/set_keys#environment-variables).",
             "keyInput": {
               "placeholder": "مثل OPENAI_ORGANIZATION"
             },
@@ -5484,7 +5111,7 @@
         },
         "setup": {
           "apiBaseField": {
-            "containerizedNote": "مع تشغيل Onyx في حاوية، استخدم `host.docker.internal` بدلًا من `localhost` للوصول إلى خدمة على مضيفك.",
+            "containerizedNote": "مع تشغيل Lumen في حاوية، استخدم `host.docker.internal` بدلًا من `localhost` للوصول إلى خدمة على مضيفك.",
             "title": "عنوان URL الأساسي لـ API"
           },
           "apiKeyField": {
@@ -5549,7 +5176,7 @@
         },
         "vertexAi": {
           "authMethodField": {
-            "description": "اختر كيف يجب أن يصادق Onyx مع Google Vertex AI.",
+            "description": "اختر كيف يجب أن يصادق Lumen مع Google Vertex AI.",
             "serviceAccount": {
               "description": "ارفع ملف JSON لمفتاح حساب خدمة GCP",
               "label": "JSON حساب الخدمة"
@@ -5578,7 +5205,7 @@
             "projectRequired": "معرّف مشروع GCP مطلوب"
           },
           "workloadIdentityNotice": {
-            "title": "سيستخدم Onyx بيانات اعتماد Google Cloud المحيطة بالحاوية (عبر google.auth.default). تأكد من ربط ServiceAccount الخاص بـ Kubernetes بحساب خدمة GCP لديه وصول إلى Vertex AI."
+            "title": "سيستخدم Lumen بيانات اعتماد Google Cloud المحيطة بالحاوية (عبر google.auth.default). تأكد من ربط ServiceAccount الخاص بـ Kubernetes بحساب خدمة GCP لديه وصول إلى Vertex AI."
           }
         }
       },
@@ -5645,8 +5272,8 @@
           "responseFallback": "فشل طلب الدعوة"
         },
         "requestSentBody": "أُرسل طلب انضمامك. يمكنك الاستكشاف كفريق خاص بك بينما تنتظر موافقة مسؤول {domain} على طلبك.",
-        "tryOnyxButton": {
-          "label": "جرّب Onyx أثناء الانتظار"
+        "tryLumenButton": {
+          "label": "جرّب Lumen أثناء الانتظار"
         }
       },
       "newTenant": {
@@ -6083,7 +5710,7 @@
       },
       "authentication": {
         "allowedEmailDomains": {
-          "placeholder": "أضف نطاقًا (مثل onyx.app)",
+          "placeholder": "أضف نطاقًا (مثل lumen.app)",
           "subDescription": "لا يمكن للمستخدمين الجدد تسجيل حسابات جديدة إلا ببريد ضمن قائمة النطاقات هذه.",
           "title": "نطاقات البريد الإلكتروني المسموح بها"
         },
@@ -6201,7 +5828,7 @@
     },
     "serviceAccounts": {
       "deleteModal": {
-        "description": "سيفقد أي تطبيق يستخدم مفتاح API للحساب *{name}* (`{keyDisplay}`) الوصول إلى Onyx.",
+        "description": "سيفقد أي تطبيق يستخدم مفتاح API للحساب *{name}* (`{keyDisplay}`) الوصول إلى Lumen.",
         "submit": {
           "label": "حذف"
         },
@@ -6248,7 +5875,7 @@
         "cancelButton": {
           "label": "إلغاء"
         },
-        "description": "استخدم مفتاح API لحساب الخدمة للوصول برمجيًا إلى Onyx API بأذونات على مستوى المستخدم. يمكنك تعديل تفاصيل الحساب لاحقًا.",
+        "description": "استخدم مفتاح API لحساب الخدمة للوصول برمجيًا إلى Lumen API بأذونات على مستوى المستخدم. يمكنك تعديل تفاصيل الحساب لاحقًا.",
         "groups": {
           "empty": {
             "description": "لا مجموعات معيّنة لحساب الخدمة هذا.",
@@ -6310,7 +5937,7 @@
         }
       },
       "page": {
-        "description": "استخدم حسابات الخدمة للوصول برمجيًا إلى Onyx API.",
+        "description": "استخدم حسابات الخدمة للوصول برمجيًا إلى Lumen API.",
         "error": {
           "description": "يرجى مراجعة وحدة التحكم لمزيد من التفاصيل.",
           "title": "فشل تحميل حسابات الخدمة."
@@ -6367,10 +5994,6 @@
         "keyCopied": "نُسخ مفتاح API إلى الحافظة.",
         "regenerateFailed": "فشلت إعادة توليد مفتاح API.",
         "regenerateFailedWithDetail": "فشلت إعادة توليد مفتاح API: {detail}"
-      },
-      "trialNotice": {
-        "description": "الحسابات التجريبية لا تشمل الوصول عبر مفاتيح API. اشترِ اشتراكًا مدفوعًا لفتح هذه الميزة.",
-        "title": "قم بالترقية إلى خطة مدفوعة لإنشاء مفاتيح API."
       }
     },
     "shared": {
@@ -6380,8 +6003,9 @@
         }
       },
       "liteModeNotice": {
-        "description": "يعمل هذا النشر بنسخة Onyx Lite التي لا تحتوي على قاعدة متجهات، فالموصلات وفهرسة المستندات معطّلة ولا يُفهرس شيء. لربط مصادر البيانات وفهرسة المستندات، انشر Onyx في **الوضع القياسي**. راجع [دليل النشر]({docsUrl}) للبدء.",
-        "title": "الفهرسة غير متاحة في وضع Lite"
+        "description": "يعمل هذا النشر بنسخة Lumen Lite التي لا تحتوي على قاعدة متجهات، فالموصلات وفهرسة المستندات معطّلة ولا يُفهرس شيء. لربط مصادر البيانات وفهرسة المستندات، انشر Lumen في **الوضع القياسي**. راجع [دليل النشر]({docsUrl}) للبدء.",
+        "title": "الفهرسة غير متاحة في وضع Lite",
+        "descriptionNoDocs": "يعمل هذا النشر بنسخة Lumen Lite التي لا تحتوي على قاعدة متجهات، فالموصلات وفهرسة المستندات معطّلة ولا يُفهرس شيء. لربط مصادر البيانات وفهرسة المستندات، انشر Lumen في **الوضع القياسي**."
       },
       "providerCard": {
         "connectButton": {
@@ -6406,10 +6030,10 @@
     "slackBots": {
       "channelConfig": {
         "createError": {
-          "toast": "خطأ في إنشاء تهيئة OnyxBot - {error}"
+          "toast": "خطأ في إنشاء تهيئة LumenBot - {error}"
         },
         "updateError": {
-          "toast": "خطأ في تحديث تهيئة OnyxBot - {error}"
+          "toast": "خطأ في تحديث تهيئة LumenBot - {error}"
         }
       },
       "channels": {
@@ -6527,16 +6151,16 @@
         },
         "disableDefault": {
           "label": "تعطيل التهيئة الافتراضية",
-          "warning": "تحذير: تعطيل التهيئة الافتراضية يعني أن OnyxBot لن يرد في قنوات Slack ما لم تُهيأ صراحةً. كذلك لن يرد OnyxBot على الرسائل المباشرة."
+          "warning": "تحذير: تعطيل التهيئة الافتراضية يعني أن LumenBot لن يرد في قنوات Slack ما لم تُهيأ صراحةً. كذلك لن يرد LumenBot على الرسائل المباشرة."
         },
         "documentSets": {
           "autoSyncedDisabled": {
-            "tooltip": "تعذّر استخدام مجموعة المستندات هذه لأنها تحتوي على موصل بأذونات مزامنة تلقائية. ردود OnyxBot في هذه القناة مرئية لجميع مستخدمي Slack، لذا قد تؤدي محاكاة أذونات السائل إلى كشف معلومات خاصة دون قصد."
+            "tooltip": "تعذّر استخدام مجموعة المستندات هذه لأنها تحتوي على موصل بأذونات مزامنة تلقائية. ردود LumenBot في هذه القناة مرئية لجميع مستخدمي Slack، لذا قد تؤدي محاكاة أذونات السائل إلى كشف معلومات خاصة دون قصد."
           },
           "autoSyncedNote": {
             "text": "لا يمكن إرفاق مجموعات المستندات هذه لأنها تحتوي على مستندات متزامنة تلقائيًا:"
           },
-          "description": "اختر مجموعات المستندات التي سيستخدمها OnyxBot عند الإجابة عن الأسئلة في Slack.",
+          "description": "اختر مجموعات المستندات التي سيستخدمها LumenBot عند الإجابة عن الأسئلة في Slack.",
           "hideUnselectableButton": {
             "label": "إخفاء مجموعات المستندات غير القابلة للاختيار"
           },
@@ -6561,12 +6185,12 @@
         },
         "isEphemeral": {
           "label": "الرد على المستخدم برسالة خاصة (مؤقتة)",
-          "tooltip": "إذا فُعّل، سيرد OnyxBot على المستخدم فقط برسالة خاصة (مؤقتة). إذا اخترت أيضًا وكيل \"البحث\" أعلاه، فسيتيح هذا الخيار للمستخدم الاستعلام عن المستندات الخاصة به."
+          "tooltip": "إذا فُعّل، سيرد LumenBot على المستخدم فقط برسالة خاصة (مؤقتة). إذا اخترت أيضًا وكيل \"البحث\" أعلاه، فسيتيح هذا الخيار للمستخدم الاستعلام عن المستندات الخاصة به."
         },
         "knowledgeSource": {
           "allPublic": {
             "label": "جميع المعارف العامة",
-            "sublabel": "دع OnyxBot يجيب بناءً على معلومات من جميع الموصلات العامة"
+            "sublabel": "دع LumenBot يجيب بناءً على معلومات من جميع الموصلات العامة"
           },
           "documentSets": {
             "label": "مجموعات مستندات محددة",
@@ -6583,7 +6207,7 @@
           }
         },
         "nonSearchAgent": {
-          "description": "اختر الوكيل غير البحثي الذي سيستخدمه OnyxBot عند الإجابة عن الأسئلة في Slack."
+          "description": "اختر الوكيل غير البحثي الذي سيستخدمه LumenBot عند الإجابة عن الأسئلة في Slack."
         },
         "privacyAlert": {
           "connectors": {
@@ -6594,7 +6218,7 @@
         },
         "questionmarkPrefilter": {
           "label": "الرد على الأسئلة فقط",
-          "tooltip": "إذا فُعّل، سيرد OnyxBot فقط على الرسائل التي تحتوي على علامة استفهام"
+          "tooltip": "إذا فُعّل، سيرد LumenBot فقط على الرسائل التي تحتوي على علامة استفهام"
         },
         "removedDocumentSets": {
           "toast": "أزلنا مجموعة مستندات أو أكثر من اختيارك لأنها لم تعد صالحة. يرجى المراجعة وتحديث التهيئة."
@@ -6604,15 +6228,15 @@
             "tooltip": "معطّل أثناء تفعيل \"الرد على المستخدم برسالة خاصة (مؤقتة)\"، فالردود المؤقتة تستهدف مستخدمًا واحدًا فقط."
           },
           "label": "(اختياري) الرد على مستخدمين / مجموعات معينين",
-          "subtext": "إذا حُدد، فلن يتمكن من استدعاء OnyxBot في هذه القناة إلا هؤلاء المستخدمون / المجموعات، ولن تكون الردود مرئية إلا لهم."
+          "subtext": "إذا حُدد، فلن يتمكن من استدعاء LumenBot في هذه القناة إلا هؤلاء المستخدمون / المجموعات، ولن تكون الردود مرئية إلا لهم."
         },
         "respondTagOnly": {
-          "label": "الرد على @OnyxBot فقط",
-          "tooltip": "إذا فُعّل، سيرد OnyxBot فقط عند الإشارة إليه مباشرة"
+          "label": "الرد على @LumenBot فقط",
+          "tooltip": "إذا فُعّل، سيرد LumenBot فقط عند الإشارة إليه مباشرة"
         },
         "respondToBots": {
           "label": "الرد على رسائل البوتات",
-          "tooltip": "إذا لم يُفعّل، سيتجاهل OnyxBot دائمًا رسائل البوتات"
+          "tooltip": "إذا لم يُفعّل، سيتجاهل LumenBot دائمًا رسائل البوتات"
         },
         "responseType": {
           "detailed": {
@@ -6622,10 +6246,10 @@
           "standard": {
             "label": "قياسي"
           },
-          "tooltip": "يتحكم في تنسيق ردود OnyxBot."
+          "tooltip": "يتحكم في تنسيق ردود LumenBot."
         },
         "searchAgent": {
-          "description": "اختر الوكيل المزود بالبحث الذي سيستخدمه OnyxBot عند الإجابة عن الأسئلة في Slack."
+          "description": "اختر الوكيل المزود بالبحث الذي سيستخدمه LumenBot عند الإجابة عن الأسئلة في Slack."
         },
         "searchConfig": {
           "section": {
@@ -6634,14 +6258,14 @@
         },
         "showContinueInWebUi": {
           "label": "إظهار زر المتابعة في واجهة الويب",
-          "tooltip": "إذا فُعّل، سيظهر زر أسفل الرد يتيح للمستخدم متابعة المحادثة في واجهة Onyx على الويب"
+          "tooltip": "إذا فُعّل، سيظهر زر أسفل الرد يتيح للمستخدم متابعة المحادثة في واجهة Lumen على الويب"
         },
         "stillNeedHelp": {
           "label": "إضافة زر \"لا تزال بحاجة إلى مساعدة؟\"",
           "section": {
             "prompt": "تهيئة زر لا تزال بحاجة إلى مساعدة"
           },
-          "tooltip": "سيتضمن رد OnyxBot زرًا في الأسفل يسأل المستخدم إن كان لا يزال بحاجة إلى مساعدة."
+          "tooltip": "سيتضمن رد LumenBot زرًا في الأسفل يسأل المستخدم إن كان لا يزال بحاجة إلى مساعدة."
         },
         "syncEnabledAgents": {
           "hideButton": {
@@ -6662,17 +6286,17 @@
       },
       "intro": {
         "autoAnswer": {
-          "item": "أعدّ OnyxBot للإجابة تلقائيًا عن الأسئلة في قنوات معينة."
+          "item": "أعدّ LumenBot للإجابة تلقائيًا عن الأسئلة في قنوات معينة."
         },
-        "description": "أعدّ بوتات Slack المتصلة بـ Onyx. بعد الإعداد، ستتمكن من طرح الأسئلة على Onyx مباشرة من Slack. كما يمكنك:",
+        "description": "أعدّ بوتات Slack المتصلة بـ Lumen. بعد الإعداد، ستتمكن من طرح الأسئلة على Lumen مباشرة من Slack. كما يمكنك:",
         "directMessage": {
-          "item": "مراسلة OnyxBot مباشرة للبحث تمامًا كما في واجهة الويب."
+          "item": "مراسلة LumenBot مباشرة للبحث تمامًا كما في واجهة الويب."
         },
         "docsPrompt": {
-          "text": "اتبع <link>الدليل</link> الموجود في وثائق Onyx للبدء!"
+          "text": "اتبع <link>الدليل</link> الموجود في وثائق Lumen للبدء!"
         },
         "documentSets": {
-          "item": "اختر مجموعات المستندات التي يجيب منها OnyxBot، بحسب القناة التي يُطرح فيها السؤال."
+          "item": "اختر مجموعات المستندات التي يجيب منها LumenBot، بحسب القناة التي يُطرح فيها السؤال."
         }
       },
       "list": {
@@ -6690,7 +6314,7 @@
       },
       "newChannel": {
         "header": {
-          "title": "تهيئة OnyxBot لقناة Slack"
+          "title": "تهيئة LumenBot لقناة Slack"
         }
       },
       "table": {
@@ -6707,7 +6331,7 @@
           "badge": "معطّل"
         },
         "empty": {
-          "message": "يرجى إضافة بوت Slack جديد لبدء المحادثة مع Onyx!"
+          "message": "يرجى إضافة بوت Slack جديد لبدء المحادثة مع Lumen!"
         },
         "enabled": {
           "badge": "مفعّل"
@@ -6794,8 +6418,7 @@
       "addProvider": {
         "button": {
           "label": "إضافة موفر"
-        },
-        "gatedTooltip": "تفعيل عدة موفري SSO متاح في خطة Business أو Enterprise."
+        }
       },
       "copyRedirectUri": {
         "tooltip": "نسخ عنوان إعادة التوجيه"
@@ -6862,7 +6485,7 @@
           "emailDomainsField": {
             "description": "لا يمكن تسجيل الدخول عبر هذا الموفر إلا لعناوين البريد ضمن هذه النطاقات.",
             "optionalDescription": "لا يمكن تسجيل الدخول عبر هذا الموفر إلا لعناوين البريد ضمن هذه النطاقات. موصى به، لكن يمكنك تركه فارغًا للسماح للجميع.",
-            "placeholder": "أضف نطاقًا (مثل onyx.app)",
+            "placeholder": "أضف نطاقًا (مثل lumen.app)",
             "recommendedTitle": "نطاقات البريد المسموح بها (موصى به)",
             "title": "نطاقات البريد المسموح بها"
           },
@@ -7114,13 +6737,12 @@
         "label": "إشعار منبثق عند الزيارة الأولى"
       },
       "appName": {
-        "description": "سيظهر هذا الاسم في جميع أنحاء التطبيق وسيحل محل \"Onyx\" في الواجهة.",
+        "description": "سيظهر هذا الاسم في جميع أنحاء التطبيق وسيحل محل \"Lumen\" في الواجهة.",
         "label": "اسم عرض التطبيق"
       },
       "branding": {
-        "description": "أزل عبارة \"powered by Onyx\" وغيرها من عناصر علامة Onyx التجارية في التطبيق.",
-        "enterpriseTooltip": "إخفاء علامة Onyx التجارية هو ميزة في خطة Enterprise.",
-        "label": "إخفاء علامة Onyx التجارية"
+        "description": "أزل عبارة \"powered by Lumen\" وغيرها من عناصر علامة Lumen التجارية في التطبيق.",
+        "label": "إخفاء علامة Lumen التجارية"
       },
       "chatFooter": {
         "description": "أضف محتوى ماركداون لإخلاء المسؤولية أو معلومات إضافية.",
@@ -7145,8 +6767,7 @@
         "label": "رسالة الترحيب"
       },
       "helpLink": {
-        "description": "أضف رابط مساعدة مخصصًا في قائمة المستخدم بالإضافة إلى وثائق Onyx.",
-        "enterpriseTooltip": "رابط المساعدة المخصص هو ميزة في خطة Enterprise.",
+        "description": "أضف رابط مساعدة مخصصًا في قائمة المستخدم بالإضافة إلى وثائق Lumen.",
         "label": "رابط مساعدة مخصص"
       },
       "helpLinkLabel": {
@@ -7563,7 +7184,7 @@
         }
       },
       "activateModal": {
-        "description": "سيستعيد <strong>{email}</strong> الوصول إلى Onyx.",
+        "description": "سيستعيد <strong>{email}</strong> الوصول إلى Lumen.",
         "submit": {
           "label": "تفعيل"
         },
@@ -7573,7 +7194,7 @@
         }
       },
       "cancelInviteModal": {
-        "description": "لن يتمكن <strong>{email}</strong> بعد الآن من الانضمام إلى Onyx بهذه الدعوة.",
+        "description": "لن يتمكن <strong>{email}</strong> بعد الآن من الانضمام إلى Lumen بهذه الدعوة.",
         "submit": {
           "label": "إلغاء الدعوة"
         },
@@ -7583,7 +7204,7 @@
         }
       },
       "deactivateModal": {
-        "description": "سيفقد <strong>{email}</strong> الوصول إلى Onyx فورًا. سيُحتفظ بجلساته ووكلائه. سيُحرر مقعد الترخيص الخاص به. يمكنك إعادة تفعيل هذا الحساب لاحقًا.",
+        "description": "سيفقد <strong>{email}</strong> الوصول إلى Lumen فورًا. سيُحتفظ بجلساته ووكلائه. سيُحرر مقعد الترخيص الخاص به. يمكنك إعادة تفعيل هذا الحساب لاحقًا.",
         "submit": {
           "label": "تعطيل"
         },
@@ -7593,7 +7214,7 @@
         }
       },
       "deleteModal": {
-        "description": "سيُزال <strong>{email}</strong> نهائيًا من Onyx. سيُحذف كامل سجل جلساته. لا يمكن التراجع عن الحذف.",
+        "description": "سيُزال <strong>{email}</strong> نهائيًا من Lumen. سيُحذف كامل سجل جلساته. لا يمكن التراجع عن الحذف.",
         "submit": {
           "label": "حذف"
         },
@@ -7718,7 +7339,7 @@
         "title": "المستخدمون والطلبات"
       },
       "permissionsNotice": {
-        "description": "يستخدم Onyx الآن أذونات قائمة على المجموعات. استُبدل دورا المنسق والمنسق العام بأذونات مجموعات قابلة للتهيئة، مع مديرين لكل مجموعة للإدارة المحدودة النطاق.",
+        "description": "يستخدم Lumen الآن أذونات قائمة على المجموعات. استُبدل دورا المنسق والمنسق العام بأذونات مجموعات قابلة للتهيئة، مع مديرين لكل مجموعة للإدارة المحدودة النطاق.",
         "learnMoreButton": {
           "label": "اعرف المزيد"
         },
@@ -7957,12 +7578,12 @@
           "placeholder": "مثل whisper-1"
         },
         "targetUri": {
-          "description": "الصق نقطة النهاية الظاهرة في [بوابة Azure (المفاتيح ونقطة النهاية)]({portalUrl}). يستخرج Onyx منطقة الكلام من هذا العنوان. أمثلة: `https://westus.api.cognitive.microsoft.com/` أو `https://westus.tts.speech.microsoft.com/`.",
+          "description": "الصق نقطة النهاية الظاهرة في [بوابة Azure (المفاتيح ونقطة النهاية)]({portalUrl}). يستخرج Lumen منطقة الكلام من هذا العنوان. أمثلة: `https://westus.api.cognitive.microsoft.com/` أو `https://westus.tts.speech.microsoft.com/`.",
           "label": "عنوان URI الهدف",
           "required": "عنوان URI الهدف مطلوب"
         },
         "ttsModel": {
-          "description": "سيستخدم Onyx هذا النموذج افتراضيًا لتحويل النص إلى كلام.",
+          "description": "سيستخدم Lumen هذا النموذج افتراضيًا لتحويل النص إلى كلام.",
           "label": "النموذج الافتراضي",
           "openaiDescription": "اسم النموذج على خادمك (نص حر لنقاط النهاية المستضافة ذاتيًا).",
           "placeholder": "مثل tts-1"
@@ -8034,7 +7655,7 @@
           "message": "تم قطع الاتصال بـ {label}"
         },
         "fallback": {
-          "description": "سيعود Onyx إلى زاحف الويب المدمج."
+          "description": "سيعود Lumen إلى زاحف الويب المدمج."
         },
         "header": {
           "description": "سيزيل هذا بيانات الاعتماد المخزنة لهذا الموفر.",
@@ -8458,7 +8079,7 @@
           "title": "بادئات المحادثة"
         },
         "defaultModel": {
-          "description": "سيستخدم Onyx هذا النموذج افتراضيًا في محادثاتك.",
+          "description": "سيستخدم Lumen هذا النموذج افتراضيًا في محادثاتك.",
           "title": "النموذج الافتراضي"
         },
         "featured": {
@@ -8559,7 +8180,7 @@
         "label": "إنشاء مؤسسة جديدة"
       },
       "createTeamOption": {
-        "text": "إنشاء فريق Onyx جديد"
+        "text": "إنشاء فريق Lumen جديد"
       },
       "differentEmailPrompt": {
         "text": "هل لديك حساب ببريد إلكتروني مختلف؟"
@@ -8568,10 +8189,10 @@
         "title": "الحساب غير موجود"
       },
       "inviteOption": {
-        "text": "تلقّي دعوة إلى فريق Onyx موجود"
+        "text": "تلقّي دعوة إلى فريق Lumen موجود"
       },
       "notFound": {
-        "description": "لم نتمكن من العثور على حسابك في سجلاتنا. للوصول إلى Onyx، تحتاج إلى أحد الخيارين:"
+        "description": "لم نتمكن من العثور على حسابك في سجلاتنا. للوصول إلى Lumen، تحتاج إلى أحد الخيارين:"
       },
       "signInLink": {
         "label": "تسجيل الدخول"
@@ -8640,7 +8261,7 @@
         "description": "قيود أو أذونات الوصول إلى الحساب"
       },
       "cloudSupportPrompt": {
-        "text": "إذا استمرت المشكلة، يرجى التواصل مع فريق Onyx على <link>support@onyx.app</link>"
+        "text": "إذا استمرت المشكلة، يرجى التواصل مع فريق Lumen على <link>support@lumen.app</link>"
       },
       "code": {
         "accessDenied": "رفض موفر الهوية الوصول.",
@@ -8723,7 +8344,7 @@
     },
     "impersonate": {
       "adminNote": {
-        "text": "ملاحظة: هذه الميزة متاحة فقط لمسؤولي @onyx.app"
+        "text": "ملاحظة: هذه الميزة متاحة فقط لمسؤولي @lumen.app"
       },
       "apiKeyField": {
         "label": "مفتاح API",
@@ -8939,7 +8560,7 @@
         "label": "كيف سمعت عنا؟"
       },
       "subtitle": {
-        "text": "ابدأ مع Onyx"
+        "text": "ابدأ مع Lumen"
       }
     },
     "verifyEmail": {
@@ -9173,7 +8794,7 @@
       },
       "healthBanner": {
         "backendUnavailable": {
-          "description": "إذا كان هذا هو الإعداد الأولي أو قمت للتو بتحديث نشر Onyx، فمن المرجح أن الخادم الخلفي لا يزال قيد بدء التشغيل. انتظر دقيقة أو دقيقتين ثم حدّث الصفحة. إذا لم يفلح ذلك، تأكد من إعداد الخادم الخلفي أو تواصل مع مسؤول.",
+          "description": "إذا كان هذا هو الإعداد الأولي أو قمت للتو بتحديث نشر Lumen، فمن المرجح أن الخادم الخلفي لا يزال قيد بدء التشغيل. انتظر دقيقة أو دقيقتين ثم حدّث الصفحة. إذا لم يفلح ذلك، تأكد من إعداد الخادم الخلفي أو تواصل مع مسؤول.",
           "title": "الخادم الخلفي غير متاح حاليًا"
         }
       },
@@ -9278,7 +8899,7 @@
           "placeholder": "كيف يمكنني مساعدتك اليوم؟",
           "queuedPlaceholder": "اضغط السهم لأعلى لتعديل الرسائل في قائمة الانتظار",
           "searchPlaceholder": "البحث في المصادر المتصلة",
-          "speakingPlaceholder": "Onyx يتحدث..."
+          "speakingPlaceholder": "Lumen يتحدث..."
         },
         "sendButton": {
           "processingFilesTooltip": "في انتظار انتهاء معالجة الملفات المرفقة"
@@ -9399,7 +9020,7 @@
       },
       "sharedAppInputBar": {
         "input": {
-          "placeholder": "كيف يمكن لـ Onyx مساعدتك اليوم"
+          "placeholder": "كيف يمكن لـ Lumen مساعدتك اليوم"
         },
         "startSessionButton": {
           "label": "بدء جلسة جديدة"
@@ -10327,7 +9948,7 @@
           "loginButton": {
             "label": "تسجيل الدخول"
           },
-          "title": "مرحبًا بك في Onyx"
+          "title": "مرحبًا بك في Lumen"
         },
         "noResubmitMessage": {
           "toast": "لم يتم العثور على رسالة مرسلة سابقًا."
@@ -10345,8 +9966,8 @@
           "confirmButton": {
             "label": "إيقاف"
           },
-          "description": "سترى صفحة علامة التبويب الجديدة الافتراضية لمتصفحك بدلًا من ذلك. يمكنك إعادة تشغيلها في أي وقت من إعدادات Onyx.",
-          "title": "هل تريد إيقاف صفحة علامة التبويب الجديدة من Onyx؟"
+          "description": "سترى صفحة علامة التبويب الجديدة الافتراضية لمتصفحك بدلًا من ذلك. يمكنك إعادة تشغيلها في أي وقت من إعدادات Lumen.",
+          "title": "هل تريد إيقاف صفحة علامة التبويب الجديدة من Lumen؟"
         }
       },
       "settingsPanel": {
@@ -10372,7 +9993,7 @@
           "title": "الإعدادات"
         },
         "newTabToggle": {
-          "label": "استخدام Onyx كصفحة علامة تبويب جديدة"
+          "label": "استخدام Lumen كصفحة علامة تبويب جديدة"
         },
         "themeToggle": {
           "tooltip": "{mode, select, light {التبديل إلى المظهر الفاتح} other {التبديل إلى المظهر الداكن}}"
@@ -10382,8 +10003,8 @@
         "newChatButton": {
           "tooltip": "دردشة جديدة"
         },
-        "openInOnyxButton": {
-          "tooltip": "فتح في Onyx"
+        "openInLumenButton": {
+          "tooltip": "فتح في Lumen"
         }
       }
     },
@@ -10395,7 +10016,7 @@
         "error": "يجب الموافقة على الشروط للوصول إلى التطبيق."
       },
       "header": {
-        "title": "مرحبًا بك في Onyx!"
+        "title": "مرحبًا بك في Lumen!"
       },
       "logoIcon": {
         "alt": "الشعار"
@@ -10753,16 +10374,16 @@
     "errorPages": {
       "accessRestricted": {
         "billingAdminHint": {
-          "text": "إذا كنت المسؤول، فيرجى زيارة صفحة <billingLink>فوترة المسؤول</billingLink> من أجل {hadLicense, select, true {تجديد} other {تفعيل}} ترخيصك، أو التسجيل عبر Stripe، أو التواصل مع <supportLink>support@onyx.app</supportLink> للمساعدة في الفوترة."
+          "text": "إذا كنت المسؤول، فيرجى زيارة صفحة <billingLink>فوترة المسؤول</billingLink> من أجل {hadLicense, select, true {تجديد} other {تفعيل}} ترخيصك، أو التسجيل عبر Stripe، أو التواصل مع <supportLink>support@lumen.app</supportLink> للمساعدة في الفوترة."
         },
         "heading": {
           "title": "الوصول مقيّد"
         },
         "licenseLapse": {
-          "description": "تم تعليق وصولك إلى Onyx مؤقتًا بسبب انقطاع ترخيصك."
+          "description": "تم تعليق وصولك إلى Lumen مؤقتًا بسبب انقطاع ترخيصك."
         },
         "licenseRequired": {
-          "description": "يلزم وجود ترخيص لاستخدام Onyx. بياناتك محمية وستكون متاحة بمجرد تفعيل الترخيص."
+          "description": "يلزم وجود ترخيص لاستخدام Lumen. بياناتك محمية وستكون متاحة بمجرد تفعيل الترخيص."
         },
         "logoutButton": {
           "label": "تسجيل الخروج"
@@ -10774,7 +10395,7 @@
           "description": "للبدء، يرجى التواصل مع مسؤول النظام للحصول على ترخيص."
         },
         "renewLicense": {
-          "description": "لاستعادة وصولك ومواصلة استخدام Onyx، يرجى التواصل مع مسؤول النظام لتجديد الترخيص."
+          "description": "لاستعادة وصولك ومواصلة استخدام Lumen، يرجى التواصل مع مسؤول النظام لتجديد الترخيص."
         },
         "resubscribeButton": {
           "label": "إعادة الاشتراك",
@@ -10793,10 +10414,10 @@
           "description": "تجاوزت مؤسستك عدد المقاعد المرخّصة ({used} مستخدمين / {seats} مقاعد). سيظل الوصول مقيّدًا حتى يتم تقليل عدد المستخدمين أو ترقية الترخيص."
         },
         "subscriptionLapse": {
-          "description": "تم تعليق وصولك إلى Onyx مؤقتًا بسبب انقطاع اشتراكك."
+          "description": "تم تعليق وصولك إلى Lumen مؤقتًا بسبب انقطاع اشتراكك."
         },
         "updatePayment": {
-          "description": "لاستعادة وصولك ومواصلة الاستفادة من ميزات Onyx القوية، يرجى تحديث معلومات الدفع الخاصة بك."
+          "description": "لاستعادة وصولك ومواصلة الاستفادة من ميزات Lumen القوية، يرجى تحديث معلومات الدفع الخاصة بك."
         }
       },
       "configError": {
@@ -10804,7 +10425,7 @@
           "text": "إذا كنت مسؤولًا، فيرجى مراجعة <docsLink>مستنداتنا</docsLink> لمعرفة خطوات الإعداد الصحيحة. إذا كنت مستخدمًا، فيرجى التواصل مع المسؤول لديك للمساعدة."
         },
         "heading": {
-          "description": "يبدو أنه حدثت مشكلة في تحميل إعدادات Onyx. قد يكون السبب مشكلة في الإعداد أو إعدادًا غير مكتمل.",
+          "description": "يبدو أنه حدثت مشكلة في تحميل إعدادات Lumen. قد يكون السبب مشكلة في الإعداد أو إعدادًا غير مكتمل.",
           "title": "واجهنا مشكلة"
         }
       },
@@ -10813,7 +10434,7 @@
           "description": "نعتذر عن أي إزعاج قد يسببه ذلك ونقدّر صبركم."
         },
         "checkBack": {
-          "description": "Onyx حاليًا في فترة صيانة. يرجى المحاولة مرة أخرى بعد بضع دقائق."
+          "description": "Lumen حاليًا في فترة صيانة. يرجى المحاولة مرة أخرى بعد بضع دقائق."
         },
         "heading": {
           "title": "الصيانة جارية"
@@ -11094,7 +10715,7 @@
         "alt": "الشعار"
       },
       "poweredBy": {
-        "label": "مدعوم من Onyx"
+        "label": "مدعوم من Lumen"
       }
     },
     "nonSelectableConnectors": {
@@ -11291,8 +10912,8 @@
             "label": "الاسم"
           }
         },
-        "managedDescription": "مقدَّم من Onyx: قم بإعداد ما يمكن للوكيل فعله.",
-        "managedNote": "هذا التطبيق مقدَّم من Onyx، وتُدار بيانات الاعتماد نيابةً عنك. اختر أدناه ما يمكن للوكيل فعله. يقوم المستخدمون بتوصيله من صفحة التطبيقات.",
+        "managedDescription": "مقدَّم من Lumen: قم بإعداد ما يمكن للوكيل فعله.",
+        "managedNote": "هذا التطبيق مقدَّم من Lumen، وتُدار بيانات الاعتماد نيابةً عنك. اختر أدناه ما يمكن للوكيل فعله. يقوم المستخدمون بتوصيله من صفحة التطبيقات.",
         "saveButton": "حفظ"
       },
       "customApp": {
@@ -11377,14 +10998,14 @@
           "startAuthFailed": "فشل بدء التفويض"
         },
         "header": {
-          "description": "قم بتوصيل الأدوات التي يمكن لـ Onyx Craft استخدامها كسياق أثناء عمله.",
+          "description": "قم بتوصيل الأدوات التي يمكن لـ Lumen Craft استخدامها كسياق أثناء عمله.",
           "manageButton": "إدارة التطبيقات",
           "searchPlaceholder": "البحث في التطبيقات...",
           "title": "التطبيقات"
         },
         "kinds": {
           "app": {
-            "blurb": "تكاملات تدعمها Onyx مباشرةً. يأتي كل منها بمهارات تعلّم Craft كيفية استخدامه، ابدأ من هنا.",
+            "blurb": "تكاملات تدعمها Lumen مباشرةً. يأتي كل منها بمهارات تعلّم Craft كيفية استخدامه، ابدأ من هنا.",
             "empty": "لم يتم إعداد أي تطبيقات لمؤسستك بعد.",
             "emptyTitle": "لا توجد تطبيقات بعد",
             "tabLabel": "التطبيقات · {count}"
@@ -11759,7 +11380,7 @@
       },
       "llmLocked": {
         "backToChatButton": "العودة إلى الدردشة",
-        "description": "يحتاج Onyx Craft إلى مزوّد نماذج، ولا يمكن إعداده إلا من قبل المسؤولين. اطلب من المسؤول توصيل Anthropic أو OpenAI أو OpenRouter.",
+        "description": "يحتاج Lumen Craft إلى مزوّد نماذج، ولا يمكن إعداده إلا من قبل المسؤولين. اطلب من المسؤول توصيل Anthropic أو OpenAI أو OpenRouter.",
         "title": "مطلوب مزوّد LLM"
       },
       "llmSetup": {
@@ -11904,7 +11525,7 @@
         "ariaLabel": "نسخ الرابط"
       },
       "organization": {
-        "description": "يمكن لأي شخص مسجّل الدخول إلى Onyx لديك عرض هذا التطبيق.",
+        "description": "يمكن لأي شخص مسجّل الدخول إلى Lumen لديك عرض هذا التطبيق.",
         "label": "المؤسسة"
       },
       "private": {
@@ -12440,7 +12061,7 @@
         "placeholder": "تصفية الملفات..."
       },
       "processing": {
-        "description": "لا يزال Onyx يعالج الملفات التي رفعتها. يمكنك إنشاء الوكيل الآن، لكنه لن يتمكن من الوصول إلى جميع الملفات حتى تكتمل المعالجة."
+        "description": "لا يزال Lumen يعالج الملفات التي رفعتها. يمكنك إنشاء الوكيل الآن، لكنه لن يتمكن من الوصول إلى جميع الملفات حتى تكتمل المعالجة."
       }
     },
     "search": {
@@ -12519,7 +12140,7 @@
         "button": {
           "label": "البحث في الويب"
         },
-        "description": "مكّن Onyx من البحث في الإنترنت عن المعلومات.",
+        "description": "مكّن Lumen من البحث في الإنترنت عن المعلومات.",
         "title": "اختر موفر البحث في الويب"
       }
     },
@@ -12539,7 +12160,7 @@
         "subtitle": "واجهات برمجة متوافقة مع LiteLLM",
         "title": "موفر LLM مخصص"
       },
-      "description": "يدعم Onyx النماذج المستضافة ذاتيًا والموفرين الشائعين.",
+      "description": "يدعم Lumen النماذج المستضافة ذاتيًا والموفرين الشائعين.",
       "edit": {
         "ariaLabel": "تعديل موفري LLM"
       },
@@ -12559,7 +12180,7 @@
       "input": {
         "placeholder": "اسمك"
       },
-      "title": "بماذا يناديك Onyx؟"
+      "title": "بماذا يناديك Lumen؟"
     },
     "nonAdminStep": {
       "confirmation": {
@@ -12685,7 +12306,7 @@
         "searchPlaceholder": "بحث..."
       },
       "revokeModal": {
-        "description": "سيفقد أي تطبيق يستخدم الرمز {name} ({tokenDisplay}) الوصول إلى Onyx. لا يمكن التراجع عن هذا الإجراء.",
+        "description": "سيفقد أي تطبيق يستخدم الرمز {name} ({tokenDisplay}) الوصول إلى Lumen. لا يمكن التراجع عن هذا الإجراء.",
         "question": "هل أنت متأكد من رغبتك في إبطال هذا الرمز؟",
         "submit": "إبطال",
         "title": "إبطال رمز الوصول"
@@ -12713,10 +12334,6 @@
         "copyButton": "نسخ الرمز",
         "description": "احفظ هذا الرمز قبل المتابعة. لن يُعرض مرة أخرى.",
         "title": "رمز الوصول"
-      },
-      "upsell": {
-        "description": "تتطلب رموز الوصول اشتراكًا مدفوعًا نشطًا.",
-        "upgradeButton": "ترقية الخطة"
       }
     },
     "appearance": {
@@ -12751,7 +12368,7 @@
         "title": "وضع التطبيق الافتراضي"
       },
       "defaultModel": {
-        "description": "سيستخدم Onyx هذا النموذج افتراضيًا في محادثاتك.",
+        "description": "سيستخدم Lumen هذا النموذج افتراضيًا في محادثاتك.",
         "title": "النموذج الافتراضي"
       },
       "defaultReasoningLevel": {
@@ -12776,7 +12393,7 @@
       "connectButton": "ربط",
       "disconnectModal": {
         "continueNote": "لا يزال بإمكانك متابعة الجلسات الحالية التي تشير إلى محتوى {name}.",
-        "description": "لن يتمكن Onyx بعد الآن من الوصول إلى محتوى حساب {name} الخاص بك أو البحث فيه.",
+        "description": "لن يتمكن Lumen بعد الآن من الوصول إلى محتوى حساب {name} الخاص بك أو البحث فيه.",
         "disconnecting": "جارٍ قطع الاتصال...",
         "submit": "قطع الاتصال",
         "title": "قطع الاتصال بـ *{name}*"
@@ -12823,7 +12440,7 @@
         "copy": "نسخ",
         "copyError": "تعذّر نسخ القيمة."
       },
-      "description": "اربط الأدوات الخارجية بالنماذج المتاحة لك في Onyx.",
+      "description": "اربط الأدوات الخارجية بالنماذج المتاحة لك في Lumen.",
       "guideButton": "الدليل",
       "loadError": {
         "description": "يرجى تحديث الصفحة والمحاولة مرة أخرى.",
@@ -12886,7 +12503,7 @@
         "maxReached": "تم بلوغ الحد الأقصى البالغ {count} من الذكريات"
       },
       "empty": {
-        "description": "أضف ملاحظة شخصية أو ذكرى يجب أن يتذكرها Onyx.",
+        "description": "أضف ملاحظة شخصية أو ذكرى يجب أن يتذكرها Lumen.",
         "getStarted": "لا توجد ذكريات بعد. انقر على \"إضافة سطر\" للبدء.",
         "noMatches": "لا توجد ذكريات تطابق بحثك."
       },
@@ -12897,11 +12514,11 @@
         "label": "{count, plural, one {سطر} other {أسطر}}"
       },
       "modal": {
-        "description": "اسمح لـ Onyx بالرجوع إلى هذه الملاحظات والذكريات المحفوظة في المحادثات.",
+        "description": "اسمح لـ Lumen بالرجوع إلى هذه الملاحظات والذكريات المحفوظة في المحادثات.",
         "searchPlaceholder": "بحث..."
       },
       "referenceStoredMemories": {
-        "description": "اسمح لـ Onyx بالرجوع إلى الذكريات المخزنة في المحادثات.",
+        "description": "اسمح لـ Lumen بالرجوع إلى الذكريات المخزنة في المحادثات.",
         "title": "الرجوع إلى الذكريات المخزنة"
       },
       "removeLineButton": {
@@ -12913,7 +12530,7 @@
         "saved": "تم حفظ التفضيلات"
       },
       "updateMemories": {
-        "description": "اسمح لـ Onyx بتوليد الذكريات المخزنة وتحديثها.",
+        "description": "اسمح لـ Lumen بتوليد الذكريات المخزنة وتحديثها.",
         "title": "تحديث الذكريات"
       },
       "viewAll": {
@@ -13149,9 +12766,6 @@
         "tracing": {
           "label": "التتبع"
         },
-        "upgradePlan": {
-          "label": "ترقية الخطة"
-        },
         "usage": {
           "label": "الاستخدام"
         },
@@ -13190,12 +12804,6 @@
       }
     },
     "adminSidebar": {
-      "businessOrEnterpriseOnly": {
-        "tooltip": "هذه الميزة متاحة فقط في [نسخة Business أو Enterprise من Onyx](/admin/billing)."
-      },
-      "enterpriseOnly": {
-        "tooltip": "هذه الميزة متاحة فقط في [نسخة Enterprise من Onyx](/admin/billing)."
-      },
       "exitAdminPanel": {
         "label": "الخروج من لوحة الإدارة"
       },
@@ -13735,7 +13343,7 @@
           "title": "استيراد من GitHub"
         },
         "scratch": {
-          "description": "اكتب التعليمات وأضف الملفات الداعمة في Onyx.",
+          "description": "اكتب التعليمات وأضف الملفات الداعمة في Lumen.",
           "title": "البدء من الصفر"
         },
         "trigger": {

@@ -17,8 +17,8 @@ from uuid import UUID
 import httpx
 import pytest
 
-from onyx.server.features.build.sandbox.nextjs_dev import WEBAPP_PACKAGE_JSON_PATH
-from onyx.server.features.build.sandbox.session_workspace import SESSIONS_ROOT
+from lumen.server.features.build.sandbox.nextjs_dev import WEBAPP_PACKAGE_JSON_PATH
+from lumen.server.features.build.sandbox.session_workspace import SESSIONS_ROOT
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.test_models import DATestUser
@@ -153,7 +153,7 @@ def proxy_get(user: DATestUser, session_id: str, path: str = "") -> httpx.Respon
             # proxy must strip these or Next dev 403s every /_next/* request.
             # Non-localhost on purpose: Next dev allows localhost origins by
             # default, which would mask a strip regression in CI.
-            "Origin": "https://cloud.onyx.app",
+            "Origin": "https://cloud.lumen.app",
             "Sec-Fetch-Site": "same-origin",
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Dest": "empty",

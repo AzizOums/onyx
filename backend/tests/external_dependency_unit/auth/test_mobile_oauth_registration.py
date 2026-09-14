@@ -10,19 +10,19 @@ gateway's SSO exchange and the dedicated mobile OAuth router.
 
 import pytest
 
-import onyx.main as onyx_main
+import lumen.main as lumen_main
 
 
 def test_mobile_routes_registered_with_env_google_oauth(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr(onyx_main, "OAUTH_ENABLED", True)
-    monkeypatch.setattr(onyx_main, "OAUTH_CLIENT_ID", "test-client-id")
-    monkeypatch.setattr(onyx_main, "OAUTH_CLIENT_SECRET", "test-client-secret")
+    monkeypatch.setattr(lumen_main, "OAUTH_ENABLED", True)
+    monkeypatch.setattr(lumen_main, "OAUTH_CLIENT_ID", "test-client-id")
+    monkeypatch.setattr(lumen_main, "OAUTH_CLIENT_SECRET", "test-client-secret")
 
     paths = {
         getattr(route, "path", "")  # ods: ignore[getattr]
-        for route in onyx_main.get_application().routes
+        for route in lumen_main.get_application().routes
     }
 
     # Dedicated OAuth router (callback routes to the api_server, not the web app)

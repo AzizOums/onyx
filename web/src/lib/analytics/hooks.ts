@@ -33,7 +33,7 @@ import { EE_ENABLED } from "@/lib/constants";
  * `/api/settings` response instead.
  */
 export enum PHFeatureFlag {
-  /** Disables the Onyx Craft (Build Mode) sidebar intro animation. */
+  /** Disables the Lumen Craft (Build Mode) sidebar intro animation. */
   CRAFT_ANIMATION_DISABLED = "craft-animation-disabled",
   /** Disables adding or modifying LLM providers on the admin Language Models page. */
   LANGUAGE_MODEL_CONFIGURATION_DISABLED = "language-model-configuration-disabled",

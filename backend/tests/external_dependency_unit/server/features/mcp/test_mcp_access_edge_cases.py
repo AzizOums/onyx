@@ -7,8 +7,8 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.db.mcp import get_mcp_servers_accessible_to_user, user_can_access_mcp_server
-from onyx.db.models import (
+from lumen.db.mcp import get_mcp_servers_accessible_to_user, user_can_access_mcp_server
+from lumen.db.models import (
     MCPServer,
     MCPServer__User,
     MCPServer__UserGroup,

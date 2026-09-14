@@ -1,33 +1,33 @@
 #!/bin/bash
 
-# Onyx installer — a bootstrap for `onyx-cli deploy install`.
+# Lumen installer — a bootstrap for `lumen-cli deploy install`.
 #
-# The guided install itself lives in the Onyx CLI (Go). This script only
+# The guided install itself lives in the Lumen CLI (Go). This script only
 # installs that CLI and hands over; every argument is forwarded untouched.
 #
-#   curl -fsSL https://raw.githubusercontent.com/onyx-dot-app/onyx/main/deployment/docker_compose/install.sh | bash
-#   curl -fsSL https://raw.githubusercontent.com/onyx-dot-app/onyx/main/deployment/docker_compose/install.sh | bash -s -- --lite --no-prompt
+#   curl -fsSL https://raw.githubusercontent.com/lumen-dot-app/lumen/main/deployment/docker_compose/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/lumen-dot-app/lumen/main/deployment/docker_compose/install.sh | bash -s -- --lite --no-prompt
 #
 # Environment:
-#   ONYX_CLI_VERSION  onyx-cli release to install (e.g. v1.3.1). Defaults to
+#   LUMEN_CLI_VERSION  lumen-cli release to install (e.g. v1.3.1). Defaults to
 #                     the newest published release.
-#   ONYX_CLI_BIN_DIR  where the binary is installed. Defaults to
+#   LUMEN_CLI_BIN_DIR  where the binary is installed. Defaults to
 #                     /usr/local/bin when running as root, else ~/.local/bin.
 #
 # When the install directory isn't already on PATH, the script persists it via
 # the user's shell profile (~/.bashrc, ~/.zshrc, or fish's config.fish) so the
-# follow-up `onyx-cli deploy ...` commands work in new shells.
+# follow-up `lumen-cli deploy ...` commands work in new shells.
 #
 # This script must remain compatible with bash 3.2 — macOS still ships
 # 3.2.57 by default and the curl-pipe installer is invoked with /bin/bash.
 # Avoid bash 4+ features (associative arrays, ${var,,}, etc.).
 set -eo pipefail
 
-REPO="onyx-dot-app/onyx"
+REPO="lumen-dot-app/lumen"
 RELEASES_URL="https://github.com/${REPO}/releases"
 # Rolling release that always carries the newest CLI under version-less asset
 # names. The repo-global releases/latest alias can't be used: it resolves to
-# the Onyx app releases, not the CLI ones.
+# the Lumen app releases, not the CLI ones.
 LATEST_TAG="cli-latest"
 
 # Colors for output
@@ -54,39 +54,39 @@ print_warning() {
 }
 
 show_help() {
-    echo "Onyx Installation Script"
+    echo "Lumen Installation Script"
     echo ""
-    echo "Installs the Onyx CLI and runs its guided deployment:"
-    echo "  onyx-cli deploy install [OPTIONS]"
+    echo "Installs the Lumen CLI and runs its guided deployment:"
+    echo "  lumen-cli deploy install [OPTIONS]"
     echo ""
     echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "Common options (forwarded to the CLI):"
-    echo "  --lite           Deploy Onyx Lite (no OpenSearch, Redis, or model servers)"
-    echo "  --include-craft  Enable Onyx Craft (AI-powered web app building)"
-    echo "  --tag <tag>      Image tag to deploy (default: the latest Onyx release)"
+    echo "  --lite           Deploy Lumen Lite (no OpenSearch, Redis, or model servers)"
+    echo "  --include-craft  Enable Lumen Craft (AI-powered web app building)"
+    echo "  --tag <tag>      Image tag to deploy (default: the latest Lumen release)"
     echo "  --local          Use existing config files instead of downloading them"
     echo "  --no-prompt      Run non-interactively with defaults (for CI/automation)"
     echo "  --dry-run        Show what would be done without making changes"
     echo "  --verbose        Show detailed output for debugging"
     echo "  --no-wait        Return as soon as containers are started"
-    echo "  --dir <path>     Deployment directory (default: ~/.config/onyx, or an"
-    echo "                   existing ./onyx_data)"
+    echo "  --dir <path>     Deployment directory (default: ~/.config/lumen, or an"
+    echo "                   existing ./lumen_data)"
     echo "  --help, -h       Show this help message"
     echo ""
-    echo "Run 'onyx-cli deploy install --help' for the full list."
+    echo "Run 'lumen-cli deploy install --help' for the full list."
     echo ""
     echo "Managing an existing deployment (these replace the retired"
     echo "--shutdown / --delete-data flags):"
-    echo "  onyx-cli deploy status     Versions, containers, and health"
-    echo "  onyx-cli deploy logs       Logs of the deployment's containers"
-    echo "  onyx-cli deploy stop       Stop the containers, keep the data"
-    echo "  onyx-cli deploy upgrade    Upgrade to a newer version"
-    echo "  onyx-cli deploy uninstall  Remove the deployment and all its data"
+    echo "  lumen-cli deploy status     Versions, containers, and health"
+    echo "  lumen-cli deploy logs       Logs of the deployment's containers"
+    echo "  lumen-cli deploy stop       Stop the containers, keep the data"
+    echo "  lumen-cli deploy upgrade    Upgrade to a newer version"
+    echo "  lumen-cli deploy uninstall  Remove the deployment and all its data"
     echo ""
     echo "Environment:"
-    echo "  ONYX_CLI_VERSION  onyx-cli release to install (default: newest)"
-    echo "  ONYX_CLI_BIN_DIR  install location (default: ~/.local/bin, or"
+    echo "  LUMEN_CLI_VERSION  lumen-cli release to install (default: newest)"
+    echo "  LUMEN_CLI_BIN_DIR  install location (default: ~/.local/bin, or"
     echo "                    /usr/local/bin as root)"
 }
 
@@ -139,7 +139,7 @@ case "$OS" in
         ;;
     *)
         print_error "Unsupported operating system: ${OS}"
-        echo "  Onyx supports Linux and macOS. See https://docs.onyx.app/deployment/overview" >&2
+        echo "  Lumen supports Linux and macOS. See https://docs.lumen.app/deployment/overview" >&2
         exit 1
         ;;
 esac
@@ -153,8 +153,8 @@ case "$ARCH" in
         ;;
     *)
         print_error "Unsupported architecture: ${ARCH}"
-        echo "  Prebuilt onyx-cli binaries exist for amd64 and arm64 only." >&2
-        echo "  Install from source or PyPI instead: pip install onyx-cli" >&2
+        echo "  Prebuilt lumen-cli binaries exist for amd64 and arm64 only." >&2
+        echo "  Install from source or PyPI instead: pip install lumen-cli" >&2
         exit 1
         ;;
 esac
@@ -162,28 +162,28 @@ esac
 # --- Resolve the release to download ---
 # Pinned versions live under their own cli/vX.Y.Z tag with versioned asset
 # names; the default rolling release drops the version from both.
-if [[ -n "$ONYX_CLI_VERSION" ]]; then
-    CLI_VERSION="${ONYX_CLI_VERSION#v}"
-    ARCHIVE_NAME="onyx-cli_${CLI_VERSION}_${OS}_${ARCH}.tar.gz"
-    CHECKSUMS_NAME="onyx-cli_${CLI_VERSION}_checksums.txt"
+if [[ -n "$LUMEN_CLI_VERSION" ]]; then
+    CLI_VERSION="${LUMEN_CLI_VERSION#v}"
+    ARCHIVE_NAME="lumen-cli_${CLI_VERSION}_${OS}_${ARCH}.tar.gz"
+    CHECKSUMS_NAME="lumen-cli_${CLI_VERSION}_checksums.txt"
     DOWNLOAD_BASE="${RELEASES_URL}/download/cli/v${CLI_VERSION}"
     VERSION_LABEL="v${CLI_VERSION}"
 else
-    ARCHIVE_NAME="onyx-cli_${OS}_${ARCH}.tar.gz"
-    CHECKSUMS_NAME="onyx-cli_checksums.txt"
+    ARCHIVE_NAME="lumen-cli_${OS}_${ARCH}.tar.gz"
+    CHECKSUMS_NAME="lumen-cli_checksums.txt"
     DOWNLOAD_BASE="${RELEASES_URL}/download/${LATEST_TAG}"
     VERSION_LABEL="latest"
 fi
 
 # --- Resolve where the binary goes ---
-if [[ -n "$ONYX_CLI_BIN_DIR" ]]; then
-    BIN_DIR="$ONYX_CLI_BIN_DIR"
+if [[ -n "$LUMEN_CLI_BIN_DIR" ]]; then
+    BIN_DIR="$LUMEN_CLI_BIN_DIR"
 elif [[ "$(id -u)" -eq 0 ]]; then
     BIN_DIR="/usr/local/bin"
 else
     BIN_DIR="${HOME}/.local/bin"
 fi
-BIN_PATH="${BIN_DIR}/onyx-cli"
+BIN_PATH="${BIN_DIR}/lumen-cli"
 
 TMP_DIR=""
 cleanup() {
@@ -196,11 +196,11 @@ trap cleanup EXIT
 
 TMP_DIR="$(mktemp -d)"
 
-print_info "Installing onyx-cli (${VERSION_LABEL}, ${OS}/${ARCH})..."
+print_info "Installing lumen-cli (${VERSION_LABEL}, ${OS}/${ARCH})..."
 
 if ! download_file "${DOWNLOAD_BASE}/${ARCHIVE_NAME}" "${TMP_DIR}/${ARCHIVE_NAME}"; then
     print_error "Failed to download ${ARCHIVE_NAME}"
-    if [[ -n "$ONYX_CLI_VERSION" ]]; then
+    if [[ -n "$LUMEN_CLI_VERSION" ]]; then
         echo "  Check that ${VERSION_LABEL} exists: ${RELEASES_URL}?q=cli%2Fv" >&2
     else
         echo "  Please ensure you have internet connection and try again." >&2
@@ -256,22 +256,22 @@ verify_checksum() {
 
 verify_checksum || exit 1
 
-if ! tar -xzf "${TMP_DIR}/${ARCHIVE_NAME}" -C "$TMP_DIR" onyx-cli; then
+if ! tar -xzf "${TMP_DIR}/${ARCHIVE_NAME}" -C "$TMP_DIR" lumen-cli; then
     print_error "Failed to extract ${ARCHIVE_NAME}"
     exit 1
 fi
 
 if ! mkdir -p "$BIN_DIR" 2>/dev/null || [[ ! -w "$BIN_DIR" ]]; then
     print_error "Cannot write to ${BIN_DIR}"
-    echo "  Re-run with sudo, or set ONYX_CLI_BIN_DIR to a writable directory." >&2
+    echo "  Re-run with sudo, or set LUMEN_CLI_BIN_DIR to a writable directory." >&2
     exit 1
 fi
 
-chmod +x "${TMP_DIR}/onyx-cli"
-mv -f "${TMP_DIR}/onyx-cli" "$BIN_PATH"
-print_success "onyx-cli installed to ${BIN_PATH}"
+chmod +x "${TMP_DIR}/lumen-cli"
+mv -f "${TMP_DIR}/lumen-cli" "$BIN_PATH"
+print_success "lumen-cli installed to ${BIN_PATH}"
 
-# --- Make sure follow-up `onyx-cli` commands resolve ---
+# --- Make sure follow-up `lumen-cli` commands resolve ---
 # The rc file PATH entries should be added to for the user's shell; empty when
 # the shell isn't one this script knows how to configure.
 shell_profile() {
@@ -304,7 +304,7 @@ shell_profile() {
 }
 
 # Persist BIN_DIR on PATH via the user's shell profile so the follow-up
-# commands this script and the CLI advertise (onyx-cli deploy status, logs,
+# commands this script and the CLI advertise (lumen-cli deploy status, logs,
 # upgrade, ...) don't die with "command not found" in new shells. Returns 1
 # when the shell is unrecognized or the profile can't be written; the caller
 # then falls back to printing manual instructions.
@@ -349,31 +349,31 @@ persist_path() {
     if ! mkdir -p "$(dirname "$profile")" 2>/dev/null; then
         return 1
     fi
-    if ! printf '\n# Added by the Onyx installer\n%s\n' "$line" >> "$profile" 2>/dev/null; then
+    if ! printf '\n# Added by the Lumen installer\n%s\n' "$line" >> "$profile" 2>/dev/null; then
         return 1
     fi
     print_success "Added ${BIN_DIR} to PATH in ${profile}"
-    print_info "Open a new shell (or run 'source ${profile}') before using onyx-cli directly."
+    print_info "Open a new shell (or run 'source ${profile}') before using lumen-cli directly."
     return 0
 }
 
 case ":${PATH}:" in
     *":${BIN_DIR}:"*)
-        # An onyx-cli earlier in PATH (e.g. a pip install) would shadow the one
-        # just installed, leaving the follow-up `onyx-cli deploy` commands on a
+        # An lumen-cli earlier in PATH (e.g. a pip install) would shadow the one
+        # just installed, leaving the follow-up `lumen-cli deploy` commands on a
         # different version than the install ran with.
-        SHADOWED_BY="$(command -v onyx-cli 2>/dev/null || true)"
+        SHADOWED_BY="$(command -v lumen-cli 2>/dev/null || true)"
         if [[ -n "$SHADOWED_BY" ]] && [[ "$SHADOWED_BY" != "$BIN_PATH" ]]; then
-            print_warning "Another onyx-cli takes precedence in PATH: ${SHADOWED_BY}"
+            print_warning "Another lumen-cli takes precedence in PATH: ${SHADOWED_BY}"
         fi
         ;;
     *)
         if ! persist_path; then
-            print_warning "${BIN_DIR} is not in your PATH — add it to run onyx-cli directly:"
+            print_warning "${BIN_DIR} is not in your PATH — add it to run lumen-cli directly:"
             echo -e "   ${BOLD}export PATH=\"${BIN_DIR}:\$PATH\"${NC}"
         fi
         # Either way, the CLI this script execs into (and anything it spawns)
-        # should resolve onyx-cli by name during this run.
+        # should resolve lumen-cli by name during this run.
         export PATH="${BIN_DIR}:${PATH}"
         ;;
 esac

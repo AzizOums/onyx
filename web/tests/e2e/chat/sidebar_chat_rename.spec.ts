@@ -6,7 +6,7 @@
 // editor, whose blur handler closed it before it could be used.
 import { test, expect } from "@playwright/test";
 import { loginAsWorkerUser } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import { AppSidebarPage } from "@tests/e2e/pages/AppSidebarPage";
 
 const CHAT_NAME = "E2E Rename Target";
@@ -20,7 +20,7 @@ test.describe("Sidebar chat rename", () => {
     await page.context().clearCookies();
     await loginAsWorkerUser(page, testInfo.workerIndex);
 
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     chatId = await apiClient.createChatSession(CHAT_NAME);
 
     sidebar = new AppSidebarPage(page);
@@ -28,7 +28,7 @@ test.describe("Sidebar chat rename", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     await apiClient.deleteChatSession(chatId);
   });
 

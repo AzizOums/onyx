@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import * as Yup from "yup";
 import { Button } from "@opal/components";
 import { SvgArrowExchange, SvgSimpleLoader } from "@opal/icons";
-import { SvgOnyxLogo } from "@opal/logos";
+import { SvgLumenLogo } from "@opal/logos";
 import * as GeneralLayouts from "@/layouts/general-layouts";
 import { Modal } from "@opal/components";
 import { toast } from "@opal/layouts";
@@ -51,7 +51,7 @@ function ModalShell({ provider, isEditing, children }: ModalShellProps) {
         <Modal.Header
           icon={provider.icon}
           moreIcon1={SvgArrowExchange}
-          moreIcon2={SvgOnyxLogo}
+          moreIcon2={SvgLumenLogo}
           title={
             isEditing
               ? t("modal.manage.title", { provider: provider.displayName })

@@ -16,10 +16,10 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import FileOrigin
-from onyx.connectors.models import IndexAttemptMetadata
-from onyx.db.models import ConnectorCredentialPair
-from onyx.indexing.indexing_pipeline import index_doc_batch_prepare
+from lumen.configs.constants import FileOrigin
+from lumen.connectors.models import IndexAttemptMetadata
+from lumen.db.models import ConnectorCredentialPair
+from lumen.indexing.indexing_pipeline import index_doc_batch_prepare
 from tests.external_dependency_unit.indexing_helpers import (
     cleanup_cc_pair,
     get_doc_row,

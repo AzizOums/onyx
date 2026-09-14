@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import type { Locator, Page } from "@playwright/test";
 import { loginAs } from "@tests/e2e/utils/auth";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 
 const LLM_SETUP_URL = ADMIN_ROUTES.LLM_MODELS.path;
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
@@ -131,7 +131,7 @@ async function exitAdminToChat(page: Page): Promise<void> {
   await page.goto("/app");
   await page.waitForURL("**/app**");
   await page
-    .locator("#onyx-chat-input-textbox")
+    .locator("#lumen-chat-input-textbox")
     .waitFor({ state: "visible", timeout: 15000 });
 }
 
@@ -255,7 +255,7 @@ test.describe("LLM Provider Setup @exclusive", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     const uniqueIds = Array.from(new Set(providersToCleanup));
 
     for (const providerId of uniqueIds) {
@@ -343,7 +343,7 @@ test.describe("LLM Provider Setup @exclusive", () => {
   test("admin can switch the default model via the default model dropdown", async ({
     page,
   }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     const initialDefault = await getDefaultTextModel(page);
 
     const firstProviderName = uniqueName("PW Baseline Provider");
@@ -440,7 +440,7 @@ test.describe("LLM Provider Setup @exclusive", () => {
     await page.goto("/app");
     await page.waitForLoadState("networkidle");
     await page
-      .locator("#onyx-chat-input-textbox")
+      .locator("#lumen-chat-input-textbox")
       .waitFor({ state: "visible", timeout: 15000 });
 
     await expect
@@ -508,7 +508,7 @@ test.describe("LLM Provider Setup @exclusive", () => {
     await page.goto("/app");
     await page.waitForLoadState("networkidle");
     await page
-      .locator("#onyx-chat-input-textbox")
+      .locator("#lumen-chat-input-textbox")
       .waitFor({ state: "visible", timeout: 15000 });
 
     await expect

@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Message } from "@/app/app/interfaces";
-import { OnyxDocument, MinimalOnyxDocument } from "@/lib/search/interfaces";
+import { LumenDocument, MinimalLumenDocument } from "@/lib/search/interfaces";
 import HumanMessage from "@/app/app/message/HumanMessage";
 import { ErrorBanner } from "@/app/app/message/Resubmit";
 import { MinimalAgent } from "@/lib/agents/types";
@@ -32,7 +32,7 @@ const MSG_MAX_W = "md:max-w-[720px] md:min-w-[400px]";
 export interface ChatUIProps {
   activeAgent: MinimalAgent;
   llmManager: LlmManager;
-  setPresentingDocument: (doc: MinimalOnyxDocument | null) => void;
+  setPresentingDocument: (doc: MinimalLumenDocument | null) => void;
   onMessageSelection: (nodeId: number) => void;
   stopGenerating: () => void;
 
@@ -91,7 +91,7 @@ const ChatUI = React.memo(
     const loadError = useLoadingError();
     const chatState = useCurrentChatState();
     // Stable fallbacks to avoid changing prop identities on each render
-    const emptyDocs = useMemo<OnyxDocument[]>(() => [], []);
+    const emptyDocs = useMemo<LumenDocument[]>(() => [], []);
     const emptyChildrenIds = useMemo<number[]>(() => [], []);
 
     // Reading-width cap on messages; dropped in full-width mode.

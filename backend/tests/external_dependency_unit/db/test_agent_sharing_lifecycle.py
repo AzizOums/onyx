@@ -6,11 +6,11 @@ works for everyone except the owner."""
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import PersonaSharePermission
-from onyx.db.models import Persona
-from onyx.db.persona import remove_user_from_persona_shares, update_persona_shared
-from onyx.db.persona_sharing import persona_ownership_is_vacant
-from onyx.db.users import delete_user_from_db
+from lumen.db.enums import PersonaSharePermission
+from lumen.db.models import Persona
+from lumen.db.persona import remove_user_from_persona_shares, update_persona_shared
+from lumen.db.persona_sharing import persona_ownership_is_vacant
+from lumen.db.users import delete_user_from_db
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.external_dependency_unit.db.agent_sharing_helpers import (
     create_test_persona,

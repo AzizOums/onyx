@@ -27,10 +27,10 @@ from uuid import uuid4
 import httpx
 import pytest
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import MCPAuthenticationPerformer, MCPAuthenticationType, Permission
-from onyx.db.models import User__UserGroup
-from onyx.db.permissions import recompute_user_permissions__no_commit
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import MCPAuthenticationPerformer, MCPAuthenticationType, Permission
+from lumen.db.models import User__UserGroup
+from lumen.db.permissions import recompute_user_permissions__no_commit
 from tests.integration.common_utils.managers.persona import PersonaManager
 from tests.integration.common_utils.managers.skill import SkillManager
 from tests.integration.common_utils.managers.user import UserManager

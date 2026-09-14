@@ -8,7 +8,7 @@ import Text from "@/refresh-components/texts/Text";
 import { FileDescriptor } from "@/app/app/interfaces";
 import { cn } from "@opal/utils";
 import PreviewModal from "@/sections/modals/PreviewModal";
-import { MinimalOnyxDocument } from "@/lib/search/interfaces";
+import { MinimalLumenDocument } from "@/lib/search/interfaces";
 
 export interface ExpandableContentWrapperProps {
   fileDescriptor: FileDescriptor;
@@ -93,7 +93,7 @@ export default function ExpandableContentWrapper({
     </div>
   );
 
-  const presentingDocument: MinimalOnyxDocument = {
+  const presentingDocument: MinimalLumenDocument = {
     document_id: fileDescriptor.id,
     semantic_identifier: fileDescriptor.name ?? null,
   };

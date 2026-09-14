@@ -20,9 +20,9 @@ from unittest.mock import MagicMock, patch
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.background.indexing.run_targeted_reindex import process_targets_for_cc_pair
-from onyx.connectors.interfaces import Resolver
-from onyx.connectors.models import (
+from lumen.background.indexing.run_targeted_reindex import process_targets_for_cc_pair
+from lumen.connectors.interfaces import Resolver
+from lumen.connectors.models import (
     ConnectorFailure,
     Document,
     DocumentFailure,
@@ -30,16 +30,16 @@ from onyx.connectors.models import (
     HierarchyNode,
     TextSection,
 )
-from onyx.db.enums import IndexingStatus
-from onyx.db.models import (
+from lumen.db.enums import IndexingStatus
+from lumen.db.models import (
     ConnectorCredentialPair,
     IndexAttempt,
     IndexAttemptError,
     TargetedReindexJob,
     TargetedReindexJobTarget,
 )
-from onyx.db.search_settings import get_current_search_settings
-from onyx.db.targeted_reindex import (
+from lumen.db.search_settings import get_current_search_settings
+from lumen.db.targeted_reindex import (
     TargetSpec,
     create_targeted_reindex_job,
     resolve_error_ids_to_targets,
@@ -150,7 +150,7 @@ def test_unsupported_connector_marks_all_targets_failed(
     )
 
     with patch(
-        "onyx.background.indexing.run_targeted_reindex.instantiate_connector",
+        "lumen.background.indexing.run_targeted_reindex.instantiate_connector",
         return_value=_StubBaseConnector(),
     ):
         result = process_targets_for_cc_pair(
@@ -185,11 +185,11 @@ def test_resolver_yields_all_docs_lands_them_all(
 
     with (
         patch(
-            "onyx.background.indexing.run_targeted_reindex.instantiate_connector",
+            "lumen.background.indexing.run_targeted_reindex.instantiate_connector",
             return_value=stub,
         ),
         patch(
-            "onyx.background.indexing.run_targeted_reindex.run_indexing_pipeline",
+            "lumen.background.indexing.run_targeted_reindex.run_indexing_pipeline",
             return_value=fake_pipeline_result,
         ),
     ):
@@ -232,11 +232,11 @@ def test_connector_failure_yields_route_to_failed_doc_ids(
 
     with (
         patch(
-            "onyx.background.indexing.run_targeted_reindex.instantiate_connector",
+            "lumen.background.indexing.run_targeted_reindex.instantiate_connector",
             return_value=stub,
         ),
         patch(
-            "onyx.background.indexing.run_targeted_reindex.run_indexing_pipeline",
+            "lumen.background.indexing.run_targeted_reindex.run_indexing_pipeline",
             return_value=fake_pipeline_result,
         ),
     ):
@@ -274,11 +274,11 @@ def test_doc_never_yielded_is_marked_failed(
 
     with (
         patch(
-            "onyx.background.indexing.run_targeted_reindex.instantiate_connector",
+            "lumen.background.indexing.run_targeted_reindex.instantiate_connector",
             return_value=stub,
         ),
         patch(
-            "onyx.background.indexing.run_targeted_reindex.run_indexing_pipeline",
+            "lumen.background.indexing.run_targeted_reindex.run_indexing_pipeline",
             return_value=fake_pipeline_result,
         ),
     ):

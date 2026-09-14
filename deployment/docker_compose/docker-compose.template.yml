@@ -9,14 +9,14 @@
 #!# ===========================================================================
 #!for default
 # =============================================================================
-# ONYX DOCKER COMPOSE
+# LUMEN DOCKER COMPOSE
 # =============================================================================
-# This is the default configuration for Onyx. This file is fairly configurable,
+# This is the default configuration for Lumen. This file is fairly configurable,
 # also see env.template for possible settings.
 #
 # PRODUCTION DEPLOYMENT CHECKLIST:
 # To convert this setup to a production deployment following best practices,
-# follow the checklist below. Note that there are other ways to secure the Onyx
+# follow the checklist below. Note that there are other ways to secure the Lumen
 # deployment so these are not strictly necessary for all teams.
 #
 # 1. SECURITY HARDENING:
@@ -47,11 +47,11 @@
 # =============================================================================
 #!endfor
 
-name: onyx
+name: lumen
 
 services:
   api_server:
-    image: ${ONYX_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
+    image: ${LUMEN_BACKEND_IMAGE:-lumendotapp/lumen-backend:${IMAGE_TAG:-latest}}
     build:
       context: ../../backend
       dockerfile: Dockerfile
@@ -60,8 +60,8 @@ services:
       target: runtime
     command: >
       /bin/sh -c "alembic upgrade head &&
-      echo \"Starting Onyx Api Server\" &&
-      uvicorn onyx.main:app --host 0.0.0.0 --port 8080"
+      echo \"Starting Lumen Api Server\" &&
+      uvicorn lumen.main:app --host 0.0.0.0 --port 8080"
     #!for default
     # Check env.template and copy to .env for env vars
     #!endfor
@@ -113,7 +113,7 @@ services:
       #!value prod,no-letsencrypt: - S3_AWS_SECRET_ACCESS_KEY=${S3_AWS_SECRET_ACCESS_KEY:?set a strong value in .env, not minioadmin}
       - S3_AWS_SECRET_ACCESS_KEY=${S3_AWS_SECRET_ACCESS_KEY:-minioadmin}
       #!for default
-      # Onyx Craft configuration (disabled by default, set ENABLE_CRAFT=true in .env to enable)
+      # Lumen Craft configuration (disabled by default, set ENABLE_CRAFT=true in .env to enable)
       # Use --include-craft with install script, or manually set in .env file
       - ENABLE_CRAFT=${ENABLE_CRAFT:-false}
       #!endfor
@@ -146,12 +146,12 @@ services:
       start_period: 600s
     # Optional, only for debugging purposes
     volumes:
-      - api_server_logs:/var/log/onyx
+      - api_server_logs:/var/log/lumen
       # Shared volume for persistent document storage (Craft file-system mode)
       - file-system:/app/file-system
 
   background:
-    image: ${ONYX_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
+    image: ${LUMEN_BACKEND_IMAGE:-lumendotapp/lumen-backend:${IMAGE_TAG:-latest}}
     build:
       context: ../../backend
       dockerfile: Dockerfile
@@ -209,7 +209,7 @@ services:
       - API_SERVER_PROTOCOL=${API_SERVER_PROTOCOL:-http}
       - API_SERVER_HOST=${API_SERVER_HOST:-api_server}
       #!for default
-      # Onyx Craft configuration (set up automatically on container startup)
+      # Lumen Craft configuration (set up automatically on container startup)
       - ENABLE_CRAFT=${ENABLE_CRAFT:-false}
       #!endfor
     #!value prod,no-letsencrypt: # Uncomment the line below to use if IAM_AUTH is true and you are using iam auth for postgres
@@ -220,7 +220,7 @@ services:
       - "host.docker.internal:host-gateway"
     # Optional, only for debugging purposes
     volumes:
-      - background_logs:/var/log/onyx
+      - background_logs:/var/log/lumen
       # Shared volume for persistent document storage (Craft file-system mode)
       - file-system:/app/file-system
     logging:
@@ -241,7 +241,7 @@ services:
     #   - ${CA_CERT_PATH:-./custom-ca.crt}:/etc/ssl/certs/custom-ca.crt:ro
 
   web_server:
-    image: ${ONYX_WEB_SERVER_IMAGE:-onyxdotapp/onyx-web-server:${IMAGE_TAG:-latest}}
+    image: ${LUMEN_WEB_SERVER_IMAGE:-lumendotapp/lumen-web-server:${IMAGE_TAG:-latest}}
     build:
       context: ../../web
       dockerfile: Dockerfile
@@ -250,7 +250,7 @@ services:
         - NEXT_PUBLIC_FORGOT_PASSWORD_ENABLED=${NEXT_PUBLIC_FORGOT_PASSWORD_ENABLED:-}
         # Enterprise Edition only
         - NEXT_PUBLIC_THEME=${NEXT_PUBLIC_THEME:-}
-        # DO NOT TURN ON unless you have EXPLICIT PERMISSION from Onyx.
+        # DO NOT TURN ON unless you have EXPLICIT PERMISSION from Lumen.
         - NEXT_PUBLIC_DO_NOT_USE_TOGGLE_OFF_DANSWER_POWERED=${NEXT_PUBLIC_DO_NOT_USE_TOGGLE_OFF_DANSWER_POWERED:-false}
         - NODE_OPTIONS=${NODE_OPTIONS:-"--max-old-space-size=4096"}
     env_file:
@@ -279,9 +279,9 @@ services:
       retries: 5
       start_period: 30s
 
-  # Uncomment the block below to enable the MCP server for Onyx.
+  # Uncomment the block below to enable the MCP server for Lumen.
   # mcp_server:
-  #   image: ${ONYX_BACKEND_IMAGE:-onyxdotapp/onyx-backend:${IMAGE_TAG:-latest}}
+  #   image: ${LUMEN_BACKEND_IMAGE:-lumendotapp/lumen-backend:${IMAGE_TAG:-latest}}
   #   build:
   #     context: ../../backend
   #     dockerfile: Dockerfile
@@ -291,7 +291,7 @@ services:
   #       echo 'MCP server is disabled (MCP_SERVER_ENABLED=false), skipping...';
   #       exit 0;
   #     else
-  #       exec python -m onyx.mcp_server_main;
+  #       exec python -m lumen.mcp_server_main;
   #     fi"
   #   env_file:
   #     - path: .env
@@ -318,10 +318,10 @@ services:
   #       max-file: "6"
   #   # Optional, only for debugging purposes
   #   volumes:
-  #     - mcp_server_logs:/var/log/onyx
+  #     - mcp_server_logs:/var/log/lumen
 
   inference_model_server:
-    image: ${ONYX_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
+    image: ${LUMEN_MODEL_SERVER_IMAGE:-lumendotapp/lumen-model-server:${IMAGE_TAG:-latest}}
     build:
       context: ../../backend
       dockerfile: Dockerfile.model_server
@@ -350,7 +350,7 @@ services:
       # Not necessary, this is just to reduce download time during startup
       - model_cache_huggingface:/app/.cache/huggingface/
       # Optional, only for debugging purposes
-      - inference_model_server_logs:/var/log/onyx
+      - inference_model_server_logs:/var/log/lumen
     logging:
       driver: json-file
       options:
@@ -372,7 +372,7 @@ services:
       start_period: 600s
 
   indexing_model_server:
-    image: ${ONYX_MODEL_SERVER_IMAGE:-onyxdotapp/onyx-model-server:${IMAGE_TAG:-latest}}
+    image: ${LUMEN_MODEL_SERVER_IMAGE:-lumendotapp/lumen-model-server:${IMAGE_TAG:-latest}}
     build:
       context: ../../backend
       dockerfile: Dockerfile.model_server
@@ -404,7 +404,7 @@ services:
       # Not necessary, this is just to reduce download time during startup
       - indexing_huggingface_model_cache:/app/.cache/huggingface/
       # Optional, only for debugging purposes
-      - indexing_model_server_logs:/var/log/onyx
+      - indexing_model_server_logs:/var/log/lumen
     logging:
       driver: json-file
       options:
@@ -642,7 +642,7 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
       #!only default
       # Note: we've seen the default bucket creation logic not work in some cases
-      MINIO_DEFAULT_BUCKETS: ${S3_FILE_STORE_BUCKET_NAME:-onyx-file-store-bucket}
+      MINIO_DEFAULT_BUCKETS: ${S3_FILE_STORE_BUCKET_NAME:-lumen-file-store-bucket}
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"

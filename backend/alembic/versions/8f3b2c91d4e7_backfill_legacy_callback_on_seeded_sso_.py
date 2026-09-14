@@ -13,8 +13,8 @@ import json
 import sqlalchemy as sa
 from alembic import op
 
-from onyx.utils.encryption import decrypt_bytes_to_string
-from onyx.utils.encryption import encrypt_string_to_bytes
+from lumen.utils.encryption import decrypt_bytes_to_string
+from lumen.utils.encryption import encrypt_string_to_bytes
 
 # revision identifiers, used by Alembic.
 revision = "8f3b2c91d4e7"
@@ -37,7 +37,7 @@ def upgrade() -> None:
     deployment that already removed its env credentials has either registered
     the parametric URI or reconfigured, and flipping it here could break it.
     """
-    from onyx.configs.app_configs import OAUTH_CLIENT_ID
+    from lumen.configs.app_configs import OAUTH_CLIENT_ID
     from shared_configs.configs import MULTI_TENANT
 
     if MULTI_TENANT:

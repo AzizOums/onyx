@@ -7,16 +7,16 @@ through the API the way the frontend will.
 
 from typing import Any
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.capabilities import CredentialCapability
-from onyx.connectors.capability_checks.models import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.capabilities import CredentialCapability
+from lumen.connectors.capability_checks.models import (
     CapabilityCheckStatus,
     CapabilityVerdict,
 )
-from onyx.connectors.capability_checks.recorder import (
+from lumen.connectors.capability_checks.recorder import (
     record_blocking_validation_outcome,
 )
-from onyx.db.enums import CapabilityCheckTrigger, CapabilityReportRunStatus
+from lumen.db.enums import CapabilityCheckTrigger, CapabilityReportRunStatus
 from tests.integration.common_utils.constants import API_SERVER_URL
 from tests.integration.common_utils.http_client import client
 from tests.integration.common_utils.managers.connector import ConnectorManager

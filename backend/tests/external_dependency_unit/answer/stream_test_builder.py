@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 
-from onyx.chat.models import AnswerStreamPart
-from onyx.context.search.models import SearchDoc
-from onyx.server.query_and_chat.streaming_models import (
+from lumen.chat.models import AnswerStreamPart
+from lumen.context.search.models import SearchDoc
+from lumen.server.query_and_chat.streaming_models import (
     AgentResponseStart,
     OverallStop,
     Packet,

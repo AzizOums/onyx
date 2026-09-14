@@ -4,7 +4,7 @@
 
 ```bash
 # Navigate to backend directory
-cd onyx/backend
+cd lumen/backend
 
 # Step 1: Generate CSV of tenants to clean (5-10 min)
 # Cutoff defaults to 60 days of no chat and no Craft activity; --inactive-days changes it.

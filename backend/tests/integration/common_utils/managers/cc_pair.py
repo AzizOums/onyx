@@ -3,9 +3,9 @@ from datetime import datetime
 from typing import Any
 from uuid import uuid4
 
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType, ConnectorCredentialPairStatus
-from onyx.server.documents.models import (
+from lumen.connectors.models import InputType
+from lumen.db.enums import AccessType, ConnectorCredentialPairStatus
+from lumen.server.documents.models import (
     CCPairFullInfo,
     ConnectorCredentialPairIdentifier,
     ConnectorIndexingStatusLite,

@@ -24,8 +24,8 @@ from fastapi_users.password import PasswordHelper
 from sqlalchemy import delete, update
 from sqlalchemy.orm import Session
 
-from onyx.configs.constants import DocumentSource
-from onyx.db.enums import (
+from lumen.configs.constants import DocumentSource
+from lumen.db.enums import (
     AccessType,
     AccountType,
     ConnectorCredentialPairStatus,
@@ -35,8 +35,8 @@ from onyx.db.enums import (
     SandboxStatus,
     SkillSharePermission,
 )
-from onyx.db.gated_app import get_or_create_gated_app_id
-from onyx.db.models import (
+from lumen.db.gated_app import get_or_create_gated_app_id
+from lumen.db.models import (
     ActionApproval,
     ActionReceipt,
     Connector,
@@ -54,8 +54,8 @@ from onyx.db.models import (
     UserGroup,
     UserGroup__ConnectorCredentialPair,
 )
-from onyx.db.permissions import recompute_user_permissions__no_commit
-from onyx.db.users import assign_user_to_default_groups__no_commit
+from lumen.db.permissions import recompute_user_permissions__no_commit
+from lumen.db.users import assign_user_to_default_groups__no_commit
 
 
 def force_approval_created_at(

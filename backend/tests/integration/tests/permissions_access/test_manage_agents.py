@@ -1,7 +1,7 @@
 """Integration tests for MANAGE_AGENTS permission gate.
 
 MANAGE_AGENTS gates persona-admin PATCH endpoints in
-``backend/onyx/server/features/persona/api.py`` (admin_router prefix
+``backend/lumen/server/features/persona/api.py`` (admin_router prefix
 ``/admin/persona``). Because the persona IDs are bogus the allowed
 callers will receive 404 — fine, we only assert the gate was not the
 blocker.
@@ -12,7 +12,7 @@ from typing import Any
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.test_models import DATestAPIKey, DATestUser
 from tests.integration.tests.permissions._access_matrix import (
     USER_KINDS,

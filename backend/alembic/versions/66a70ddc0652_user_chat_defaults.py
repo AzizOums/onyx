@@ -9,7 +9,7 @@ Create Date: 2026-08-25 14:00:35.813051
 from alembic import op
 import sqlalchemy as sa
 
-from onyx.llm.models import ReasoningEffort
+from lumen.llm.models import ReasoningEffort
 
 # revision identifiers, used by Alembic.
 revision = "66a70ddc0652"

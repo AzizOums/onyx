@@ -20,36 +20,36 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.access.models import DocumentAccess
-from onyx.background.celery.tasks.port import tasks as port_task
-from onyx.background.celery.tasks.port.tasks import run_check_for_port, run_port_attempt
-from onyx.configs.constants import DocumentSource
-from onyx.configs.model_configs import ASYM_PASSAGE_PREFIX, ASYM_QUERY_PREFIX
-from onyx.context.search.models import SavedSearchSettings
-from onyx.db import swap_index
-from onyx.db.enums import (
+from lumen.access.models import DocumentAccess
+from lumen.background.celery.tasks.port import tasks as port_task
+from lumen.background.celery.tasks.port.tasks import run_check_for_port, run_port_attempt
+from lumen.configs.constants import DocumentSource
+from lumen.configs.model_configs import ASYM_PASSAGE_PREFIX, ASYM_QUERY_PREFIX
+from lumen.context.search.models import SavedSearchSettings
+from lumen.db import swap_index
+from lumen.db.enums import (
     EmbeddingPrecision,
     IndexingStatus,
     IndexModelStatus,
     PortAttemptStatus,
     SwitchoverType,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     ConnectorCredentialPair,
     IndexAttempt,
     PortAttempt,
     SearchSettings,
 )
-from onyx.db.port_attempt import get_port_attempt
-from onyx.db.search_settings import create_search_settings, get_current_search_settings
-from onyx.document_index.interfaces_new import TenantState
-from onyx.document_index.opensearch.client import OpenSearchIndexClient
-from onyx.document_index.opensearch.constants import DEFAULT_MAX_CHUNK_SIZE
-from onyx.document_index.opensearch.opensearch_document_index import (
+from lumen.db.port_attempt import get_port_attempt
+from lumen.db.search_settings import create_search_settings, get_current_search_settings
+from lumen.document_index.interfaces_new import TenantState
+from lumen.document_index.opensearch.client import OpenSearchIndexClient
+from lumen.document_index.opensearch.constants import DEFAULT_MAX_CHUNK_SIZE
+from lumen.document_index.opensearch.opensearch_document_index import (
     OpenSearchDocumentIndex,
     generate_opensearch_filtered_access_control_list,
 )
-from onyx.document_index.opensearch.schema import (
+from lumen.document_index.opensearch.schema import (
     DocumentChunk,
     DocumentSchema,
     get_opensearch_doc_chunk_id,

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
 )
 
 // interactiveIOS builds an IOStreams that reads input and claims to be a TTY.

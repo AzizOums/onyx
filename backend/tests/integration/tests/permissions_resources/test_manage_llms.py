@@ -1,6 +1,6 @@
 """Integration tests for MANAGE_LLMS permission gate.
 
-LLM admin endpoints live in ``backend/onyx/server/manage/llm/api.py`` on
+LLM admin endpoints live in ``backend/lumen/server/manage/llm/api.py`` on
 the admin_router (prefix ``/admin/llm``).
 """
 
@@ -9,7 +9,7 @@ from typing import Any
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.test_models import DATestAPIKey, DATestUser
 from tests.integration.tests.permissions._access_matrix import (
     USER_KINDS,

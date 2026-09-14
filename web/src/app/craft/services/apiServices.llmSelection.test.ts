@@ -26,7 +26,7 @@ describe("Craft LLM selection payloads", () => {
     expect(global.fetch).toHaveBeenCalledTimes(1);
     const request = jest.mocked(global.fetch).mock.calls[0]![1];
     expect(JSON.parse(String(request!.body))).toMatchObject({
-      provider: "onyx",
+      provider: "lumen",
       provider_id: 13,
       model: "gpt-5-mini",
     });

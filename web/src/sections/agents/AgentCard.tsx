@@ -130,7 +130,7 @@ export default function AgentCard({ agent, onView }: AgentCardProps) {
               <div className="flex flex-col gap-1 py-1 px-2">
                 <Content
                   icon={SvgUser}
-                  title={agent.owner?.email || "Onyx"}
+                  title={agent.owner?.email || "Lumen"}
                   sizePreset="secondary"
                   variant="body"
                   color="muted"

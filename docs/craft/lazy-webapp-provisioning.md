@@ -30,8 +30,8 @@ create conflicts and drift.
 
 - **env-baking** (already merged). `build_nextjs_start_script`
   (`sandbox/nextjs_dev.py`) already writes `.nextjs-port`, exports
-  `ONYX_WEBAPP_PORT` / `ONYX_WEBAPP_BASE_PATH`, and uses a `PORT_FLAG` fallback;
-  both managers set the pod/container env `ONYX_WEBAPP_ALLOWED_DEV_ORIGINS`
+  `LUMEN_WEBAPP_PORT` / `LUMEN_WEBAPP_BASE_PATH`, and uses a `PORT_FLAG` fallback;
+  both managers set the pod/container env `LUMEN_WEBAPP_ALLOWED_DEV_ORIGINS`
   (k8s ~L538, docker ~L565). So a hand-run `bun run dev` already binds the
   correct port and basePath. The lazy bootstrap must **embed main's current**
   `build_nextjs_start_script`, not the feature's older copy.

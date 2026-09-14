@@ -6,12 +6,12 @@ from unittest.mock import MagicMock
 import pytest
 from docker import DockerClient
 
-from onyx.sandbox_proxy.identity_docker import (
+from lumen.sandbox_proxy.identity_docker import (
     DockerEventsLookup,
     _identity_from_container,
 )
 
-_DEFAULT_NETWORK = "onyx_craft_sandbox"
+_DEFAULT_NETWORK = "lumen_craft_sandbox"
 
 
 def _make_container(
@@ -31,11 +31,11 @@ def _make_container(
     """
     labels: dict[str, str] = {}
     if component is not None:
-        labels["onyx.app/component"] = component
+        labels["lumen.app/component"] = component
     if sandbox_id is not None:
-        labels["onyx.app/sandbox-id"] = sandbox_id
+        labels["lumen.app/sandbox-id"] = sandbox_id
     if tenant_id is not None:
-        labels["onyx.app/tenant-id"] = tenant_id
+        labels["lumen.app/tenant-id"] = tenant_id
 
     networks: dict[str, dict[str, str]] = {}
     if ip is not None:

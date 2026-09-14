@@ -5,8 +5,8 @@ import (
 
 	"charm.land/bubbles/v2/textinput"
 	tea "charm.land/bubbletea/v2"
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
+	"github.com/lumen-dot-app/lumen/cli/internal/api"
+	"github.com/lumen-dot-app/lumen/cli/internal/config"
 )
 
 const (
@@ -130,15 +130,15 @@ func (m AuthModel) View() tea.View {
 
 	var b strings.Builder
 	b.WriteString("\n")
-	b.WriteString("  \x1b[1;35mOnyx CLI\x1b[0m\n")
+	b.WriteString("  \x1b[1;35mLumen CLI\x1b[0m\n")
 	b.WriteString("  \x1b[90m" + m.serverURL + "\x1b[0m\n")
 	b.WriteString("\n")
 	b.WriteString("  Generate a personal access token (PAT) at:\n")
 	b.WriteString("  \x1b[4;34m" + settingsURL + "\x1b[0m\n")
 	b.WriteString("\n")
 	b.WriteString("  \x1b[90mTip: skip this prompt by passing your PAT via SSH:\x1b[0m\n")
-	b.WriteString("  \x1b[90m  export ONYX_PAT=<key>\x1b[0m\n")
-	b.WriteString("  \x1b[90m  ssh -o SendEnv=ONYX_PAT <host> -p <port>\x1b[0m\n")
+	b.WriteString("  \x1b[90m  export LUMEN_PAT=<key>\x1b[0m\n")
+	b.WriteString("  \x1b[90m  ssh -o SendEnv=LUMEN_PAT <host> -p <port>\x1b[0m\n")
 	b.WriteString("\n")
 
 	if m.errMsg != "" {
@@ -165,14 +165,14 @@ type ServeModel struct {
 	auth      AuthModel
 	tui       tea.Model
 	authed    bool
-	serverCfg config.OnyxCliConfig
+	serverCfg config.LumenCliConfig
 	width     int
 	height    int
 }
 
 // NewServeModel creates a new serve model that first shows the auth prompt
 // and then transitions to the chat TUI.
-func NewServeModel(serverCfg config.OnyxCliConfig, initialErr string, validateFunc func(string, string) error) ServeModel {
+func NewServeModel(serverCfg config.LumenCliConfig, initialErr string, validateFunc func(string, string) error) ServeModel {
 	return ServeModel{
 		auth:      NewAuthModel(serverCfg.ServerURL, initialErr, validateFunc),
 		serverCfg: serverCfg,
@@ -199,7 +199,7 @@ func (m ServeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 		if m.auth.APIKey != "" {
-			cfg := config.OnyxCliConfig{
+			cfg := config.LumenCliConfig{
 				ServerURL:      m.serverCfg.ServerURL,
 				APIKey:         m.auth.APIKey,
 				DefaultAgentID: m.serverCfg.DefaultAgentID,

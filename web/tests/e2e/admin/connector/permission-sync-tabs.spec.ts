@@ -29,7 +29,7 @@ import { test, expect } from "@playwright/test";
 test.skip(true, "external permission sync beat tasks are EE-only and removed in the Community build");
 import type { Page, Route } from "@playwright/test";
 
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 
 const MOCK_SYNC_CC_PAIR_ID = 99999;
 const MOCK_SOURCE = "google_drive";
@@ -172,7 +172,7 @@ test.describe("Permission sync tabs", () => {
   test("non-sync connector: renders legacy Indexing Attempts table, no tabs", async ({
     page,
   }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     const ccPairId = await apiClient.createFileConnector(
       `E2E PermSyncTabs NonSync ${Date.now()}`
     );

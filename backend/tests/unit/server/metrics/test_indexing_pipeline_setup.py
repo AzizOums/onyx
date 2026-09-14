@@ -2,7 +2,7 @@
 
 from unittest.mock import MagicMock
 
-from onyx.server.metrics.indexing_pipeline import (
+from lumen.server.metrics.indexing_pipeline import (
     QueueDepthCollector,
     RedisHealthCollector,
 )

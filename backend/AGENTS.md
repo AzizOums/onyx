@@ -5,7 +5,7 @@ tests. Additive to the root `AGENTS.md`.
 
 ## Key Rules
 
-- Put ALL db operations under the `backend/onyx/db` / `backend/ee/onyx/db` directories. Don't run
+- Put ALL db operations under the `backend/lumen/db` / `backend/ee/lumen/db` directories. Don't run
   queries outside of those directories.
 - When creating new FastAPI APIs, do NOT use the `response_model` field. Instead, just type the
   function.
@@ -19,9 +19,9 @@ tests. Additive to the root `AGENTS.md`.
 
 ## Background Workers (Celery)
 
-Onyx uses Celery for asynchronous task processing. Worker apps live in
-`backend/onyx/background/celery/apps/`; the periodic schedule is defined in
-`backend/onyx/background/celery/tasks/beat_schedule.py`.
+Lumen uses Celery for asynchronous task processing. Worker apps live in
+`backend/lumen/background/celery/apps/`; the periodic schedule is defined in
+`backend/lumen/background/celery/tasks/beat_schedule.py`.
 
 | Worker | Role |
 | --- | --- |
@@ -41,8 +41,8 @@ Key facts:
 - Multi-tenant: `DynamicTenantScheduler` explicitly adds `tenant_id` to each Celery Beat task's
   kwargs; direct task sends must propagate it themselves (`TenantAwareTask` silently falls back to
   the default schema when it's absent).
-- Tasks route to named queues and carry a separate High/Medium/Low priority (`OnyxCeleryQueues` /
-  `OnyxCeleryPriority` in `backend/onyx/configs/constants.py`); Redis coordinates inter-process
+- Tasks route to named queues and carry a separate High/Medium/Low priority (`LumenCeleryQueues` /
+  `LumenCeleryPriority` in `backend/lumen/configs/constants.py`); Redis coordinates inter-process
   communication; task state and metadata live in PostgreSQL.
 
 ### Defining Tasks
@@ -95,7 +95,7 @@ Write the migration manually and place it in the file that alembic creates when 
 Run pytest through `uv run` from the repo root — no venv activation needed (`uv run` uses the
 lockfile-pinned environment and creates/syncs `.venv` as needed).
 
-There are 4 main types of tests within Onyx:
+There are 4 main types of tests within Lumen:
 
 ### Model choice for tests that make real LLM calls
 
@@ -107,7 +107,7 @@ that hit a live provider), use the cheap-and-fast tier for each provider:
 
 ### Unit Tests
 
-These should not assume any Onyx/external services are available to be called.
+These should not assume any Lumen/external services are available to be called.
 Interactions with the outside world should be mocked using `unittest.mock`. Generally, only
 write these for complex, isolated modules e.g. `citation_processing.py`.
 
@@ -119,10 +119,10 @@ uv run pytest -xv backend/tests/unit
 
 ### External Dependency Unit Tests
 
-These tests assume that all external dependencies of Onyx are available and callable (e.g. Postgres, Redis,
+These tests assume that all external dependencies of Lumen are available and callable (e.g. Postgres, Redis,
 MinIO/S3, OpenSearch are running + OpenAI can be called + any request to the internet is fine + etc.).
 
-However, the actual Onyx containers are not running and with these tests we call the function to test directly.
+However, the actual Lumen containers are not running and with these tests we call the function to test directly.
 We can also mock components/calls at will.
 
 The goal with these tests are to minimize mocking while giving some flexibility to mock things that are flakey,
@@ -139,7 +139,7 @@ uv run --env-file .vscode/.env pytest backend/tests/external_dependency_unit
 
 ### Integration Tests
 
-Standard integration tests. Every test in `backend/tests/integration` runs against a real Onyx deployment. We cannot
+Standard integration tests. Every test in `backend/tests/integration` runs against a real Lumen deployment. We cannot
 mock anything in these tests. Prefer writing integration tests (or External Dependency Unit Tests if mocking/internal
 verification is necessary) over any other type of test.
 
@@ -160,7 +160,7 @@ uv run --env-file .vscode/.env pytest backend/tests/integration
 
 ### Playwright (E2E) Tests
 
-These tests are an even more complete version of the Integration Tests mentioned above. Has all services of Onyx
+These tests are an even more complete version of the Integration Tests mentioned above. Has all services of Lumen
 running, _including_ the Web Server.
 
 Use these tests for anything that requires significant frontend <-> backend coordination.
@@ -179,25 +179,25 @@ For shared fixtures, best practices, and detailed guidance, see `backend/tests/R
 
 ## Error Handling
 
-**Always raise `OnyxError` from `onyx.error_handling.exceptions` instead of `HTTPException`.
+**Always raise `LumenError` from `lumen.error_handling.exceptions` instead of `HTTPException`.
 Never hardcode status codes or use `starlette.status` / `fastapi.status` constants directly.**
 
-A global FastAPI exception handler converts `OnyxError` into a JSON response with the standard
+A global FastAPI exception handler converts `LumenError` into a JSON response with the standard
 `{"error_code": "...", "detail": "..."}` shape. This eliminates boilerplate and keeps error
 handling consistent across the entire backend.
 
 ```python
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
 
 # ✅ Good
-raise OnyxError(OnyxErrorCode.NOT_FOUND, "Session not found")
+raise LumenError(LumenErrorCode.NOT_FOUND, "Session not found")
 
 # ✅ Good — no extra message needed
-raise OnyxError(OnyxErrorCode.UNAUTHENTICATED)
+raise LumenError(LumenErrorCode.UNAUTHENTICATED)
 
 # ✅ Good — upstream service with dynamic status code
-raise OnyxError(OnyxErrorCode.BAD_GATEWAY, detail, status_code_override=upstream_status)
+raise LumenError(LumenErrorCode.BAD_GATEWAY, detail, status_code_override=upstream_status)
 
 # ❌ Bad — using HTTPException directly
 raise HTTPException(status_code=404, detail="Session not found")
@@ -206,15 +206,15 @@ raise HTTPException(status_code=404, detail="Session not found")
 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 ```
 
-Available error codes are defined in `backend/onyx/error_handling/error_codes.py`. If a new error
+Available error codes are defined in `backend/lumen/error_handling/error_codes.py`. If a new error
 category is needed, add it there first — do not invent ad-hoc codes.
 
 **Upstream service errors:** When forwarding errors from an upstream service where the HTTP
 status code is dynamic (comes from the upstream response), use `status_code_override`:
 
 ```python
-raise OnyxError(
-    OnyxErrorCode.BAD_GATEWAY, detail, status_code_override=e.response.status_code
+raise LumenError(
+    LumenErrorCode.BAD_GATEWAY, detail, status_code_override=e.response.status_code
 )
 ```
 
@@ -224,7 +224,7 @@ LLM calls go through LiteLLM; models are configurable per feature (chat, search,
 
 ### Tracing — every LLM invocation must be tagged
 
-Every LLM, embedding, rerank, image-generation, voice (STT/TTS), and intent-classification call must open a generation span tagged with a value from the `LLMFlow` registry in `backend/onyx/tracing/flows.py`. Use one of:
+Every LLM, embedding, rerank, image-generation, voice (STT/TTS), and intent-classification call must open a generation span tagged with a value from the `LLMFlow` registry in `backend/lumen/tracing/flows.py`. Use one of:
 
 - `llm_generation_span(llm=..., flow=LLMFlow.X, input_messages=...)` for calls going through an `LLM` subclass.
 - `traced_llm_call(flow=LLMFlow.X, model=..., provider=..., input_messages=...)` for direct provider SDK / `litellm` / model_server HTTP calls that bypass the `LLM` abstraction.
@@ -233,4 +233,4 @@ Rules:
 
 1. Add a new `LLMFlow` enum value before instrumenting a new operation. Don't pass raw strings.
 2. Flow tags name the **operation** (e.g. `IMAGE_EDIT`, `RERANK`) — not the provider. Provider lives in `model_config["model_provider"]`.
-3. The auto-wrap fallback in `onyx/llm/tracing_wrap.py` emits `LLMFlow.UNTAGGED_INVOKE` / `UNTAGGED_STREAM` for calls that reach `LLM.invoke` / `LLM.stream` without an explicit span. These sentinels are visible in dashboards and indicate missing instrumentation — fix the call site, don't rely on the fallback.
+3. The auto-wrap fallback in `lumen/llm/tracing_wrap.py` emits `LLMFlow.UNTAGGED_INVOKE` / `UNTAGGED_STREAM` for calls that reach `LLM.invoke` / `LLM.stream` without an explicit span. These sentinels are visible in dashboards and indicate missing instrumentation — fix the call site, don't rely on the fallback.

@@ -20,7 +20,7 @@ import {
   SvgHistory,
   SvgImage,
   SvgMcp,
-  SvgOnyxOctagon,
+  SvgLumenOctagon,
   SvgPaintBrush,
   SvgPieChart,
   SvgPlug,
@@ -189,7 +189,7 @@ export const ADMIN_ROUTES = {
   // ── Agents & Actions ──────────────────────────────────────────────
   AGENTS: {
     path: "/admin/agents",
-    icon: SvgOnyxOctagon,
+    icon: SvgLumenOctagon,
     title: "Agents",
     sidebarLabel: "Agents",
     requiredPermission: Permission.MANAGE_AGENTS,

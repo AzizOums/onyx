@@ -13,8 +13,8 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - onyx_default
+      - lumen_default
 networks:
-  onyx_default:
-    name: onyx_default
+  lumen_default:
+    name: lumen_default
     external: true

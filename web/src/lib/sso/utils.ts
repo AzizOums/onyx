@@ -146,7 +146,7 @@ export const CONFIG_FIELDS_BY_TYPE: Record<SSOProviderType, SSOConfigField[]> =
         label: "SP Entity ID",
         kind: "text",
         description: "This instance's entity ID, registered with the IdP.",
-        placeholder: "onyx",
+        placeholder: "lumen",
       },
       {
         name: "sp_x509_cert",

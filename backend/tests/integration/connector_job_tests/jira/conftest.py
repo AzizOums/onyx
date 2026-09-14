@@ -4,9 +4,9 @@ from datetime import datetime, timezone
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.models import InputType
-from onyx.db.enums import AccessType
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.models import InputType
+from lumen.db.enums import AccessType
 from tests.integration.common_utils.managers.cc_pair import CCPairManager
 from tests.integration.common_utils.managers.connector import ConnectorManager
 from tests.integration.common_utils.managers.credential import CredentialManager

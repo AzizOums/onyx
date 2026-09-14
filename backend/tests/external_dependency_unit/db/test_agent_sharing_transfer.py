@@ -8,10 +8,10 @@ from uuid import UUID
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import AccountType, PersonaSharePermission
-from onyx.db.models import Persona__User
-from onyx.db.persona import transfer_persona_ownership
-from onyx.db.persona_sharing import persona_ownership_is_vacant
+from lumen.db.enums import AccountType, PersonaSharePermission
+from lumen.db.models import Persona__User
+from lumen.db.persona import transfer_persona_ownership
+from lumen.db.persona_sharing import persona_ownership_is_vacant
 from tests.external_dependency_unit.conftest import create_test_user
 from tests.external_dependency_unit.db.agent_sharing_helpers import (
     create_test_persona,

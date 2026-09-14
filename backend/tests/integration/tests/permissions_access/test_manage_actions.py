@@ -1,8 +1,8 @@
 """Integration tests for MANAGE_ACTIONS permission gate.
 
 MANAGE_ACTIONS protects custom-tool + MCP admin endpoints in
-``backend/onyx/server/features/tool/api.py`` (admin_router prefix
-``/admin/tool``) and ``backend/onyx/server/features/mcp/api.py``
+``backend/lumen/server/features/tool/api.py`` (admin_router prefix
+``/admin/tool``) and ``backend/lumen/server/features/mcp/api.py``
 (admin_router prefix ``/admin/mcp``).
 """
 
@@ -12,7 +12,7 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.test_models import DATestAPIKey, DATestUser
 from tests.integration.tests.permissions._access_matrix import (
     USER_KINDS,

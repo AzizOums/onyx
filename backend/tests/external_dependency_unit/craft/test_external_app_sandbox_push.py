@@ -5,15 +5,15 @@ from uuid import UUID, uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-import onyx.server.features.build.external_apps.api as api
-from onyx.db.enums import ExternalAppType
-from onyx.db.external_app import (
+import lumen.server.features.build.external_apps.api as api
+from lumen.db.enums import ExternalAppType
+from lumen.db.external_app import (
     get_external_app_by_skill_id,
     get_external_app_user_credential,
 )
-from onyx.db.models import ExternalApp, Skill, User, UserSkillPreference
-from onyx.db.skill import list_runtime_skills_for_user, set_skill_enabled_for_user
-from onyx.server.features.build.external_apps.models import (
+from lumen.db.models import ExternalApp, Skill, User, UserSkillPreference
+from lumen.db.skill import list_runtime_skills_for_user, set_skill_enabled_for_user
+from lumen.server.features.build.external_apps.models import (
     CreateBuiltInExternalAppRequest,
     UpdateExternalAppRequest,
     UpsertUserCredentialsRequest,

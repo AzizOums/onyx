@@ -1,8 +1,8 @@
-name: onyx
+name: lumen
 
 services:
   mcp_per_user_key_server:
-    image: ${ONYX_BACKEND_IMAGE:-onyxdotapp/onyx-backend:latest}
+    image: ${LUMEN_BACKEND_IMAGE:-lumendotapp/lumen-backend:latest}
     restart: on-failure
     working_dir: /workspace
     environment:

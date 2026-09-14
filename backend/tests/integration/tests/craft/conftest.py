@@ -10,10 +10,10 @@ from uuid import UUID, uuid4
 import httpx
 import pytest
 
-from onyx.db.engine.sql_engine import SqlEngine, get_session_with_tenant
-from onyx.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
-from onyx.server.features.build.db.sandbox import get_running_sandboxes
-from onyx.server.features.build.sandbox.factory import get_sandbox_manager
+from lumen.db.engine.sql_engine import SqlEngine, get_session_with_tenant
+from lumen.server.features.build.configs import SANDBOX_BACKEND, SandboxBackend
+from lumen.server.features.build.db.sandbox import get_running_sandboxes
+from lumen.server.features.build.sandbox.factory import get_sandbox_manager
 from shared_configs.configs import POSTGRES_DEFAULT_SCHEMA_STANDARD_VALUE
 from tests.common.craft.users import create_or_login_admin
 from tests.integration.common_utils.constants import ADMIN_USER_NAME

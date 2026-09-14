@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import { OnyxApiClient } from "@tests/e2e/utils/onyxApiClient";
+import { LumenApiClient } from "@tests/e2e/utils/lumenApiClient";
 import { THEMES, setThemeBeforeNavigation } from "@tests/e2e/utils/theme";
 import { IndexingStatusPage } from "@tests/e2e/admin/connector/IndexingStatusPage";
 
@@ -29,14 +29,14 @@ test.describe("Connector status page — visual @exclusive", () => {
   let ccPairId: number | null = null;
 
   test.beforeEach(async ({ page }) => {
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     ccPairId = await apiClient.createFileConnector(CONNECTOR_NAME);
   });
 
   test.afterEach(async ({ page }) => {
     if (ccPairId === null) return;
 
-    const apiClient = new OnyxApiClient(page.request);
+    const apiClient = new LumenApiClient(page.request);
     const idToDelete = ccPairId;
     ccPairId = null;
 

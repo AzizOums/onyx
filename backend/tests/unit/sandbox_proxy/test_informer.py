@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from kubernetes import client
 
-from onyx.sandbox_proxy.identity_k8s import K8sInformerLookup, _identity_from_pod
+from lumen.sandbox_proxy.identity_k8s import K8sInformerLookup, _identity_from_pod
 
 
 def _make_pod(
@@ -12,15 +12,15 @@ def _make_pod(
     pod_ip: str | None = "10.0.0.1",
     sandbox_id: str | None = "11111111-1111-1111-1111-111111111111",
     tenant_id: str | None = "public",
-    managed_by: str | None = "onyx",
+    managed_by: str | None = "lumen",
 ) -> client.V1Pod:
     labels: dict[str, str] = {"app.kubernetes.io/component": "sandbox"}
     if managed_by is not None:
         labels["app.kubernetes.io/managed-by"] = managed_by
     if sandbox_id is not None:
-        labels["onyx.app/sandbox-id"] = sandbox_id
+        labels["lumen.app/sandbox-id"] = sandbox_id
     if tenant_id is not None:
-        labels["onyx.app/tenant-id"] = tenant_id
+        labels["lumen.app/tenant-id"] = tenant_id
     return client.V1Pod(
         metadata=client.V1ObjectMeta(name=name, labels=labels),
         status=client.V1PodStatus(pod_ip=pod_ip),
@@ -148,7 +148,7 @@ def test_synced_clears_after_watch_loop_returns_cleanly() -> None:
         def stop(self) -> None:
             pass
 
-    with patch("onyx.sandbox_proxy.identity_k8s.watch.Watch", _StubWatch):
+    with patch("lumen.sandbox_proxy.identity_k8s.watch.Watch", _StubWatch):
         lookup._run()
 
     assert lookup._initial_sync_done.is_set()

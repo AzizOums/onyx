@@ -1,7 +1,7 @@
 """Integration tests for MANAGE_SERVICE_ACCOUNT_API_KEYS permission gate.
 
 Covers the service-account API-key admin endpoints in
-``backend/onyx/server/api_key/api.py`` (router prefix ``/admin/api-key``).
+``backend/lumen/server/api_key/api.py`` (router prefix ``/admin/api-key``).
 """
 
 import os
@@ -10,7 +10,7 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.db.enums import Permission
+from lumen.db.enums import Permission
 from tests.integration.common_utils.managers.user_group import UserGroupManager
 from tests.integration.common_utils.permission_state import effective_permissions
 from tests.integration.common_utils.test_models import (

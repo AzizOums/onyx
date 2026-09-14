@@ -74,12 +74,12 @@ func TestLintBytesRules(t *testing.T) {
 		},
 		{
 			name: "allow marker silences every hit on its line",
-			src:  "a = \"ops@onyx.app 123456789012 8.8.8.8/32\" # public-safe: ok\n",
+			src:  "a = \"ops@lumen.app 123456789012 8.8.8.8/32\" # public-safe: ok\n",
 		},
 		{
 			name: "several hits on one line",
-			src:  "a = \"ops@onyx.app 123456789012 8.8.8.8/32\"\n",
-			want: []string{"email ops@onyx.app", "account_id 123456789012", "cidr 8.8.8.8/32"},
+			src:  "a = \"ops@lumen.app 123456789012 8.8.8.8/32\"\n",
+			want: []string{"email ops@lumen.app", "account_id 123456789012", "cidr 8.8.8.8/32"},
 		},
 	}
 
@@ -99,7 +99,7 @@ func TestLintBytesRules(t *testing.T) {
 }
 
 func TestLintBytesReportsLineNumbers(t *testing.T) {
-	src := "one = 1\ntwo = 2\nthree = \"8.8.8.8/32\"\nfour = 4\nfive = \"ops@onyx.app\"\n"
+	src := "one = 1\ntwo = 2\nthree = \"8.8.8.8/32\"\nfour = 4\nfive = \"ops@lumen.app\"\n"
 
 	findings := lintBytes([]byte(src), "main.tf")
 	if len(findings) != 2 {

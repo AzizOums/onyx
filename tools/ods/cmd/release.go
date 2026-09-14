@@ -5,11 +5,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/release"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/release"
 )
 
 // NewReleaseCommand creates the parent `ods release` command. Subcommands hang
-// off it (e.g. `ods release opal`) and cut releases of Onyx-published
+// off it (e.g. `ods release opal`) and cut releases of Lumen-published
 // packages; --check validates an existing release tag instead.
 func NewReleaseCommand() *cobra.Command {
 	var check bool
@@ -17,8 +17,8 @@ func NewReleaseCommand() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "release",
-		Short: "Cut releases of Onyx-published packages",
-		Long: `Cut releases of Onyx-published packages.
+		Short: "Cut releases of Lumen-published packages",
+		Long: `Cut releases of Lumen-published packages.
 
 With --check, no tag is cut. Instead the command validates an existing release
 tag:

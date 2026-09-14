@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { SvgOnyxLogo } from "@opal/logos";
+import { SvgLumenLogo } from "@opal/logos";
 import { useSettings } from "@/lib/settings/hooks";
 import { Text } from "@opal/components";
 
@@ -21,7 +21,7 @@ export default function AuthFlowContainer({
     <div className="p-4 flex flex-col items-center justify-center min-h-screen bg-background">
       <div className="w-full max-w-md flex items-start flex-col bg-background-tint-00 rounded-16 shadow-lg shadow-box-02 p-6">
         {/* logo_display_style only governs the sidebar; auth pages always show
-            the logo mark (custom when uploaded, Onyx otherwise) */}
+            the logo mark (custom when uploaded, Lumen otherwise) */}
         {logoUrl ? (
           <div
             className="aspect-square rounded-full overflow-hidden relative"
@@ -35,7 +35,7 @@ export default function AuthFlowContainer({
             />
           </div>
         ) : (
-          <SvgOnyxLogo size={44} className="text-theme-primary-05" />
+          <SvgLumenLogo size={44} className="text-theme-primary-05" />
         )}
         <div className="w-full mt-3">{children}</div>
       </div>

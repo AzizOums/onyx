@@ -5,13 +5,13 @@ import (
 	"encoding/hex"
 	"os"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/version"
+	"github.com/lumen-dot-app/lumen/cli/internal/version"
 )
 
 // Craft sandbox constants (names pinned to match the compose overlay's
 // external declarations and the backend's configs).
 const (
-	defaultSandboxNetwork = "onyx_craft_sandbox"
+	defaultSandboxNetwork = "lumen_craft_sandbox"
 	sandboxProxyCAVolume  = "sandbox_proxy_ca"
 )
 

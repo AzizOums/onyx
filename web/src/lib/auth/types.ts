@@ -1,5 +1,5 @@
 // Wire values of the backend session-rejection codes carried in the `/api/me`
-// 403 body (`backend/onyx/error_handling/error_codes.py`).
+// 403 body (`backend/lumen/error_handling/error_codes.py`).
 export enum SessionEndReason {
   EXPIRED = "SESSION_EXPIRED",
   TERMINATED = "SESSION_TERMINATED",

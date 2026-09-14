@@ -1,6 +1,6 @@
 services:
   tls_failure:
-    image: ${ONYX_BACKEND_IMAGE:?ONYX_BACKEND_IMAGE must be set}
+    image: ${LUMEN_BACKEND_IMAGE:?LUMEN_BACKEND_IMAGE must be set}
     command: python /test/tls_failure_server.py
     volumes:
       - ../../backend/tests/airgap/tls_failure_server.py:/test/tls_failure_server.py:ro

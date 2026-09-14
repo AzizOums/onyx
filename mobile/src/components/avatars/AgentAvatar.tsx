@@ -6,8 +6,8 @@ import { AgentImage } from "@/components/avatars/AgentImage";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { DEFAULT_AGENT_ID, MinimalAgent } from "@/chat/agents";
-import SvgOnyxLogo from "@/icons/onyx-logo";
-import SvgOnyxOctagon from "@/icons/onyx-octagon";
+import SvgLumenLogo from "@/icons/lumen-logo";
+import SvgLumenOctagon from "@/icons/lumen-octagon";
 import SvgTwoLineSmall from "@/icons/two-line-small";
 
 export const DEFAULT_AVATAR_SIZE_PX = 18;
@@ -17,7 +17,7 @@ interface AgentAvatarProps {
   size?: number;
 }
 
-// id 0 → Onyx logo; uploaded image → circle; icon_name → mapped icon; else monogram or a
+// id 0 → Lumen logo; uploaded image → circle; icon_name → mapped icon; else monogram or a
 // two-line glyph. The enterprise custom-logo for id 0 isn't rendered (no enterprise-settings fetch).
 export function AgentAvatar({
   agent,
@@ -25,7 +25,7 @@ export function AgentAvatar({
 }: AgentAvatarProps) {
   if (agent.id === DEFAULT_AGENT_ID) {
     return (
-      <Icon as={SvgOnyxLogo} size={size} className="text-theme-primary-05" />
+      <Icon as={SvgLumenLogo} size={size} className="text-theme-primary-05" />
     );
   }
 
@@ -82,7 +82,7 @@ function OctagonWrapper({
         style={StyleSheet.absoluteFill}
         className="items-center justify-center"
       >
-        <Icon as={SvgOnyxOctagon} size={size} className="text-text-04" />
+        <Icon as={SvgLumenOctagon} size={size} className="text-text-04" />
       </View>
       <View
         style={StyleSheet.absoluteFill}

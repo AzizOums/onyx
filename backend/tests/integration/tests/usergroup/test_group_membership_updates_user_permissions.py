@@ -4,11 +4,11 @@ import httpx
 import pytest
 from sqlalchemy import update
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.db.enums import Permission
-from onyx.db.models import PermissionGrant, User__UserGroup
-from onyx.db.models import UserGroup as UserGroupModel
-from onyx.db.permissions import (
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.db.enums import Permission
+from lumen.db.models import PermissionGrant, User__UserGroup
+from lumen.db.models import UserGroup as UserGroupModel
+from lumen.db.permissions import (
     recompute_permissions_for_group__no_commit,
     recompute_user_permissions__no_commit,
 )

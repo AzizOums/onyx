@@ -11,12 +11,12 @@ import time
 
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import ExternalAppType
-from onyx.db.external_app import (
+from lumen.db.enums import ExternalAppType
+from lumen.db.external_app import (
     get_external_app_user_credential,
     upsert_external_app_user_credential,
 )
-from onyx.db.models import ExternalApp
+from lumen.db.models import ExternalApp
 from tests.external_dependency_unit.craft.db_helpers import (
     make_external_app,
     make_skill,

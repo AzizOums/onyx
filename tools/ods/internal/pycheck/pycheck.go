@@ -13,7 +13,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/paths"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/paths"
 )
 
 // BannedName forbids bare references to a builtin name in code context.

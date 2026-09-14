@@ -11,7 +11,7 @@
       }
     },
     {
-      "name": "Run All Onyx Services",
+      "name": "Run All Lumen Services",
       "configurations": [
         "Web Server",
         "Model Server",
@@ -43,7 +43,7 @@
       }
     },
     {
-      "name": "Run All Onyx Services (k8s)",
+      "name": "Run All Lumen Services (k8s)",
       "preLaunchTask": "k8s: telepresence quit",
       "configurations": [
         "Web Server",
@@ -168,7 +168,7 @@
         "model_server.main:app",
         "--reload",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/skills/builtin",
+        "${workspaceFolder}/backend/lumen/skills/builtin",
         "--port",
         "9000"
       ],
@@ -191,12 +191,12 @@
         "PYTHONUNBUFFERED": "1"
       },
       "args": [
-        "onyx.main:app",
+        "lumen.main:app",
         "--reload",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/skills/builtin",
+        "${workspaceFolder}/backend/lumen/skills/builtin",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/server/features/build/sandbox/image",
+        "${workspaceFolder}/backend/lumen/server/features/build/sandbox/image",
         "--port",
         "8080"
       ],
@@ -221,12 +221,12 @@
         "SANDBOX_BACKEND": "kubernetes"
       },
       "args": [
-        "onyx.main:app",
+        "lumen.main:app",
         "--reload",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/skills/builtin",
+        "${workspaceFolder}/backend/lumen/skills/builtin",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/server/features/build/sandbox/image",
+        "${workspaceFolder}/backend/lumen/server/features/build/sandbox/image",
         "--port",
         "8080"
       ],
@@ -241,7 +241,7 @@
       "consoleName": "Slack Bot",
       "type": "debugpy",
       "request": "launch",
-      "program": "onyx/onyxbot/slack/listener.py",
+      "program": "lumen/lumenbot/slack/listener.py",
       "cwd": "${workspaceFolder}/backend",
       "envFile": "${workspaceFolder}/.vscode/.env",
       "env": {
@@ -259,7 +259,7 @@
       "consoleName": "Discord Bot",
       "type": "debugpy",
       "request": "launch",
-      "program": "onyx/onyxbot/discord/client.py",
+      "program": "lumen/lumenbot/discord/client.py",
       "cwd": "${workspaceFolder}/backend",
       "envFile": "${workspaceFolder}/.vscode/.env",
       "env": {
@@ -288,10 +288,10 @@
         "PYTHONUNBUFFERED": "1"
       },
       "args": [
-        "onyx.mcp_server.api:mcp_app",
+        "lumen.mcp_server.api:mcp_app",
         "--reload",
         "--reload-exclude",
-        "${workspaceFolder}/backend/onyx/skills/builtin",
+        "${workspaceFolder}/backend/lumen/skills/builtin",
         "--port",
         "8090",
         "--timeout-graceful-shutdown",
@@ -318,7 +318,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.primary",
+        "lumen.background.celery.versioned_apps.primary",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -350,7 +350,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.light",
+        "lumen.background.celery.versioned_apps.light",
         "worker",
         "--pool=threads",
         "--concurrency=64",
@@ -382,7 +382,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.heavy",
+        "lumen.background.celery.versioned_apps.heavy",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -415,7 +415,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.monitoring",
+        "lumen.background.celery.versioned_apps.monitoring",
         "worker",
         "--pool=threads",
         "--concurrency=1",
@@ -447,7 +447,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.user_file_processing",
+        "lumen.background.celery.versioned_apps.user_file_processing",
         "worker",
         "--pool=threads",
         "--concurrency=2",
@@ -480,7 +480,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.scheduled_tasks",
+        "lumen.background.celery.versioned_apps.scheduled_tasks",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -513,7 +513,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.docfetching",
+        "lumen.background.celery.versioned_apps.docfetching",
         "worker",
         "--pool=threads",
         "--prefetch-multiplier=1",
@@ -546,7 +546,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.docprocessing",
+        "lumen.background.celery.versioned_apps.docprocessing",
         "worker",
         "--pool=threads",
         "--prefetch-multiplier=1",
@@ -578,7 +578,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.beat",
+        "lumen.background.celery.versioned_apps.beat",
         "beat",
         "--loglevel=INFO"
       ],
@@ -605,7 +605,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.primary",
+        "lumen.background.celery.versioned_apps.primary",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -638,7 +638,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.light",
+        "lumen.background.celery.versioned_apps.light",
         "worker",
         "--pool=threads",
         "--concurrency=64",
@@ -671,7 +671,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.heavy",
+        "lumen.background.celery.versioned_apps.heavy",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -705,7 +705,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.monitoring",
+        "lumen.background.celery.versioned_apps.monitoring",
         "worker",
         "--pool=threads",
         "--concurrency=1",
@@ -738,7 +738,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.user_file_processing",
+        "lumen.background.celery.versioned_apps.user_file_processing",
         "worker",
         "--pool=threads",
         "--concurrency=2",
@@ -772,7 +772,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.scheduled_tasks",
+        "lumen.background.celery.versioned_apps.scheduled_tasks",
         "worker",
         "--pool=threads",
         "--concurrency=4",
@@ -806,7 +806,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.docfetching",
+        "lumen.background.celery.versioned_apps.docfetching",
         "worker",
         "--pool=threads",
         "--prefetch-multiplier=1",
@@ -840,7 +840,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.docprocessing",
+        "lumen.background.celery.versioned_apps.docprocessing",
         "worker",
         "--pool=threads",
         "--prefetch-multiplier=1",
@@ -873,7 +873,7 @@
       },
       "args": [
         "-A",
-        "onyx.background.celery.versioned_apps.beat",
+        "lumen.background.celery.versioned_apps.beat",
         "beat",
         "--loglevel=INFO"
       ],
@@ -946,7 +946,7 @@
       "name": "Eval CLI",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/backend/onyx/evals/eval_cli.py",
+      "program": "${workspaceFolder}/backend/lumen/evals/eval_cli.py",
       "cwd": "${workspaceFolder}/backend",
       "console": "integratedTerminal",
       "justMyCode": false,
@@ -997,7 +997,7 @@
       "name": "Build Sandbox Templates",
       "type": "debugpy",
       "request": "launch",
-      "module": "onyx.server.features.build.sandbox.build_templates",
+      "module": "lumen.server.features.build.sandbox.build_templates",
       "cwd": "${workspaceFolder}/backend",
       "envFile": "${workspaceFolder}/.vscode/.env",
       "env": {
@@ -1027,7 +1027,7 @@
       "runtimeArgs": [
         "run",
         "--with",
-        "onyx-devtools",
+        "lumen-devtools",
         "ods",
         "db",
         "restore",
@@ -1048,7 +1048,7 @@
       "runtimeArgs": [
         "run",
         "--with",
-        "onyx-devtools",
+        "lumen-devtools",
         "ods",
         "db",
         "restore",
@@ -1070,7 +1070,7 @@
       "runtimeArgs": [
         "run",
         "--with",
-        "onyx-devtools",
+        "lumen-devtools",
         "ods",
         "db",
         "dump",
@@ -1090,7 +1090,7 @@
       "runtimeArgs": [
         "run",
         "--with",
-        "onyx-devtools",
+        "lumen-devtools",
         "ods",
         "db",
         "restore",
@@ -1112,7 +1112,7 @@
       "runtimeArgs": [
         "run",
         "--with",
-        "onyx-devtools",
+        "lumen-devtools",
         "ods",
         "db",
         "upgrade"
@@ -1124,10 +1124,10 @@
       }
     },
     {
-      "name": "Onyx OpenAPI Schema Generator",
+      "name": "Lumen OpenAPI Schema Generator",
       "type": "debugpy",
       "request": "launch",
-      "program": "backend/scripts/onyx_openapi_schema.py",
+      "program": "backend/scripts/lumen_openapi_schema.py",
       "cwd": "${workspaceFolder}",
       "envFile": "${workspaceFolder}/.env",
       "env": {
@@ -1141,10 +1141,10 @@
       ]
     },
     {
-      "name": "Onyx DB Manager (Top Chunks)",
+      "name": "Lumen DB Manager (Top Chunks)",
       "type": "debugpy",
       "request": "launch",
-      "program": "scripts/debugging/onyx_db.py",
+      "program": "scripts/debugging/lumen_db.py",
       "cwd": "${workspaceFolder}/backend",
       "envFile": "${workspaceFolder}/.env",
       "env": {

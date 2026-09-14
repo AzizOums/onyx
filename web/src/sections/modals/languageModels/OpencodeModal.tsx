@@ -36,7 +36,7 @@ import { ModelsDevBrowser } from "@/sections/modals/languageModels/ModelsDevBrow
 
 // Static client identity for the Zen gateway, prefilled so a new provider
 // works out of the box (free tier needs no API key). Keep in sync with
-// backend/onyx/llm/opencode.py. Session/request ids are minted per chat
+// backend/lumen/llm/opencode.py. Session/request ids are minted per chat
 // session and turn by the backend — never store them here.
 const PRESET_EXTRA_HEADERS: KeyValue[] = [
   { key: "User-Agent", value: "opencode/1.18.18" },

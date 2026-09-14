@@ -13,8 +13,8 @@ from uuid import UUID, uuid4
 
 import pytest
 
-from onyx.llm.constants import LlmProviderNames
-from onyx.server.features.build.configs import (
+from lumen.llm.constants import LlmProviderNames
+from lumen.server.features.build.configs import (
     OPENCODE_SERVER_PASSWORD,
     SANDBOX_BACKEND,
     SandboxBackend,

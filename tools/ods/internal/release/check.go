@@ -9,7 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/onyx-dot-app/onyx/tools/ods/internal/git"
+	"github.com/lumen-dot-app/lumen/tools/ods/internal/git"
 )
 
 // stableTagRe matches a well-formed stable tag (vX.Y.Z, no pre-release

@@ -12,19 +12,19 @@ from uuid import uuid4
 from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
-from onyx.db.llm import (
+from lumen.db.llm import (
     fetch_all_accessible_llm_providers,
     fetch_first_accessible_llm_provider_by_type,
     remove_llm_provider,
     upsert_llm_provider,
 )
-from onyx.db.models import (
+from lumen.db.models import (
     LLMProvider,
     LLMProvider__Persona,
     LLMProvider__UserGroup,
     User,
 )
-from onyx.server.manage.llm.models import (
+from lumen.server.manage.llm.models import (
     LLMProviderUpsertRequest,
     ModelConfigurationUpsertRequest,
 )

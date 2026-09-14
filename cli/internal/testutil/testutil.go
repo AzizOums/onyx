@@ -8,15 +8,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/onyx-dot-app/onyx/cli/internal/api"
-	"github.com/onyx-dot-app/onyx/cli/internal/config"
-	"github.com/onyx-dot-app/onyx/cli/internal/iostreams"
+	"github.com/lumen-dot-app/lumen/cli/internal/api"
+	"github.com/lumen-dot-app/lumen/cli/internal/config"
+	"github.com/lumen-dot-app/lumen/cli/internal/iostreams"
 )
 
 // NewClient creates a test API client pointed at the given server URL.
 func NewClient(serverURL string) *api.Client {
 	return api.NewClient(
-		config.OnyxCliConfig{ServerURL: serverURL, APIKey: "test-key"},
+		config.LumenCliConfig{ServerURL: serverURL, APIKey: "test-key"},
 	)
 }
 
@@ -27,9 +27,9 @@ func StatusServer(status int) *httptest.Server {
 	}))
 }
 
-// OnyxServer returns an httptest.Server that simulates the Onyx backend.
+// LumenServer returns an httptest.Server that simulates the Lumen backend.
 // Routes are mounted under /api to match the production URL layout.
-func OnyxServer(meStatus int) *httptest.Server {
+func LumenServer(meStatus int) *httptest.Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/me", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(meStatus)
@@ -58,8 +58,8 @@ func DeadServerURL() string {
 func IsolateConfig(t *testing.T, serverURL string) {
 	t.Helper()
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
-	t.Setenv("ONYX_SERVER_URL", serverURL)
-	t.Setenv("ONYX_PAT", "test-key")
+	t.Setenv("LUMEN_SERVER_URL", serverURL)
+	t.Setenv("LUMEN_PAT", "test-key")
 }
 
 // TestIOStreams returns an IOStreams backed by buffers for testing.

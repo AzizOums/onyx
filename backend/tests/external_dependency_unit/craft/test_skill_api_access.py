@@ -11,11 +11,11 @@ import pytest
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
-from onyx.db.enums import SkillAccessLevel, SkillSharePermission
-from onyx.db.models import User, UserSkillPreference
-from onyx.error_handling.error_codes import OnyxErrorCode
-from onyx.error_handling.exceptions import OnyxError
-from onyx.server.features.skill.api import (
+from lumen.db.enums import SkillAccessLevel, SkillSharePermission
+from lumen.db.models import User, UserSkillPreference
+from lumen.error_handling.error_codes import LumenErrorCode
+from lumen.error_handling.exceptions import LumenError
+from lumen.server.features.skill.api import (
     create_custom_skill,
     create_custom_skill_from_editor,
     fetch_skill_for_current_user,
@@ -25,8 +25,8 @@ from onyx.server.features.skill.api import (
     set_skill_enabled_for_current_user,
     upload_current_user_skill_files,
 )
-from onyx.server.features.skill.models import SkillEnableRequest, SkillPatchRequest
-from onyx.skills.bundle import SKILL_MD_NAME, build_single_file_bundle, build_skill_md
+from lumen.server.features.skill.models import SkillEnableRequest, SkillPatchRequest
+from lumen.skills.bundle import SKILL_MD_NAME, build_single_file_bundle, build_skill_md
 from tests.external_dependency_unit.craft.db_helpers import (
     add_user_to_group,
     make_external_app,
@@ -56,7 +56,7 @@ def test_curator_without_group_scope_cannot_patch_shared_skill(
     private_skill = make_skill(db_session, is_public=False)
     share_skill_with_group(db_session, private_skill, group)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         patch_current_user_skill(
             private_skill.id,
             SkillPatchRequest(description="unauthorized edit"),
@@ -64,7 +64,7 @@ def test_curator_without_group_scope_cannot_patch_shared_skill(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == LumenErrorCode.NOT_FOUND
 
 
 def test_fetch_direct_shared_skill_is_not_personal(
@@ -172,7 +172,7 @@ def test_viewer_share_cannot_patch_skill(
         SkillSharePermission.VIEWER,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         patch_current_user_skill(
             private_skill.id,
             SkillPatchRequest(description="unauthorized edit"),
@@ -180,7 +180,7 @@ def test_viewer_share_cannot_patch_skill(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == LumenErrorCode.NOT_FOUND
 
 
 def test_preference_commit_succeeds_when_sandbox_push_fails(
@@ -195,7 +195,7 @@ def test_preference_commit_succeeds_when_sandbox_push_fails(
         raise RuntimeError("sandbox unavailable")
 
     monkeypatch.setattr(
-        "onyx.skills.push.get_sandbox_user_map",
+        "lumen.skills.push.get_sandbox_user_map",
         fail_sandbox_lookup,
     )
 
@@ -228,14 +228,14 @@ def test_create_reserved_name_rejects_from_bundle_metadata(
         ).encode("utf-8"),
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         create_custom_skill(
             bundle=_upload("unrelated-filename.zip", bundle),
             user=user,
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "skill name 'pptx' is reserved"
 
 
@@ -245,7 +245,7 @@ def test_editor_create_rejects_whitespace_only_fields(
 ) -> None:
     user = make_user(db_session, standard_account=True)
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         create_custom_skill_from_editor(
             name=" ",
             description="\t",
@@ -254,7 +254,7 @@ def test_editor_create_rejects_whitespace_only_fields(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert exc_info.value.detail == (
         "Skill name, description, and instructions cannot be empty."
     )
@@ -280,11 +280,11 @@ def test_replace_bundle_authorizes_before_reading_bundle(
     )
     read_bundle_file = MagicMock()
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.read_bundle_file",
+        "lumen.server.features.skill.api.read_bundle_file",
         read_bundle_file,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         replace_current_user_skill_bundle(
             private_skill.id,
             bundle=_upload("replace-test.zip"),
@@ -292,7 +292,7 @@ def test_replace_bundle_authorizes_before_reading_bundle(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == LumenErrorCode.NOT_FOUND
     read_bundle_file.assert_not_called()
 
 
@@ -316,11 +316,11 @@ def test_upload_files_authorizes_before_reading_upload(
     )
     read_bundle_file = MagicMock()
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.read_bundle_file",
+        "lumen.server.features.skill.api.read_bundle_file",
         read_bundle_file,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         upload_current_user_skill_files(
             private_skill.id,
             upload=_upload("notes.md"),
@@ -328,7 +328,7 @@ def test_upload_files_authorizes_before_reading_upload(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == LumenErrorCode.NOT_FOUND
     read_bundle_file.assert_not_called()
 
 
@@ -352,11 +352,11 @@ def test_remove_file_authorizes_before_reading_bundle(
     )
     read_bundle = MagicMock()
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.read_custom_skill_bundle_bytes",
+        "lumen.server.features.skill.api.read_custom_skill_bundle_bytes",
         read_bundle,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         remove_current_user_skill_file(
             private_skill.id,
             path="references/context.md",
@@ -364,7 +364,7 @@ def test_remove_file_authorizes_before_reading_bundle(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.NOT_FOUND
+    assert exc_info.value.error_code == LumenErrorCode.NOT_FOUND
     read_bundle.assert_not_called()
 
 
@@ -381,11 +381,11 @@ def test_remove_file_rejects_empty_path_before_reading_bundle(
     )
     read_bundle = MagicMock()
     monkeypatch.setattr(
-        "onyx.server.features.skill.api.read_custom_skill_bundle_bytes",
+        "lumen.server.features.skill.api.read_custom_skill_bundle_bytes",
         read_bundle,
     )
 
-    with pytest.raises(OnyxError) as exc_info:
+    with pytest.raises(LumenError) as exc_info:
         remove_current_user_skill_file(
             private_skill.id,
             path="",
@@ -393,6 +393,6 @@ def test_remove_file_rejects_empty_path_before_reading_bundle(
             db_session=db_session,
         )
 
-    assert exc_info.value.error_code == OnyxErrorCode.INVALID_INPUT
+    assert exc_info.value.error_code == LumenErrorCode.INVALID_INPUT
     assert exc_info.value.detail == "Skill file path cannot be empty"
     read_bundle.assert_not_called()

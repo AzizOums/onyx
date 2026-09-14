@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 import pytest
 from github import Github
 
-from onyx.db.engine.sql_engine import get_session_with_current_tenant
-from onyx.utils.logger import setup_logger
+from lumen.db.engine.sql_engine import get_session_with_current_tenant
+from lumen.utils.logger import setup_logger
 from tests.integration.common_utils.document_acl import (
     get_all_connector_documents,
     get_user_document_access_via_acl,

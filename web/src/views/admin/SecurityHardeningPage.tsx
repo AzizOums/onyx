@@ -566,7 +566,7 @@ export default function SecurityHardeningPage() {
                   title={t("jwt.expectedAudience.title")}
                   description={t("jwt.expectedAudience.description")}
                   value={draft.jwt_expected_audience ?? ""}
-                  placeholder="onyx"
+                  placeholder="lumen"
                   pinned={pinnedFields.includes("jwt_expected_audience")}
                   onCommit={(value) =>
                     saveSettings({ jwt_expected_audience: value || null })

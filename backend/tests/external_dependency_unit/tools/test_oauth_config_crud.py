@@ -10,8 +10,8 @@ from uuid import uuid4
 import pytest
 from sqlalchemy.orm import Session
 
-from onyx.db.models import OAuthConfig, Tool
-from onyx.db.oauth_config import (
+from lumen.db.models import OAuthConfig, Tool
+from lumen.db.oauth_config import (
     create_oauth_config,
     delete_oauth_config,
     delete_user_oauth_token,
@@ -22,7 +22,7 @@ from onyx.db.oauth_config import (
     update_oauth_config,
     upsert_user_oauth_token,
 )
-from onyx.db.tools import delete_tool__no_commit, update_tool
+from lumen.db.tools import delete_tool__no_commit, update_tool
 from tests.external_dependency_unit.conftest import create_test_user
 
 

@@ -11,13 +11,13 @@ from uuid import uuid4
 
 from sqlalchemy.orm import Session
 
-from onyx.connectors.models import ConnectorFailure, DocumentFailure
-from onyx.db.engine.sql_engine import get_sqlalchemy_engine
-from onyx.db.enums import IndexingStatus
-from onyx.db.index_attempt import create_index_attempt, create_index_attempt_error
-from onyx.db.models import IndexAttempt
-from onyx.db.search_settings import get_current_search_settings
-from onyx.server.documents.models import DocumentSource
+from lumen.connectors.models import ConnectorFailure, DocumentFailure
+from lumen.db.engine.sql_engine import get_sqlalchemy_engine
+from lumen.db.enums import IndexingStatus
+from lumen.db.index_attempt import create_index_attempt, create_index_attempt_error
+from lumen.db.models import IndexAttempt
+from lumen.db.search_settings import get_current_search_settings
+from lumen.server.documents.models import DocumentSource
 from tests.integration.common_utils.constants import NUM_DOCS
 from tests.integration.common_utils.managers.api_key import APIKeyManager
 from tests.integration.common_utils.managers.cc_pair import CCPairManager

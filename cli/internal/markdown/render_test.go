@@ -88,14 +88,14 @@ func TestConstructs(t *testing.T) {
 		},
 		{
 			name:    "link with distinct text",
-			md:      "see [Onyx docs](https://docs.onyx.app) here",
-			want:    []string{"Onyx docs", "(https://docs.onyx.app)"},
+			md:      "see [Lumen docs](https://docs.lumen.app) here",
+			want:    []string{"Lumen docs", "(https://docs.lumen.app)"},
 			notWant: []string{"["},
 		},
 		{
 			name: "autolink",
-			md:   "go to <https://onyx.app> now",
-			want: []string{"https://onyx.app"},
+			md:   "go to <https://lumen.app> now",
+			want: []string{"https://lumen.app"},
 		},
 		{
 			name: "image",
@@ -260,7 +260,7 @@ func TestEmptyAndWhitespaceInput(t *testing.T) {
 
 const kitchenSink = `# Report
 
-Intro paragraph with **bold**, *italic*, ` + "`code`" + `, a [link](https://onyx.app),
+Intro paragraph with **bold**, *italic*, ` + "`code`" + `, a [link](https://lumen.app),
 and ~~strikethrough~~.
 
 ## Details

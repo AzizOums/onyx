@@ -1,5 +1,5 @@
 [project]
-name = "onyx"
+name = "lumen"
 version = "0.0.0"
 requires-python = ">=3.13"
 # Shared dependencies between backend and model_server
@@ -66,7 +66,7 @@ backend = [
     "lxml==6.1.1",
     # NOTE: Do not update without understanding the patching behavior in
     # get_markitdown_converter in
-    # backend/onyx/file_processing/extract_file_text.py and what impacts
+    # backend/lumen/file_processing/extract_file_text.py and what impacts
     # updating might have on this behavior.
     "markitdown[pdf, docx, pptx, xlsx, xls]==0.1.2",
     "mcp[cli]==1.28.1",
@@ -142,7 +142,6 @@ dev = [
     "manygo==0.2.0",
     "matplotlib==3.10.8",
     "ty==0.0.63",
-    "onyx-devtools==0.13.0",
     "openapi-generator-cli==7.17.0",
     "pre-commit==3.2.2",
     "pytest-alembic==0.12.1",
@@ -203,7 +202,7 @@ model_server = [
 ]
 
 [tool.uv]
-# uv is used for dependency management only. The onyx "project" is never built
+# uv is used for dependency management only. The lumen "project" is never built
 # or installed as a package: Docker images copy the source tree and install
 # deps from the requirements exports, and local imports resolve via cwd /
 # PYTHONPATH conventions (see backend/pytest.ini).
@@ -228,7 +227,7 @@ override-dependencies = [
 [tool.ty.environment]
 python-version = "3.13"
 root = ["./backend"]
-# Ensure ty resolves onyx.* from this project's backend directory first, even
+# Ensure ty resolves lumen.* from this project's backend directory first, even
 # when PYTHONPATH contains another checkout (e.g. when working in a git worktree
 # alongside the main repo).
 extra-paths = ["backend"]
@@ -238,9 +237,9 @@ include = ["backend"]
 exclude = [
     "**/generated/**",
     "**/.venv/**",
-    "**/onyx/server/features/build/sandbox/image/sandbox_daemon/**",
-    "**/onyx/skills/builtin/**",
-    "**/onyx/server/features/build/sandbox/image/templates/**",
+    "**/lumen/server/features/build/sandbox/image/sandbox_daemon/**",
+    "**/lumen/skills/builtin/**",
+    "**/lumen/server/features/build/sandbox/image/templates/**",
 ]
 
 [tool.ty.rules]
@@ -262,8 +261,8 @@ members = ["tools/ods"]
 include = ["backend"]
 exclude = [
     "backend/generated",
-    "backend/onyx/server/features/build/sandbox/image/sandbox_daemon",
-    "backend/onyx/skills/builtin/pptx",
+    "backend/lumen/server/features/build/sandbox/image/sandbox_daemon",
+    "backend/lumen/skills/builtin/pptx",
 ]
 typeCheckingMode = "off"
 
@@ -311,11 +310,11 @@ extend-immutable-calls = [
     "fastapi.File",
     "fastapi.Form",
     "fastapi.Query",
-    "onyx.auth.permissions.require_permission",
+    "lumen.auth.permissions.require_permission",
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["onyx", "ee", "tests", "shared_configs", "model_server"]
+known-first-party = ["lumen", "ee", "tests", "shared_configs", "model_server"]
 
 [tool.ruff.lint.per-file-ignores]
 # alembic has a folder named `alembic` in backend/ which confuses import sorters.
@@ -334,69 +333,69 @@ known-first-party = ["onyx", "ee", "tests", "shared_configs", "model_server"]
 # number is the highest complexity in that file at the time. Remove an entry
 # once its functions are simplified. NOTE: the ignore is per file, so it also
 # hides new complex functions added to these files. Tracked in #2403.
-"backend/ee/onyx/background/celery/tasks/doc_permission_syncing/tasks.py" = ["C901"] # 21
-"backend/ee/onyx/external_permissions/google_drive/doc_sync.py" = ["C901"] # 21
-"backend/ee/onyx/server/gateway/anthropic_passthrough.py" = ["C901"] # 23
-"backend/ee/onyx/server/gateway/api.py" = ["C901"] # 27
-"backend/ee/onyx/server/gateway/openai_passthrough.py" = ["C901"] # 32
-"backend/onyx/auth/users.py" = ["C901"] # 30
-"backend/onyx/background/celery/tasks/docfetching/tasks.py" = ["C901"] # 43
-"backend/onyx/background/celery/tasks/docprocessing/tasks.py" = ["C901"] # 24
-"backend/onyx/background/celery/tasks/port/tasks.py" = ["C901"] # 27
-"backend/onyx/background/indexing/run_docfetching.py" = ["C901"] # 33
-"backend/onyx/chat/citation_processor.py" = ["C901"] # 30
-"backend/onyx/chat/llm_loop.py" = ["C901"] # 46
-"backend/onyx/chat/llm_step.py" = ["C901"] # 51
-"backend/onyx/chat/process_message.py" = ["C901"] # 47
-"backend/onyx/connectors/blob/connector.py" = ["C901"] # 24
-"backend/onyx/connectors/confluence/connector.py" = ["C901"] # 22
-"backend/onyx/connectors/confluence/onyx_confluence.py" = ["C901"] # 22
-"backend/onyx/connectors/connector_runner.py" = ["C901"] # 26
-"backend/onyx/connectors/drupal_wiki/connector.py" = ["C901"] # 21
-"backend/onyx/connectors/github/connector.py" = ["C901"] # 28
-"backend/onyx/connectors/gitlab/connector.py" = ["C901"] # 22
-"backend/onyx/connectors/google_drive/connector.py" = ["C901"] # 22
-"backend/onyx/connectors/google_drive/doc_conversion.py" = ["C901"] # 24
-"backend/onyx/connectors/hubspot/connector.py" = ["C901"] # 23
-"backend/onyx/connectors/notion/connector.py" = ["C901"] # 22
-"backend/onyx/connectors/sharepoint/connector.py" = ["C901"] # 34
-"backend/onyx/connectors/slack/connector.py" = ["C901"] # 26
-"backend/onyx/connectors/testrail/connector.py" = ["C901"] # 21
-"backend/onyx/connectors/web/connector.py" = ["C901"] # 23
-"backend/onyx/context/search/federated/slack_search.py" = ["C901"] # 31
-"backend/onyx/db/persona.py" = ["C901"] # 49
-"backend/onyx/deep_research/dr_loop.py" = ["C901"] # 26
-"backend/onyx/document_index/opensearch/search.py" = ["C901"] # 48
-"backend/onyx/document_index/vespa/shared_utils/vespa_request_builders.py" = ["C901"] # 41
-"backend/onyx/federated_connectors/federated_retrieval.py" = ["C901"] # 21
-"backend/onyx/kg/extractions/extraction_processing.py" = ["C901"] # 30
-"backend/onyx/llm/multi_llm.py" = ["C901"] # 45
-"backend/onyx/llm/utils.py" = ["C901"] # 30
-"backend/onyx/onyxbot/slack/handlers/handle_message.py" = ["C901"] # 34
-"backend/onyx/onyxbot/slack/handlers/handle_regular_answer.py" = ["C901"] # 22
-"backend/onyx/onyxbot/slack/listener.py" = ["C901"] # 28
-"backend/onyx/secondary_llm_flows/document_filter.py" = ["C901"] # 31
-"backend/onyx/server/documents/connector.py" = ["C901"] # 28
-"backend/onyx/server/features/build/interactive_turns/api.py" = ["C901"] # 22
-"backend/onyx/server/features/build/interactive_turns/executor.py" = ["C901"] # 35
-"backend/onyx/server/features/build/sandbox/opencode/serve_client.py" = ["C901"] # 56
-"backend/onyx/server/features/build/session/streaming.py" = ["C901"] # 24
-"backend/onyx/server/features/mcp/api.py" = ["C901"] # 33
-"backend/onyx/server/manage/users.py" = ["C901"] # 22
-"backend/onyx/server/manage/voice/websocket_api.py" = ["C901"] # 29
-"backend/onyx/server/query_and_chat/session_loading.py" = ["C901"] # 42
-"backend/onyx/skills/builtin/gmail/gmail_api.py" = ["C901"] # 23
-"backend/onyx/skills/builtin/google-drive/gdrive_api.py" = ["C901"] # 26
-"backend/onyx/skills/builtin/notion/notion_api.py" = ["C901"] # 28
-"backend/onyx/skills/ingest_from_github.py" = ["C901"] # 27
-"backend/onyx/tools/tool_constructor.py" = ["C901"] # 40
-"backend/onyx/tools/tool_implementations/search/search_tool.py" = ["C901"] # 25
-"backend/onyx/tools/tool_runner.py" = ["C901"] # 21
-"backend/onyx/utils/jsonriver/tokenize.py" = ["C901"] # 22
-"backend/onyx/voice/providers/elevenlabs.py" = ["C901"] # 21
+"backend/ee/lumen/background/celery/tasks/doc_permission_syncing/tasks.py" = ["C901"] # 21
+"backend/ee/lumen/external_permissions/google_drive/doc_sync.py" = ["C901"] # 21
+"backend/ee/lumen/server/gateway/anthropic_passthrough.py" = ["C901"] # 23
+"backend/ee/lumen/server/gateway/api.py" = ["C901"] # 27
+"backend/ee/lumen/server/gateway/openai_passthrough.py" = ["C901"] # 32
+"backend/lumen/auth/users.py" = ["C901"] # 30
+"backend/lumen/background/celery/tasks/docfetching/tasks.py" = ["C901"] # 43
+"backend/lumen/background/celery/tasks/docprocessing/tasks.py" = ["C901"] # 24
+"backend/lumen/background/celery/tasks/port/tasks.py" = ["C901"] # 27
+"backend/lumen/background/indexing/run_docfetching.py" = ["C901"] # 33
+"backend/lumen/chat/citation_processor.py" = ["C901"] # 30
+"backend/lumen/chat/llm_loop.py" = ["C901"] # 46
+"backend/lumen/chat/llm_step.py" = ["C901"] # 51
+"backend/lumen/chat/process_message.py" = ["C901"] # 47
+"backend/lumen/connectors/blob/connector.py" = ["C901"] # 24
+"backend/lumen/connectors/confluence/connector.py" = ["C901"] # 22
+"backend/lumen/connectors/confluence/lumen_confluence.py" = ["C901"] # 22
+"backend/lumen/connectors/connector_runner.py" = ["C901"] # 26
+"backend/lumen/connectors/drupal_wiki/connector.py" = ["C901"] # 21
+"backend/lumen/connectors/github/connector.py" = ["C901"] # 28
+"backend/lumen/connectors/gitlab/connector.py" = ["C901"] # 22
+"backend/lumen/connectors/google_drive/connector.py" = ["C901"] # 22
+"backend/lumen/connectors/google_drive/doc_conversion.py" = ["C901"] # 24
+"backend/lumen/connectors/hubspot/connector.py" = ["C901"] # 23
+"backend/lumen/connectors/notion/connector.py" = ["C901"] # 22
+"backend/lumen/connectors/sharepoint/connector.py" = ["C901"] # 34
+"backend/lumen/connectors/slack/connector.py" = ["C901"] # 26
+"backend/lumen/connectors/testrail/connector.py" = ["C901"] # 21
+"backend/lumen/connectors/web/connector.py" = ["C901"] # 23
+"backend/lumen/context/search/federated/slack_search.py" = ["C901"] # 31
+"backend/lumen/db/persona.py" = ["C901"] # 49
+"backend/lumen/deep_research/dr_loop.py" = ["C901"] # 26
+"backend/lumen/document_index/opensearch/search.py" = ["C901"] # 48
+"backend/lumen/document_index/vespa/shared_utils/vespa_request_builders.py" = ["C901"] # 41
+"backend/lumen/federated_connectors/federated_retrieval.py" = ["C901"] # 21
+"backend/lumen/kg/extractions/extraction_processing.py" = ["C901"] # 30
+"backend/lumen/llm/multi_llm.py" = ["C901"] # 45
+"backend/lumen/llm/utils.py" = ["C901"] # 30
+"backend/lumen/lumenbot/slack/handlers/handle_message.py" = ["C901"] # 34
+"backend/lumen/lumenbot/slack/handlers/handle_regular_answer.py" = ["C901"] # 22
+"backend/lumen/lumenbot/slack/listener.py" = ["C901"] # 28
+"backend/lumen/secondary_llm_flows/document_filter.py" = ["C901"] # 31
+"backend/lumen/server/documents/connector.py" = ["C901"] # 28
+"backend/lumen/server/features/build/interactive_turns/api.py" = ["C901"] # 22
+"backend/lumen/server/features/build/interactive_turns/executor.py" = ["C901"] # 35
+"backend/lumen/server/features/build/sandbox/opencode/serve_client.py" = ["C901"] # 56
+"backend/lumen/server/features/build/session/streaming.py" = ["C901"] # 24
+"backend/lumen/server/features/mcp/api.py" = ["C901"] # 33
+"backend/lumen/server/manage/users.py" = ["C901"] # 22
+"backend/lumen/server/manage/voice/websocket_api.py" = ["C901"] # 29
+"backend/lumen/server/query_and_chat/session_loading.py" = ["C901"] # 42
+"backend/lumen/skills/builtin/gmail/gmail_api.py" = ["C901"] # 23
+"backend/lumen/skills/builtin/google-drive/gdrive_api.py" = ["C901"] # 26
+"backend/lumen/skills/builtin/notion/notion_api.py" = ["C901"] # 28
+"backend/lumen/skills/ingest_from_github.py" = ["C901"] # 27
+"backend/lumen/tools/tool_constructor.py" = ["C901"] # 40
+"backend/lumen/tools/tool_implementations/search/search_tool.py" = ["C901"] # 25
+"backend/lumen/tools/tool_runner.py" = ["C901"] # 21
+"backend/lumen/utils/jsonriver/tokenize.py" = ["C901"] # 22
+"backend/lumen/voice/providers/elevenlabs.py" = ["C901"] # 21
 "backend/scripts/rotate_llm_provider_keys.py" = ["C901"] # 25
 "backend/scripts/tenant_cleanup/cleanup_tenants.py" = ["C901"] # 27
 "backend/scripts/tenant_cleanup/mark_connectors_for_deletion.py" = ["C901"] # 31
 "backend/scripts/tenant_cleanup/no_bastion_cleanup_tenants.py" = ["C901"] # 49
 "backend/scripts/tenant_cleanup/no_bastion_mark_connectors.py" = ["C901"] # 39
-"backend/tests/unit/onyx/connectors/salesforce/test_salesforce_sqlite.py" = ["C901"] # 24
+"backend/tests/unit/lumen/connectors/salesforce/test_salesforce_sqlite.py" = ["C901"] # 24

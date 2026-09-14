@@ -60,12 +60,12 @@ export interface Settings {
   // Default Assistant settings
   disable_default_assistant?: boolean;
 
-  // Onyx Craft (Build Mode) feature flag
-  onyx_craft_enabled?: boolean;
+  // Lumen Craft (Build Mode) feature flag
+  lumen_craft_enabled?: boolean;
 
   // Deployment-level Craft availability, ignoring workspace/per-user policy.
   // Gates visibility of the admin Craft-access controls.
-  onyx_craft_available?: boolean;
+  lumen_craft_available?: boolean;
 
   // Workspace default for Craft access; per-user overrides win.
   craft_default_enabled?: boolean;
@@ -100,7 +100,7 @@ export interface Settings {
   // True when hooks are available: single-tenant deployments only.
   hooks_enabled?: boolean;
 
-  // Application version from the ONYX_VERSION env var on the server.
+  // Application version from the LUMEN_VERSION env var on the server.
   version?: string | null;
   // Hard ceiling for user_file_max_upload_size_mb, derived from env var.
   max_allowed_upload_size_mb?: number;
@@ -151,8 +151,8 @@ export interface EnterpriseSettings {
   custom_help_link_url: string | null;
   custom_help_link_label: string | null;
 
-  // Hide the "Powered by Onyx" tagline under the sidebar logo.
-  hide_onyx_branding: boolean | null;
+  // Hide the "Powered by Lumen" tagline under the sidebar logo.
+  hide_lumen_branding: boolean | null;
 }
 
 /**
@@ -194,10 +194,10 @@ export function toSettings({
 export interface AppSettings extends Settings {
   /** Raw enterprise settings — null when EE is disabled or not yet loaded. */
   enterprise: EnterpriseSettings | null;
-  /** Resolved display name: enterprise.application_name || "Onyx". */
+  /** Resolved display name: enterprise.application_name || "Lumen". */
   appName: string;
   /**
-   * URL of the logo image to render, or `null` to use the default Onyx SVG.
+   * URL of the logo image to render, or `null` to use the default Lumen SVG.
    * Includes a cache-buster that updates whenever enterprise settings are
    * revalidated, forcing the browser to re-fetch after an admin uploads a
    * new logo.

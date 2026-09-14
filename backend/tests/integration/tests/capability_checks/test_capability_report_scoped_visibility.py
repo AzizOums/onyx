@@ -17,12 +17,12 @@ from uuid import uuid4
 
 import pytest
 
-from onyx.configs.constants import DocumentSource
-from onyx.connectors.capability_checks.recorder import (
+from lumen.configs.constants import DocumentSource
+from lumen.connectors.capability_checks.recorder import (
     record_blocking_validation_outcome,
 )
-from onyx.connectors.models import InputType
-from onyx.db.enums import (
+from lumen.connectors.models import InputType
+from lumen.db.enums import (
     AccessType,
     CapabilityCheckTrigger,
     CapabilityReportRunStatus,

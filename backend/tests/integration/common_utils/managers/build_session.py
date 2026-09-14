@@ -11,11 +11,11 @@ from __future__ import annotations
 from typing import Any, NamedTuple
 from uuid import UUID
 
-from onyx.db.enums import SandboxStatus, SharingScope
-from onyx.server.features.build.interactive_turns.models import InteractiveTurnResponse
-from onyx.server.features.build.models import UploadResponse
-from onyx.server.features.build.sandbox.models import DirectoryListing
-from onyx.server.features.build.session.models import (
+from lumen.db.enums import SandboxStatus, SharingScope
+from lumen.server.features.build.interactive_turns.models import InteractiveTurnResponse
+from lumen.server.features.build.models import UploadResponse
+from lumen.server.features.build.sandbox.models import DirectoryListing
+from lumen.server.features.build.session.models import (
     DetailedSessionResponse,
     MessageListResponse,
     MessageResponse,

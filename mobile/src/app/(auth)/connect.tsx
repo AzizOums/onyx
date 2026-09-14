@@ -4,7 +4,8 @@ import { useState } from "react";
 import { View } from "react-native";
 
 import {
-  ONYX_CLOUD_URL,
+  DEFAULT_SERVER_URL,
+  SERVER_URL_PLACEHOLDER,
   normalizeServerUrl,
   probeAuthType,
 } from "@/api/auth/instanceUrl";
@@ -19,7 +20,7 @@ export default function ConnectScreen() {
   const setServerUrl = useSession((state) => state.setServerUrl);
 
   // Default to cloud: cloud users tap through, self-hosted overwrite.
-  const [url, setUrl] = useState(serverUrl ?? ONYX_CLOUD_URL);
+  const [url, setUrl] = useState(serverUrl ?? DEFAULT_SERVER_URL);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -47,10 +48,10 @@ export default function ConnectScreen() {
   }
 
   return (
-    <AuthScreenShell title="Connect to Onyx">
+    <AuthScreenShell title="Connect to Lumen">
       <InputLayouts.Vertical
         title="Root Domain"
-        description="The root URL for your Onyx instance"
+        description="The root URL for your Lumen instance"
         error={error ?? undefined}
       >
         <TextInput
@@ -60,7 +61,7 @@ export default function ConnectScreen() {
             if (error) setError(null);
           }}
           variant={error ? "error" : "idle"}
-          placeholder={ONYX_CLOUD_URL}
+          placeholder={SERVER_URL_PLACEHOLDER}
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="url"

@@ -1,0 +1,601 @@
+from functools import partial
+from unittest.mock import MagicMock, patch
+
+from lumen.chat.incognito import (
+    BIFROST_DISABLE_CONTENT_LOGGING_HEADER,
+    incognito_llm_extra_headers,
+    incognito_llm_request_policy,
+)
+from lumen.db.enums import IncognitoRecordMode
+from lumen.llm.constants import LlmProviderNames
+from lumen.llm.factory import (
+    _build_provider_extra_headers,
+    get_default_llm,
+    get_llm,
+    get_llm_for_persona,
+    llm_from_provider,
+)
+from lumen.llm.interfaces import LlmRequestPolicy
+from lumen.llm.opencode import (
+    OPENCODE_PROVIDER_NAME,
+    is_opencode_gateway,
+    opencode_request_headers,
+    opencode_session_id,
+)
+from lumen.llm.well_known_providers.constants import (
+    BIFROST_PROVIDER_NAME,
+    LM_STUDIO_API_KEY_CONFIG_KEY,
+)
+from lumen.server.manage.llm.models import LLMProviderView, ModelConfigurationView
+
+
+def test_build_provider_extra_headers_adds_bearer_for_lm_studio_api_key() -> None:
+    headers = _build_provider_extra_headers(
+        LlmProviderNames.LM_STUDIO,
+        {LM_STUDIO_API_KEY_CONFIG_KEY: "  test-key  "},
+    )
+
+    assert headers == {"Authorization": "Bearer test-key"}
+
+
+def test_build_provider_extra_headers_keeps_existing_bearer_prefix() -> None:
+    headers = _build_provider_extra_headers(
+        LlmProviderNames.LM_STUDIO,
+        {LM_STUDIO_API_KEY_CONFIG_KEY: "bearer test-key"},
+    )
+
+    assert headers == {"Authorization": "bearer test-key"}
+
+
+def test_build_provider_extra_headers_ignores_empty_lm_studio_api_key() -> None:
+    headers = _build_provider_extra_headers(
+        LlmProviderNames.LM_STUDIO,
+        {LM_STUDIO_API_KEY_CONFIG_KEY: "   "},
+    )
+
+    assert headers == {}
+
+
+def test_build_provider_extra_headers_ignores_legacy_ollama_custom_config() -> None:
+    # Ollama now carries its key in the standard api_key field, which LiteLLM
+    # turns into a Bearer header itself; custom_config must not add one.
+    headers = _build_provider_extra_headers(
+        LlmProviderNames.OLLAMA_CHAT,
+        {"OLLAMA_API_KEY": "test-key"},
+    )
+
+    assert headers == {}
+
+
+def _build_provider_view(
+    provider: str,
+    max_input_tokens: int | None,
+) -> LLMProviderView:
+    return LLMProviderView(
+        id=1,
+        name="test-provider",
+        provider=provider,
+        model_configurations=[
+            ModelConfigurationView(
+                name="test-model",
+                is_visible=True,
+                max_input_tokens=max_input_tokens,
+                supports_image_input=False,
+            )
+        ],
+        api_key=None,
+        api_base="http://localhost:11434",
+        api_version=None,
+        custom_config=None,
+        is_public=True,
+        is_auto_mode=False,
+        groups=[],
+        personas=[],
+        deployment_name=None,
+    )
+
+
+def test_get_llm_sets_ollama_num_ctx_model_kwarg() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=LlmProviderNames.OLLAMA_CHAT,
+            model="test-model",
+            deployment_name=None,
+            max_input_tokens=4096,
+            model_kwargs={"num_ctx": 8192},
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["model_kwargs"] == {"num_ctx": 8192}
+
+
+def test_get_llm_does_not_set_ollama_num_ctx_for_non_ollama_provider() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=LlmProviderNames.OPENAI,
+            model="gpt-4o-mini",
+            deployment_name=None,
+            max_input_tokens=4096,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["model_kwargs"] == {}
+
+
+def test_llm_from_provider_passes_configured_ollama_num_ctx() -> None:
+    provider = _build_provider_view(
+        provider=LlmProviderNames.OLLAMA_CHAT,
+        max_input_tokens=16384,
+    )
+
+    with patch("lumen.llm.factory.get_llm") as mock_get_llm:
+        llm_from_provider(
+            model_name="test-model",
+            llm_provider=provider,
+        )
+
+        kwargs = mock_get_llm.call_args.kwargs
+        assert kwargs["max_input_tokens"] == 16384
+        assert kwargs["model_kwargs"] == {"num_ctx": 16384}
+
+
+def test_llm_from_provider_omits_ollama_num_ctx_when_model_context_unknown() -> None:
+    provider = _build_provider_view(
+        provider=LlmProviderNames.OLLAMA_CHAT,
+        max_input_tokens=None,
+    )
+
+    with (
+        patch(
+            "lumen.llm.factory.get_max_input_tokens_from_llm_provider",
+            return_value=32000,
+        ),
+        patch("lumen.llm.factory.get_llm") as mock_get_llm,
+    ):
+        llm_from_provider(
+            model_name="test-model",
+            llm_provider=provider,
+        )
+
+        kwargs = mock_get_llm.call_args.kwargs
+        assert kwargs["max_input_tokens"] == 32000
+        assert kwargs["model_kwargs"] == {}
+
+
+def test_llm_from_provider_never_sets_ollama_num_ctx_for_non_ollama_provider() -> None:
+    provider = _build_provider_view(
+        provider=LlmProviderNames.OPENAI,
+        max_input_tokens=16384,
+    )
+
+    with patch("lumen.llm.factory.get_llm") as mock_get_llm:
+        llm_from_provider(
+            model_name="test-model",
+            llm_provider=provider,
+        )
+
+        kwargs = mock_get_llm.call_args.kwargs
+        assert kwargs["max_input_tokens"] == 16384
+        assert kwargs["model_kwargs"] == {}
+
+
+def test_get_llm_policy_headers_win_over_every_other_source() -> None:
+    """Policy headers must be the final merge. The request and deployment-env
+    sources set the same header to false here."""
+    policy = incognito_llm_extra_headers(
+        IncognitoRecordMode.USAGE_ONLY, BIFROST_PROVIDER_NAME
+    )
+    header = BIFROST_DISABLE_CONTENT_LOGGING_HEADER
+    with (
+        patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm,
+        patch("lumen.utils.headers.LITELLM_EXTRA_HEADERS", {header: "false"}),
+    ):
+        get_llm(
+            provider=BIFROST_PROVIDER_NAME,
+            model="gpt-4o",
+            deployment_name=None,
+            max_input_tokens=4096,
+            additional_headers={header: "false"},
+            policy_headers=policy,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"][header] == "true"
+
+
+def test_get_llm_without_policy_headers_keeps_the_existing_merge() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai",
+            model="gpt-4o",
+            deployment_name=None,
+            max_input_tokens=4096,
+            additional_headers={"x-request-scoped": "a"},
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"] == {"x-request-scoped": "a"}
+
+
+def test_get_llm_merges_provider_headers_over_request_headers() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai",
+            model="gpt-4o",
+            deployment_name=None,
+            max_input_tokens=4096,
+            additional_headers={"x-request-scoped": "a", "User-Agent": "other"},
+            provider_headers={"User-Agent": "opencode/1.18.18"},
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"] == {
+            "x-request-scoped": "a",
+            "User-Agent": "opencode/1.18.18",
+        }
+
+
+def test_get_llm_policy_headers_win_over_provider_headers() -> None:
+    policy = incognito_llm_extra_headers(
+        IncognitoRecordMode.USAGE_ONLY, BIFROST_PROVIDER_NAME
+    )
+    header = BIFROST_DISABLE_CONTENT_LOGGING_HEADER
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=BIFROST_PROVIDER_NAME,
+            model="gpt-4o",
+            deployment_name=None,
+            max_input_tokens=4096,
+            provider_headers={header: "false"},
+            policy_headers=policy,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"][header] == "true"
+
+
+def test_get_llm_special_auth_wins_over_provider_headers() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=LlmProviderNames.LM_STUDIO,
+            model="test-model",
+            deployment_name=None,
+            max_input_tokens=4096,
+            custom_config={LM_STUDIO_API_KEY_CONFIG_KEY: "test-key"},
+            provider_headers={"X-Custom": "yes"},
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"] == {
+            "X-Custom": "yes",
+            "Authorization": "Bearer test-key",
+        }
+
+
+def test_llm_from_provider_passes_stored_extra_headers() -> None:
+    provider = _build_provider_view(
+        provider="openai",
+        max_input_tokens=4096,
+    )
+    provider.extra_headers = {"User-Agent": "opencode/1.18.18"}
+
+    with patch("lumen.llm.factory.get_llm") as mock_get_llm:
+        llm_from_provider(model_name="test-model", llm_provider=provider)
+
+        assert mock_get_llm.call_args.kwargs["provider_headers"] == {
+            "User-Agent": "opencode/1.18.18"
+        }
+
+
+def test_is_opencode_gateway_matches_native_and_zen_rows() -> None:
+    assert is_opencode_gateway("opencode", None) is True
+    assert is_opencode_gateway("opencode", "https://opencode.ai/zen/v1") is True
+    # Rows created before the native provider (generic openai-compatible
+    # pointed at Zen) get the same treatment.
+    assert is_opencode_gateway("openai_compatible", "https://opencode.ai/zen/v1") is True
+    assert is_opencode_gateway("openai_compatible", "http://localhost:8000/v1") is False
+    assert is_opencode_gateway("openai", None) is False
+    assert is_opencode_gateway(None, None) is False
+
+
+def test_get_llm_uses_public_bearer_for_keyless_zen() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=OPENCODE_PROVIDER_NAME,
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            api_key=None,
+            api_base="https://opencode.ai/zen/v1",
+            max_input_tokens=4096,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["api_key"] == "public"
+
+
+def test_get_llm_uses_public_bearer_for_keyless_zen_compat_row() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai_compatible",
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            api_key=None,
+            api_base="https://opencode.ai/zen/v1",
+            max_input_tokens=4096,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["api_key"] == "public"
+        assert "x-opencode-session" in kwargs["extra_headers"]
+
+
+def test_get_llm_keeps_real_key_and_skips_public_for_others() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai",
+            model="gpt-4o",
+            deployment_name=None,
+            api_key=None,
+            max_input_tokens=4096,
+        )
+
+        assert mock_litellm_llm.call_args.kwargs["api_key"] is None
+
+
+def test_opencode_session_id_is_stable_and_prefixed() -> None:
+    first = opencode_session_id("chat-session:123")
+    assert first.startswith("ses_")
+    assert len(first) == len("ses_") + 32
+    assert opencode_session_id("chat-session:123") == first
+    assert opencode_session_id("chat-session:456") != first
+
+
+def test_opencode_request_headers_carry_client_identity() -> None:
+    headers = opencode_request_headers("chat-session:123")
+    assert headers["User-Agent"].startswith("opencode/")
+    assert headers["x-opencode-client"] == "cli"
+    assert headers["x-opencode-session"] == opencode_session_id("chat-session:123")
+    assert headers["x-opencode-request"].startswith("msg_")
+    # Same scope keeps the session (affinity) but mints a fresh request id.
+    again = opencode_request_headers("chat-session:123")
+    assert again["x-opencode-session"] == headers["x-opencode-session"]
+    assert again["x-opencode-request"] != headers["x-opencode-request"]
+
+
+def test_get_llm_adds_opencode_identity_headers() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=OPENCODE_PROVIDER_NAME,
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            max_input_tokens=4096,
+            provider_session_scope="chat-session:123",
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        # The request id is minted fresh per build, so compare the rest.
+        assert kwargs["extra_headers"]["x-opencode-request"].startswith("msg_")
+        assert {
+            k: v
+            for k, v in kwargs["extra_headers"].items()
+            if k != "x-opencode-request"
+        } == {
+            k: v
+            for k, v in opencode_request_headers("chat-session:123").items()
+            if k != "x-opencode-request"
+        }
+
+
+def test_get_llm_stored_headers_win_over_opencode_identity() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=OPENCODE_PROVIDER_NAME,
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            max_input_tokens=4096,
+            provider_session_scope="chat-session:123",
+            provider_headers={"x-opencode-session": "ses_custom"},
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"]["x-opencode-session"] == "ses_custom"
+        assert kwargs["extra_headers"]["x-opencode-client"] == "cli"
+
+
+def test_get_llm_policy_headers_win_over_opencode_identity() -> None:
+    policy = incognito_llm_extra_headers(
+        IncognitoRecordMode.USAGE_ONLY, BIFROST_PROVIDER_NAME
+    )
+    header = BIFROST_DISABLE_CONTENT_LOGGING_HEADER
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider=OPENCODE_PROVIDER_NAME,
+            model="mimo-v2.5-free",
+            deployment_name=None,
+            max_input_tokens=4096,
+            provider_session_scope="chat-session:123",
+            policy_headers=policy,
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"][header] == "true"
+        assert "x-opencode-session" in kwargs["extra_headers"]
+
+
+def test_get_llm_skips_opencode_identity_for_other_providers() -> None:
+    with patch("lumen.llm.factory.LitellmLLM") as mock_litellm_llm:
+        get_llm(
+            provider="openai",
+            model="gpt-4o",
+            deployment_name=None,
+            max_input_tokens=4096,
+            provider_session_scope="chat-session:123",
+        )
+
+        kwargs = mock_litellm_llm.call_args.kwargs
+        assert kwargs["extra_headers"] == {}
+
+
+def test_llm_from_provider_passes_session_scope() -> None:
+    provider = _build_provider_view(
+        provider=OPENCODE_PROVIDER_NAME,
+        max_input_tokens=4096,
+    )
+
+    with patch("lumen.llm.factory.get_llm") as mock_get_llm:
+        llm_from_provider(
+            model_name="mimo-v2.5-free",
+            llm_provider=provider,
+            provider_session_scope="chat-session:123",
+        )
+
+        assert (
+            mock_get_llm.call_args.kwargs["provider_session_scope"]
+            == "chat-session:123"
+        )
+
+
+def test_llm_from_provider_resolves_policy_headers_for_the_winning_provider() -> None:
+    """The caller hands policy as a provider-keyed function because persona
+    resolution decides the provider inside the factory."""
+    provider = _build_provider_view(
+        provider=BIFROST_PROVIDER_NAME,
+        max_input_tokens=4096,
+    )
+
+    with patch("lumen.llm.factory.get_llm") as mock_get_llm:
+        llm_from_provider(
+            model_name="gpt-4o",
+            llm_provider=provider,
+            policy_fn=partial(
+                incognito_llm_request_policy, IncognitoRecordMode.USAGE_ONLY
+            ),
+        )
+
+        kwargs = mock_get_llm.call_args.kwargs
+        assert kwargs["policy_headers"] == {
+            BIFROST_DISABLE_CONTENT_LOGGING_HEADER: "true"
+        }
+
+
+def test_llm_from_provider_without_policy_fn_passes_none() -> None:
+    provider = _build_provider_view(
+        provider=BIFROST_PROVIDER_NAME,
+        max_input_tokens=4096,
+    )
+
+    with patch("lumen.llm.factory.get_llm") as mock_get_llm:
+        llm_from_provider(model_name="gpt-4o", llm_provider=provider)
+
+        assert mock_get_llm.call_args.kwargs["policy_headers"] is None
+
+
+def _sentinel_policy_fn(_provider: str) -> LlmRequestPolicy:
+    return LlmRequestPolicy()
+
+
+def _mock_user() -> MagicMock:
+    """get_llm_for_persona reads the user's chat-default attributes, which
+    must be concrete values for UserChatDefaults validation."""
+    user = MagicMock()
+    user.temperature_default = None
+    user.reasoning_effort_default = None
+    return user
+
+
+class TestPolicyFnForwarding:
+    """Every exit of the persona chain must forward the policy function.
+
+    A dropped forward is a silent policy loss on a fallback path, invisible to
+    the precedence test, which only guards the final merge inside get_llm.
+    """
+
+    def test_no_persona_exit_forwards(self) -> None:
+        with patch("lumen.llm.factory.get_default_llm") as mock_default:
+            get_llm_for_persona(
+                persona=None,
+                user=_mock_user(),
+                policy_fn=_sentinel_policy_fn,
+            )
+            assert mock_default.call_args.kwargs["policy_fn"] is _sentinel_policy_fn
+
+    def test_unconfigured_persona_exit_forwards(self) -> None:
+        persona = MagicMock()
+        persona.default_model_configuration_id = None
+        with patch("lumen.llm.factory.get_default_llm") as mock_default:
+            get_llm_for_persona(
+                persona=persona,
+                user=_mock_user(),
+                policy_fn=_sentinel_policy_fn,
+            )
+            assert mock_default.call_args.kwargs["policy_fn"] is _sentinel_policy_fn
+
+    def test_failed_resolution_exit_forwards(self) -> None:
+        persona = MagicMock()
+        persona.default_model_configuration_id = 123
+        with (
+            patch("lumen.llm.factory.get_session_with_current_tenant"),
+            patch("lumen.llm.factory._resolve_provider_and_model", return_value=None),
+            patch("lumen.llm.factory.get_default_llm") as mock_default,
+        ):
+            get_llm_for_persona(
+                persona=persona,
+                user=_mock_user(),
+                policy_fn=_sentinel_policy_fn,
+            )
+            assert mock_default.call_args.kwargs["policy_fn"] is _sentinel_policy_fn
+
+    def test_access_denied_exit_forwards(self) -> None:
+        persona = MagicMock()
+        persona.default_model_configuration_id = 123
+        with (
+            patch("lumen.llm.factory.get_session_with_current_tenant"),
+            patch(
+                "lumen.llm.factory._resolve_provider_and_model",
+                return_value=(MagicMock(), "some-model"),
+            ),
+            patch("lumen.llm.factory.fetch_user_group_ids", return_value=[]),
+            patch("lumen.llm.factory.can_user_access_llm_provider", return_value=False),
+            patch("lumen.llm.factory.get_default_llm") as mock_default,
+        ):
+            get_llm_for_persona(
+                persona=persona,
+                user=_mock_user(),
+                policy_fn=_sentinel_policy_fn,
+            )
+            assert mock_default.call_args.kwargs["policy_fn"] is _sentinel_policy_fn
+
+    def test_resolved_provider_exit_forwards(self) -> None:
+        persona = MagicMock()
+        persona.default_model_configuration_id = 123
+        with (
+            patch("lumen.llm.factory.get_session_with_current_tenant"),
+            patch(
+                "lumen.llm.factory._resolve_provider_and_model",
+                return_value=(MagicMock(), "some-model"),
+            ),
+            patch("lumen.llm.factory.fetch_user_group_ids", return_value=[]),
+            patch("lumen.llm.factory.can_user_access_llm_provider", return_value=True),
+            patch("lumen.llm.factory.LLMProviderView"),
+            patch("lumen.llm.factory.llm_from_provider") as mock_from_provider,
+        ):
+            get_llm_for_persona(
+                persona=persona,
+                user=_mock_user(),
+                policy_fn=_sentinel_policy_fn,
+            )
+            assert (
+                mock_from_provider.call_args.kwargs["policy_fn"] is _sentinel_policy_fn
+            )
+
+    def test_get_default_llm_forwards(self) -> None:
+        with (
+            patch("lumen.llm.factory.get_session_with_current_tenant"),
+            patch("lumen.llm.factory.fetch_default_llm_model", return_value=MagicMock()),
+            patch("lumen.llm.factory.LLMProviderView"),
+            patch("lumen.llm.factory.llm_from_provider") as mock_from_provider,
+        ):
+            get_default_llm(policy_fn=_sentinel_policy_fn)
+            assert (
+                mock_from_provider.call_args.kwargs["policy_fn"] is _sentinel_policy_fn
+            )

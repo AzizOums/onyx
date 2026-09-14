@@ -1,4 +1,4 @@
-"""Environment-variable inventory for the Onyx backend.
+"""Environment-variable inventory for the Lumen backend.
 
 AST-walks the backend (and optionally the frontend) to build a canonical
 manifest of every environment variable the code actually reads, then
@@ -50,7 +50,7 @@ BACKEND_DIR = REPO_ROOT / "backend"
 
 # Directories under backend/ to scan for env reads. We skip vendored/build dirs.
 SCAN_ROOTS = [
-    BACKEND_DIR / "onyx",
+    BACKEND_DIR / "lumen",
     BACKEND_DIR / "ee",
     BACKEND_DIR / "shared_configs",
     BACKEND_DIR / "model_server",
@@ -77,13 +77,13 @@ ENV_TEMPLATES = [
     REPO_ROOT / "deployment" / "docker_compose" / "env.template",
     REPO_ROOT / "deployment" / "docker_compose" / "env.prod.template",
 ]
-HELM_VALUES = REPO_ROOT / "deployment" / "helm" / "charts" / "onyx" / "values.yaml"
+HELM_VALUES = REPO_ROOT / "deployment" / "helm" / "charts" / "lumen" / "values.yaml"
 HELM_CONFIGMAP = (
     REPO_ROOT
     / "deployment"
     / "helm"
     / "charts"
-    / "onyx"
+    / "lumen"
     / "templates"
     / "configmap.yaml"
 )
@@ -655,7 +655,7 @@ def human_report(reads: list[EnvRead], drift_only: bool = False) -> None:
         multi_type = {n: s.types for n, s in summaries.items() if len(s.types) > 1}
 
         print("=" * 78)
-        print("ONYX BACKEND ENV-VAR INVENTORY")
+        print("LUMEN BACKEND ENV-VAR INVENTORY")
         print("=" * 78)
         print(f"Distinct env vars read in code : {len(code_names)}")
         print(f"Total read sites               : {total_reads}")
@@ -916,7 +916,7 @@ def main() -> int:
                 print(f"    + {n}", file=sys.stderr)
             print(
                 "  → Document each in deployment/docker_compose/env.template and "
-                "deployment/helm/charts/onyx/values.yaml,\n"
+                "deployment/helm/charts/lumen/values.yaml,\n"
                 "    or (if intentionally left undocumented) regenerate the baseline.",
                 file=sys.stderr,
             )
