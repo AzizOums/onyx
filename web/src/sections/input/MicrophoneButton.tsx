@@ -30,6 +30,12 @@ interface MicrophoneButtonProps {
   stopRecordingRef?: React.MutableRefObject<
     (() => Promise<string | null>) | null
   >;
+  /**
+   * Ref to expose transcript suppression to the parent. Call it when the
+   * message has been sent: transcripts still in flight must not repopulate
+   * an input the send just cleared.
+   */
+  suppressTranscriptRef?: React.MutableRefObject<(() => void) | null>;
   /** Called when recording starts */
   onRecordingStart?: () => void;
   /** Existing message text to prepend to transcription (append mode) */
@@ -53,6 +59,7 @@ function MicrophoneButton({
   chatState,
   onRecordingChange,
   stopRecordingRef,
+  suppressTranscriptRef,
   onRecordingStart,
   currentMessage = "",
   onMuteChange,
@@ -141,6 +148,18 @@ function MicrophoneButton({
     }
   }, [setMuted, setMutedRef]);
 
+  // Expose transcript suppression to parent. A manual send clears the input
+  // while the recorder is still settling its final transcript; without this,
+  // that late transcript lands back in the freshly emptied input.
+  useEffect(() => {
+    if (suppressTranscriptRef) {
+      suppressTranscriptRef.current = () => {
+        suppressTranscriptUpdatesRef.current = true;
+        messagePrefixRef.current = "";
+      };
+    }
+  }, [suppressTranscriptRef]);
+
   // Notify parent when mute state changes
   useEffect(() => {
     onMuteChange?.(isMuted);
@@ -173,7 +192,7 @@ function MicrophoneButton({
       manualStopRequestedRef.current = true;
       try {
         const finalTranscript = await stopRecording();
-        if (finalTranscript) {
+        if (finalTranscript && !suppressTranscriptUpdatesRef.current) {
           const combined = withPrefix(finalTranscript);
           onTranscription(combined);
           if (

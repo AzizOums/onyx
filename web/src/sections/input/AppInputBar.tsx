@@ -140,6 +140,7 @@ const AppInputBar = React.memo(
     const stopRecordingRef = useRef<(() => Promise<string | null>) | null>(
       null
     );
+    const suppressTranscriptRef = useRef<(() => void) | null>(null);
     const setMutedRef = useRef<((muted: boolean) => void) | null>(null);
     const queuedMessages = useCurrentQueuedMessages();
     const latestMessageRenderComplete = useCurrentLatestMessageRenderComplete();
@@ -305,6 +306,9 @@ const AppInputBar = React.memo(
         // a server-side stop, so without this the mic keeps recording through
         // the whole generation with no way to stop it.
         if (isRecording) {
+          // Order matters: silence the recorder before stopping it, or its
+          // final transcript lands in the input the send is about to clear.
+          suppressTranscriptRef.current?.();
           void stopRecordingRef.current?.();
         }
         handleSubmit(text);
@@ -751,7 +755,7 @@ const AppInputBar = React.memo(
           {showMicButton &&
             (sttEnabled ? (
               <MicrophoneButton
-                onTranscription={(text) => setMessage(text)}
+                onTranscription={setMessage}
                 disabled={disabled || chatState === "streaming"}
                 autoSend={user?.preferences?.voice_auto_send ?? false}
                 autoListen={user?.preferences?.voice_auto_playback ?? false}
@@ -759,6 +763,7 @@ const AppInputBar = React.memo(
                 chatState={chatState}
                 onRecordingChange={handleRecordingChange}
                 stopRecordingRef={stopRecordingRef}
+                suppressTranscriptRef={suppressTranscriptRef}
                 currentMessage={message}
                 onRecordingStart={() => {}}
                 onAutoSend={(text) => {
