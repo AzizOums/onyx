@@ -6,9 +6,11 @@
 
 pub mod auth;
 pub mod config;
+pub mod http;
 pub mod logging;
 pub mod metrics;
 pub mod resources;
+pub mod server;
 pub mod time_cutoff;
 pub mod tools;
 pub mod upstream;

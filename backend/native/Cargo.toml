@@ -14,11 +14,12 @@ axum = "0.8"
 chrono = { version = "0.4", default-features = false, features = ["serde", "std", "clock"] }
 prometheus = { version = "0.14", default-features = false }
 regex = "1.13"
-reqwest = { version = "0.13", default-features = false, features = [
+# 0.13.2+ is required by rmcp's client transport, used by the integration tests.
+reqwest = { version = "0.13.2", default-features = false, features = [
     "json",
+    # Pulls rustls-platform-verifier, which honours the system trust store and
+    # therefore the custom CA bundle the Helm chart mounts.
     "rustls",
-    # Honours the cluster's custom CA bundle, which the Helm chart mounts.
-    "rustls-native-certs",
     "http2",
 ] }
 rmcp = { version = "3.3", default-features = false, features = [
