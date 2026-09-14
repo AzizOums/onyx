@@ -349,7 +349,6 @@ deployment/       docker_compose/ (compose + templates) et helm/ (chart K8s)
 cli/              lumen-cli (installer / gestion du cycle de vie)
 docs/             Ce guide + guide utilisateur
 desktop/ mobile/  Applications Tauri et Expo (builds séparés)
-widget/           Widget chat embarquable
 extensions/       Extension Chrome
 tools/            ods (devtools), loadtest, profiling
 ```

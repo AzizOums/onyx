@@ -3,19 +3,23 @@
 Rust modules that replace Python hot paths. Each one is optional: when it is not
 built, or its flag is off, the Python code runs unchanged.
 
-## Why Rust here, .NET elsewhere
+## Language policy
 
-The repository uses one language per domain:
+Rust is the target language for backend code. The web frontend stays on
+Next.js and React.
 
-| Domain | Language | Reason |
+| Area | Language | Note |
 | --- | --- | --- |
 | CPU-bound work inside the Python process (parsing, chunking, text cleanup) | Rust | Links into CPython through PyO3. No network hop, no new service, no serialization cost. |
-| Low-level network services (proxies, gateways) | Rust | Predictable latency and memory, no GIL. |
-| Standalone business services behind HTTP | .NET | Faster to write and staff for CRUD and workflow code. Pays for its own toolchain only when the service is standalone. |
-| Everything else | Python | The application, connectors, and the LLM pipeline stay as they are. |
+| Standalone backend services (proxies, gateways, HTTP services) | Rust | Predictable latency and memory, no GIL. |
+| Web frontend | TypeScript | Next.js and React. Not a migration target. |
+| Python still to migrate | Python | The FastAPI app, the Celery workers, and the connectors. Moving each one is its own project. |
 
-Rust is already in the tree (`desktop/src-tauri`), so `lumen_text` adds no new
-toolchain. No .NET service exists yet; the first one will add its own build.
+`model_server` is the one backend component that stays on Python: it runs torch
+and the HuggingFace stack, which have no Rust equivalent.
+
+Rust is already in the tree (`desktop/src-tauri`), so the native modules add no
+new toolchain.
 
 ## lumen_text
 

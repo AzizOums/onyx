@@ -150,7 +150,6 @@ documents de référence.
 
 - API REST complète sous `/api` (documents, chats, agents, connecteurs…).
 - Clés de **Service Account** : Admin Panel → Service Accounts.
-- **Widget** chat embarquable sur un site (`widget/`).
 - **Bot Slack/Discord** : mentionnez le bot dans un canal pour discuter.
 
 ---

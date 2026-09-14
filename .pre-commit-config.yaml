@@ -254,7 +254,7 @@ repos:
         language: system
         entry: bun install
         pass_filenames: false
-        files: ^(package\.json|bun\.lock|(widget|examples/widget|desktop)/package\.json)$
+        files: ^(package\.json|bun\.lock|(examples/widget|desktop)/package\.json)$
         stages: [post-checkout, post-merge, post-rewrite]
       - id: root-bun-install-check
         name: root bun install
@@ -262,7 +262,7 @@ repos:
         language: system
         entry: bun install
         pass_filenames: false
-        files: ^(package\.json|bun\.lock|(widget|examples/widget|desktop)/package\.json)$
+        files: ^(package\.json|bun\.lock|(examples/widget|desktop)/package\.json)$
 
       - id: oxfmt
         name: oxfmt
@@ -281,8 +281,8 @@ repos:
       # Type checks with the native TypeScript compiler (~10x faster than classic
       # tsc). web and web/lib/shared use the stable typescript@7 release (web
       # aliases it as `typescript-7` since Next.js still needs typescript@5); the
-      # widget hooks below still use tsgo from @typescript/native-preview in the
-      # root workspace.
+      # examples/widget hook below still uses tsgo from
+      # @typescript/native-preview in the root workspace.
       - id: typescript-check
         name: TypeScript type check
         entry: bash -c 'cd web && bun run types:check'
@@ -292,13 +292,6 @@ repos:
         # The i18n catalogs are part of the type graph: keyParity.ts turns a
         # missing or extra locale key into a compile error.
         files: ^web/(.*\.(ts|tsx)|src/i18n/messages/.*\.json)$
-
-      - id: widget-typescript-check
-        name: widget TypeScript type check
-        entry: bash -c 'cd widget && bunx tsgo --noEmit'
-        language: system
-        pass_filenames: false
-        files: ^(bun\.lock|widget/(.*\.(ts|tsx)|package\.json|tsconfig\.json))$
 
       - id: examples-widget-typescript-check
         name: examples/widget TypeScript type check
