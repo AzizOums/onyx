@@ -29,7 +29,7 @@ def test_generated_rust_matches_the_models() -> None:
 
     generator = _load_generator()
     models, enums = generator.collect()
-    expected = generator.render(models, enums)
+    expected = generator.rustfmt(generator.render(models, enums))
 
     actual = _GENERATED_PATH.read_text(encoding="utf-8")
     assert actual == expected, (

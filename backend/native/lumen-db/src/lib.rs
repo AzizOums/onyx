@@ -6,12 +6,14 @@
 //! schema maintained by hand alongside 447 Alembic revisions would diverge, and
 //! a diverged schema corrupts data quietly.
 //!
-//! This crate carries the row types and the vocabulary around them. Connection
-//! pooling, per-tenant schema translation and shard routing come next; nothing
-//! here opens a socket yet.
+//! The crate carries the row types, a connection pool, and per-tenant schema
+//! scoping. Shard routing is refused rather than approximated — see
+//! [`connection::ShardError`].
 
+pub mod connection;
 pub mod generated;
 
+pub use connection::{Database, DatabaseConfig, TenantId};
 pub use generated::*;
 
 use serde::{Deserialize, Serialize};

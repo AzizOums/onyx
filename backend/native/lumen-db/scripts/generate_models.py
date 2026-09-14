@@ -17,6 +17,8 @@ Run from the repo root:
 from __future__ import annotations
 
 import os
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -253,10 +255,36 @@ def render(models: list[dict], enums: list[dict]) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def rustfmt(source: str) -> str:
+    """Format the output so `cargo fmt` is a no-op on it.
+
+    Without this, running `cargo fmt` rewrites the generated file and the drift
+    test fails against a difference rustfmt introduced, not one the models did.
+    """
+    binary = shutil.which("rustfmt")
+    if binary is None:
+        raise RuntimeError(
+            "rustfmt is not on PATH. It is required: an unformatted generated "
+            "file is rewritten by `cargo fmt` and then fails the drift test."
+        )
+    result = subprocess.run(  # noqa: S603
+        [binary, "--edition", "2021", "--emit", "stdout"],
+        input=source,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    # rustfmt prefixes its stdout emission with a filename banner.
+    lines = result.stdout.splitlines(keepends=True)
+    if lines and lines[0].startswith("<stdin>:"):
+        lines = lines[1:]
+    return "".join(lines).lstrip("\n")
+
+
 def main() -> int:
     models, enums = collect()
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(render(models, enums), encoding="utf-8")
+    OUTPUT_PATH.write_text(rustfmt(render(models, enums)), encoding="utf-8")
     columns = sum(len(model["fields"]) for model in models)
     print(
         f"wrote {len(models)} models ({columns} columns) and {len(enums)} enums "

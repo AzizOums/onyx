@@ -912,11 +912,7 @@ pub struct GatedApp {
 
 impl GatedApp {
     pub const TABLE: &'static str = "gated_app";
-    pub const COLUMNS: &'static [&'static str] = &[
-        "id",
-        "external_app_id",
-        "mcp_server_id",
-    ];
+    pub const COLUMNS: &'static [&'static str] = &["id", "external_app_id", "mcp_server_id"];
 }
 
 /// Row of `mcp_server`.
