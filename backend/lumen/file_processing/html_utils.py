@@ -14,6 +14,7 @@ from lumen.configs.app_configs import (
 )
 from lumen.file_processing.enums import HtmlBasedConnectorTransformLinksStrategy
 from lumen.utils.logger import setup_logger
+from lumen.utils.native_text import get_native
 
 logger = setup_logger()
 
@@ -21,6 +22,15 @@ MINTLIFY_UNWANTED = ["sticky", "hidden"]
 _ANCHOR_ELEMENT = "a"
 _HREF_ATTRIBUTE = "href"
 _TABLE_ELEMENT = "table"
+_TABLE_CELL_SEPARATOR = "\t"
+
+
+def _use_markdown_links() -> bool:
+    """Read the strategy per call so tests can override the module attribute."""
+    return (
+        HTML_BASED_CONNECTOR_TRANSFORM_LINKS_STRATEGY
+        == HtmlBasedConnectorTransformLinksStrategy.MARKDOWN
+    )
 
 
 @dataclass
@@ -172,6 +182,13 @@ def format_document_soup(
 
 
 def parse_html_page_basic(text: str | BytesIO | IO[bytes]) -> str:
+    native = get_native()
+    # Byte streams keep the Python path, which lets bs4 detect the encoding.
+    if native is not None and isinstance(text, str):
+        return native.parse_html_page_basic(
+            text, _TABLE_CELL_SEPARATOR, _use_markdown_links()
+        )
+
     soup = bs4.BeautifulSoup(text, "lxml")
     return format_document_soup(soup)
 
@@ -181,6 +198,31 @@ def web_html_cleanup(
     mintlify_cleanup_enabled: bool = True,
     additional_element_types_to_discard: list[str] | None = None,
 ) -> ParsedHTML:
+    native = get_native()
+    # The native path covers raw HTML on the bs4 branch only. An already-parsed
+    # soup and the trafilatura branch stay in Python.
+    if (
+        native is not None
+        and isinstance(page_content, str)
+        and not PARSE_WITH_TRAFILATURA
+    ):
+        unwanted_classes = copy(WEB_CONNECTOR_IGNORED_CLASSES)
+        if mintlify_cleanup_enabled:
+            unwanted_classes.extend(MINTLIFY_UNWANTED)
+
+        unwanted_tags = copy(WEB_CONNECTOR_IGNORED_ELEMENTS)
+        if additional_element_types_to_discard:
+            unwanted_tags.extend(additional_element_types_to_discard)
+
+        title, cleaned_text = native.web_html_cleanup(
+            page_content,
+            unwanted_classes,
+            unwanted_tags,
+            _TABLE_CELL_SEPARATOR,
+            _use_markdown_links(),
+        )
+        return ParsedHTML(title=title, cleaned_text=cleaned_text)
+
     if isinstance(page_content, str):
         soup = bs4.BeautifulSoup(page_content, "lxml")
     else:

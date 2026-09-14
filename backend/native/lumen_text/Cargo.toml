@@ -1,0 +1,28 @@
+[package]
+name = "lumen_text_native"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+description = "Native text and HTML extraction primitives for the Lumen indexing pipeline"
+
+[lib]
+name = "lumen_text_native"
+crate-type = ["cdylib", "rlib"]
+
+# `extension-module` is on by default for the real build. `cargo test` needs it
+# off so the test binary can link against libpython.
+[features]
+default = ["extension-module"]
+extension-module = ["pyo3/extension-module"]
+
+[dependencies]
+pyo3 = { version = "0.29", features = ["abi3-py311"] }
+scraper = "0.27"
+ego-tree = "0.11"
+regex = "1.13"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

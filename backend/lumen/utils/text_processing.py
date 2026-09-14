@@ -5,6 +5,7 @@ import string
 from urllib.parse import quote
 
 from lumen.utils.logger import setup_logger
+from lumen.utils.native_text import get_native
 
 logger = setup_logger(__name__)
 
@@ -253,6 +254,10 @@ def shared_precompare_cleanup(text: str) -> str:
     """LLMs models sometime restructure whitespaces or edits special characters to fit a more likely
     distribution of characters found in its training data, but this hurts exact quote matching
     """
+    native = get_native()
+    if native is not None:
+        return native.shared_precompare_cleanup(text)
+
     text = text.lower()
 
     # \s: matches any whitespace character (spaces, tabs, newlines, etc.)
@@ -266,6 +271,10 @@ def shared_precompare_cleanup(text: str) -> str:
 
 
 def clean_text(text: str) -> str:
+    native = get_native()
+    if native is not None:
+        return native.clean_text(text)
+
     # Remove specific Unicode ranges that might cause issues
     cleaned = _INITIAL_FILTER.sub("", text)
 

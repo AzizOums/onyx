@@ -68,3 +68,6 @@ plans
 .claude/scheduled_tasks.lock
 .claude/worktrees/
 !.claude/settings.json
+
+# Rust native module build artifacts
+backend/native/*/target/
