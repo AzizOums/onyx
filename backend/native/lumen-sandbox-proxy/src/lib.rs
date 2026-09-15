@@ -12,10 +12,12 @@
 pub mod ca;
 pub mod ca_file;
 pub mod catalog;
+pub mod lockdown;
 pub mod matching;
 
 pub use ca::{CaBootstrap, CaError, CaStore, MaterializedCa};
 pub use ca_file::FileCaStore;
+pub use lockdown::{destination_is_blocked, is_internal, ApiServer, Resolver, SystemResolver};
 pub use matching::{
     actions_requiring_approval, apply_credential_gate, recognize_actions, AllMatchedActions,
     EndpointPolicy, EndpointSpec, GatedAppKind, GatedTarget, MatchedAction, ProxiedRequest,

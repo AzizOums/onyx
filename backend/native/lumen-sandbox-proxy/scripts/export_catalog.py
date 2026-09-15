@@ -94,10 +94,13 @@ def write(path: Path, value: object) -> None:
 
 
 def main() -> int:
+    # An explicit path lets the drift test run this exact command into a temp
+    # file rather than re-importing the builder.
+    destination = Path(sys.argv[1]) if len(sys.argv) > 1 else CATALOG_PATH
     catalog = build_catalog()
-    write(CATALOG_PATH, catalog)
+    write(destination, catalog)
     actions = sum(len(app["actions"]) for app in catalog["apps"])
-    print(f"wrote {CATALOG_PATH} ({len(catalog['apps'])} apps, {actions} actions)")
+    print(f"wrote {destination} ({len(catalog['apps'])} apps, {actions} actions)")
     return 0
 
 

@@ -8,9 +8,11 @@ action.
 """
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 
-from lumen.db.enums import ExternalAppType
+from lumen.db.enums import EndpointPolicy, ExternalAppType
 from lumen.external_apps.providers.registry import (
     PROVIDERS,
     uses_cloud_scope,
@@ -19,6 +21,7 @@ from lumen.external_apps.providers.registry import (
 
 _CRATE_DIR = Path(__file__).resolve().parents[4] / "native" / "lumen-sandbox-proxy"
 _CATALOG_PATH = _CRATE_DIR / "data" / "action_catalog.json"
+_SCRIPT = _CRATE_DIR / "scripts" / "export_catalog.py"
 _GENERATOR = "backend/native/lumen-sandbox-proxy/scripts/export_catalog.py"
 _REGENERATE = f"Regenerate it with: uv run python {_GENERATOR}"
 
@@ -30,14 +33,9 @@ def _exported() -> dict:
     return loaded
 
 
-def test_exported_catalog_matches_the_providers() -> None:
-    """The whole file, rebuilt from the registry and compared."""
-    import sys
-
-    sys.path.insert(0, str(_CRATE_DIR / "scripts"))
-    from export_catalog import build_catalog  # noqa: PLC0415
-
-    assert _exported() == build_catalog(), (
+def test_exported_catalog_matches_the_providers(tmp_path: Path) -> None:
+    """The whole file, regenerated from the registry and compared."""
+    assert _exported() == _regenerate_into(tmp_path / "action_catalog.json"), (
         f"The Rust gate's action catalog is stale. {_REGENERATE}"
     )
 
@@ -76,4 +74,22 @@ def test_exported_action_ids_are_the_ids_the_admin_api_accepts() -> None:
             if not (cloud and action["requires_self_hosted_scope"])
         ]
         # Raises on any id outside this app_type's catalog.
-        validate_action_policies(app_type, dict.fromkeys(ids))
+        validate_action_policies(app_type, dict.fromkeys(ids, EndpointPolicy.ASK))
+
+
+def _regenerate_into(destination: Path) -> dict:
+    """Run the real generator command into `destination` and read it back.
+
+    Running the command rather than importing it keeps the test honest about
+    the fix it prescribes, and keeps the type checker able to see every import.
+    """
+    result = subprocess.run(  # noqa: S603
+        [sys.executable, str(_SCRIPT), str(destination)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, f"{_GENERATOR} failed:\n{result.stderr}"
+    loaded = json.loads(destination.read_text(encoding="utf-8"))
+    assert isinstance(loaded, dict)
+    return loaded

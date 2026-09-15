@@ -77,7 +77,9 @@ class Case:
             "method": self.method,
             "path": self.path,
             "body": self.body,
-            "body_bytes": list(self.body_bytes) if self.body_bytes is not None else None,
+            "body_bytes": list(self.body_bytes)
+            if self.body_bytes is not None
+            else None,
             "stored": self.stored,
             "is_available": self.is_available,
         }
@@ -134,9 +136,13 @@ def _rest_cases(app_type: str, action_id: str, rule: RestRoute) -> list[Case]:
         # one: the tail swallows nothing. A matcher that accepts this gates a
         # whole collection endpoint as if it were a single resource.
         prefix = _fill(rule.path.rstrip("/").rsplit("/", 1)[0])
-        cases.append(Case(f"{action_id} wildcard tail absent", app_type, rule.method, prefix))
         cases.append(
-            Case(f"{action_id} wildcard tail empty", app_type, rule.method, prefix + "/")
+            Case(f"{action_id} wildcard tail absent", app_type, rule.method, prefix)
+        )
+        cases.append(
+            Case(
+                f"{action_id} wildcard tail empty", app_type, rule.method, prefix + "/"
+            )
         )
         cases.append(
             Case(
@@ -153,7 +159,9 @@ def _rest_cases(app_type: str, action_id: str, rule: RestRoute) -> list[Case]:
             "" if segment.startswith("{") else segment
             for segment in rule.path.split("/")
         )
-        cases.append(Case(f"{action_id} empty placeholder", app_type, rule.method, emptied))
+        cases.append(
+            Case(f"{action_id} empty placeholder", app_type, rule.method, emptied)
+        )
         # A placeholder value that looks like a path separator when decoded.
         cases.append(
             Case(
@@ -199,9 +207,7 @@ def _graphql_cases(app_type: str, action_id: str, rule: GraphQLOp) -> list[Case]
         "nested not root": json.dumps(
             {"query": f"{op} {{ outer {{ {field_name} {{ id }} }} }}"}
         ),
-        "aliased": json.dumps(
-            {"query": f"{op} {{ alias: {field_name} {{ id }} }}"}
-        ),
+        "aliased": json.dumps({"query": f"{op} {{ alias: {field_name} {{ id }} }}"}),
         "syntax error": json.dumps({"query": f"{op} {{ {field_name} "}),
         "not json": "this is not json",
         "empty body": "",
@@ -227,14 +233,13 @@ def _graphql_cases(app_type: str, action_id: str, rule: GraphQLOp) -> list[Case]
         "variable definitions with defaults": json.dumps(
             {
                 "query": (
-                    f"{op} N($a: String = \"x\", $b: [Int!]! = [1,2]) "
+                    f'{op} N($a: String = "x", $b: [Int!]! = [1,2]) '
                     f"{{ {field_name}(a: $a) {{ id }} }}"
                 )
             }
         ),
-        "byte order mark": "\ufeff" + json.dumps(
-            {"query": f"{op} {{ {field_name} {{ id }} }}"}
-        ),
+        "byte order mark": "\ufeff"
+        + json.dumps({"query": f"{op} {{ {field_name} {{ id }} }}"}),
         "two operations one matching": json.dumps(
             {
                 "query": (
@@ -248,7 +253,9 @@ def _graphql_cases(app_type: str, action_id: str, rule: GraphQLOp) -> list[Case]
                 "query": (
                     f"{op} {{ ...F }} fragment F on T {{ {field_name} ...G }} "
                     "fragment G on T {{ ...F }}"
-                ).replace("{{", "{").replace("}}", "}")
+                )
+                .replace("{{", "{")
+                .replace("}}", "}")
             }
         ),
         "deeply nested selection": json.dumps(
@@ -268,16 +275,23 @@ def _graphql_cases(app_type: str, action_id: str, rule: GraphQLOp) -> list[Case]
     # to the whole-domain ASK, which never consults this action's policy — so an
     # explicit DENY would be evaded by a choice of encoding.
     exact = bodies["exact"]
-    for encoding in ("utf-8-sig", "utf-16", "utf-16-be", "utf-16-le", "utf-32", "utf-32-be"):
-        cases.append(
-            Case(
-                f"{action_id} graphql body in {encoding}",
-                app_type,
-                "POST",
-                "/graphql",
-                body_bytes=exact.encode(encoding),
-            )
+    cases.extend(
+        Case(
+            f"{action_id} graphql body in {encoding}",
+            app_type,
+            "POST",
+            "/graphql",
+            body_bytes=exact.encode(encoding),
         )
+        for encoding in (
+            "utf-8-sig",
+            "utf-16",
+            "utf-16-be",
+            "utf-16-le",
+            "utf-32",
+            "utf-32-be",
+        )
+    )
     return cases
 
 
@@ -442,7 +456,9 @@ def main() -> int:
     actual = rust_verdicts(cases)
 
     if len(expected) != len(actual):
-        print(f"the Rust runner returned {len(actual)} verdicts for {len(expected)} cases")
+        print(
+            f"the Rust runner returned {len(actual)} verdicts for {len(expected)} cases"
+        )
         return 1
 
     divergences: list[str] = []
