@@ -770,6 +770,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "graphql-parser"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a818c0d883d7c0801df27be910917750932be279c7bc82dc541b8769425f409"
+dependencies = [
+ "combine",
+ "thiserror 1.0.69",
+]
+
+[[package]]
 name = "h2"
 version = "0.4.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1257,9 +1267,13 @@ dependencies = [
 name = "lumen-sandbox-proxy"
 version = "0.1.0"
 dependencies = [
+ "graphql-parser",
  "rand 0.8.8",
  "rcgen",
+ "regex",
  "rsa",
+ "serde",
+ "serde_json",
  "tempfile",
  "thiserror 2.0.20",
  "time",

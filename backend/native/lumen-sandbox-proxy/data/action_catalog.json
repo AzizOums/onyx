@@ -1,0 +1,1641 @@
+{
+  "apps": [
+    {
+      "app_type": "GITHUB",
+      "app_name": "GitHub",
+      "upstream_url_regexes": [
+        "https://api\\.github\\.com/.*"
+      ],
+      "actions": [
+        {
+          "id": "github.user.read",
+          "normalised_name": "Read the connected user",
+          "description": "Read the authenticated user's profile.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/user"
+            },
+            {
+              "kind": "graphql",
+              "operation_type": "query",
+              "field": "viewer"
+            }
+          ]
+        },
+        {
+          "id": "github.repos.read",
+          "normalised_name": "Read repositories",
+          "description": "List the user's repositories and fetch a single repo.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/user/repos"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}"
+            }
+          ]
+        },
+        {
+          "id": "github.issues.read",
+          "normalised_name": "Read issues",
+          "description": "List a repo's issues and fetch a single issue with its comments.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/issues"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/issues/{number}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/issues/{number}/comments"
+            }
+          ]
+        },
+        {
+          "id": "github.pulls.read",
+          "normalised_name": "Read pull requests",
+          "description": "List a repo's pull requests and fetch a single pull request.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/pulls"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/pulls/{number}"
+            }
+          ]
+        },
+        {
+          "id": "github.search.read",
+          "normalised_name": "Search",
+          "description": "Search repositories, issues, and pull requests.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/search/repositories"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/search/issues"
+            },
+            {
+              "kind": "graphql",
+              "operation_type": "query",
+              "field": "search"
+            }
+          ]
+        },
+        {
+          "id": "github.graphql.repo.read",
+          "normalised_name": "Read repos, issues, and PRs via the GitHub CLI",
+          "description": "Read repository-scoped data (the repo, its issues, and its pull requests) through GitHub's GraphQL API \u2014 the path `gh repo/pr/issue view` and `list` take.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "graphql",
+              "operation_type": "query",
+              "field": "repository"
+            },
+            {
+              "kind": "graphql",
+              "operation_type": "query",
+              "field": "repositoryOwner"
+            }
+          ]
+        },
+        {
+          "id": "github.refs.read",
+          "normalised_name": "Read branches and refs",
+          "description": "List branches and read a branch or git ref (its SHA).",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/branches"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/branches/{branch...}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/git/ref/{ref...}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/git/refs"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/git/refs/{ref...}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/git/matching-refs/{ref...}"
+            }
+          ]
+        },
+        {
+          "id": "github.contents.read",
+          "normalised_name": "Read file contents",
+          "description": "Read a file or directory's contents (and the README).",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/contents"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/contents/{path...}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/readme"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/readme/{dir...}"
+            }
+          ]
+        },
+        {
+          "id": "github.git_data.read",
+          "normalised_name": "Read commits and git objects",
+          "description": "Read commits, trees, and blobs (the git object graph).",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/git/trees/{sha}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/git/blobs/{sha}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/git/commits/{sha}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/commits"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/commits/{ref...}"
+            }
+          ]
+        },
+        {
+          "id": "github.releases.read",
+          "normalised_name": "Read releases",
+          "description": "List releases and read a single release, asset, or tag.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/releases"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/repos/{owner}/{repo}/releases/{release...}"
+            }
+          ]
+        },
+        {
+          "id": "github.issues.create",
+          "normalised_name": "Create an issue",
+          "description": "Open a new issue in a repository.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/repos/{owner}/{repo}/issues"
+            },
+            {
+              "kind": "graphql",
+              "operation_type": "mutation",
+              "field": "createIssue"
+            }
+          ]
+        },
+        {
+          "id": "github.comments.create",
+          "normalised_name": "Comment on an issue",
+          "description": "Add a comment to an issue or pull request.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/repos/{owner}/{repo}/issues/{number}/comments"
+            },
+            {
+              "kind": "graphql",
+              "operation_type": "mutation",
+              "field": "addComment"
+            }
+          ]
+        },
+        {
+          "id": "github.contents.write",
+          "normalised_name": "Create, update, or delete files",
+          "description": "Write or delete a file in a repository (a single-file commit).",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "PUT",
+              "path": "/repos/{owner}/{repo}/contents/{path...}"
+            },
+            {
+              "kind": "rest",
+              "method": "DELETE",
+              "path": "/repos/{owner}/{repo}/contents/{path...}"
+            }
+          ]
+        },
+        {
+          "id": "github.refs.write",
+          "normalised_name": "Create, update, or delete branches",
+          "description": "Create a branch/ref, move it, or delete it.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/repos/{owner}/{repo}/git/refs"
+            },
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/repos/{owner}/{repo}/git/refs/{ref...}"
+            },
+            {
+              "kind": "rest",
+              "method": "DELETE",
+              "path": "/repos/{owner}/{repo}/git/refs/{ref...}"
+            }
+          ]
+        },
+        {
+          "id": "github.pulls.create",
+          "normalised_name": "Open a pull request",
+          "description": "Open a new pull request.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/repos/{owner}/{repo}/pulls"
+            },
+            {
+              "kind": "graphql",
+              "operation_type": "mutation",
+              "field": "createPullRequest"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "app_type": "GMAIL",
+      "app_name": "Gmail",
+      "upstream_url_regexes": [
+        "https://gmail\\.googleapis\\.com/gmail/.*"
+      ],
+      "actions": [
+        {
+          "id": "gmail.messages.read",
+          "normalised_name": "Read messages",
+          "description": "List or search messages and read a single message.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/gmail/v1/users/{userId}/messages"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/gmail/v1/users/{userId}/messages/{messageId}"
+            }
+          ]
+        },
+        {
+          "id": "gmail.labels.read",
+          "normalised_name": "List labels",
+          "description": "List the labels in the mailbox.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/gmail/v1/users/{userId}/labels"
+            }
+          ]
+        },
+        {
+          "id": "gmail.profile.read",
+          "normalised_name": "Read profile",
+          "description": "Read the connected account's Gmail profile.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/gmail/v1/users/{userId}/profile"
+            }
+          ]
+        },
+        {
+          "id": "gmail.messages.send",
+          "normalised_name": "Send a message",
+          "description": "Send an email from the connected account.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/gmail/v1/users/{userId}/messages/send"
+            }
+          ]
+        },
+        {
+          "id": "gmail.messages.modify",
+          "normalised_name": "Modify message labels",
+          "description": "Add or remove labels on a message (mark read, archive, \u2026).",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/gmail/v1/users/{userId}/messages/{messageId}/modify"
+            }
+          ]
+        },
+        {
+          "id": "gmail.messages.trash",
+          "normalised_name": "Trash a message",
+          "description": "Move a message to the trash.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/gmail/v1/users/{userId}/messages/{messageId}/trash"
+            }
+          ]
+        },
+        {
+          "id": "gmail.threads.read",
+          "normalised_name": "Read threads",
+          "description": "List threads and read a single conversation thread.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/gmail/v1/users/{userId}/threads"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/gmail/v1/users/{userId}/threads/{threadId}"
+            }
+          ]
+        },
+        {
+          "id": "gmail.attachments.read",
+          "normalised_name": "Read attachments",
+          "description": "Download an attachment from a message.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/gmail/v1/users/{userId}/messages/{messageId}/attachments/{attachmentId}"
+            }
+          ]
+        },
+        {
+          "id": "gmail.drafts.read",
+          "normalised_name": "Read drafts",
+          "description": "List drafts and read a single draft.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/gmail/v1/users/{userId}/drafts"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/gmail/v1/users/{userId}/drafts/{draftId}"
+            }
+          ]
+        },
+        {
+          "id": "gmail.drafts.create",
+          "normalised_name": "Create a draft",
+          "description": "Save a new draft email (not sent).",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/gmail/v1/users/{userId}/drafts"
+            }
+          ]
+        },
+        {
+          "id": "gmail.drafts.update",
+          "normalised_name": "Update a draft",
+          "description": "Replace the contents of an existing draft (not sent).",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "PUT",
+              "path": "/gmail/v1/users/{userId}/drafts/{draftId}"
+            }
+          ]
+        },
+        {
+          "id": "gmail.drafts.delete",
+          "normalised_name": "Delete a draft",
+          "description": "Permanently delete a draft.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "DELETE",
+              "path": "/gmail/v1/users/{userId}/drafts/{draftId}"
+            }
+          ]
+        },
+        {
+          "id": "gmail.drafts.send",
+          "normalised_name": "Send a draft",
+          "description": "Send an existing draft as an email.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/gmail/v1/users/{userId}/drafts/send"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "app_type": "GOOGLE_CALENDAR",
+      "app_name": "Google Calendar",
+      "upstream_url_regexes": [
+        "https://www\\.googleapis\\.com/calendar/.*"
+      ],
+      "actions": [
+        {
+          "id": "gcal.calendars.read",
+          "normalised_name": "List calendars",
+          "description": "List the calendars on the user's calendar list.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/calendar/v3/users/{userId}/calendarList"
+            }
+          ]
+        },
+        {
+          "id": "gcal.events.read",
+          "normalised_name": "Read events",
+          "description": "List events in a calendar or fetch a single event.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/calendar/v3/calendars/{calendarId}/events"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/calendar/v3/calendars/{calendarId}/events/{eventId}"
+            }
+          ]
+        },
+        {
+          "id": "gcal.freebusy.read",
+          "normalised_name": "Query free/busy",
+          "description": "Query busy intervals across calendars.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/calendar/v3/freeBusy"
+            }
+          ]
+        },
+        {
+          "id": "gcal.events.create",
+          "normalised_name": "Create an event",
+          "description": "Create a new event on a calendar.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/calendar/v3/calendars/{calendarId}/events"
+            }
+          ]
+        },
+        {
+          "id": "gcal.events.update",
+          "normalised_name": "Update an event",
+          "description": "Modify an existing event.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "PUT",
+              "path": "/calendar/v3/calendars/{calendarId}/events/{eventId}"
+            },
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/calendar/v3/calendars/{calendarId}/events/{eventId}"
+            }
+          ]
+        },
+        {
+          "id": "gcal.events.delete",
+          "normalised_name": "Delete an event",
+          "description": "Permanently delete an event.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "DELETE",
+              "path": "/calendar/v3/calendars/{calendarId}/events/{eventId}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "app_type": "GOOGLE_DRIVE",
+      "app_name": "Google Drive",
+      "upstream_url_regexes": [
+        "https://www\\.googleapis\\.com/drive/.*",
+        "https://www\\.googleapis\\.com/upload/drive/.*",
+        "https://docs\\.googleapis\\.com/.*",
+        "https://sheets\\.googleapis\\.com/.*",
+        "https://slides\\.googleapis\\.com/.*"
+      ],
+      "actions": [
+        {
+          "id": "gdrive.files.read",
+          "normalised_name": "Read files",
+          "description": "Search/list files and folders, read a file's metadata, and download a non-native file's contents.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/drive/v3/files"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/drive/v3/files/{fileId}"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.files.export",
+          "normalised_name": "Export a document",
+          "description": "Export a Google-native doc (Docs/Sheets/Slides) to text, markdown, or CSV so its contents can be read.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/drive/v3/files/{fileId}/export"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.drives.read",
+          "normalised_name": "List shared drives",
+          "description": "List the shared drives the user can access.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": true,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/drive/v3/drives"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/drive/v3/drives/{driveId}"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.files.create",
+          "normalised_name": "Create or upload a file",
+          "description": "Create a folder/file or upload new content (optionally converting to a Google-native Doc/Sheet/Slides).",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/drive/v3/files"
+            },
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/upload/drive/v3/files"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.files.update",
+          "normalised_name": "Edit a file",
+          "description": "Update a file's metadata or replace its contents.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/drive/v3/files/{fileId}"
+            },
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/upload/drive/v3/files/{fileId}"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.files.delete",
+          "normalised_name": "Delete a file",
+          "description": "Trash or permanently delete a file.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "DELETE",
+              "path": "/drive/v3/files/{fileId}"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.docs.read",
+          "normalised_name": "Read a document",
+          "description": "Read a Google Doc's structured contents (text, formatting, and layout) via the Docs API.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/documents/{documentId}"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.docs.create",
+          "normalised_name": "Create a document",
+          "description": "Create a new, empty Google Doc via the Docs API.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v1/documents"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.docs.update",
+          "normalised_name": "Edit a document",
+          "description": "Apply edits to a Google Doc's contents via the Docs API.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v1/documents/{documentId}"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.sheets.read",
+          "normalised_name": "Read a spreadsheet",
+          "description": "Read a Google Sheet's structure and cell values via the Sheets API.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v4/spreadsheets/{spreadsheetId}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v4/spreadsheets/{spreadsheetId}/values/{range}"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.sheets.create",
+          "normalised_name": "Create a spreadsheet",
+          "description": "Create a new Google Sheet via the Sheets API.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v4/spreadsheets"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.sheets.update",
+          "normalised_name": "Edit a spreadsheet",
+          "description": "Write, append, or clear cell values and apply structural edits to a Google Sheet via the Sheets API.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v4/spreadsheets/{spreadsheetId}"
+            },
+            {
+              "kind": "rest",
+              "method": "PUT",
+              "path": "/v4/spreadsheets/{spreadsheetId}/values/{range}"
+            },
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v4/spreadsheets/{spreadsheetId}/values/{range}"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.slides.read",
+          "normalised_name": "Read a presentation",
+          "description": "Read a Google Slides presentation's structure and text via the Slides API.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/presentations/{presentationId}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/presentations/{presentationId}/pages/{pageObjectId}"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.slides.create",
+          "normalised_name": "Create a presentation",
+          "description": "Create a new Google Slides presentation via the Slides API.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v1/presentations"
+            }
+          ]
+        },
+        {
+          "id": "gdrive.slides.update",
+          "normalised_name": "Edit a presentation",
+          "description": "Apply edits (add slides, insert or replace text, restyle) to a Google Slides presentation via the Slides API.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v1/presentations/{presentationId}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "app_type": "HUBSPOT",
+      "app_name": "HubSpot",
+      "upstream_url_regexes": [
+        "https://api\\.hubapi\\.com/.*"
+      ],
+      "actions": [
+        {
+          "id": "hubspot.owners.read",
+          "normalised_name": "Read owners",
+          "description": "List CRM owners and fetch a single owner.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/crm/v3/owners"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/crm/v3/owners/{owner_id}"
+            }
+          ]
+        },
+        {
+          "id": "hubspot.contacts.read",
+          "normalised_name": "Read contacts",
+          "description": "List contacts and fetch a single contact.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/crm/v3/objects/contacts"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/crm/v3/objects/contacts/{contact_id}"
+            }
+          ]
+        },
+        {
+          "id": "hubspot.companies.read",
+          "normalised_name": "Read companies",
+          "description": "List companies and fetch a single company.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/crm/v3/objects/companies"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/crm/v3/objects/companies/{company_id}"
+            }
+          ]
+        },
+        {
+          "id": "hubspot.deals.read",
+          "normalised_name": "Read deals",
+          "description": "List deals and fetch a single deal.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/crm/v3/objects/deals"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/crm/v3/objects/deals/{deal_id}"
+            }
+          ]
+        },
+        {
+          "id": "hubspot.crm.search",
+          "normalised_name": "Search the CRM",
+          "description": "Search contacts, companies, and deals by filters.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/crm/v3/objects/contacts/search"
+            },
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/crm/v3/objects/companies/search"
+            },
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/crm/v3/objects/deals/search"
+            }
+          ]
+        },
+        {
+          "id": "hubspot.contacts.write",
+          "normalised_name": "Create or update contacts",
+          "description": "Create a new contact or update an existing one.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/crm/v3/objects/contacts"
+            },
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/crm/v3/objects/contacts/{contact_id}"
+            }
+          ]
+        },
+        {
+          "id": "hubspot.companies.write",
+          "normalised_name": "Create or update companies",
+          "description": "Create a new company or update an existing one.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/crm/v3/objects/companies"
+            },
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/crm/v3/objects/companies/{company_id}"
+            }
+          ]
+        },
+        {
+          "id": "hubspot.deals.write",
+          "normalised_name": "Create or update deals",
+          "description": "Create a new deal or update an existing one.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/crm/v3/objects/deals"
+            },
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/crm/v3/objects/deals/{deal_id}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "app_type": "LINEAR",
+      "app_name": "Linear",
+      "upstream_url_regexes": [
+        "https://api\\.linear\\.app/.*"
+      ],
+      "actions": [
+        {
+          "id": "linear.viewer.read",
+          "normalised_name": "Read the connected user",
+          "description": "Read the authenticated user's profile (viewer).",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "graphql",
+              "operation_type": "query",
+              "field": "viewer"
+            }
+          ]
+        },
+        {
+          "id": "linear.teams.read",
+          "normalised_name": "Read teams",
+          "description": "List the workspace's teams.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "graphql",
+              "operation_type": "query",
+              "field": "teams"
+            }
+          ]
+        },
+        {
+          "id": "linear.issues.read",
+          "normalised_name": "Read issues",
+          "description": "List, fetch, and search issues.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "graphql",
+              "operation_type": "query",
+              "field": "issues"
+            },
+            {
+              "kind": "graphql",
+              "operation_type": "query",
+              "field": "issue"
+            },
+            {
+              "kind": "graphql",
+              "operation_type": "query",
+              "field": "issueSearch"
+            }
+          ]
+        },
+        {
+          "id": "linear.projects.read",
+          "normalised_name": "Read projects",
+          "description": "List projects.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "graphql",
+              "operation_type": "query",
+              "field": "projects"
+            }
+          ]
+        },
+        {
+          "id": "linear.issues.create",
+          "normalised_name": "Create an issue",
+          "description": "Create a new issue.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "graphql",
+              "operation_type": "mutation",
+              "field": "issueCreate"
+            }
+          ]
+        },
+        {
+          "id": "linear.comments.create",
+          "normalised_name": "Comment on an issue",
+          "description": "Add a comment to an issue.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "graphql",
+              "operation_type": "mutation",
+              "field": "commentCreate"
+            }
+          ]
+        },
+        {
+          "id": "linear.projects.create",
+          "normalised_name": "Create a project",
+          "description": "Create a new project.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "graphql",
+              "operation_type": "mutation",
+              "field": "projectCreate"
+            }
+          ]
+        },
+        {
+          "id": "linear.projects.update",
+          "normalised_name": "Edit a project",
+          "description": "Update an existing project.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "graphql",
+              "operation_type": "mutation",
+              "field": "projectUpdate"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "app_type": "NOTION",
+      "app_name": "Notion",
+      "upstream_url_regexes": [
+        "https://api\\.notion\\.com/.*"
+      ],
+      "actions": [
+        {
+          "id": "notion.users.read",
+          "normalised_name": "Read users",
+          "description": "List the workspace's users and fetch a single user (including the authenticated bot via /users/me).",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/users"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/users/{user_id}"
+            }
+          ]
+        },
+        {
+          "id": "notion.search",
+          "normalised_name": "Search",
+          "description": "Search all pages and data sources the integration can access.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v1/search"
+            }
+          ]
+        },
+        {
+          "id": "notion.pages.read",
+          "normalised_name": "Read pages",
+          "description": "Fetch a page's properties and read an individual page property.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/pages/{page_id}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/pages/{page_id}/properties/{property_id}"
+            }
+          ]
+        },
+        {
+          "id": "notion.blocks.read",
+          "normalised_name": "Read blocks",
+          "description": "Fetch a block and list a block's (or page's) child blocks.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/blocks/{block_id}"
+            },
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/blocks/{block_id}/children"
+            }
+          ]
+        },
+        {
+          "id": "notion.databases.read",
+          "normalised_name": "Read databases",
+          "description": "List a database's data sources (each with an id and name).",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/databases/{database_id}"
+            }
+          ]
+        },
+        {
+          "id": "notion.data_sources.read",
+          "normalised_name": "Read data sources",
+          "description": "Fetch a data source's schema (its property definitions).",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/data_sources/{data_source_id}"
+            }
+          ]
+        },
+        {
+          "id": "notion.data_sources.query",
+          "normalised_name": "Query a data source",
+          "description": "Query a data source's rows with optional filters and sorts.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v1/data_sources/{data_source_id}/query"
+            }
+          ]
+        },
+        {
+          "id": "notion.comments.read",
+          "normalised_name": "Read comments",
+          "description": "List the unresolved comments on a page or block.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/v1/comments"
+            }
+          ]
+        },
+        {
+          "id": "notion.pages.create",
+          "normalised_name": "Create a page",
+          "description": "Create a new page under a page or data source parent.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v1/pages"
+            }
+          ]
+        },
+        {
+          "id": "notion.pages.update",
+          "normalised_name": "Update a page",
+          "description": "Update a page's properties, icon, cover, or archive it.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/v1/pages/{page_id}"
+            }
+          ]
+        },
+        {
+          "id": "notion.blocks.append",
+          "normalised_name": "Append blocks",
+          "description": "Append child blocks (content) to a page or block.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/v1/blocks/{block_id}/children"
+            }
+          ]
+        },
+        {
+          "id": "notion.blocks.update",
+          "normalised_name": "Update a block",
+          "description": "Update or archive an individual block's content.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/v1/blocks/{block_id}"
+            }
+          ]
+        },
+        {
+          "id": "notion.blocks.delete",
+          "normalised_name": "Delete a block",
+          "description": "Delete (move to trash) an individual block.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "DELETE",
+              "path": "/v1/blocks/{block_id}"
+            }
+          ]
+        },
+        {
+          "id": "notion.databases.create",
+          "normalised_name": "Create a database",
+          "description": "Create a new database (with an initial data source) under a page parent.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v1/databases"
+            }
+          ]
+        },
+        {
+          "id": "notion.databases.update",
+          "normalised_name": "Update a database",
+          "description": "Update a database container's title or move its data sources.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/v1/databases/{database_id}"
+            }
+          ]
+        },
+        {
+          "id": "notion.data_sources.create",
+          "normalised_name": "Create a data source",
+          "description": "Add a new data source to an existing database.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v1/data_sources"
+            }
+          ]
+        },
+        {
+          "id": "notion.data_sources.update",
+          "normalised_name": "Update a data source",
+          "description": "Update a data source's schema, title, or description.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "PATCH",
+              "path": "/v1/data_sources/{data_source_id}"
+            }
+          ]
+        },
+        {
+          "id": "notion.comments.create",
+          "normalised_name": "Add a comment",
+          "description": "Add a comment to a page or an existing discussion.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/v1/comments"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "app_type": "SLACK",
+      "app_name": "Slack",
+      "upstream_url_regexes": [
+        "https://slack\\.com/api/.*",
+        "https://files\\.slack\\.com/upload/v1/.*"
+      ],
+      "actions": [
+        {
+          "id": "slack.channels.read",
+          "normalised_name": "View channels & conversations",
+          "description": "List the workspace's channels and conversations and look up a single conversation's metadata.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/conversations.list"
+            },
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/conversations.info"
+            }
+          ]
+        },
+        {
+          "id": "slack.messages.read",
+          "normalised_name": "Read messages",
+          "description": "Read messages and thread replies in a channel or direct message.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/conversations.history"
+            },
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/conversations.replies"
+            }
+          ]
+        },
+        {
+          "id": "slack.users.read",
+          "normalised_name": "Read users",
+          "description": "List workspace users and look up individual profiles.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/users.list"
+            },
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/users.info"
+            }
+          ]
+        },
+        {
+          "id": "slack.search.read",
+          "normalised_name": "Search messages",
+          "description": "Full-text search across messages the user can see.",
+          "default_policy": "ALWAYS",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/search.messages"
+            }
+          ]
+        },
+        {
+          "id": "slack.messages.write",
+          "normalised_name": "Post a message",
+          "description": "Post a message to a channel or conversation.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/chat.postMessage"
+            }
+          ]
+        },
+        {
+          "id": "slack.dm.open",
+          "normalised_name": "Open a direct message",
+          "description": "Open (or resume) a direct message conversation with a user.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/conversations.open"
+            }
+          ]
+        },
+        {
+          "id": "slack.files.write",
+          "normalised_name": "Upload files",
+          "description": "Upload a file and share it to a channel, direct message, or thread using Slack's external upload flow.",
+          "default_policy": "ASK",
+          "requires_self_hosted_scope": false,
+          "matches": [
+            {
+              "kind": "rest",
+              "method": "GET",
+              "path": "/api/files.getUploadURLExternal"
+            },
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/files.getUploadURLExternal"
+            },
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/api/files.completeUploadExternal"
+            },
+            {
+              "kind": "rest",
+              "method": "POST",
+              "path": "/upload/v1/{token...}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

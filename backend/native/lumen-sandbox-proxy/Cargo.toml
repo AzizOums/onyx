@@ -9,6 +9,12 @@ description = "Egress proxy for Lumen sandboxes"
 [dependencies]
 thiserror.workspace = true
 tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+regex.workspace = true
+# Only used to turn a GraphQL body into (operation_type, root_field) pairs; the
+# matcher never validates a document against a schema.
+graphql-parser = "0.4"
 rcgen = { version = "0.14", default-features = false, features = ["pem", "ring"] }
 # ring signs RSA but cannot generate it, so the key comes from the `rsa` crate
 # and rcgen only does the signing.
