@@ -13,6 +13,8 @@ flag or a Helm value that still points at Python.
 | `lumen-db` row structs | Generated, drift test verified | Not wired to anything |
 | `lumen-db` connection layer | Tested against a real PostgreSQL 16 | Not wired to anything |
 | `sandbox_proxy` CA bootstrap | Ported, interop with Python proven | Not wired to anything |
+| `sandbox_proxy` action matcher | Ported, parity measured over the real catalog | Not wired to anything |
+| `sandbox_proxy` egress lockdown | Ported, parity measured over 400k addresses | Not wired to anything |
 | `sandbox_proxy` everything else | Not started | — |
 | `api_server`, Celery workers | Not started | — |
 
@@ -28,6 +30,10 @@ These were run, not assumed.
 | Tenant scoping isolates schemas | 5 integration tests against a live PostgreSQL 16.13, including cross-tenant reuse |
 | A sharded deployment is refused, not misrouted | Unit test asserts `Database::connect` errors |
 | The Rust proxy loads a CA the Python proxy wrote | Interop check, 12 certificate fields identical both ways |
+| The Rust matcher reaches the Python verdict | 1,838 requests over the real catalog, 0 divergences |
+| The Rust lockdown denies what Python denies | 400,221 addresses, every range boundary plus a random sample, 0 divergences |
+| Each parity check detects a fault | A bug injected into each produced 119, 15 and 6,947 divergences |
+| Each generated file detects drift | A real change to the Python source made each drift test fail |
 
 ## Not verified — and what breaks
 
@@ -112,11 +118,15 @@ the intended behaviour: the Python router fails closed because guessing
 "default" for an already-migrated tenant sends its writes to the database it
 moved off. Approximating it would be worse than refusing.
 
-### The sandbox proxy is a CA bootstrap and nothing else yet
+### The sandbox proxy has no transport yet
 
-What exists: CA generation, validation, the file-backed store, and the atomic
-materialization the proxy reads. What does not: the MITM engine, identity
-resolution, credential injection, and the gate.
+What exists: the CA bootstrap and its store, the action matcher that decides
+what a request is allowed to do, and the egress lockdown that decides where a
+request may go. What does not: the MITM engine that would intercept the request
+in the first place, identity resolution, credential injection, and the approval
+rendezvous.
+
+So the two decision layers are ported and measured, and nothing calls them.
 
 **Breaks as:** nothing. No binary runs it and no deployment references it.
 
@@ -127,6 +137,10 @@ path length, every key-usage bit, and the subject key identifier. That is the
 property a cutover depends on: a proxy that regenerated instead of loading would
 orphan every sandbox trust store at once.
 
+The matcher and the lockdown were both checked against the Python code they
+replace, and each check was checked in turn — a deliberate bug injected into
+each one to confirm it fails. The matcher check found a real divergence, below.
+
 Still unverifiable here, and it is the larger half:
 
 - **Docker identity resolution** needs a Docker daemon.
@@ -134,7 +148,28 @@ Still unverifiable here, and it is the larger half:
 - **The MITM engine** has no Rust equivalent of mitmproxy; it is a rewrite, and
   a security-critical one.
 
-## The one thing that nearly went wrong
+### The matcher has not seen a real crawl of GraphQL traffic
+
+Parity is measured over a corpus this branch generates, which covers every
+catalog route and rule and the near-misses around them. It is not a sample of
+what sandboxes actually send.
+
+**Breaks as:** a GraphQL body shape nobody thought of parses differently under
+`graphql-parser` than under `graphql-core`, so an action is recognised by one
+gate and not the other. Recognising less is the safer direction — the request
+falls to the whole-domain `ASK` — except where an admin set `DENY` on the
+action, which that fallback never consults.
+
+```bash
+uv run python backend/native/lumen-sandbox-proxy/scripts/matcher_parity_check.py
+```
+
+Eleven adversarial body shapes were measured and agree: comments, commas,
+directives, block strings, unicode escapes, variable defaults, several
+operations in one document, fragment cycles, deep nesting, and an embedded null
+byte.
+
+## Two things that nearly went wrong
 
 An integration test caught a **cross-tenant read**. SQLAlchemy carries the schema
 as a per-connection execution option; `SET search_path` is session state that
@@ -146,6 +181,21 @@ here because it is the failure mode to look for in everything built on this
 layer, and because unit tests would never have found it — only a real pool
 against a real server did.
 
+The second was an **encoding evasion**, found by the matcher parity check.
+Python's `json.loads` detects a body's encoding before parsing, so a
+BOM-prefixed or UTF-16 body is still JSON to the gate; `serde_json::from_slice`
+reads UTF-8 only. A body the Python gate recognises and the Rust one does not
+falls through to the whole-domain `ASK`, which never consults the invoked
+action's policy — so encoding a GraphQL body as UTF-16 would turn an admin's
+explicit `DENY` into a prompt a user can approve.
+
+`matching::json_bytes` now reproduces `json.detect_encoding`. Reverting it
+produces 119 divergences, so the corpus holds that shut.
+
+Both are the same lesson twice: the fault sat in the gap between two libraries
+that looked interchangeable, and only running both sides over the same inputs
+showed it.
+
 ## Rolling back
 
 | Component | Roll back by |
@@ -153,6 +203,7 @@ against a real server did.
 | `lumen_text` | Unset `LUMEN_NATIVE_TEXT` and restart. No rebuild needed. |
 | MCP server | `mcpServer.runtime: python`. Same port, same health path, same metric names. |
 | `lumen-db` | Nothing to roll back; no code path uses it yet. |
+| `sandbox_proxy` | Nothing to roll back; no binary runs it and no deployment references it. |
 
 ## Reproducing the test environment
 
@@ -173,3 +224,17 @@ LUMEN_DB_TEST=1 POSTGRES_HOST=127.0.0.1 POSTGRES_USER=postgres \
 
 Without `LUMEN_DB_TEST`, those tests print a skip instead of failing — which
 means **a CI run that does not set it proves nothing about tenant isolation.**
+
+## Reproducing the parity checks
+
+Neither needs a database, a network, or Docker.
+
+```bash
+cargo build --manifest-path backend/native/Cargo.toml -p lumen-sandbox-proxy \
+  --example match_corpus --example classify_addresses
+
+uv run python backend/native/lumen-sandbox-proxy/scripts/matcher_parity_check.py
+uv run python backend/native/lumen-sandbox-proxy/scripts/lockdown_parity_check.py
+```
+
+Both print the size of the corpus they ran and exit non-zero on any divergence.

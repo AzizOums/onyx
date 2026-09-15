@@ -42,14 +42,38 @@ gated on `backend/lumen/db`.
 
 1. `lumen_text` — done, opt-in
 2. `lumen-mcp-server` — done, opt-in (`lumen-mcp-server/README.md`)
-3. `sandbox_proxy` — blocked, see below
-4. the database layer — the real prerequisite
-5. `api_server` and the Celery workers — not startable before step 4
+3. the database layer — the real prerequisite
+4. `sandbox_proxy` — its pure layers are done, the rest is blocked, see below
+5. `api_server` and the Celery workers — not startable before step 3
 
-### Why `sandbox_proxy` is not next
+### What of `sandbox_proxy` is ported
 
-It reads as the obvious second service: a standalone binary, 4,600 lines. Its
-dependency closure is not.
+Three pieces, each one that needs no database, no network and no TLS engine:
+
+| Piece | What it decides |
+| --- | --- |
+| `ca`, `ca_file` | The authority the proxy signs intercepted connections with |
+| `matching` | What a request is allowed to do, against the action catalog |
+| `lockdown` | Where a request may go, by address rather than by hostname |
+
+The two decision layers are the security boundary, so neither is trusted on a
+reading of the Python. Each is checked against it over a generated corpus, and
+each check is itself checked by injecting a bug and watching it fail. See
+`../VERIFICATION.md`.
+
+The catalog and the address tables are **generated from Python**, not
+re-declared: the providers and `ipaddress` stay the single source of truth, and
+a drift test fails when a copy falls behind.
+
+```bash
+uv run python backend/native/lumen-sandbox-proxy/scripts/export_catalog.py
+uv run python backend/native/lumen-sandbox-proxy/scripts/export_ip_ranges.py
+```
+
+### Why the rest of `sandbox_proxy` is blocked
+
+The transport and the approval pipeline are another matter. The proxy reads as
+a standalone binary of 4,600 lines; its dependency closure is not.
 
 | What it needs | Size |
 | --- | --- |
@@ -60,7 +84,8 @@ dependency closure is not.
 | The credential encryption used for `Sandbox.encrypted_pat` | — |
 | A MITM TLS engine, today `mitmproxy` | — |
 
-So a straight port means porting the database layer first, which is step 4.
+So a straight port of the rest means the database layer first, which is step 3.
+What is ported above is the part with no such dependency.
 
 There is a second path that skips it: have the proxy ask the API server for what
 it needs, exactly as the MCP server does. Resolving a sandbox by IP, evaluating
@@ -72,7 +97,7 @@ terminates sandbox TLS.
 That path changes the architecture, so it is a decision to take deliberately
 rather than a detail of the port.
 
-### The size of step 4
+### The size of step 3
 
 | | |
 | --- | --- |
