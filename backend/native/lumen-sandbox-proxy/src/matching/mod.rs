@@ -10,6 +10,7 @@
 pub mod actions;
 pub mod engine;
 pub mod graphql;
+pub mod json_bytes;
 pub mod policy;
 pub mod url_glob;
 

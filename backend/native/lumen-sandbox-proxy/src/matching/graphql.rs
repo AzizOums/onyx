@@ -20,7 +20,13 @@ pub fn parse_invocations(body: Option<&[u8]>) -> Vec<(String, String)> {
     let Some(body) = body.filter(|bytes| !bytes.is_empty()) else {
         return Vec::new();
     };
-    let Ok(payload) = serde_json::from_slice::<serde_json::Value>(body) else {
+    // Python's `json.loads` detects the body's encoding before parsing, so a
+    // BOM-prefixed or UTF-16 body is real JSON to the gate. Decoding the same
+    // way is what stops such a body evading a recognised action's policy.
+    let Some(decoded) = super::json_bytes::decode(body) else {
+        return Vec::new();
+    };
+    let Ok(payload) = serde_json::from_str::<serde_json::Value>(&decoded) else {
         return Vec::new();
     };
 

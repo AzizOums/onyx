@@ -29,6 +29,21 @@ pub struct ProxiedRequest {
     pub body: Option<Vec<u8>>,
 }
 
+impl ProxiedRequest {
+    /// Normalise an intercepted request into the form the matcher consumes.
+    ///
+    /// `raw_path` is the path as the interception layer reports it, which
+    /// carries the query string; catalog path matchers test the path only, so
+    /// it is dropped here. Mirrors `ExternalAppRequestEvaluator.evaluate`.
+    pub fn from_http(method: &str, raw_path: &str, body: Option<Vec<u8>>) -> Self {
+        Self {
+            method: method.to_string(),
+            path: raw_path.split('?').next().unwrap_or("").to_string(),
+            body,
+        }
+    }
+}
+
 /// A request paired with the derived views matchers consult.
 ///
 /// Interpreting a request (parsing a GraphQL body) happens here and is
@@ -511,5 +526,33 @@ mod tests {
             app_name: "Jira".into(),
         };
         assert_ne!(external.key(), mcp.key());
+    }
+}
+
+#[cfg(test)]
+mod normalization_tests {
+    use super::*;
+
+    #[test]
+    fn a_query_string_is_dropped_before_matching() {
+        // The interception layer reports the path with its query string;
+        // catalog path matchers test the path only, so a route would never
+        // match a real request if this were kept.
+        let request = ProxiedRequest::from_http("GET", "/repos/lumen/app?per_page=100", None);
+        assert_eq!(request.path, "/repos/lumen/app");
+        assert_eq!(request.method, "GET");
+    }
+
+    #[test]
+    fn only_the_first_question_mark_splits_the_path() {
+        let request = ProxiedRequest::from_http("GET", "/a?b=1?c=2", None);
+        assert_eq!(request.path, "/a");
+    }
+
+    #[test]
+    fn a_path_without_a_query_string_is_unchanged() {
+        let request = ProxiedRequest::from_http("POST", "/graphql", Some(b"{}".to_vec()));
+        assert_eq!(request.path, "/graphql");
+        assert_eq!(request.body.as_deref(), Some(b"{}".as_slice()));
     }
 }
